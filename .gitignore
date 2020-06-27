@@ -1,0 +1,10 @@
+/dist
+/tmp
+/out-tsc
+/node_modules
+.idea
+npm-debug.log
+yarn-error.log
+.DS_Store
+Thumbs.db
+.jest-cache
