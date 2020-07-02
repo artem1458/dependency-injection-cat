@@ -1,37 +1,8 @@
 {
-  "compileOnSave": false,
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "sourceMap": true,
-    "outDir": "dist",
-    "noEmit": false,
-    "esModuleInterop": true,
-    "target": "es5",
-    "strictNullChecks": true,
-    "module": "esnext",
-    "jsx": "react",
-    "experimentalDecorators": true,
-    "allowJs": true,
-    "checkJs": false,
-    "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "strict": true,
-    "lib": ["dom", "es5", "es6", "es2017", "scripthost"],
-    "rootDir": ".",
-    "declaration": false,
-    "emitDecoratorMetadata": true,
-    "importHelpers": true,
-    "typeRoots": ["node_modules/@types"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@src/*": ["src/*"]
-    }
-  },
-    "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+    "plugins": [
+      { "transform": "./src/transformer/index.ts" }
+    ]
+  }
 }

@@ -3,11 +3,12 @@ const path = require('path');
 module.exports = {
   testMatch: ['**/+(*.)+(test).+(ts|js)'],
   transform: {
-    '^.+\\.(ts|js|tsx|jsx)$': 'ts-jest',
+    '^.+\\.(ts|js)$': 'ts-jest',
   },
+  setupFilesAfterEnv: ["jest-sinon"],
   transformIgnorePatterns: ['/node_modules/'],
   resolver: path.resolve(__dirname, 'scripts/jest-resolver.js'),
-  moduleFileExtensions: ['ts', 'js', 'tsx', 'jsx'],
+  moduleFileExtensions: ['ts', 'js'],
   coverageReporters: ['html'],
   globals: {
     'ts-jest': {

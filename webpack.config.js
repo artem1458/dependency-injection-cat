@@ -1,10 +1,9 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const testTransformer = require('./test-transformer').default;
 
 module.exports = {
-    entry: './index.ts',
+    entry: './src/testFile.ts',
     mode: 'development',
     devtool: 'source-map',
     resolve: {
@@ -16,20 +15,13 @@ module.exports = {
     },
     module: {
         rules: [
-            // {
-            //     test: /\.(js|ts)$/,
-            //     loader: 'babel-loader',
-            // },
             {
-                test: /\.ts$/,
-                loader: 'ts-loader',
-                exclude: /node_modules/,
+                test: /\.(ts|tsx)$/,
+                loader: require.resolve('ts-loader'),
                 options: {
-                    getCustomTransformers: (program) => ({
-                        before: [testTransformer]
-                    })
+                    compiler: 'ttypescript',
                 }
-            },
+            }
         ],
     },
     plugins: [
