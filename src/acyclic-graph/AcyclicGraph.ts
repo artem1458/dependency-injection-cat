@@ -1,4 +1,4 @@
-import { Graph } from '@src/graph/Graph';
+import { Graph } from '../graph';
 import { IAcyclicGraph } from './IAcyclicGraph';
 
 export class AcyclicGraph extends Graph implements IAcyclicGraph {
@@ -14,7 +14,7 @@ export class AcyclicGraph extends Graph implements IAcyclicGraph {
         const stack: Record<string, boolean> = {};
 
         nodes.forEach(node => {
-            if (this.detectCycleForNode(node, visited , stack)) {
+            if (this.detectCycleForNode(node, visited, stack)) {
                 throw new Error(`Cyclic dependency detected in ${node}`);
             }
         });
@@ -22,7 +22,7 @@ export class AcyclicGraph extends Graph implements IAcyclicGraph {
 
     //TODO Find out, how to correctly log cyclic dependencies
     detectCycleForNode(node: string, visited: Record<string, boolean>, stack: Record<string, boolean>): boolean {
-        if(!visited[node]){
+        if (!visited[node]) {
             const nodeNeighbors = this.g[node];
             let hasCycle: boolean = false;
 
@@ -30,9 +30,9 @@ export class AcyclicGraph extends Graph implements IAcyclicGraph {
             stack[node] = true;
 
             nodeNeighbors.forEach(node => {
-                if(!visited[node] && this.detectCycleForNode(node, visited, stack)){
+                if (!visited[node] && this.detectCycleForNode(node, visited, stack)) {
                     hasCycle = true;
-                } else if (stack[node]){
+                } else if (stack[node]) {
                     hasCycle = true;
                 }
             });

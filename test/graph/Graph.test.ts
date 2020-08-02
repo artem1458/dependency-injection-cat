@@ -69,10 +69,15 @@ describe('Graph tests', () => {
             verify(instanceSpy.addNode('a')).once();
         });
 
-        it('should add edges to node, and not duplicate them', () => {
+        it('should add edges to node, and not duplicate them, also should add empty nodes to graph with dependencies', () => {
             //Given
             const expected = {
                 a: ['b', 'c', 'd', 'e', 'f'],
+                b: [],
+                c: [],
+                d: [],
+                e: [],
+                f: [],
             };
 
             const graph = new Graph();

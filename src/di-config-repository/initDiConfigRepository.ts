@@ -1,12 +1,11 @@
 import glob from 'glob';
-import fs from 'fs';
 import { transformerConfig } from '../transformer-config';
 import { diConfigRepository } from './repository';
 
 let initialized: boolean = false;
 
 export const initDiConfigRepository = (): void => {
-    const { configPattern } = transformerConfig;
+    const { configPattern, ignorePatterns } = transformerConfig;
 
     if (initialized) {
         return;
@@ -17,8 +16,8 @@ export const initDiConfigRepository = (): void => {
     }
 
     initialized = true;
-    const configPaths = glob.sync(configPattern, { absolute: true });
-    const filesContent = configPaths.map(config => fs.readFileSync(config, 'utf-8'));
 
-    filesContent.forEach(content => diConfigRepository.push(content));
+    const configPaths = glob.sync(configPattern, { absolute: true, ignore: ignorePatterns });
+
+    configPaths.forEach(path => diConfigRepository.push(path));
 };

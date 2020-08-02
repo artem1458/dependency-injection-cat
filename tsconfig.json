@@ -2,7 +2,9 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "plugins": [
-      { "transform": "./src/transformer/index.ts" }
+      {
+        "transform": "./src/transformer/index.ts"
+      }
     ]
   }
 }

@@ -19,13 +19,13 @@ export class Graph implements IGraph {
     }
 
     addEdges(node: string, ...edges: Array<string>): void {
-        if (!this.hasNode(node)) {
-            this.addNode(node);
-        }
+        this.addNode(node);
 
         const nodeEdges = this._graph[node];
 
         edges.forEach(edge => {
+            this.addNode(edge);
+
             if (!nodeEdges.includes(edge)) {
                 nodeEdges.push(edge);
             }

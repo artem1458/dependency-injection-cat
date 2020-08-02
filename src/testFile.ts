@@ -1,9 +1,26 @@
-import { ITestFile } from '@src/testFileI';
+import { IInterface } from './Interfaces';
+import fs from 'fs';
+// import { ConfigDiconfig } from '@src/config/config.diconfig';
+//
+// new ConfigDiconfig();
 
-const getVa = () => console.log('ss');
+fs.readFileSync('./TEST2.ts');
 
-getVa();
+aa();
 
-const a: ITestFile = {};
+function aa(): IInterface {
+    return {
+        a: 'a',
+    }
+}
 
-a;
+// function aa(): CC<IT> & IT {
+//     return {
+//         a: 'a',
+//         c: {
+//             b: {
+//                 a: 'a'
+//             }
+//         }
+//     }
+// }

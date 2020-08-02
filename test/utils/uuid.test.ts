@@ -10,7 +10,7 @@ describe('uuid test', () => {
             const lastIndex = values.lastIndexOf(it);
 
             expect(firstIndex).toBe(lastIndex);
-            expect(it).toHaveLength(32);
+            expect(it).toHaveLength(16);
         });
     });
 });

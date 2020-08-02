@@ -16,19 +16,29 @@
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "strict": true,
-    "lib": ["dom", "es5", "es6", "es2017", "scripthost"],
+    "lib": [
+      "dom",
+      "es5",
+      "es6",
+      "es2017",
+      "scripthost"
+    ],
     "rootDir": ".",
     "declaration": false,
     "emitDecoratorMetadata": true,
     "importHelpers": true,
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"]
+      "@src/*": [
+        "src/*"
+      ]
     }
   },
   "exclude": [

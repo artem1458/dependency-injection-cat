@@ -13,6 +13,7 @@ module.exports = {
   globals: {
     'ts-jest': {
       compiler: 'ttypescript',
+      tsConfig: './tsconfig.test.json',
     }
   },
   cacheDirectory: './test/.jest-cache',

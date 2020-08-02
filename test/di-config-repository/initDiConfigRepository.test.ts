@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import glob from 'glob';
-import fs from 'fs';
 import { diConfigRepository } from '@src/di-config-repository';
 import { ITransformerConfig } from '@src/transformer-config';
 import { initDiConfigRepository } from '@src/di-config-repository/initDiConfigRepository';
@@ -20,10 +19,6 @@ const configsList = [
     'config_0',
     'config_1',
 ];
-
-const readFileSyncStub = sinon.stub();
-readFileSyncStub.onFirstCall().returns('config_0__content');
-readFileSyncStub.onSecondCall().returns('config_1__content');
 
 const syncStub = sinon.stub().returns(configsList);
 
@@ -53,13 +48,7 @@ describe('initDiConfigRepository tests', () => {
 
     it('should init configuration only once, and correctly add files inner to repository', () => {
         //Given
-        const expectedRepository = [
-            'config_0__content',
-            'config_1__content',
-        ];
-
         transformerConfigMock.configPattern = 'mockPattern';
-        sinon.replace(fs, 'readFileSync', readFileSyncStub);
 
         //When
         initDiConfigRepository();
@@ -68,12 +57,8 @@ describe('initDiConfigRepository tests', () => {
         initDiConfigRepository();
 
         //Then
-        expect(diConfigRepository).toEqual(expectedRepository);
+        expect(diConfigRepository).toEqual(configsList);
 
         expect(syncStub).toBeCalledOnceWithExactly('mockPattern', { absolute: true });
-
-        expect(readFileSyncStub).toBeCalledTwice();
-        expect(readFileSyncStub.getCall(0)).toBeCalledWithExactly('config_0', 'utf-8');
-        expect(readFileSyncStub.getCall(1)).toBeCalledWithExactly('config_1', 'utf-8');
     });
 });
