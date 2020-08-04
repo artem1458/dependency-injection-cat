@@ -2,16 +2,18 @@ import * as ts from 'typescript';
 import { diConfigRepository } from '../di-config-repository';
 import { TypeRegisterRepository } from './TypeRegisterRepository';
 import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
+import { ProgramRepository } from '../program';
 
 let initialized = false;
 
-export function registerTypes(program: ts.Program): void {
+export function registerTypes(): void {
     if (initialized) {
         return;
     }
 
     initialized = true;
 
+    const program = ProgramRepository.program;
     const typeChecker: ts.TypeChecker = program.getTypeChecker();
 
     diConfigRepository.forEach(filePath => {

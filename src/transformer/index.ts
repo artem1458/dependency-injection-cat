@@ -1,14 +1,16 @@
 import * as ts from 'typescript';
-import { ITransformerConfig, initTransformerConfig } from '../transformer-config';
+import { initTransformerConfig, ITransformerConfig } from '../transformer-config';
 import { initDiConfigRepository } from '../di-config-repository';
 import { registerTypes } from '../type-register/registerTypes';
 import { registerDependencies } from '../types-dependencies-register/registerDependencies';
+import { ProgramRepository } from '../program';
 
 const transformer = (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
     initTransformerConfig(config);
     initDiConfigRepository();
-    registerTypes(program);
-    registerDependencies(program);
+    ProgramRepository.initProgram(program);
+    registerTypes();
+    registerDependencies();
 
     return context => {
         return sourceFile => {

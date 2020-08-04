@@ -1,10 +1,7 @@
 import { IInterface } from './Interfaces';
-import fs from 'fs';
 // import { ConfigDiconfig } from '@src/config/config.diconfig';
 //
 // new ConfigDiconfig();
-
-fs.readFileSync('./TEST2.ts');
 
 aa();
 

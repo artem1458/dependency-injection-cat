@@ -5,15 +5,15 @@ describe('initTransformerConfig tests', () => {
     it('initTransformerConfig should init configuration only once, and correctly set first configuration', () => {
         //Given
         const firstConfig: ITransformerConfig = {
-            configPattern: 'pattern',
+            diConfigPattern: 'pattern',
         };
 
         const anotherConfig_0: ITransformerConfig = {
-            configPattern: 'anotherPattern_0',
+            diConfigPattern: 'anotherPattern_0',
         };
 
         const anotherConfig_1: ITransformerConfig = {
-            configPattern: 'anotherPattern_1',
+            diConfigPattern: 'anotherPattern_1',
         };
 
         //When

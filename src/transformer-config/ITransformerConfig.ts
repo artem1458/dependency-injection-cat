@@ -1,4 +1,4 @@
 export interface ITransformerConfig {
-    configPattern?: string;
+    diConfigPattern?: string;
     ignorePatterns?: Array<string>;
 }

@@ -4,7 +4,7 @@ describe('Transformer Config tests', () => {
     it('transformerConfig should have correct initial configuration', () => {
         //Given
         const expected: ITransformerConfig = {
-            configPattern: '**/*.diconfig.ts',
+            diConfigPattern: '**/*.diconfig.ts',
         };
 
         //When

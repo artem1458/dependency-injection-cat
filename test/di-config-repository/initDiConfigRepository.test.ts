@@ -8,7 +8,7 @@ let transformerConfigMock: ITransformerConfig;
 
 jest.mock('@src/transformer-config', () => {
     transformerConfigMock = {};
-    transformerConfigMock.configPattern = undefined;
+    transformerConfigMock.diConfigPattern = undefined;
 
     return {
         transformerConfig: transformerConfigMock,
@@ -24,7 +24,7 @@ const syncStub = sinon.stub().returns(configsList);
 
 describe('initDiConfigRepository tests', () => {
     beforeEach(() => {
-        transformerConfigMock.configPattern = 'mockPattern';
+        transformerConfigMock.diConfigPattern = 'mockPattern';
 
         sinon.restore();
         sinon.replace(glob, 'sync', syncStub);
@@ -37,7 +37,7 @@ describe('initDiConfigRepository tests', () => {
         ${''}
     `('should throw error, when search pattern is empty, configPattern - $configPattern', ({ configPattern }) => {
         //Given
-        transformerConfigMock.configPattern = configPattern;
+        transformerConfigMock.diConfigPattern = configPattern;
 
         //When
         const errorCall = () => initDiConfigRepository();
@@ -48,7 +48,7 @@ describe('initDiConfigRepository tests', () => {
 
     it('should init configuration only once, and correctly add files inner to repository', () => {
         //Given
-        transformerConfigMock.configPattern = 'mockPattern';
+        transformerConfigMock.diConfigPattern = 'mockPattern';
 
         //When
         initDiConfigRepository();

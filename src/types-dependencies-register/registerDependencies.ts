@@ -3,16 +3,18 @@ import { diConfigRepository } from '../di-config-repository';
 import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
+import { ProgramRepository } from '../program';
 
 let initialized = false;
 
-export function registerDependencies(program: ts.Program): void {
+export function registerDependencies(): void {
     if (initialized) {
         return;
     }
 
     initialized = true;
 
+    const program = ProgramRepository.program;
     const typeChecker: ts.TypeChecker = program.getTypeChecker();
 
     diConfigRepository.forEach(filePath => {

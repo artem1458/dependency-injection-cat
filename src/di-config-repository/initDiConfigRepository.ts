@@ -5,19 +5,19 @@ import { diConfigRepository } from './repository';
 let initialized: boolean = false;
 
 export const initDiConfigRepository = (): void => {
-    const { configPattern, ignorePatterns } = transformerConfig;
+    const { diConfigPattern, ignorePatterns } = transformerConfig;
 
     if (initialized) {
         return;
     }
 
-    if (!configPattern) {
+    if (!diConfigPattern) {
         throw new Error('DI Config pattern is empty, please check plugin configuration');
     }
 
     initialized = true;
 
-    const configPaths = glob.sync(configPattern, { absolute: true, ignore: ignorePatterns });
+    const configPaths = glob.sync(diConfigPattern, { absolute: true, ignore: ignorePatterns });
 
     configPaths.forEach(path => diConfigRepository.push(path));
 };
