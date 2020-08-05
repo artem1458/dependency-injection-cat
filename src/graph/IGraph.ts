@@ -8,5 +8,6 @@ export interface IGraph {
 
     addEdges(node: string, ...edges: Array<string>): void;
     hasEdges(node: string): boolean;
+    getEdges(node: string): Array<string>;
 }
 

@@ -1,6 +1,6 @@
 export interface ITypeInfo {
     id: string;
-    configId: string;
+    factoryId: string;
     beanName: string;
-    configName: string;
+    factoryName: string;
 }

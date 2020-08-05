@@ -21,7 +21,7 @@ export class Graph implements IGraph {
     addEdges(node: string, ...edges: Array<string>): void {
         this.addNode(node);
 
-        const nodeEdges = this._graph[node];
+        const nodeEdges = this._graph[node] || [];
 
         edges.forEach(edge => {
             this.addNode(edge);
@@ -33,6 +33,12 @@ export class Graph implements IGraph {
     }
 
     hasEdges(node: string): boolean {
-        return this.g[node]?.length > 0;
+        const list = this.g[node] || [];
+
+        return list.length > 0;
+    }
+
+    getEdges(node: string): Array<string> {
+        return this.g[node] || [];
     }
 }

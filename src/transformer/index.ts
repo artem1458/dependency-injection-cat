@@ -5,6 +5,8 @@ import { registerTypes } from '../type-register/registerTypes';
 import { registerDependencies } from '../types-dependencies-register/registerDependencies';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { createFactories } from '../factories/createFactories';
+import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
+import { TypeDependencyRepository } from '../types-dependencies-register/TypeDependencyRepository';
 
 const transformer = (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
     initTransformerConfig(config);
@@ -13,6 +15,8 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
     registerTypes();
     registerDependencies();
     createFactories()
+    console.log(TypeRegisterRepository.repository);
+    console.log(TypeDependencyRepository.graph.g);
 
     return context => {
         return sourceFile => {

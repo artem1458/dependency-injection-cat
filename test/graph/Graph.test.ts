@@ -113,4 +113,34 @@ describe('Graph tests', () => {
         //Then
         expect(actual).toEqual(expected);
     });
+
+    describe('getEdges', () => {
+        it('should return list edges of node, when node exist', () => {
+            //Given
+            const graph = new Graph();
+            const innerGraph = {
+                a: ['b', 'c'],
+            }
+            Object.defineProperty(graph, '_graph', { value: innerGraph });
+
+            //When
+            const actual = graph.getEdges('a');
+
+            //Then
+            expect(actual).toEqual(innerGraph.a);
+        });
+
+        it('should return empty list, when node not exist in graph', () => {
+            //Given
+            const graph = new Graph();
+            const innerGraph = {}
+            Object.defineProperty(graph, '_graph', { value: innerGraph });
+
+            //When
+            const actual = graph.getEdges('a');
+
+            //Then
+            expect(actual).toEqual([]);
+        });
+    });
 });

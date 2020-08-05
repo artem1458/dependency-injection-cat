@@ -1,3 +1,4 @@
+import { filter, map } from 'lodash';
 import { uuid } from '../utils/uuid';
 import { ITypeInfo } from './ITypeInfo';
 import { FactoryIdRepository } from '../factories/FactoryIdRepository';
@@ -22,9 +23,10 @@ export class TypeRegisterRepository {
         }
 
         const typeInfo: ITypeInfo = {
-            id: uuid(),
-            configId: FactoryIdRepository.getFactoryId(configId),
-            configName,
+            // id: uuid(),
+            id: typeId,
+            factoryId: FactoryIdRepository.getFactoryId(configId),
+            factoryName: configName,
             beanName,
         }
 
@@ -40,5 +42,17 @@ export class TypeRegisterRepository {
             const { typeName, filePath } = TypeRegisterRepository.parseKey(key);
             throw new Error(`It seems like you forgot to define config for Type ${typeName}, Path ${filePath}`);
         }
+    }
+
+    static getTypesByFactoryId(factoryId: string): ITypeInfo[] {
+        const types = map(TypeRegisterRepository.repository, it => it);
+
+        return filter(types, (value): value is ITypeInfo => value?.factoryId === factoryId);
+    }
+
+    static getTypeById(typeId: string): ITypeInfo {
+        TypeRegisterRepository.checkTypeInRegister(typeId);
+
+        return TypeRegisterRepository.repository[typeId]!;
     }
 }

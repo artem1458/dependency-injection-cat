@@ -1,1 +1,1 @@
-export type TGraphEntity = Record<string, Array<string>>;
+export type TGraphEntity = Record<string, Array<string> | undefined>;

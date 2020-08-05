@@ -6,4 +6,8 @@ export class TypeDependencyRepository {
     static addDependencies(type: string, ...dependencies: Array<string>): void {
         TypeDependencyRepository.graph.addEdges(type, ...dependencies);
     }
+
+    static getDependencies(type: string): Array<string> {
+        return TypeDependencyRepository.graph.getEdges(type);
+    }
 }

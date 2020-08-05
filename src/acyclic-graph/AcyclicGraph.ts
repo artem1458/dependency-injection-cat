@@ -23,7 +23,7 @@ export class AcyclicGraph extends Graph implements IAcyclicGraph {
     //TODO Find out, how to correctly log cyclic dependencies
     detectCycleForNode(node: string, visited: Record<string, boolean>, stack: Record<string, boolean>): boolean {
         if (!visited[node]) {
-            const nodeNeighbors = this.g[node];
+            const nodeNeighbors = this.g[node] || [];
             let hasCycle: boolean = false;
 
             visited[node] = true;

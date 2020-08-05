@@ -7,6 +7,8 @@ import { FactoryIdRepository } from './FactoryIdRepository';
 import { getFactoryPath } from './getFactoryPath';
 import { absolutizeImports } from '../internal-transformers/absolutizeImports';
 import { makeBeansStatic } from '../internal-transformers/makeBeansStatic';
+import { getImportsForFactory } from './getImportsForFactory';
+import { addImportsInFactory } from '../internal-transformers/addImportsInFactory';
 
 let initialized = false;
 
@@ -32,10 +34,12 @@ export function createFactories(): void {
         }
 
         const factoryId = FactoryIdRepository.getFactoryId(filePath);
+        const imports = getImportsForFactory(factoryId);
 
         const newSourceFile = ts.transform(sourceFile, [
             absolutizeImports(filePath),
             makeBeansStatic,
+            addImportsInFactory(imports),
         ]);
 
         fs.writeFileSync(getFactoryPath(factoryId), printer.printFile(newSourceFile.transformed[0]));
