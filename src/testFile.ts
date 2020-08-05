@@ -1,9 +1,11 @@
 import { IInterface } from './Interfaces';
-// import { ConfigDiconfig } from '@src/config/config.diconfig';
-//
-// new ConfigDiconfig();
+import { ConfigDiconfig } from '@src/config/config.diconfig';
 
-aa();
+const inst = new ConfigDiconfig();
+
+console.log(ConfigDiconfig.method2() === ConfigDiconfig.method2());
+console.log(ConfigDiconfig.method2());
+aa()
 
 function aa(): IInterface {
     return {

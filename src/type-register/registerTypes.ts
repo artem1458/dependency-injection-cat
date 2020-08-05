@@ -33,7 +33,17 @@ export function registerTypes(): void {
         if (isBean(node)) {
             try {
                 const typeId = typeIdQualifier(typeChecker, node);
-                TypeRegisterRepository.registerType(typeId, configPath);
+                let configName;
+
+                if (ts.isClassDeclaration(node.parent) && node.parent.name) {
+                    configName = node.parent.name?.getText();
+                } else {
+                    throw new Error('Configs must be a Named Class Declaration' + getMethodLocationMessage(node));
+                }
+
+                const beanName = node.name.getText();
+
+                TypeRegisterRepository.registerType(typeId, configPath, configName, beanName);
             } catch (error) {
                 switch (error) {
                     case TypeQualifierError.HasNoType:
@@ -41,6 +51,9 @@ export function registerTypes(): void {
 
                     case TypeQualifierError.TypeIsPrimitive:
                         throw new Error('Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
+
+                    default:
+                        throw new Error(error);
                 }
             }
         }

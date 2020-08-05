@@ -1,13 +1,12 @@
 import fs from 'fs';
 import * as ts from 'typescript';
-import { ScriptTarget } from 'typescript';
 import { getFactoriesListPath } from './getFactoriesListPath';
 import { diConfigRepository } from '../di-config-repository';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { FactoryIdRepository } from './FactoryIdRepository';
 import { getFactoryPath } from './getFactoryPath';
-import { isBean } from '../utils/is-bean/isBean';
-import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
+import { absolutizeImports } from '../internal-transformers/absolutizeImports';
+import { makeBeansStatic } from '../internal-transformers/makeBeansStatic';
 
 let initialized = false;
 
@@ -33,39 +32,12 @@ export function createFactories(): void {
         }
 
         const factoryId = FactoryIdRepository.getFactoryId(filePath);
-        const newSourceFile = ts.createSourceFile('', '', ScriptTarget.ES2015);
 
-        createSourceFile(sourceFile);
+        const newSourceFile = ts.transform(sourceFile, [
+            absolutizeImports(filePath),
+            makeBeansStatic,
+        ]);
 
-        fs.writeFileSync(getFactoryPath(factoryId), printer.printFile(newSourceFile));
+        fs.writeFileSync(getFactoryPath(factoryId), printer.printFile(newSourceFile.transformed[0]));
     });
-
-    function createSourceFile(node: ts.Node): void {
-        if (isBean(node)) {
-            const body = node.body;
-
-            if (body === undefined) {
-                throw new Error('Body of bean should not be empty' + getMethodLocationMessage(node));
-            }
-
-            let returnStatement: ts.ReturnStatement | undefined;
-
-            body.statements.forEach(it => {
-                if (ts.isReturnStatement(it)) {
-                    returnStatement = it;
-                }
-            });
-
-            if (returnStatement === undefined || returnStatement.expression === undefined) {
-                throw new Error('Return statement in bean not found or its empty' + getMethodLocationMessage(node));
-            }
-
-            returnStatement.expression.forEachChild(node1 => {
-                const a = typeChecker.getSymbolAtLocation(node1);
-                console.log(a);
-            })
-        }
-
-        ts.forEachChild(node, (node: ts.Node) => createSourceFile(node));
-    }
 }

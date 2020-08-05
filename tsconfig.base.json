@@ -10,6 +10,7 @@
     "strictNullChecks": true,
     "module": "esnext",
     "jsx": "react",
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowJs": true,
     "checkJs": false,
@@ -27,7 +28,6 @@
     ],
     "rootDir": ".",
     "declaration": false,
-    "emitDecoratorMetadata": true,
     "importHelpers": true,
     "typeRoots": [
       "node_modules/@types"

@@ -15,7 +15,7 @@ export class TypeRegisterRepository {
         }
     }
 
-    static registerType(typeId: string, configId: string): void {
+    static registerType(typeId: string, configId: string, configName: string, beanName: string): void {
         if (TypeRegisterRepository.hasTypeInRegister(typeId)) {
             const { typeName, filePath } = TypeRegisterRepository.parseKey(typeId);
             throw new Error(`It seems like you define config for type ${typeName} more than one time, path ${filePath}`);
@@ -24,7 +24,10 @@ export class TypeRegisterRepository {
         const typeInfo: ITypeInfo = {
             id: uuid(),
             configId: FactoryIdRepository.getFactoryId(configId),
+            configName,
+            beanName,
         }
+
         TypeRegisterRepository.repository[typeId] = typeInfo;
     }
 
