@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
+// TODO Needs to use nearest to file tsconfig file
 export function getTsConfigPaths(baseConfigPath: string): Record<string, Array<string>> | undefined {
     const file = fs.readFileSync(baseConfigPath, { encoding: 'utf-8' });
     const tsConfig = JSON.parse(file);
