@@ -9,6 +9,7 @@ import { absolutizeImports } from '../internal-transformers/absolutizeImports';
 import { makeBeansStatic } from '../internal-transformers/makeBeansStatic';
 import { getImportsForFactory } from './getImportsForFactory';
 import { addImportsInFactory } from '../internal-transformers/addImportsInFactory';
+import { replaceParametersWithConstants } from '../internal-transformers/replaceParametersWithConstants';
 
 let initialized = false;
 
@@ -40,6 +41,7 @@ export function createFactories(): void {
             absolutizeImports(filePath),
             makeBeansStatic,
             addImportsInFactory(imports),
+            replaceParametersWithConstants(typeChecker, factoryId)
         ]);
 
         fs.writeFileSync(getFactoryPath(factoryId), printer.printFile(newSourceFile.transformed[0]));
