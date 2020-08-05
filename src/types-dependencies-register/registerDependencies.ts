@@ -3,7 +3,9 @@ import { diConfigRepository } from '../di-config-repository';
 import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
-import { ProgramRepository } from '../program';
+import { ProgramRepository } from '../program/ProgramRepository';
+import { isBean } from '../utils/is-bean/isBean';
+import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
 
 let initialized = false;
 
@@ -29,7 +31,7 @@ export function registerDependencies(): void {
     });
 
     function travelSourceFile(node: ts.Node): void {
-        if (ts.isMethodDeclaration(node)) {
+        if (isBean(node)) {
             const dependencies: Array<string> = [];
 
             node.parameters.forEach(parameter => {
@@ -38,16 +40,12 @@ export function registerDependencies(): void {
                     TypeRegisterRepository.checkTypeInRegister(typeId);
                     dependencies.push(typeId);
                 } catch (error) {
-                    const path = node.getSourceFile().fileName;
-                    const methodName = node.name.getText();
-                    const methodLocation = `, Method Name = ${methodName}, Path = ${path}`;
-
                     switch (error) {
                         case TypeQualifierError.HasNoType:
-                            throw new Error('All parameters in Bean should have type' + methodLocation);
+                            throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
 
                         case TypeQualifierError.TypeIsPrimitive:
-                            throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + methodLocation);
+                            throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
 
                         default:
                             throw new Error(error);

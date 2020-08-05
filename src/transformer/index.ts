@@ -3,7 +3,8 @@ import { initTransformerConfig, ITransformerConfig } from '../transformer-config
 import { initDiConfigRepository } from '../di-config-repository';
 import { registerTypes } from '../type-register/registerTypes';
 import { registerDependencies } from '../types-dependencies-register/registerDependencies';
-import { ProgramRepository } from '../program';
+import { ProgramRepository } from '../program/ProgramRepository';
+import { createFactories } from '../factories/createFactories';
 
 const transformer = (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
     initTransformerConfig(config);
@@ -11,6 +12,7 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
     ProgramRepository.initProgram(program);
     registerTypes();
     registerDependencies();
+    createFactories()
 
     return context => {
         return sourceFile => {

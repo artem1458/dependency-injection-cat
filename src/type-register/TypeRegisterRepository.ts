@@ -1,7 +1,9 @@
 import { uuid } from '../utils/uuid';
+import { ITypeInfo } from './ITypeInfo';
+import { FactoryIdRepository } from '../factories/FactoryIdRepository';
 
 export class TypeRegisterRepository {
-    private static repository: Record<string, string | undefined> = {};
+    static repository: Record<string, ITypeInfo | undefined> = {};
     private static parseKey(key: string): { typeName: string, filePath: string } {
         const parsedKeys = key.startsWith('"')
             ? key.slice(1).split('"')
@@ -13,24 +15,17 @@ export class TypeRegisterRepository {
         }
     }
 
-    static registerType(key: string): void {
-        if (TypeRegisterRepository.hasTypeInRegister(key)) {
-            const { typeName, filePath } = TypeRegisterRepository.parseKey(key);
+    static registerType(typeId: string, configId: string): void {
+        if (TypeRegisterRepository.hasTypeInRegister(typeId)) {
+            const { typeName, filePath } = TypeRegisterRepository.parseKey(typeId);
             throw new Error(`It seems like you define config for type ${typeName} more than one time, path ${filePath}`);
         }
 
-        TypeRegisterRepository.repository[key] = uuid();
-    }
-
-    static getTypeId(key: string): string {
-        const id = TypeRegisterRepository.repository[key];
-
-        if (id !== undefined) {
-            return id;
+        const typeInfo: ITypeInfo = {
+            id: uuid(),
+            configId: FactoryIdRepository.getFactoryId(configId),
         }
-
-        this.checkTypeInRegister(key);
-        return '';
+        TypeRegisterRepository.repository[typeId] = typeInfo;
     }
 
     static hasTypeInRegister(key: string): boolean {

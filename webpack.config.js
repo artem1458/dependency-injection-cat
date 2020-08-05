@@ -17,7 +17,7 @@ module.exports = {
         rules: [
             {
                 test: /\.(ts|tsx)$/,
-                loader: require.resolve('ts-loader'),
+                loader: 'ts-loader',
                 options: {
                     compiler: 'ttypescript',
                     transpileOnly: true,
