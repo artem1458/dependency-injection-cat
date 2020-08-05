@@ -6,15 +6,17 @@ import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { getFactoryNameForNamespaceImport } from '../factories/getFactoryNameForNamespaceImport';
 
+interface IParametersLight {
+    parameterName: string;
+    typeId: string;
+}
+
 export const replaceParametersWithConstants = (typeChecker: ts.TypeChecker, factoryId: string): ts.TransformerFactory<ts.SourceFile> =>
     context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
                 if (isBean(node)) {
-                    const factoryDrivenDependencies = getFactoryDependencies(factoryId);
-                    const factoryDriverDependencies = TypeRegisterRepository.getTypesByFactoryId(factoryId);
-
-                    const parameters: { parameterName: string, typeId: string }[] = node.parameters.map(it => {
+                    const parameters: IParametersLight[] = node.parameters.map(it => {
                         if (it.type === undefined) {
                             throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
                         }
@@ -25,54 +27,10 @@ export const replaceParametersWithConstants = (typeChecker: ts.TypeChecker, fact
                         };
                     });
 
-                    const constantStatements = parameters.map(it => {
-                        const driverType = factoryDriverDependencies.find(type => type.id === it.typeId);
-                        const drivenType = factoryDrivenDependencies.find(type => type.id === it.typeId);
-                        if (driverType !== undefined) {
-                            return ts.createVariableStatement(
-                                undefined,
-                                ts.createVariableDeclarationList(
-                                    [ts.createVariableDeclaration(
-                                        ts.createIdentifier(it.parameterName),
-                                        undefined,
-                                        ts.createCall(
-                                            ts.createPropertyAccess(
-                                                ts.createIdentifier(driverType.factoryName),
-                                                ts.createIdentifier(driverType.beanName)
-                                            ),
-                                            undefined,
-                                            []
-                                        )
-                                    )],
-                                    ts.NodeFlags.Const
-                                )
-                            );
-                        } else if (drivenType !== undefined) {
-                            return ts.createVariableStatement(
-                                undefined,
-                                ts.createVariableDeclarationList(
-                                    [ts.createVariableDeclaration(
-                                        ts.createIdentifier(it.parameterName),
-                                        undefined,
-                                        ts.createCall(
-                                            ts.createPropertyAccess(
-                                                ts.createPropertyAccess(
-                                                    ts.createIdentifier(getFactoryNameForNamespaceImport(drivenType.factoryId)),
-                                                    ts.createIdentifier(drivenType.factoryName)
-                                                ),
-                                                ts.createIdentifier(drivenType.beanName)
-                                            ),
-                                            undefined,
-                                            []
-                                        )
-                                    )],
-                                    ts.NodeFlags.Const
-                                )
-                            )
-                        } else {
-                            throw new Error('Type of dependency not register in config'); //TODO Add more readable error
-                        }
-                    });
+                    const constantStatements = getConstantStatements(
+                        factoryId,
+                        parameters,
+                    );
 
                     const beanBlock = node.body;
 
@@ -111,3 +69,60 @@ export const replaceParametersWithConstants = (typeChecker: ts.TypeChecker, fact
             return ts.visitNode(sourceFile, visitor);
         };
     };
+
+function getConstantStatements(
+    factoryId: string,
+    parameters: IParametersLight[],
+): ts.Statement[] {
+    const factoryInDependencies = getFactoryDependencies(factoryId);
+    const factoryOutDependencies = TypeRegisterRepository.getTypesByFactoryId(factoryId);
+
+    return parameters.map(it => {
+        const driverType = factoryOutDependencies.find(type => type.id === it.typeId);
+        const drivenType = factoryInDependencies.find(type => type.id === it.typeId);
+        if (driverType !== undefined) {
+            return ts.createVariableStatement(
+                undefined,
+                ts.createVariableDeclarationList(
+                    [ts.createVariableDeclaration(
+                        ts.createIdentifier(it.parameterName),
+                        undefined,
+                        ts.createCall(
+                            ts.createPropertyAccess(
+                                ts.createIdentifier(driverType.factoryName),
+                                ts.createIdentifier(driverType.beanName)
+                            ),
+                            undefined,
+                            []
+                        )
+                    )],
+                    ts.NodeFlags.Const
+                )
+            );
+        } else if (drivenType !== undefined) {
+            return ts.createVariableStatement(
+                undefined,
+                ts.createVariableDeclarationList(
+                    [ts.createVariableDeclaration(
+                        ts.createIdentifier(it.parameterName),
+                        undefined,
+                        ts.createCall(
+                            ts.createPropertyAccess(
+                                ts.createPropertyAccess(
+                                    ts.createIdentifier(getFactoryNameForNamespaceImport(drivenType.factoryId)),
+                                    ts.createIdentifier(drivenType.factoryName)
+                                ),
+                                ts.createIdentifier(drivenType.beanName)
+                            ),
+                            undefined,
+                            []
+                        )
+                    )],
+                    ts.NodeFlags.Const
+                )
+            )
+        } else {
+            throw new Error('Type of dependency not register in config'); //TODO Add more readable error
+        }
+    });
+}
