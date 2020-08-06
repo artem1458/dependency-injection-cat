@@ -4,7 +4,7 @@ import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isBean } from '../utils/is-bean/isBean';
+import { isBean } from '../utils/isBean';
 import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
 
 let initialized = false;

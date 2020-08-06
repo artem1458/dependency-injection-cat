@@ -1,10 +1,11 @@
 import * as ts from 'typescript';
-import { isBean } from '../utils/is-bean/isBean';
+import { isBean } from '../utils/isBean';
 import { getFactoryDependencies } from '../factories/utils/getFactoryDependencies';
 import { typeIdQualifier } from '../type-id-qualifier';
 import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
-import { getFactoryNameForNamespaceImport } from '../factories/getFactoryNameForNamespaceImport';
+import { getFactoryNameForNamespaceImport } from '../factories/utils/getFactoryNameForNamespaceImport';
+import { getPublicInstanceIdentifier } from '../utils/getPublicInstanceIdentifier';
 
 interface IParametersLight {
     parameterName: string;
@@ -52,7 +53,7 @@ export const replaceParametersWithConstants = (typeChecker: ts.TypeChecker, fact
                     return ts.updateMethod(
                         node,
                         undefined,
-                        [ts.createToken(ts.SyntaxKind.StaticKeyword)],
+                        [],
                         undefined,
                         node.name,
                         undefined,
@@ -89,7 +90,10 @@ function getConstantStatements(
                         undefined,
                         ts.createCall(
                             ts.createPropertyAccess(
-                                ts.createIdentifier(driverType.factoryName),
+                                ts.createPropertyAccess(
+                                    ts.createIdentifier(driverType.factoryName),
+                                    getPublicInstanceIdentifier(driverType.factoryName),
+                                ),
                                 ts.createIdentifier(driverType.beanName)
                             ),
                             undefined,
@@ -109,8 +113,11 @@ function getConstantStatements(
                         ts.createCall(
                             ts.createPropertyAccess(
                                 ts.createPropertyAccess(
-                                    ts.createIdentifier(getFactoryNameForNamespaceImport(drivenType.factoryId)),
-                                    ts.createIdentifier(drivenType.factoryName)
+                                    ts.createPropertyAccess(
+                                        ts.createIdentifier(getFactoryNameForNamespaceImport(drivenType.factoryId)),
+                                        ts.createIdentifier(drivenType.factoryName),
+                                    ),
+                                    getPublicInstanceIdentifier(drivenType.factoryName)
                                 ),
                                 ts.createIdentifier(drivenType.beanName)
                             ),
@@ -120,7 +127,7 @@ function getConstantStatements(
                     )],
                     ts.NodeFlags.Const
                 )
-            )
+            );
         } else {
             throw new Error('Type of dependency not register in config'); //TODO Add more readable error
         }

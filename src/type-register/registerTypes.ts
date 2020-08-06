@@ -3,7 +3,7 @@ import { diConfigRepository } from '../di-config-repository';
 import { TypeRegisterRepository } from './TypeRegisterRepository';
 import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isBean } from '../utils/is-bean/isBean';
+import { isBean } from '../utils/isBean';
 import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
 
 let initialized = false;

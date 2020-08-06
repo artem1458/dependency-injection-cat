@@ -1,13 +1,13 @@
 import fs from 'fs';
 import * as ts from 'typescript';
-import { getFactoriesListPath } from './getFactoriesListPath';
+import { getFactoriesListPath } from './utils/getFactoriesListPath';
 import { diConfigRepository } from '../di-config-repository';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { FactoryIdRepository } from './FactoryIdRepository';
-import { getFactoryPath } from './getFactoryPath';
+import { getFactoryPath } from './utils/getFactoryPath';
 import { absolutizeImports } from '../internal-transformers/absolutizeImports';
-import { makeBeansStatic } from '../internal-transformers/makeBeansStatic';
-import { getImportsForFactory } from './getImportsForFactory';
+import { makeFactorySingleton } from '../internal-transformers/makeFactorySingleton';
+import { getImportsForFactory } from './utils/getImportsForFactory';
 import { addImportsInFactory } from '../internal-transformers/addImportsInFactory';
 import { replaceParametersWithConstants } from '../internal-transformers/replaceParametersWithConstants';
 
@@ -39,7 +39,7 @@ export function createFactories(): void {
 
         const newSourceFile = ts.transform(sourceFile, [
             absolutizeImports(filePath),
-            makeBeansStatic,
+            makeFactorySingleton,
             addImportsInFactory(imports),
             replaceParametersWithConstants(typeChecker, factoryId)
         ]);
