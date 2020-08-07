@@ -17,6 +17,10 @@ export function getTsConfigPaths(baseConfigPath: string): Record<string, Array<s
             return getTsConfigPaths(extendz)
         }
 
+        if (baseConfigPath === process.cwd()) {
+            throw new Error('tsConfig not found');
+        }
+
         const newPath = path.resolve(path.dirname(baseConfigPath), extendz);
 
         return getTsConfigPaths(newPath);

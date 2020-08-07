@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import path from 'path';
 import { isPathRelative } from '../utils/isPathRelative';
-import { parseString } from '../utils/parseString';
+import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 
 
 export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory<ts.SourceFile> =>
@@ -15,7 +15,7 @@ export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory
                         throw new Error(`Module specifier is empty, Path ${sourceFileName}, Node ${nodeText}`);
                     }
 
-                    const importPath = parseString(node.moduleSpecifier.getText());
+                    const importPath = removeQuotesFromString(node.moduleSpecifier.getText());
 
                     if (isPathRelative(importPath)) {
                         const newSourceFilePath = path.dirname(sourceFilePath);

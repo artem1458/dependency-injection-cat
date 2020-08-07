@@ -38,6 +38,9 @@
     "paths": {
       "@src/*": [
         "src/*"
+      ],
+      "ts-pring": [
+        "src/container"
       ]
     }
   },
