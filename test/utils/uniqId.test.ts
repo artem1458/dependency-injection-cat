@@ -1,9 +1,9 @@
-import { uuid } from '@src/utils/uuid';
+import { uniqId } from '@src/utils/uniqId';
 
-describe('uuid test', () => {
-    it('uuid should always return uniq strings with length == 32', () => {
+describe('uniqId test', () => {
+    it('uniqId should always return uniq strings with length == 32', () => {
         //When
-        const values = new Array(1000).fill(null).map(uuid);
+        const values = new Array(1000).fill(null).map(uniqId);
 
         //Then
         values.forEach((it, firstIndex) => {

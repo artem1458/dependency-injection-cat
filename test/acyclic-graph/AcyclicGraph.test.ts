@@ -26,6 +26,11 @@ describe('AcyclicGraph tests', () => {
             //Given
             const expected = {
                 a: ['b', 'c', 'd', 'e', 'f'],
+                b: [],
+                c: [],
+                d: [],
+                e: [],
+                f: [],
             };
 
             const acyclicGraph = new Graph();

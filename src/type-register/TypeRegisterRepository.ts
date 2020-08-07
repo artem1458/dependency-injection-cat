@@ -1,5 +1,5 @@
 import { filter, map } from 'lodash';
-import { uuid } from '../utils/uuid';
+import { uniqId } from '../utils/uniqId';
 import { ITypeInfo } from './ITypeInfo';
 import { FactoryIdRepository } from '../factories/FactoryIdRepository';
 

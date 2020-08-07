@@ -30,9 +30,7 @@ export class AcyclicGraph extends Graph implements IAcyclicGraph {
             stack[node] = true;
 
             nodeNeighbors.forEach(node => {
-                if (!visited[node] && this.detectCycleForNode(node, visited, stack)) {
-                    hasCycle = true;
-                } else if (stack[node]) {
+                if (!visited[node] && this.detectCycleForNode(node, visited, stack) || stack[node]) {
                     hasCycle = true;
                 }
             });

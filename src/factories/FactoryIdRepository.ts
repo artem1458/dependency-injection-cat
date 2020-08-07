@@ -1,4 +1,4 @@
-import { uuid } from '../utils/uuid';
+import { uniqId } from '../utils/uniqId';
 
 export class FactoryIdRepository {
     private static _factories: Record<string, string | undefined> = {};
@@ -8,7 +8,7 @@ export class FactoryIdRepository {
             throw new Error('Trying to register same factory');
         }
 
-        FactoryIdRepository._factories[path] = uuid();
+        FactoryIdRepository._factories[path] = uniqId();
     }
 
     static getFactoryId(path: string): string {
