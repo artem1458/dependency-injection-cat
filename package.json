@@ -43,11 +43,11 @@
     "ttypescript": "^1.5.10",
     "typescript": "^3.9.5",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "glob": "^7.1.6",
-    "lodash": "^4.17.15",
-    "node-nightly": "^1.7.3"
+    "lodash": "^4.17.15"
   }
 }

@@ -16,7 +16,6 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
     registerTypes();
     registerDependencies();
     createFactories();
-    console.log(TypeDependencyRepository.graph.g)
 
     return context => {
         return sourceFile => {
