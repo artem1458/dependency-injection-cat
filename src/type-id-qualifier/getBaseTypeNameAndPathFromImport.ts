@@ -1,18 +1,18 @@
 import * as ts from 'typescript';
-import { ITypeNamePath } from './types';
+import { INodeSourceDescriptor } from './types';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
-import { absolutizePath } from '../utils/absolutizePath';
+import { PathResolver } from '../paths-resolver/PathResolver';
 
-export function getBaseTypeNameAndPathFromImport(sourceFile: ts.SourceFile, nameToFind: string): ITypeNamePath | undefined {
+export function getBaseTypeNameAndPathFromImport(sourceFile: ts.SourceFile, nameToFind: string): INodeSourceDescriptor | undefined {
     const imports = sourceFile.statements.filter(ts.isImportDeclaration);
-    let result: ITypeNamePath | undefined = undefined;
+    let result: INodeSourceDescriptor | undefined = undefined;
 
     imports.forEach(imp => {
         if (result !== undefined) {
             return;
         }
 
-        const importPath = absolutizePath(sourceFile.fileName, removeQuotesFromString(imp.moduleSpecifier.getText()));
+        const importPath = PathResolver.resolve(sourceFile.fileName, removeQuotesFromString(imp.moduleSpecifier.getText()));
         if (imp.importClause === undefined) {
             return;
         }

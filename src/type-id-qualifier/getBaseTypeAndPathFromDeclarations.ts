@@ -1,8 +1,8 @@
 import * as ts from 'typescript';
 import { get } from 'lodash';
-import { ITypeNamePath, TNamedAvailableTypes } from './types';
+import { INodeSourceDescriptor, TNamedAvailableTypes } from './types';
 
-export function getBaseTypeAndPathFromStatements(sourceFile: ts.SourceFile, nameToFind: string): ITypeNamePath | undefined {
+export function getBaseTypeAndPathFromStatements(sourceFile: ts.SourceFile, nameToFind: string): INodeSourceDescriptor | undefined {
     const statement = sourceFile.statements.filter(isNamedExportStatement).find(it => it.name.escapedText === nameToFind);
     if (statement === undefined) {
         return undefined;

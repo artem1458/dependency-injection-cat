@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
-import { absolutizePath } from '../utils/absolutizePath';
+import { PathResolver } from '../paths-resolver/PathResolver';
 
 export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory<ts.SourceFile> =>
     context => {
@@ -19,7 +19,7 @@ export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory
                         node.decorators,
                         node.modifiers,
                         node.importClause,
-                        ts.createLiteral(absolutizePath(sourceFilePath, importPath)),
+                        ts.createLiteral(PathResolver.resolve(sourceFilePath, importPath)),
                     );
                 }
 

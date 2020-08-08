@@ -9,7 +9,7 @@ import {
     TypeReferenceNode,
 } from 'typescript';
 
-export interface ITypeNamePath {
+export interface INodeSourceDescriptor {
     name: string;
     path: string;
     isDefault?: boolean;
