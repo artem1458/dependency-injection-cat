@@ -17,7 +17,6 @@ export function registerDependencies(): void {
     initialized = true;
 
     const program = ProgramRepository.program;
-    const typeChecker: ts.TypeChecker = program.getTypeChecker();
 
     diConfigRepository.forEach(filePath => {
         const path = filePath as ts.Path;
@@ -36,7 +35,7 @@ export function registerDependencies(): void {
 
             node.parameters.forEach(parameter => {
                 try {
-                    const typeId = typeIdQualifier(typeChecker, parameter);
+                    const typeId = typeIdQualifier(parameter);
                     TypeRegisterRepository.checkTypeInRegister(typeId);
                     dependencies.push(typeId);
                 } catch (error) {
@@ -53,7 +52,7 @@ export function registerDependencies(): void {
                 }
             });
 
-            const beanTypeId = typeIdQualifier(typeChecker, node);
+            const beanTypeId = typeIdQualifier(node);
             TypeDependencyRepository.addDependencies(beanTypeId, ...dependencies);
         }
 

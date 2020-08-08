@@ -5,6 +5,7 @@ import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { isBean } from '../utils/isBean';
 import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
+import { checkTypeForCorrectness } from '../type-id-qualifier/utils/checkTypeForCorrectness';
 
 let initialized = false;
 
@@ -16,7 +17,6 @@ export function registerTypes(): void {
     initialized = true;
 
     const program = ProgramRepository.program;
-    const typeChecker: ts.TypeChecker = program.getTypeChecker();
 
     diConfigRepository.forEach(filePath => {
         const path = filePath as ts.Path;
@@ -32,7 +32,7 @@ export function registerTypes(): void {
     function travelSourceFile(node: ts.Node, configPath: string): void {
         if (isBean(node)) {
             try {
-                const typeId = typeIdQualifier(typeChecker, node);
+                const typeId = typeIdQualifier(node);
                 let configName;
 
                 if (ts.isClassDeclaration(node.parent) && node.parent.name) {
@@ -43,6 +43,7 @@ export function registerTypes(): void {
 
                 const beanName = node.name.getText();
 
+                checkTypeForCorrectness(typeId);
                 TypeRegisterRepository.registerType(typeId, configPath, configName, beanName);
             } catch (error) {
                 switch (error) {
@@ -52,8 +53,11 @@ export function registerTypes(): void {
                     case TypeQualifierError.TypeIsPrimitive:
                         throw new Error('Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
 
+                    case TypeQualifierError.CanNotGenerateType:
+                        throw new Error('Can not generate type for' + getMethodLocationMessage(node));
+
                     default:
-                        throw new Error(error);
+                        throw error;
                 }
             }
         }

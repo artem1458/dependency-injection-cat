@@ -23,7 +23,6 @@ export function createFactories(): void {
     fs.mkdirSync(getFactoriesListPath());
 
     const program = ProgramRepository.program;
-    const typeChecker: ts.TypeChecker = program.getTypeChecker();
     const printer = ts.createPrinter();
 
     diConfigRepository.forEach(filePath => {
@@ -41,7 +40,7 @@ export function createFactories(): void {
             absolutizeImports(filePath),
             makeFactorySingleton,
             addImportsInFactory(imports),
-            replaceParametersWithConstants(typeChecker, factoryId)
+            replaceParametersWithConstants(factoryId)
         ]);
 
         fs.writeFileSync(getFactoryPath(factoryId), printer.printFile(newSourceFile.transformed[0]));

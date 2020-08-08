@@ -7,3 +7,11 @@ export namespace AAA {
         someField: string;
     }
 }
+
+export namespace ABC {
+    export namespace DEF {
+        export interface IDiConfigTest2 {
+            someField: string;
+        }
+    }
+}

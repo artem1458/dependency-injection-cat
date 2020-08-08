@@ -12,7 +12,7 @@ interface IParametersLight {
     typeId: string;
 }
 
-export const replaceParametersWithConstants = (typeChecker: ts.TypeChecker, factoryId: string): ts.TransformerFactory<ts.SourceFile> =>
+export const replaceParametersWithConstants = (factoryId: string): ts.TransformerFactory<ts.SourceFile> =>
     context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
@@ -24,7 +24,7 @@ export const replaceParametersWithConstants = (typeChecker: ts.TypeChecker, fact
 
                         return {
                             parameterName: it.name.getText(),
-                            typeId: typeIdQualifier(typeChecker, it),
+                            typeId: typeIdQualifier(it),
                         };
                     });
 

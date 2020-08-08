@@ -1,5 +1,21 @@
-import { AAA as BBB } from './types';
+import { AAA as BBB, ABC } from './types';
 import { DiConfigTestClass } from '@src/config/DiConfigTestClass';
+
+export interface IInterface<T> {}
+
+export class ConfigDiconfig2 {
+    method3(): object {
+        return {
+            someField: '',
+        }
+    }
+
+    method2(): BBB.IDiConfigTest2 {
+        return {
+            someField: '',
+        };
+    }
+}
 
 export class ConfigDiconfig {
     method(
@@ -9,10 +25,3 @@ export class ConfigDiconfig {
     }
 }
 
-export class ConfigDiconfig2 {
-    method2(): BBB.IDiConfigTest2 {
-        return {
-            someField: '',
-        };
-    }
-}

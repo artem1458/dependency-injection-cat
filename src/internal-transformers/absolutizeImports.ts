@@ -1,8 +1,6 @@
 import * as ts from 'typescript';
-import path from 'path';
-import { isPathRelative } from '../utils/isPathRelative';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
-
+import { absolutizePath } from '../utils/absolutizePath';
 
 export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory<ts.SourceFile> =>
     context => {
@@ -16,18 +14,13 @@ export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory
                     }
 
                     const importPath = removeQuotesFromString(node.moduleSpecifier.getText());
-
-                    if (isPathRelative(importPath)) {
-                        const newSourceFilePath = path.dirname(sourceFilePath);
-                        const newPath = path.resolve(newSourceFilePath, importPath);
-                        const newNode = ts.getMutableClone(node);
-
-                        newNode.moduleSpecifier = ts.createLiteral(newPath);
-
-                        return newNode;
-                    }
-
-                    return node;
+                    return ts.updateImportDeclaration(
+                        node,
+                        node.decorators,
+                        node.modifiers,
+                        node.importClause,
+                        ts.createLiteral(absolutizePath(sourceFilePath, importPath)),
+                    );
                 }
 
                 return ts.visitEachChild(node, visitor, context);

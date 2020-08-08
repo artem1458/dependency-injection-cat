@@ -1,4 +1,18 @@
-import { ClassDeclaration, InterfaceDeclaration, TypeAliasDeclaration, NamespaceExportDeclaration, Identifier } from 'typescript';
+import {
+    ClassDeclaration,
+    InterfaceDeclaration,
+    TypeAliasDeclaration,
+    NamespaceExportDeclaration,
+    Identifier,
+    NodeArray,
+    TypeNode,
+    TypeReferenceNode,
+} from 'typescript';
+
+export interface ITypeNamePath {
+    name: string;
+    path: string;
+}
 
 export type TAvailableTypes =
     ClassDeclaration
@@ -16,3 +30,7 @@ interface NamedClassDeclaration extends ClassDeclaration { name: Identifier }
 interface NamedInterfaceDeclaration extends InterfaceDeclaration { name: Identifier }
 interface NamedTypeAliasDeclaration extends TypeAliasDeclaration { name: Identifier }
 interface NamedNamespaceExportDeclaration extends NamespaceExportDeclaration { name: Identifier }
+
+export interface ITypeReferenceNode extends TypeReferenceNode {
+    typeArguments: NodeArray<TypeNode>;
+}

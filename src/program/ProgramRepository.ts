@@ -17,7 +17,10 @@ export class ProgramRepository {
                 // paths,
             };
 
-            ProgramRepository._program = createProgram(diConfigRepository, compilerOptions);
+            const newProgram =createProgram(diConfigRepository, compilerOptions);
+            //CRUTCH???
+            newProgram.getTypeChecker();
+            ProgramRepository._program = newProgram;
         }
     }
 
