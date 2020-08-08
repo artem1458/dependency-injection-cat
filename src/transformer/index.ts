@@ -6,8 +6,7 @@ import { registerDependencies } from '../types-dependencies-register/registerDep
 import { ProgramRepository } from '../program/ProgramRepository';
 import { createFactories } from '../factories/createFactories';
 import { isImportFromThisLibrary } from '../utils/isImportFromThisLibrary';
-import { createNewSourceFile } from '../utils/createNewSourceFile';
-import { TypeDependencyRepository } from '../types-dependencies-register/TypeDependencyRepository';
+import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 
 const transformer = (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
     initTransformerConfig(config);
@@ -17,19 +16,10 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
     registerDependencies();
     createFactories();
 
+    console.log(TypeRegisterRepository.repository)
+
     return context => {
         return sourceFile => {
-            let isFromThisLib = false;
-            ts.forEachChild(sourceFile, (node => {
-                if (isImportFromThisLibrary(node)) {
-                    isFromThisLib = true;
-                }
-            }));
-
-            // if (isFromThisLib) {
-            //     return createNewSourceFile(program, sourceFile);
-            // }
-
             const visitor: ts.Visitor = (node: ts.Node) => {
                 return ts.visitEachChild(node, visitor, context);
             };

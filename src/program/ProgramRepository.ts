@@ -13,8 +13,8 @@ export class ProgramRepository {
 
             const compilerOptions = {
                 ...oldCompilerOptions,
-                noResolve: false,
-                paths,
+                // noResolve: false,
+                // paths,
             };
 
             ProgramRepository._program = createProgram(diConfigRepository, compilerOptions);
