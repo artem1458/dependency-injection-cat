@@ -1,12 +1,13 @@
 import { createProgram, Program } from 'typescript';
-import { diConfigRepository } from '../di-config-repository';
+import { DiConfigRepository } from '../di-config-repository';
 import { getTsConfigPaths } from '../utils/getTsConfigPaths';
+import { ShouldReinitializeRepository } from '../transformer/ShouldReinitializeRepository';
 
 export class ProgramRepository {
     private static _program: Program | undefined;
 
     static initProgram(program: Program): void {
-        if (ProgramRepository._program === undefined) {
+        if (ShouldReinitializeRepository.value) {
             const oldCompilerOptions = program.getCompilerOptions();
             // TODO Needs to use nearest to file tsconfig file and somehow group factories by nearest tsConfig (in future)
             const paths = getTsConfigPaths(oldCompilerOptions.configFilePath as string);
@@ -17,7 +18,7 @@ export class ProgramRepository {
                 // paths,
             };
 
-            const newProgram =createProgram(diConfigRepository, compilerOptions);
+            const newProgram = createProgram(DiConfigRepository.data, compilerOptions);
             //CRUTCH???
             newProgram.getTypeChecker();
             ProgramRepository._program = newProgram;

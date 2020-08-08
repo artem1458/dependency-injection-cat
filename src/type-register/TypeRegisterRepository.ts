@@ -55,4 +55,8 @@ export class TypeRegisterRepository {
 
         return TypeRegisterRepository.repository[typeId]!;
     }
+
+    static clearRepository(): void {
+        TypeRegisterRepository.repository = {};
+    }
 }

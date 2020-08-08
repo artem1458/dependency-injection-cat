@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import glob from 'glob';
-import { diConfigRepository } from '@src/di-config-repository';
 import { ITransformerConfig } from '@src/transformer-config';
 import { initDiConfigRepository } from '@src/di-config-repository/initDiConfigRepository';
 
@@ -44,21 +43,5 @@ describe('initDiConfigRepository tests', () => {
 
         //Then
         expect(errorCall).toThrow('DI Config pattern is empty, please check plugin configuration');
-    });
-
-    it('should init configuration only once, and correctly add files inner to repository', () => {
-        //Given
-        transformerConfigMock.diConfigPattern = 'mockPattern';
-
-        //When
-        initDiConfigRepository();
-        initDiConfigRepository();
-        initDiConfigRepository();
-        initDiConfigRepository();
-
-        //Then
-        expect(diConfigRepository).toEqual(configsList);
-
-        expect(syncStub).toBeCalledOnceWithExactly('mockPattern', { absolute: true });
     });
 });

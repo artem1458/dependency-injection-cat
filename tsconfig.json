@@ -4,6 +4,11 @@
     "plugins": [
       {
         "transform": "./src/transformer/index.ts"
+      },
+      {
+        "transform": "./src/transformer/index.ts",
+        "after": true,
+        "import": "afterTransformerHelper"
       }
     ]
   }

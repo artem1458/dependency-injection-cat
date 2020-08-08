@@ -41,4 +41,8 @@ export class Graph implements IGraph {
     getEdges(node: string): Array<string> {
         return this.g[node] || [];
     }
+
+    clearGraph(): void {
+        this._graph = {};
+    }
 }

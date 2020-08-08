@@ -1,7 +1,7 @@
 import fs from 'fs';
 import * as ts from 'typescript';
 import { getFactoriesListPath } from './utils/getFactoriesListPath';
-import { diConfigRepository } from '../di-config-repository';
+import { DiConfigRepository } from '../di-config-repository';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { FactoryIdRepository } from './FactoryIdRepository';
 import { getFactoryPath } from './utils/getFactoryPath';
@@ -10,22 +10,20 @@ import { makeFactorySingleton } from '../internal-transformers/makeFactorySingle
 import { getImportsForFactory } from './utils/getImportsForFactory';
 import { addImportsInFactory } from '../internal-transformers/addImportsInFactory';
 import { replaceParametersWithConstants } from '../internal-transformers/replaceParametersWithConstants';
-
-let initialized = false;
+import { ShouldReinitializeRepository } from '../transformer/ShouldReinitializeRepository';
 
 export function createFactories(): void {
-    if (initialized) {
+    if (!ShouldReinitializeRepository.value) {
         return;
     }
 
-    initialized = true;
     fs.rmdirSync(getFactoriesListPath(), { recursive: true });
     fs.mkdirSync(getFactoriesListPath());
 
     const program = ProgramRepository.program;
     const printer = ts.createPrinter();
 
-    diConfigRepository.forEach(filePath => {
+    DiConfigRepository.data.forEach(filePath => {
         const path = filePath as ts.Path;
         const sourceFile = program.getSourceFileByPath(path);
 

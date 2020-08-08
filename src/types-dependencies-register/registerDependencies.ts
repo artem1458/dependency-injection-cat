@@ -1,24 +1,21 @@
 import ts from 'typescript';
-import { diConfigRepository } from '../di-config-repository';
+import { DiConfigRepository } from '../di-config-repository';
 import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { isBean } from '../utils/isBean';
 import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
-
-let initialized = false;
+import { ShouldReinitializeRepository } from '../transformer/ShouldReinitializeRepository';
 
 export function registerDependencies(): void {
-    if (initialized) {
+    if (!ShouldReinitializeRepository.value) {
         return;
     }
 
-    initialized = true;
-
     const program = ProgramRepository.program;
 
-    diConfigRepository.forEach(filePath => {
+    DiConfigRepository.data.forEach(filePath => {
         const path = filePath as ts.Path;
         const sourceFile = program.getSourceFileByPath(path);
 

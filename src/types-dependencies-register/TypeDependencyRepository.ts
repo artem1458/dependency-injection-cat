@@ -10,4 +10,8 @@ export class TypeDependencyRepository {
     static getDependencies(type: string): Array<string> {
         return TypeDependencyRepository.graph.getEdges(type);
     }
+
+    static clearRepository(): void {
+        TypeDependencyRepository.graph.clearGraph();
+    }
 }

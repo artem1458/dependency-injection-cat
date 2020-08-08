@@ -1,2 +1,2 @@
-export { diConfigRepository } from './repository';
+export { DiConfigRepository } from './repository';
 export { initDiConfigRepository } from './initDiConfigRepository';
