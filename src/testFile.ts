@@ -1,5 +1,5 @@
 import { container } from 'ts-pring';
-export interface IInterface {}
+export default interface IInterface {}
 
 const a = container.get<IInterface>();
 a;

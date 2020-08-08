@@ -12,6 +12,7 @@ import {
 export interface ITypeNamePath {
     name: string;
     path: string;
+    isDefault?: boolean;
 }
 
 export type TAvailableTypes =

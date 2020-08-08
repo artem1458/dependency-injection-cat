@@ -1,10 +1,9 @@
+import defa from '@src/testFile'
 import { AAA as BBB, ABC } from './types';
 import { DiConfigTestClass } from '@src/config/DiConfigTestClass';
 
-export interface IInterface<T> {}
-
 export class ConfigDiconfig2 {
-    method3(): object {
+    method3(): defa {
         return {
             someField: '',
         }

@@ -30,7 +30,9 @@ function getBaseTypeNameAndPath(node: ts.Node, nameToFind: string, referTypeName
     }
 
     if (typeFromImport) {
-        return `${START_PATH_TOKEN}${typeFromImport.path}${END_PATH_TOKEN}${referTypeName}`;
+        const actualName = typeFromImport.isDefault ? typeFromImport.name : referTypeName;
+
+        return `${START_PATH_TOKEN}${typeFromImport.path}${END_PATH_TOKEN}${actualName}`;
     }
 
     if (typeFromStatement) {
