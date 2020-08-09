@@ -9,12 +9,6 @@ import {
     TypeReferenceNode,
 } from 'typescript';
 
-export interface INodeSourceDescriptor {
-    name: string;
-    path: string;
-    isDefault?: boolean;
-}
-
 export type TAvailableTypes =
     ClassDeclaration
     | InterfaceDeclaration
@@ -34,4 +28,9 @@ interface NamedNamespaceExportDeclaration extends NamespaceExportDeclaration { n
 
 export interface ITypeReferenceNode extends TypeReferenceNode {
     typeArguments: NodeArray<TypeNode>;
+}
+
+export interface ITypeIdQualifierResult {
+    originalTypeName: string;
+    typeId: string;
 }

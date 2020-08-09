@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { TypeQualifierError } from './TypeQualifierError';
-import { getBaseTypeNameAndPathFromImport } from './getBaseTypeNameAndPathFromImport';
-import { getBaseTypeAndPathFromStatements } from './getBaseTypeAndPathFromDeclarations';
+import { getNodeSourceDescriptorFromImports, ImportType } from '../node-source-descriptor';
+import { getTypeSourceDescriptorFromTopStatements } from './getTypeSourceDescriptorFromTopStatements';
 import { END_PATH_TOKEN, START_PATH_TOKEN } from './parseTokens';
 
 export function typeIdQualifierBase(node: ts.TypeReferenceNode): string {
@@ -22,15 +22,31 @@ export function typeIdQualifierBase(node: ts.TypeReferenceNode): string {
 
 function getBaseTypeNameAndPath(node: ts.Node, nameToFind: string, referTypeName: string): string | undefined {
     const sourceFile = node.getSourceFile();
-    const typeFromImport = getBaseTypeNameAndPathFromImport(sourceFile, nameToFind);
-    const typeFromStatement = getBaseTypeAndPathFromStatements(sourceFile, nameToFind);
+    const typeFromImport = getNodeSourceDescriptorFromImports(sourceFile, nameToFind);
+    const typeFromStatement = getTypeSourceDescriptorFromTopStatements(sourceFile, nameToFind);
 
     if (typeFromImport && typeFromStatement && typeFromImport.name === typeFromStatement.name) {
         throw new Error(`Duplicate identifiers detected, when trying to resolve TypeReference ${nameToFind}, Path ${sourceFile.fileName}`);
     }
 
     if (typeFromImport) {
-        const actualName = typeFromImport.isDefault ? typeFromImport.name : referTypeName;
+        let actualName: string;
+        switch (typeFromImport.importType) {
+            case ImportType.Default:
+                actualName = 'default';
+                break;
+
+            case ImportType.Namespace:
+                actualName = referTypeName.split('.').slice(1).join('.');
+                break;
+
+            case ImportType.Named:
+                actualName = [typeFromImport.name, ...referTypeName.split('.').slice(1)].join('.');
+                break;
+
+            default:
+                actualName = referTypeName;
+        }
 
         return `${START_PATH_TOKEN}${typeFromImport.path}${END_PATH_TOKEN}${actualName}`;
     }

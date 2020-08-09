@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { isBean } from '../utils/isBean';
+import { isMethodBean } from '../bean/isMethodBean';
 import { getFactoryDependencies } from '../factories/utils/getFactoryDependencies';
 import { typeIdQualifier } from '../type-id-qualifier';
 import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
@@ -16,7 +16,7 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
     context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
-                if (isBean(node)) {
+                if (isMethodBean(node)) {
                     const parameters: IParametersLight[] = node.parameters.map(it => {
                         if (it.type === undefined) {
                             throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
@@ -24,7 +24,7 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
 
                         return {
                             parameterName: it.name.getText(),
-                            typeId: typeIdQualifier(it),
+                            typeId: typeIdQualifier(it).typeId,
                         };
                     });
 
@@ -52,7 +52,7 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
 
                     return ts.updateMethod(
                         node,
-                        undefined,
+                        node.decorators,
                         [],
                         undefined,
                         node.name,
@@ -114,7 +114,7 @@ function getConstantStatements(
                             ts.createPropertyAccess(
                                 ts.createPropertyAccess(
                                     ts.createPropertyAccess(
-                                        ts.createIdentifier(getFactoryNameForNamespaceImport(drivenType.factoryId)),
+                                        ts.createIdentifier(getFactoryNameForNamespaceImport(drivenType.configId)),
                                         ts.createIdentifier(drivenType.factoryName),
                                     ),
                                     getPublicInstanceIdentifier(drivenType.factoryName)

@@ -1,5 +1,5 @@
 import { flatten } from 'lodash';
-import { ITypeInfo } from '../../type-register/ITypeInfo';
+import { ITypeInfo } from '../../type-register/types';
 import { TypeRegisterRepository } from '../../type-register/TypeRegisterRepository';
 import { TypeDependencyRepository } from '../../types-dependencies-register/TypeDependencyRepository';
 
@@ -9,5 +9,5 @@ export function getFactoryDependencies(factoryId: string): ITypeInfo[] {
 
     return dependencies
         .map(it => TypeRegisterRepository.getTypeById(it))
-        .filter(it => it.factoryId !== factoryId);
+        .filter(it => it.configId !== factoryId);
 }

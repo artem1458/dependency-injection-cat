@@ -3,7 +3,7 @@ import { DiConfigRepository } from '../di-config-repository';
 import { TypeRegisterRepository } from './TypeRegisterRepository';
 import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isBean } from '../utils/isBean';
+import { isMethodBean } from '../bean/isMethodBean';
 import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
 import { checkTypeForCorrectness } from '../type-id-qualifier/utils/checkTypeForCorrectness';
 import { ShouldReinitializeRepository } from '../transformer/ShouldReinitializeRepository';
@@ -27,9 +27,9 @@ export function registerTypes(): void {
     });
 
     function travelSourceFile(node: ts.Node, configPath: string): void {
-        if (isBean(node)) {
+        if (isMethodBean(node)) {
             try {
-                const typeId = typeIdQualifier(node);
+                const { typeId, originalTypeName } = typeIdQualifier(node);
                 let configName;
 
                 if (ts.isClassDeclaration(node.parent) && node.parent.name) {
@@ -41,7 +41,13 @@ export function registerTypes(): void {
                 const beanName = node.name.getText();
 
                 checkTypeForCorrectness(typeId);
-                TypeRegisterRepository.registerType(typeId, configPath, configName, beanName);
+                TypeRegisterRepository.registerType({
+                    typeId,
+                    originalTypeName,
+                    configPath,
+                    configName,
+                    beanName,
+                });
             } catch (error) {
                 switch (error) {
                     case TypeQualifierError.HasNoType:

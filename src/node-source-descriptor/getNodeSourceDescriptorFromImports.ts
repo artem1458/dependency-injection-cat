@@ -1,9 +1,9 @@
 import * as ts from 'typescript';
-import { INodeSourceDescriptor } from './types';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 import { PathResolver } from '../paths-resolver/PathResolver';
+import { ImportType, INodeSourceDescriptor } from './types';
 
-export function getBaseTypeNameAndPathFromImport(sourceFile: ts.SourceFile, nameToFind: string): INodeSourceDescriptor | undefined {
+export function getNodeSourceDescriptorFromImports(sourceFile: ts.SourceFile, nameToFind: string): INodeSourceDescriptor | undefined {
     const imports = sourceFile.statements.filter(ts.isImportDeclaration);
     let result: INodeSourceDescriptor | undefined = undefined;
 
@@ -17,11 +17,11 @@ export function getBaseTypeNameAndPathFromImport(sourceFile: ts.SourceFile, name
             return;
         }
 
-        if (imp.importClause.name && imp.importClause.name.escapedText === nameToFind) {
+        if (imp.importClause.name?.escapedText === nameToFind) {
             result = {
-                name: 'default',
+                name: nameToFind,
                 path: importPath,
-                isDefault: true,
+                importType: ImportType.Default,
             }
             return;
         }
@@ -35,6 +35,7 @@ export function getBaseTypeNameAndPathFromImport(sourceFile: ts.SourceFile, name
             result = {
                 name: nameToFind,
                 path: importPath,
+                importType: ImportType.Namespace,
             }
             return;
         }
@@ -42,9 +43,11 @@ export function getBaseTypeNameAndPathFromImport(sourceFile: ts.SourceFile, name
         if (namedBindings.kind === ts.SyntaxKind.NamedImports) {
             namedBindings.elements.forEach(it => {
                 if (it.name.escapedText === nameToFind) {
+                    const name = it.propertyName ? it.propertyName.escapedText.toString() : nameToFind;
                     result = {
-                        name: nameToFind,
+                        name,
                         path: importPath,
+                        importType: ImportType.Named,
                     }
                 }
             });

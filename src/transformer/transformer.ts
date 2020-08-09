@@ -7,6 +7,7 @@ import { ProgramRepository } from '../program/ProgramRepository';
 import { createFactories } from '../factories/createFactories';
 import { ShouldReinitializeRepository } from './ShouldReinitializeRepository';
 import { PathResolver } from '../paths-resolver/PathResolver';
+import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 
 const transformer = (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
     initTransformerConfig(config);
@@ -14,6 +15,7 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
     ProgramRepository.initProgram(program);
     PathResolver.init();
     registerTypes();
+    console.log(TypeRegisterRepository.repository)
     registerDependencies();
     createFactories();
     ShouldReinitializeRepository.value = false;

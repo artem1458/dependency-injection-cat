@@ -4,7 +4,7 @@ import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isBean } from '../utils/isBean';
+import { isMethodBean } from '../bean/isMethodBean';
 import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
 import { ShouldReinitializeRepository } from '../transformer/ShouldReinitializeRepository';
 
@@ -27,12 +27,12 @@ export function registerDependencies(): void {
     });
 
     function travelSourceFile(node: ts.Node): void {
-        if (isBean(node)) {
+        if (isMethodBean(node)) {
             const dependencies: Array<string> = [];
 
             node.parameters.forEach(parameter => {
                 try {
-                    const typeId = typeIdQualifier(parameter);
+                    const { typeId } = typeIdQualifier(parameter);
                     TypeRegisterRepository.checkTypeInRegister(typeId);
                     dependencies.push(typeId);
                 } catch (error) {
@@ -44,12 +44,12 @@ export function registerDependencies(): void {
                             throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
 
                         default:
-                            throw new Error(error);
+                            throw error;
                     }
                 }
             });
 
-            const beanTypeId = typeIdQualifier(node);
+            const { typeId: beanTypeId } = typeIdQualifier(node);
             TypeDependencyRepository.addDependencies(beanTypeId, ...dependencies);
         }
 

@@ -4,7 +4,7 @@ import { getFactoryPathWithoutExtension } from './getFactoryPathWithoutExtension
 import { getFactoryDependencies } from './getFactoryDependencies';
 
 export function getImportsForFactory(factoryId: string): ts.ImportDeclaration[] {
-    return getFactoryDependencies(factoryId).map(({ factoryId: dependencyFactoryId }) => ts.createImportDeclaration(
+    return getFactoryDependencies(factoryId).map(({ configId: dependencyFactoryId }) => ts.createImportDeclaration(
         undefined,
         undefined,
         ts.createImportClause(

@@ -15,3 +15,19 @@ export const typeKeywords: SyntaxKind[] = [
     SyntaxKind.NullKeyword,
     SyntaxKind.NeverKeyword,
 ];
+
+export const typeKeywordsDictionary: Record<number, string> = {
+    [SyntaxKind.AnyKeyword]: 'any',
+    [SyntaxKind.UnknownKeyword]: 'unknown',
+    [SyntaxKind.NumberKeyword]: 'number',
+    [SyntaxKind.BooleanKeyword]: 'boolean',
+    [SyntaxKind.BigIntKeyword]: 'bigInt',
+    [SyntaxKind.ObjectKeyword]: 'object',
+    [SyntaxKind.StringKeyword]: 'string',
+    [SyntaxKind.SymbolKeyword]: 'symbol',
+    [SyntaxKind.ThisKeyword]: 'this',
+    [SyntaxKind.VoidKeyword]: 'void',
+    [SyntaxKind.UndefinedKeyword]: 'undefined',
+    [SyntaxKind.NullKeyword]: 'null',
+    [SyntaxKind.NeverKeyword]: 'never',
+};

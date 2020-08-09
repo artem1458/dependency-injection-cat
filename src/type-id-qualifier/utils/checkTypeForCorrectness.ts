@@ -12,12 +12,12 @@ export function checkTypeForCorrectness(type: string) {
     loggedTypes.push(type);
 
     DiConfigRepository.data.forEach(path => {
-        const regexp = new RegExp(`${START_PATH_TOKEN}${escapeRegExp(path)}${END_PATH_TOKEN}`, 'g');
+        const regexp = new RegExp(`${escapeRegExp(START_PATH_TOKEN)}(${escapeRegExp(path)})${escapeRegExp(END_PATH_TOKEN)}`);
         const matches = type.match(regexp) || [];
-        const transformed = matches.map(it => it.slice(1, -1));
+        const transformed = matches[1];
 
-        if (transformed.length > 0) {
-            console.log(chalk.bgRed(`Some types defined in diconfig files, but we can handle it. ${transformed.join(', ')}`));
+        if (transformed !== undefined) {
+            console.log(chalk.bgRed(`Some types defined in diconfig file, but we can handle it. ${transformed}`));
         }
     });
 }

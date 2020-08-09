@@ -1,31 +1,21 @@
 import { filter, map } from 'lodash';
-import { uniqId } from '../utils/uniqId';
-import { ITypeInfo } from './ITypeInfo';
+import { IRegisterTypeProps, ITypeInfo } from './types';
 import { FactoryIdRepository } from '../factories/FactoryIdRepository';
 
 export class TypeRegisterRepository {
     static repository: Record<string, ITypeInfo | undefined> = {};
-    private static parseKey(key: string): { typeName: string, filePath: string } {
-        const parsedKeys = key.startsWith('"')
-            ? key.slice(1).split('"')
-            : key.split('"');
 
-        return {
-            filePath: parsedKeys[0],
-            typeName: parsedKeys[1].slice(1),
-        }
-    }
-
-    static registerType(typeId: string, configId: string, configName: string, beanName: string): void {
+    static registerType({ typeId, originalTypeName, configPath, configName, beanName }: IRegisterTypeProps): void {
         if (TypeRegisterRepository.hasTypeInRegister(typeId)) {
-            const { typeName, filePath } = TypeRegisterRepository.parseKey(typeId);
-            throw new Error(`It seems like you define config for type ${typeName} more than one time, path ${filePath}`);
+            const { originalName } = TypeRegisterRepository.getTypeById(typeId);
+            throw new Error(`It seems like you define config for type ${originalName} more than one time`);
         }
 
         const typeInfo: ITypeInfo = {
-            // id: uuid(),
             id: typeId,
-            factoryId: FactoryIdRepository.getFactoryId(configId),
+            configPath,
+            originalName: originalTypeName,
+            configId: FactoryIdRepository.getFactoryId(configPath),
             factoryName: configName,
             beanName,
         }
@@ -33,21 +23,20 @@ export class TypeRegisterRepository {
         TypeRegisterRepository.repository[typeId] = typeInfo;
     }
 
-    static hasTypeInRegister(key: string): boolean {
-        return TypeRegisterRepository.repository[key] !== undefined;
+    static hasTypeInRegister(typeId: string): boolean {
+        return TypeRegisterRepository.repository[typeId] !== undefined;
     }
 
-    static checkTypeInRegister(key: string): void {
-        if (!TypeRegisterRepository.hasTypeInRegister(key)) {
-            const { typeName, filePath } = TypeRegisterRepository.parseKey(key);
-            throw new Error(`It seems like you forgot to define config for Type ${typeName}, Path ${filePath}`);
+    static checkTypeInRegister(typeId: string): void {
+        if (!TypeRegisterRepository.hasTypeInRegister(typeId)) {
+            throw new Error(`It seems like you forgot to define config for Type ${typeId}`); //TODO ADD TYPE NAME
         }
     }
 
     static getTypesByFactoryId(factoryId: string): ITypeInfo[] {
         const types = map(TypeRegisterRepository.repository, it => it);
 
-        return filter(types, (value): value is ITypeInfo => value?.factoryId === factoryId);
+        return filter(types, (value): value is ITypeInfo => value?.configId === factoryId);
     }
 
     static getTypeById(typeId: string): ITypeInfo {
