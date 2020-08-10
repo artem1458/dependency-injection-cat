@@ -1,9 +1,10 @@
-import { createProgram, Program } from 'typescript';
+import { createProgram, Program, TypeChecker } from 'typescript';
 import { DiConfigRepository } from '../di-config-repository';
 import { ShouldReinitializeRepository } from '../transformer/ShouldReinitializeRepository';
 
 export class ProgramRepository {
     private static _program: Program | undefined;
+    private static _typeChecker: TypeChecker | undefined;
 
     static initProgram(program: Program): void {
         if (ShouldReinitializeRepository.value) {
@@ -16,7 +17,7 @@ export class ProgramRepository {
 
             const newProgram = createProgram(DiConfigRepository.data, compilerOptions);
             //CRUTCH???
-            newProgram.getTypeChecker();
+            ProgramRepository._typeChecker = newProgram.getTypeChecker();
             ProgramRepository._program = newProgram;
         }
     }
@@ -28,4 +29,13 @@ export class ProgramRepository {
 
         return ProgramRepository._program;
     }
+
+    static get typeChecker(): TypeChecker {
+        if (ProgramRepository._typeChecker === undefined) {
+            throw new Error('Trying to access typeChecker before program initialization');
+        }
+
+        return ProgramRepository._typeChecker;
+    }
+
 }

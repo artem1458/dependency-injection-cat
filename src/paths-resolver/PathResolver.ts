@@ -21,6 +21,7 @@ export class PathResolver {
         PathResolver.resolver = createMatchPath(config.absoluteBaseUrl, config.paths);
     }
 
+    //Transform to absolute path, only if it's relative or aliased by paths defined in tsConfig.json
     static resolve(sourceFilePath: string, targetPath: string): string {
         if (isPathRelative(targetPath)) {
             const newSourceFilePath = path.dirname(sourceFilePath);

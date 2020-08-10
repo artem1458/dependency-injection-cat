@@ -28,18 +28,23 @@ export function registerDependencies(): void {
 
     function travelSourceFile(node: ts.Node): void {
         if (isMethodBean(node)) {
+            if (node.type === undefined) {
+                throw new Error('Bean should have return type' + getMethodLocationMessage(node));
+            }
+
             const dependencies: Array<string> = [];
 
             node.parameters.forEach(parameter => {
+                 if (parameter.type === undefined) {
+                     throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
+                 }
+
                 try {
-                    const { typeId } = typeIdQualifier(parameter);
+                    const { typeId } = typeIdQualifier(parameter.type);
                     TypeRegisterRepository.checkTypeInRegister(typeId);
                     dependencies.push(typeId);
                 } catch (error) {
                     switch (error) {
-                        case TypeQualifierError.HasNoType:
-                            throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
-
                         case TypeQualifierError.TypeIsPrimitive:
                             throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
 
@@ -49,7 +54,7 @@ export function registerDependencies(): void {
                 }
             });
 
-            const { typeId: beanTypeId } = typeIdQualifier(node);
+            const { typeId: beanTypeId } = typeIdQualifier(node.type);
             TypeDependencyRepository.addDependencies(beanTypeId, ...dependencies);
         }
 

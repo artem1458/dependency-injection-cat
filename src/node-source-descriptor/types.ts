@@ -1,7 +1,7 @@
 export interface INodeSourceDescriptor {
     name: string;
     path: string;
-    importType?: ImportType;
+    importType: ImportType;
 }
 
 export enum ImportType {

@@ -1,14 +1,33 @@
 import * as ts from 'typescript';
+import { getNodeSourceDescriptorFromImports, ImportType } from '../node-source-descriptor';
+import { getLibraryName } from '../utils/getLibraryName';
+import { isCallExpressionFromFile } from '../typescript-helpers/isCallExpressionFromFile';
 
-export function isContainerGetCall(typeChecker: ts.TypeChecker, node: ts.Node): node is ts.CallExpression {
-    if (ts.isCallExpression(node)) {
-        const expressionText = node.expression.getText();
-        const bb = typeChecker.getResolvedSignature(node); //Check for signature, and if it's not exist, check imports, if exist, check source file path, for not equality to current
-        aa;
-        // if (node.typeArguments === undefined) {
-        //     throw new Error();
-        // }
+export function isContainerGetCall(typeChecker: ts.TypeChecker, node: ts.CallExpression): boolean {
+    if (isCallExpressionFromFile(typeChecker, node, node.getSourceFile().fileName)) {
+        return false;
     }
 
-    return false;
+    const fullExpression = node.expression.getText().split('.');
+    const fromImports = getNodeSourceDescriptorFromImports(node.getSourceFile(), fullExpression[0]);
+
+    if (fromImports === undefined || getLibraryName() !== fromImports.path) {
+        return false;
+    }
+
+    switch (fromImports.importType) {
+        case ImportType.Named:
+            fullExpression[0] = fromImports.name;
+            break;
+
+        case ImportType.Namespace:
+            fullExpression.splice(0, 1);
+            break;
+        case ImportType.Default:
+        default:
+            return false;
+
+    }
+
+    return fullExpression.join('.') === 'container.get';
 }

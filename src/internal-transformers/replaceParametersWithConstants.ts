@@ -24,7 +24,7 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
 
                         return {
                             parameterName: it.name.getText(),
-                            typeId: typeIdQualifier(it).typeId,
+                            typeId: typeIdQualifier(it.type).typeId,
                         };
                     });
 

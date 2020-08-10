@@ -28,8 +28,12 @@ export function registerTypes(): void {
 
     function travelSourceFile(node: ts.Node, configPath: string): void {
         if (isMethodBean(node)) {
+            if (node.type === undefined) {
+                throw new Error('Bean should have return type' + getMethodLocationMessage(node));
+            }
+
             try {
-                const { typeId, originalTypeName } = typeIdQualifier(node);
+                const { typeId, originalTypeName } = typeIdQualifier(node.type);
                 let configName;
 
                 if (ts.isClassDeclaration(node.parent) && node.parent.name) {
@@ -50,9 +54,6 @@ export function registerTypes(): void {
                 });
             } catch (error) {
                 switch (error) {
-                    case TypeQualifierError.HasNoType:
-                        throw new Error('Bean should have return type' + getMethodLocationMessage(node));
-
                     case TypeQualifierError.TypeIsPrimitive:
                         throw new Error('Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
 

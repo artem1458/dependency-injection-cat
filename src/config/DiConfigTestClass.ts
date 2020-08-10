@@ -5,5 +5,10 @@ export class DiConfigTestClass implements AAA.IDiConfigTest {
         a: AAA.IDiConfigTest2,
     ) {
     }
-    someField: string = '123';
+
+    get someField(): string {
+        console.log('getSomeField');
+
+        return '';
+    }
 }

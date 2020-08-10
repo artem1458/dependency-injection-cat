@@ -13,14 +13,10 @@ import {
 } from './parseTokens';
 import { ITypeIdQualifierResult } from './types';
 
-export function typeIdQualifier(node: ts.Node): ITypeIdQualifierResult {
-    if (!isHasTypeNode(node) || node.type === undefined) {
-        throw new Error(TypeQualifierError.HasNoType);
-    }
-
+export function typeIdQualifier(typeNode: ts.TypeNode): ITypeIdQualifierResult {
     return {
-        originalTypeName: node.type.getText(),
-        typeId: getTypesNameDeep(node.type),
+        originalTypeName: typeNode.getText(),
+        typeId: getTypesNameDeep(typeNode),
     };
 }
 

@@ -2,7 +2,8 @@ import * as ts from 'typescript'
 import { getNodeSourceDescriptorFromImports } from '../node-source-descriptor';
 
 export function isMethodBean(node: ts.Node): node is ts.MethodDeclaration {
-    return ts.isMethodDeclaration(node) &&  !!node.decorators?.some(isBeanDecorator);
+    return ts.isMethodDeclaration(node);
+    // return ts.isMethodDeclaration(node) &&  !!node.decorators?.some(isBeanDecorator);
 }
 
 export function isBeanDecorator(decoratorNode: ts.Decorator): boolean {

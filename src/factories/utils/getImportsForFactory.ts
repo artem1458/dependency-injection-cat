@@ -1,10 +1,10 @@
 import * as ts from 'typescript';
 import { getFactoryNameForNamespaceImport } from './getFactoryNameForNamespaceImport';
-import { getFactoryPathWithoutExtension } from './getFactoryPathWithoutExtension';
+import { getConfigPathWithoutExtension } from './getConfigPathWithoutExtension';
 import { getFactoryDependencies } from './getFactoryDependencies';
 
-export function getImportsForFactory(factoryId: string): ts.ImportDeclaration[] {
-    return getFactoryDependencies(factoryId).map(({ configId: dependencyFactoryId }) => ts.createImportDeclaration(
+export function getImportsForFactory(configId: string): ts.ImportDeclaration[] {
+    return getFactoryDependencies(configId).map(({ configId: dependencyFactoryId }) => ts.createImportDeclaration(
         undefined,
         undefined,
         ts.createImportClause(
@@ -16,6 +16,6 @@ export function getImportsForFactory(factoryId: string): ts.ImportDeclaration[] 
             ),
             false
         ),
-        ts.createStringLiteral(getFactoryPathWithoutExtension(dependencyFactoryId)),
+        ts.createStringLiteral(getConfigPathWithoutExtension(dependencyFactoryId)),
     ));
 }
