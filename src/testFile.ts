@@ -1,1 +1,7 @@
-export default interface IInterface {}
+import { container } from 'ts-pring';
+
+function aa() {
+    // const container = () => {};
+    container();
+}
+
