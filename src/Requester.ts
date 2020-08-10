@@ -7,6 +7,6 @@ export class Requester implements IRequester<string> {
     ) {}
 
     sendRequest(message: string): void {
-        this.customLogger.logMessage('Some message here');
+        this.customLogger.logMessage(message);
     }
 }

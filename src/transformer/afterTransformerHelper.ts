@@ -6,8 +6,7 @@ import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository'
 import { TypeDependencyRepository } from '../types-dependencies-register/TypeDependencyRepository';
 
 export const afterTransformerHelper = (): ts.TransformerFactory<ts.SourceFile> => {
-    return context => sourceFile => {
-        FactoryIdRepository.clearRepository();
+    return () => sourceFile => {
         DiConfigRepository.clearRepository();
         TypeRegisterRepository.clearRepository();
         TypeDependencyRepository.clearRepository();
