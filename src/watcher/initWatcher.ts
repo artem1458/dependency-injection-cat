@@ -23,6 +23,7 @@ export function initWatcher(): void {
         const absolutePath = nodePath.resolve(process.cwd(), path);
         ConfigIdRepository.registerConfig(absolutePath);
         DiConfigRepository.registerConfig(absolutePath);
+
         runCompile();
     });
 
