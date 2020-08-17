@@ -1,4 +1,4 @@
-import { AcyclicGraph } from '../acyclic-graph';
+import { AcyclicGraph } from '../graphs/acyclic-graph';
 
 export class TypeDependencyRepository {
     static graph = new AcyclicGraph();

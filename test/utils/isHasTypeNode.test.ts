@@ -1,6 +1,6 @@
 import { Node } from 'typescript';
 
-import { isHasTypeNode } from '@src/utils/isHasTypeNode';
+import { isHasTypeNode } from '@src/typescript-helpers/isHasTypeNode';
 
 describe('isHasTypeNode tests', () => {
     it.each`

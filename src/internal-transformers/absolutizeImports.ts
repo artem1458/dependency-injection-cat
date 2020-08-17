@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
-import { PathResolver } from '../paths-resolver/PathResolver';
+import { PathResolver } from '../typescript-helpers/path-resolver/PathResolver';
 
 export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory<ts.SourceFile> =>
     context => {

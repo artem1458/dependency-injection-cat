@@ -1,6 +1,6 @@
 import { filter, map } from 'lodash';
 import { IRegisterTypeProps, ITypeInfo } from './types';
-import { FactoryIdRepository } from '../factories/FactoryIdRepository';
+import { ConfigIdRepository } from '../factories/ConfigIdRepository';
 
 export class TypeRegisterRepository {
     static repository: Record<string, ITypeInfo | undefined> = {};
@@ -15,7 +15,7 @@ export class TypeRegisterRepository {
             id: typeId,
             configPath,
             originalName: originalTypeName,
-            configId: FactoryIdRepository.getFactoryId(configPath),
+            configId: ConfigIdRepository.getFactoryId(configPath),
             factoryName: configName,
             beanName,
         }

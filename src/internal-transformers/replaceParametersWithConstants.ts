@@ -1,11 +1,11 @@
 import * as ts from 'typescript';
-import { isMethodBean } from '../bean/isMethodBean';
+import { isMethodBean } from '../typescript-helpers/bean/isMethodBean';
 import { getFactoryDependencies } from '../factories/utils/getFactoryDependencies';
-import { typeIdQualifier } from '../type-id-qualifier';
-import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
+import { typeIdQualifier } from '../typescript-helpers/type-id-qualifier';
+import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { getFactoryNameForNamespaceImport } from '../factories/utils/getFactoryNameForNamespaceImport';
-import { getPublicInstanceIdentifier } from '../utils/getPublicInstanceIdentifier';
+import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';
 
 interface IParametersLight {
     parameterName: string;

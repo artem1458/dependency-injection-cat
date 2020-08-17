@@ -2,10 +2,16 @@ export class DiConfigRepository {
     static data: Array<string> = [];
 
     static registerConfig(fileName: string): void {
-        DiConfigRepository.data.push(fileName);
+        if (!this.data.includes(fileName)) {
+            DiConfigRepository.data.push(fileName);
+        }
     }
 
-    static clearRepository(): void {
-        DiConfigRepository.data = [];
+    static unregisterConfig(fileName: string): void {
+        const index = this.data.indexOf(fileName);
+
+        if (index >= 0) {
+            DiConfigRepository.data.splice(index, 1);
+        }
     }
 }

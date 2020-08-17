@@ -7,7 +7,7 @@ module.exports = {
   },
   setupFilesAfterEnv: ["jest-sinon"],
   transformIgnorePatterns: ['/node_modules/'],
-  resolver: path.resolve(__dirname, 'scripts/jest-resolver.js'),
+  resolver: path.resolve(__dirname, 'scripts/jestResolver.js'),
   moduleFileExtensions: ['ts', 'js'],
   coverageReporters: ['html'],
   globals: {

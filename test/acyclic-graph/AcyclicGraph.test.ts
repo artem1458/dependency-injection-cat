@@ -1,6 +1,6 @@
 import { spy, verify, when } from 'ts-mockito';
-import { AcyclicGraph } from '@src/acyclic-graph';
-import { Graph } from '@src/graph';
+import { AcyclicGraph } from '@src/graphs/acyclic-graph';
+import { Graph } from '@src/graphs/graph';
 
 describe('AcyclicGraph tests', () => {
     it('should be instance of Graph', () => {

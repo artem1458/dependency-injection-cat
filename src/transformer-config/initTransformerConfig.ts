@@ -1,7 +1,20 @@
+import { mergeWith, isArray } from 'lodash';
 import { ITransformerConfig } from './ITransformerConfig';
-import { merge } from 'lodash';
 import { transformerConfig } from './transformerConfig';
 
+let wasInitialized = false;
+
 export const initTransformerConfig = (config?: ITransformerConfig): void => {
-    merge(transformerConfig, config);
+    if (wasInitialized) {
+        return;
+    }
+    wasInitialized = true;
+
+    mergeWith(transformerConfig, config, (objValue, srcValue) => {
+        if (isArray(objValue)) {
+            return objValue.concat(srcValue);
+        }
+
+        return undefined
+    })
 }

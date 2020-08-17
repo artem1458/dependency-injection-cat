@@ -2,23 +2,27 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const DiContainerWebpackPlugin = require('./dist/src/webpack').default;
 
 module.exports = {
-    entry: './src/testFile.ts',
+    entry: './dir-tests/index.ts',
     mode: 'development',
     devtool: 'source-map',
     resolve: {
-        extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.ts', '.tsx'],
+        alias: {
+            'ts-pring': path.resolve(__dirname, 'dist/src'),
+        },
+        extensions: ['.js', '.ts'],
         plugins: [new TsconfigPathsPlugin()]
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'dist2'),
         filename: 'bundle.js',
     },
     module: {
         rules: [
             {
-                test: /\.(ts|tsx)$/,
+                test: /\.ts$/,
                 loader: 'ts-loader',
                 options: {
                     compiler: 'ttypescript',
@@ -30,5 +34,6 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin(),
+        new DiContainerWebpackPlugin(),
     ]
 };

@@ -1,18 +1,13 @@
 import ts from 'typescript';
 import { DiConfigRepository } from '../di-config-repository';
-import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
+import { typeIdQualifier, TypeQualifierError } from '../typescript-helpers/type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isMethodBean } from '../bean/isMethodBean';
-import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
-import { ShouldReinitializeRepository } from '../transformer/ShouldReinitializeRepository';
+import { isMethodBean } from '../typescript-helpers/bean/isMethodBean';
+import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
 
 export function registerDependencies(): void {
-    if (!ShouldReinitializeRepository.value) {
-        return;
-    }
-
     const program = ProgramRepository.program;
 
     DiConfigRepository.data.forEach(filePath => {
@@ -49,7 +44,7 @@ export function registerDependencies(): void {
                             throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
 
                         default:
-                            throw error;
+                            throw new Error(error);
                     }
                 }
             });

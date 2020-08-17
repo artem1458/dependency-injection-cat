@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
-import { isConfigDeclaration } from '../utils/isConfigDeclaration';
-import { getPrivateInstanceIdentifier } from '../utils/getPrivateInstanceIdentifier';
-import { getPublicInstanceIdentifier } from '../utils/getPublicInstanceIdentifier';
+import { isConfigDeclaration } from '../typescript-helpers/isConfigDeclaration';
+import { getPrivateInstanceIdentifier } from '../typescript-helpers/getPrivateInstanceIdentifier';
+import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';
 
 export const makeFactorySingleton: ts.TransformerFactory<ts.SourceFile> =
     context => {

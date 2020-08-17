@@ -1,5 +1,5 @@
 import { spy, verify, when } from 'ts-mockito';
-import { Graph } from '@src/graph/Graph';
+import { Graph } from '@src/graphs/graph/Graph';
 
 describe('Graph tests', () => {
     describe('addNode should add node to graph', () => {

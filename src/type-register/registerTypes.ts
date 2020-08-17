@@ -1,18 +1,13 @@
 import * as ts from 'typescript';
 import { DiConfigRepository } from '../di-config-repository';
 import { TypeRegisterRepository } from './TypeRegisterRepository';
-import { typeIdQualifier, TypeQualifierError } from '../type-id-qualifier';
+import { typeIdQualifier, TypeQualifierError } from '../typescript-helpers/type-id-qualifier';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isMethodBean } from '../bean/isMethodBean';
-import { getMethodLocationMessage } from '../utils/getMethodLocationMessage';
-import { checkTypeForCorrectness } from '../type-id-qualifier/utils/checkTypeForCorrectness';
-import { ShouldReinitializeRepository } from '../transformer/ShouldReinitializeRepository';
+import { isMethodBean } from '../typescript-helpers/bean/isMethodBean';
+import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
+import { checkTypeForCorrectness } from '../typescript-helpers/type-id-qualifier/utils/checkTypeForCorrectness';
 
 export function registerTypes(): void {
-    if (!ShouldReinitializeRepository.value) {
-        return;
-    }
-
     const program = ProgramRepository.program;
 
     DiConfigRepository.data.forEach(filePath => {
@@ -61,7 +56,7 @@ export function registerTypes(): void {
                         throw new Error('Can not generate type for' + getMethodLocationMessage(node));
 
                     default:
-                        throw error;
+                        throw new Error(error);
                 }
             }
         }
