@@ -6,10 +6,13 @@ import { DiConfigRepository } from '../di-config-repository';
 import { runCompile } from '../run-compile/runCompile';
 import { getDiConfigPattern } from '../transformer-config/getDiConfigPattern';
 import { WatchModeRepository } from './WatchModeRepository';
+import { setWatchMode } from './setWatchMode';
 
 let wasInitialised = false;
 
 export function initWatcher(): void {
+    setWatchMode();
+
     if (wasInitialised || !WatchModeRepository.isWatchMode) {
         return;
     }

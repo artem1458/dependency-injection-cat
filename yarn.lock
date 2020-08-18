@@ -6520,6 +6520,7 @@ ts-pring@./dist/src:
   version "0.0.1"
   dependencies:
     chalk "^4.1.0"
+    chokidar "^3.4.2"
     glob "^7.1.6"
     lodash "^4.17.15"
     tsconfig-paths "^3.9.0"
