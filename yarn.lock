@@ -4842,11 +4842,6 @@ nth-check@~1.0.1:
   dependencies:
     boolbase "~1.0.0"
 
-ntypescript@^1.201706190042.1:
-  version "1.201706190042.1"
-  resolved "https://registry.yarnpkg.com/ntypescript/-/ntypescript-1.201706190042.1.tgz#866ae9cc36688b141606156ed0bcc35cdf536271"
-  integrity sha1-hmrpzDZoixQWBhVu0LzDXN9TYnE=
-
 nwsapi@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.0.tgz#204879a9e3d068ff2a55139c2c772780681a38b7"

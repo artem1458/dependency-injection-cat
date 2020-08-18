@@ -35,7 +35,6 @@
     "json-beautify": "^1.1.1",
     "less-loader": "^6.1.1",
     "memfs": "^3.2.0",
-    "ntypescript": "^1.201706190042.1",
     "sinon": "^9.0.2",
     "style-loader": "^1.2.1",
     "ts-auto-mock": "^2.3.3",
