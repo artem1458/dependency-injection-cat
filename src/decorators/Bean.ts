@@ -1,7 +1,7 @@
 type TBeanScope = 'prototype' | 'singleton';
 type TBeanProps = {
     scope?: TBeanScope;
-    name?: string;
+    qualifier?: string;
 }
 
 export function Bean<T>(

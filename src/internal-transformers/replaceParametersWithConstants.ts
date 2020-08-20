@@ -23,12 +23,12 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
                             throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
                         }
 
-                        parameterTypeIdQualifier(it);
+                        const typeId = parameterTypeIdQualifier(it);
 
                         return {
                             ...it,
+                            typeId,
                             parameterName: it.name.getText(),
-                            typeId: typeIdQualifier(it.type).typeId,
                         };
                     });
 
@@ -133,7 +133,7 @@ function getConstantStatements(
                 )
             );
         } else {
-            throw new Error('Type of dependency not register in config'); //TODO Add more readable error
+            throw new Error('Type of dependency not register in config ' + it.typeId); //TODO Add more readable error
         }
     });
 }
