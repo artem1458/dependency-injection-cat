@@ -1,10 +1,10 @@
-import ts from 'typescript';
+import * as ts from 'typescript';
 import { DiConfigRepository } from '../di-config-repository';
 import { typeIdQualifier, TypeQualifierError } from '../typescript-helpers/type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isMethodBean } from '../typescript-helpers/bean/isMethodBean';
+import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
 import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
 
 export function registerDependencies(): void {

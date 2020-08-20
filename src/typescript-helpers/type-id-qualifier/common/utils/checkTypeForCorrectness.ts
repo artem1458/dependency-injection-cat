@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { escapeRegExp } from 'lodash';
 import { END_PATH_TOKEN, START_PATH_TOKEN } from '../parseTokens';
-import { DiConfigRepository } from '../../../di-config-repository';
+import { DiConfigRepository } from '../../../../di-config-repository';
 
 const loggedTypes: Array<string> = [];
 

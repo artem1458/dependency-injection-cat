@@ -1,2 +1,2 @@
-export * from './TypeQualifierError';
-export * from './typeIdQualifier';
+export * from './common/TypeQualifierError';
+export * from './common/typeIdQualifier';

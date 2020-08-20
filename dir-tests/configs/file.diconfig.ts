@@ -3,7 +3,7 @@ import { ILogger } from '../ILogger';
 import { Logger } from '../Logger';
 
 export class FileDiconfig {
-    @Bean({ name: 'BeanName', scope: 'prototype' })
+    @Bean
     @Singleton
     logger(): ILogger {
         return new Logger();

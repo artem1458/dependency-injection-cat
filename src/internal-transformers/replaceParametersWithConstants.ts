@@ -1,13 +1,14 @@
 import * as ts from 'typescript';
-import { isMethodBean } from '../typescript-helpers/bean/isMethodBean';
+import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
 import { getFactoryDependencies } from '../factories/utils/getFactoryDependencies';
 import { typeIdQualifier } from '../typescript-helpers/type-id-qualifier';
 import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { getFactoryNameForNamespaceImport } from '../factories/utils/getFactoryNameForNamespaceImport';
 import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';
+import { parameterTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/parameter/parameterTypeIdQualifier';
 
-interface IParametersLight {
+interface IParameter extends ts.ParameterDeclaration {
     parameterName: string;
     typeId: string;
 }
@@ -17,12 +18,15 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
                 if (isMethodBean(node)) {
-                    const parameters: IParametersLight[] = node.parameters.map(it => {
+                    const parameters: IParameter[] = node.parameters.map(it => {
                         if (it.type === undefined) {
                             throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
                         }
 
+                        parameterTypeIdQualifier(it);
+
                         return {
+                            ...it,
                             parameterName: it.name.getText(),
                             typeId: typeIdQualifier(it.type).typeId,
                         };
@@ -73,7 +77,7 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
 
 function getConstantStatements(
     factoryId: string,
-    parameters: IParametersLight[],
+    parameters: IParameter[],
 ): ts.Statement[] {
     const factoryInDependencies = getFactoryDependencies(factoryId);
     const factoryOutDependencies = TypeRegisterRepository.getTypesByFactoryId(factoryId);
@@ -87,7 +91,7 @@ function getConstantStatements(
                 ts.createVariableDeclarationList(
                     [ts.createVariableDeclaration(
                         ts.createIdentifier(it.parameterName),
-                        undefined,
+                        it.type,
                         ts.createCall(
                             ts.createPropertyAccess(
                                 ts.createPropertyAccess(
@@ -109,7 +113,7 @@ function getConstantStatements(
                 ts.createVariableDeclarationList(
                     [ts.createVariableDeclaration(
                         ts.createIdentifier(it.parameterName),
-                        undefined,
+                        it.type,
                         ts.createCall(
                             ts.createPropertyAccess(
                                 ts.createPropertyAccess(

@@ -3,7 +3,7 @@ import { getNodeSourceDescriptorFromImports } from '../node-source-descriptor';
 import { libraryName } from '../../constants/libraryName';
 
 export function isMethodBean(node: ts.Node): node is ts.MethodDeclaration {
-    return ts.isMethodDeclaration(node) && !!node.decorators?.some(isBeanDecorator);
+    return ts.isMethodDeclaration(node) && Boolean(node.decorators?.some(isBeanDecorator));
 }
 
 export function isBeanDecorator(decoratorNode: ts.Decorator): boolean {

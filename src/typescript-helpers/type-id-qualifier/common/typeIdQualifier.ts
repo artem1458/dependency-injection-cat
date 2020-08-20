@@ -1,5 +1,4 @@
 import * as ts from 'typescript';
-import { isHasTypeNode } from '../isHasTypeNode';
 import { TypeQualifierError } from './TypeQualifierError';
 import { isTypeRestrictedOnTopLevel } from './utils/isTypeRestrictedOnTopLevel';
 import { isTypeReferenceNode } from './utils/isTypeReferenceNode';

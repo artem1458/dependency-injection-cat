@@ -12,7 +12,8 @@
     "build-dir-tests": "yarn run build && webpack",
     "build-dir-tests-watch": "yarn run build && webpack --watch",
     "start": "yarn run build && webpack-dev-server --open --inspect",
-    "start-no-open": "yarn run build && webpack-dev-server --inspect"
+    "start-no-open": "yarn run build && webpack-dev-server --inspect",
+    "start-no-open-debug": "webpack-dev-server --config webpack.config.debug.js --inspect"
   },
   "peerDependencies": {
     "typescript": "^3.9.5"

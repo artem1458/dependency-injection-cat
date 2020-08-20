@@ -1,8 +1,8 @@
-export const Singleton = <T extends Function>(
+export function Singleton<T extends Function>(
     target: any,
     propertyKey: string | symbol,
     descriptor: TypedPropertyDescriptor<T>,
-): TypedPropertyDescriptor<T> => {
+): TypedPropertyDescriptor<T> {
     let cached: any | undefined = undefined;
 
     return {
