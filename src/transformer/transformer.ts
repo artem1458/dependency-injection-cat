@@ -20,8 +20,6 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
     initContainer();
     initWatcher();
 
-    console.log(TypeRegisterRepository.repository)
-
     const typeChecker = program.getTypeChecker();
 
     return context => {

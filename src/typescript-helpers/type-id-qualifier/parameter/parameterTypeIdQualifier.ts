@@ -4,8 +4,9 @@ import { typeIdQualifier } from '../common/typeIdQualifier';
 import { isParameterQualifierDecorator } from '../../decorator-helpers/isParameterQualifierDecorator';
 import { removeQuotesFromString } from '../../../utils/removeQuotesFromString';
 import { END_QUALIFIER_TOKEN, START_QUALIFIER_TOKEN } from '../common/parseTokens';
+import { ITypeIdQualifierResult } from '../common/types';
 
-export function parameterTypeIdQualifier(parameter: ts.ParameterDeclaration): string {
+export function parameterTypeIdQualifier(parameter: ts.ParameterDeclaration): ITypeIdQualifierResult {
     if (parameter.type === undefined) {
         throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(parameter.parent as ts.MethodDeclaration));
     }
@@ -23,7 +24,7 @@ export function parameterTypeIdQualifier(parameter: ts.ParameterDeclaration): st
     });
 
     if (qualifierCallExpression === undefined) {
-        return baseType.typeId;
+        return baseType;
     }
 
     const parent = parameter.parent as ts.MethodDeclaration;
@@ -46,5 +47,8 @@ export function parameterTypeIdQualifier(parameter: ts.ParameterDeclaration): st
         throw new Error('Argument in @Qualifier should not be empty string' + getMethodLocationMessage(parent));
     }
 
-    return `${baseType.typeId}${START_QUALIFIER_TOKEN}${qualifier}${END_QUALIFIER_TOKEN}`;
+    return {
+        typeId: `${baseType.typeId}${START_QUALIFIER_TOKEN}${qualifier}${END_QUALIFIER_TOKEN}`,
+        originalTypeName: baseType.originalTypeName,
+    };
 }

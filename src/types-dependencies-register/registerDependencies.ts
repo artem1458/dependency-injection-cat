@@ -1,6 +1,11 @@
 import * as ts from 'typescript';
 import { DiConfigRepository } from '../di-config-repository';
-import { typeIdQualifier, TypeQualifierError } from '../typescript-helpers/type-id-qualifier';
+import {
+    methodBeanTypeIdQualifier,
+    parameterTypeIdQualifier,
+    typeIdQualifier,
+    TypeQualifierError
+} from '../typescript-helpers/type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { ProgramRepository } from '../program/ProgramRepository';
@@ -35,7 +40,7 @@ export function registerDependencies(): void {
                  }
 
                 try {
-                    const { typeId } = typeIdQualifier(parameter.type);
+                    const { typeId } = parameterTypeIdQualifier(parameter);
                     TypeRegisterRepository.checkTypeInRegister(typeId);
                     dependencies.push(typeId);
                 } catch (error) {
@@ -49,7 +54,7 @@ export function registerDependencies(): void {
                 }
             });
 
-            const { typeId: beanTypeId } = typeIdQualifier(node.type);
+            const { typeId: beanTypeId } = methodBeanTypeIdQualifier(node);
             TypeDependencyRepository.addDependencies(beanTypeId, ...dependencies);
         }
 

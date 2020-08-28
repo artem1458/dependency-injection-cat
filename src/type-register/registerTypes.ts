@@ -1,7 +1,10 @@
 import * as ts from 'typescript';
 import { DiConfigRepository } from '../di-config-repository';
 import { TypeRegisterRepository } from './TypeRegisterRepository';
-import { typeIdQualifier, TypeQualifierError } from '../typescript-helpers/type-id-qualifier';
+import {
+    methodBeanTypeIdQualifier,
+    TypeQualifierError
+} from '../typescript-helpers/type-id-qualifier';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
 import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
@@ -32,7 +35,7 @@ export function registerTypes(): void {
                     throw new Error('Configs must be a Named Class Declaration' + getMethodLocationMessage(node));
                 }
 
-                const { typeId, originalTypeName } = typeIdQualifier(node.type);
+                const { typeId, originalTypeName } = methodBeanTypeIdQualifier(node);
                 const configName = node.parent.name.getText();
                 const beanName = node.name.getText();
 

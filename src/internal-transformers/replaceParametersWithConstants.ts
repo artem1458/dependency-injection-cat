@@ -22,7 +22,7 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
                             throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
                         }
 
-                        const typeId = parameterTypeIdQualifier(it);
+                        const { typeId } = parameterTypeIdQualifier(it);
 
                         return {
                             ...it,
