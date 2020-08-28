@@ -1,5 +1,5 @@
-type TBeanScope = 'prototype' | 'singleton';
-type TBeanProps = {
+export type TBeanScope = 'prototype' | 'singleton';
+export interface IBeanInfo {
     scope?: TBeanScope;
     qualifier?: string;
 }
@@ -11,7 +11,7 @@ export function Bean<T>(
 ): void;
 
 export function Bean<T>(
-    beanProps: TBeanProps,
+    beanProps: IBeanInfo,
 ): typeof Bean;
 
 export function Bean<T>(...args: any[]) {

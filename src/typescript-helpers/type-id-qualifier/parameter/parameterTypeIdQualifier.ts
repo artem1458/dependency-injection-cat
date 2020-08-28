@@ -12,7 +12,6 @@ export function parameterTypeIdQualifier(parameter: ts.ParameterDeclaration): st
 
     const baseType = typeIdQualifier(parameter.type);
 
-
     let qualifierExpressionsCount = 0;
     let qualifierCallExpression: ts.CallExpression | undefined;
 
@@ -27,22 +26,24 @@ export function parameterTypeIdQualifier(parameter: ts.ParameterDeclaration): st
         return baseType.typeId;
     }
 
+    const parent = parameter.parent as ts.MethodDeclaration;
+
     if (qualifierExpressionsCount > 1) {
-        throw new Error('Parameter can not have more that 1 @Qualifier' + getMethodLocationMessage(parameter.parent as ts.MethodDeclaration));
+        throw new Error('Parameter can not have more that 1 @Qualifier' + getMethodLocationMessage(parent));
     }
 
     if (qualifierCallExpression.arguments.length === 0) {
-        throw new Error('You should pass argument to @Qualifier' + getMethodLocationMessage(parameter.parent as ts.MethodDeclaration));
+        throw new Error('You should pass argument to @Qualifier' + getMethodLocationMessage(parent));
     }
 
     if (!ts.isStringLiteral(qualifierCallExpression.arguments[0])) {
-        throw new Error('Argument in @Qualifier should be a string literal' + getMethodLocationMessage(parameter.parent as ts.MethodDeclaration));
+        throw new Error('Argument in @Qualifier should be a string literal' + getMethodLocationMessage(parent));
     }
 
     const qualifier = removeQuotesFromString(qualifierCallExpression.arguments[0].getText());
 
     if (qualifier === '') {
-        throw new Error('Argument in @Qualifier should not be empty string' + getMethodLocationMessage(parameter.parent as ts.MethodDeclaration));
+        throw new Error('Argument in @Qualifier should not be empty string' + getMethodLocationMessage(parent));
     }
 
     return `${baseType.typeId}${START_QUALIFIER_TOKEN}${qualifier}${END_QUALIFIER_TOKEN}`;

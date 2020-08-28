@@ -5,7 +5,7 @@ import { ConfigIdRepository } from '../factories/ConfigIdRepository';
 export class TypeRegisterRepository {
     static repository: Record<string, ITypeInfo | undefined> = {};
 
-    static registerType({ typeId, originalTypeName, configPath, configName, beanName }: IRegisterTypeProps): void {
+    static registerType({ typeId, originalTypeName, configPath, configName, beanName, beanInfo }: IRegisterTypeProps): void {
         if (TypeRegisterRepository.hasTypeInRegister(typeId)) {
             const { originalName } = TypeRegisterRepository.getTypeById(typeId);
             throw new Error(`It seems like you define config for type ${originalName} more than one time`);
@@ -18,6 +18,7 @@ export class TypeRegisterRepository {
             configId: ConfigIdRepository.getFactoryId(configPath),
             factoryName: configName,
             beanName,
+            beanInfo,
         }
 
         TypeRegisterRepository.repository[typeId] = typeInfo;

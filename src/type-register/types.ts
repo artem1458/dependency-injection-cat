@@ -1,3 +1,5 @@
+import { IBeanInfo } from '../decorators/Bean';
+
 export interface ITypeInfo {
     id: string;
     originalName: string;
@@ -5,6 +7,7 @@ export interface ITypeInfo {
     configPath: string;
     beanName: string;
     factoryName: string;
+    beanInfo: IBeanInfo;
 }
 
 export interface IRegisterTypeProps {
@@ -13,4 +16,5 @@ export interface IRegisterTypeProps {
     configPath: string;
     configName: string;
     beanName: string;
+    beanInfo: IBeanInfo;
 }

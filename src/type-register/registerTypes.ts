@@ -28,15 +28,12 @@ export function registerTypes(): void {
             }
 
             try {
-                const { typeId, originalTypeName } = typeIdQualifier(node.type);
-                let configName;
-
-                if (ts.isClassDeclaration(node.parent) && node.parent.name) {
-                    configName = node.parent.name?.getText();
-                } else {
+                if (!ts.isClassDeclaration(node.parent) || !node.parent.name) {
                     throw new Error('Configs must be a Named Class Declaration' + getMethodLocationMessage(node));
                 }
 
+                const { typeId, originalTypeName } = typeIdQualifier(node.type);
+                const configName = node.parent.name.getText();
                 const beanName = node.name.getText();
 
                 checkTypeForCorrectness(typeId);
@@ -46,6 +43,7 @@ export function registerTypes(): void {
                     configPath,
                     configName,
                     beanName,
+                    beanInfo: {},
                 });
             } catch (error) {
                 switch (error) {

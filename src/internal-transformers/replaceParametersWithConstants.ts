@@ -1,12 +1,11 @@
 import * as ts from 'typescript';
 import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
 import { getFactoryDependencies } from '../factories/utils/getFactoryDependencies';
-import { typeIdQualifier } from '../typescript-helpers/type-id-qualifier';
 import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { getFactoryNameForNamespaceImport } from '../factories/utils/getFactoryNameForNamespaceImport';
 import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';
-import { parameterTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/parameter/parameterTypeIdQualifier';
+import { parameterTypeIdQualifier } from '../typescript-helpers/type-id-qualifier';
 
 interface IParameter extends ts.ParameterDeclaration {
     parameterName: string;
