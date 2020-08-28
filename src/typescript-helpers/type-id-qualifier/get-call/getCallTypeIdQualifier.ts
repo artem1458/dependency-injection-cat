@@ -24,7 +24,7 @@ export function getCallTypeIdQualifier(callExpression: ts.CallExpression): IType
     const qualifier = removeQuotesFromString(firstArgument.getText());
 
     if (qualifier === '') {
-        throw new Error(`Bean name in container.get should not be empty string, ${callExpression.getText()}, ${callExpression.getSourceFile().fileName}`);
+        throw new Error(`Bean name should not be empty string, ${callExpression.getText()}, ${callExpression.getSourceFile().fileName}`);
     }
 
     return {

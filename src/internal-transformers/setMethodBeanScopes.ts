@@ -9,33 +9,33 @@ export const setMethodBeanScopes = (factoryContext: ICreateFactoriesContext): ts
     return sourceFile => {
         const visitor: ts.Visitor = (node: ts.Node) => {
             if (isMethodBean(node)) {
-                const { typeId } = methodBeanTypeIdQualifier(node);
+                const {typeId} = methodBeanTypeIdQualifier(node);
                 const typeInfo = TypeRegisterRepository.getTypeById(typeId);
 
-                if (typeInfo.beanInfo.scope !== 'singleton') {
-                    return node;
+                const scope = typeInfo.beanInfo.scope;
+
+                if (scope === 'singleton' || scope === undefined) {
+                    factoryContext.hasSingleton = true;
+
+                    const decorators = node.decorators || [];
+                    const decorator = ts.createDecorator(getPrivateIdentifier('Singleton'));
+
+                    return ts.updateMethod(
+                        node,
+                        [
+                            decorator,
+                            ...decorators,
+                        ],
+                        node.modifiers,
+                        node.asteriskToken,
+                        node.name,
+                        node.questionToken,
+                        node.typeParameters,
+                        node.parameters,
+                        node.type,
+                        node.body,
+                    );
                 }
-
-                factoryContext.hasSingleton = true;
-
-                const decorators = node.decorators || [];
-                const decorator = ts.createDecorator(getPrivateIdentifier('Singleton'));
-
-                return ts.updateMethod(
-                    node,
-                    [
-                        decorator,
-                        ...decorators,
-                    ],
-                    node.modifiers,
-                    node.asteriskToken,
-                    node.name,
-                    node.questionToken,
-                    node.typeParameters,
-                    node.parameters,
-                    node.type,
-                    node.body,
-                );
             }
 
             return ts.visitEachChild(node, visitor, context);

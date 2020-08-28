@@ -7,4 +7,9 @@ export class FileDiconfig {
     logger(): ILogger {
         return new Logger();
     }
+
+    @Bean({ scope: 'prototype' })
+    logger2(): ILogger {
+        return new Logger();
+    }
 }
