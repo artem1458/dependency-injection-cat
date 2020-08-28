@@ -9,6 +9,8 @@ import { ProgramRepository } from '../program/ProgramRepository';
 import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
 import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
 import { checkTypeForCorrectness } from '../typescript-helpers/type-id-qualifier/common/utils/checkTypeForCorrectness';
+import { isBeanDecorator } from '../typescript-helpers/decorator-helpers/isBeanDecorator';
+import { getMethodBeanInfo } from '../typescript-helpers/bean-info/getMethodBeanInfo';
 
 export function registerTypes(): void {
     const program = ProgramRepository.program;
@@ -38,6 +40,13 @@ export function registerTypes(): void {
                 const { typeId, originalTypeName } = methodBeanTypeIdQualifier(node);
                 const configName = node.parent.name.getText();
                 const beanName = node.name.getText();
+                const bean = node.decorators?.find(isBeanDecorator);
+
+                if (bean === undefined) {
+                    throw new Error('Bean method should have @Bean decorator (how is it possible?)' + getMethodLocationMessage(node));
+                }
+
+                const beanInfo = getMethodBeanInfo(bean);
 
                 checkTypeForCorrectness(typeId);
                 TypeRegisterRepository.registerType({
@@ -46,7 +55,7 @@ export function registerTypes(): void {
                     configPath,
                     configName,
                     beanName,
-                    beanInfo: {},
+                    beanInfo,
                 });
             } catch (error) {
                 switch (error) {

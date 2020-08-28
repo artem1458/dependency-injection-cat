@@ -1,10 +1,9 @@
-import { Bean, Singleton } from 'ts-pring';
+import { Bean } from 'ts-pring';
 import { ILogger } from '../ILogger';
 import { Logger } from '../Logger';
 
 export class FileDiconfig {
-    @Bean({ qualifier: '1234', scope: 'singleton' })
-    @Singleton
+    @Bean({ scope: 'singleton' })
     logger(): ILogger {
         return new Logger();
     }

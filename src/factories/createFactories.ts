@@ -9,12 +9,19 @@ import { makeFactorySingleton } from '../internal-transformers/makeFactorySingle
 import { getImportsForFactory } from './utils/getImportsForFactory';
 import { addImportsInFactory } from '../internal-transformers/addImportsInFactory';
 import { replaceParametersWithConstants } from '../internal-transformers/replaceParametersWithConstants';
+import { setMethodBeanScopes } from '../internal-transformers/setMethodBeanScopes';
+import { ICreateFactoriesContext } from './ICreateFactoriesContext';
+import { getImportForSingleton } from './utils/getImportForSingleton';
 
 export function createFactories(): void {
     const program = ProgramRepository.program;
     const printer = ts.createPrinter();
 
     DiConfigRepository.data.forEach(filePath => {
+        const context: ICreateFactoriesContext = {
+            hasSingleton: false,
+        };
+
         const path = filePath as ts.Path;
         const sourceFile = program.getSourceFileByPath(path);
 
@@ -28,8 +35,9 @@ export function createFactories(): void {
         const newSourceFile = ts.transform(sourceFile, [
             absolutizeImports(filePath),
             makeFactorySingleton,
-            addImportsInFactory(imports),
-            replaceParametersWithConstants(factoryId)
+            replaceParametersWithConstants(factoryId),
+            setMethodBeanScopes(context),
+            addImportsInFactory(imports, context),
         ]);
 
         fs.writeFile(getFactoryPath(factoryId), printer.printFile(newSourceFile.transformed[0]), (err) => {

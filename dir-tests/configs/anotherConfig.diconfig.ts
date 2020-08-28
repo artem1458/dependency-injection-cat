@@ -7,7 +7,7 @@ export class AnotherConfigDiconfig {
     @Bean
     @Singleton
     requester(
-        @Qualifier('1234') logger: ILogger,
+        logger: ILogger,
     ): IRequester {
         return new Requester(logger);
     }
