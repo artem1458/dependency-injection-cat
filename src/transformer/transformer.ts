@@ -2,7 +2,6 @@ import * as ts from 'typescript';
 import { initTransformerConfig, ITransformerConfig } from '../transformer-config';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { isContainerGetCall } from '../typescript-helpers/container-call/isContainerGetCall';
-import { typeIdQualifier } from '../typescript-helpers/type-id-qualifier';
 import { getFactoryNameForNamespaceImport } from '../factories/utils/getFactoryNameForNamespaceImport';
 import { getConfigPathWithoutExtension } from '../factories/utils/getConfigPathWithoutExtension';
 import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';

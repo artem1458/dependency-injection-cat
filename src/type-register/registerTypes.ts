@@ -7,10 +7,11 @@ import {
 } from '../typescript-helpers/type-id-qualifier';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
-import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
+import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMemberLocationMessage';
 import { checkTypeForCorrectness } from '../typescript-helpers/type-id-qualifier/common/utils/checkTypeForCorrectness';
 import { isBeanDecorator } from '../typescript-helpers/decorator-helpers/isBeanDecorator';
 import { getMethodBeanInfo } from '../typescript-helpers/bean-info/getMethodBeanInfo';
+import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
 
 export function registerTypes(): void {
     const program = ProgramRepository.program;
@@ -27,14 +28,16 @@ export function registerTypes(): void {
     });
 
     function travelSourceFile(node: ts.Node, configPath: string): void {
+        isClassPropertyBean(node);
+
         if (isMethodBean(node)) {
             if (node.type === undefined) {
-                throw new Error('Bean should have return type' + getMethodLocationMessage(node));
+                throw new Error('Bean should have return type' + getClassMemberLocationMessage(node));
             }
 
             try {
                 if (!ts.isClassDeclaration(node.parent) || !node.parent.name) {
-                    throw new Error('Configs must be a Named Class Declaration' + getMethodLocationMessage(node));
+                    throw new Error('Configs must be a Named Class Declaration' + getClassMemberLocationMessage(node));
                 }
 
                 const { typeId, originalTypeName } = methodBeanTypeIdQualifier(node);
@@ -43,7 +46,7 @@ export function registerTypes(): void {
                 const bean = node.decorators?.find(isBeanDecorator);
 
                 if (bean === undefined) {
-                    throw new Error('Bean method should have @Bean decorator (how is it possible?)' + getMethodLocationMessage(node));
+                    throw new Error('Bean method should have @Bean decorator (how is it possible?)' + getClassMemberLocationMessage(node));
                 }
 
                 const beanInfo = getMethodBeanInfo(bean);
@@ -60,10 +63,10 @@ export function registerTypes(): void {
             } catch (error) {
                 switch (error) {
                     case TypeQualifierError.TypeIsPrimitive:
-                        throw new Error('Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
+                        throw new Error('Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
 
                     case TypeQualifierError.CanNotGenerateType:
-                        throw new Error('Can not generate type for' + getMethodLocationMessage(node));
+                        throw new Error('Can not generate type for' + getClassMemberLocationMessage(node));
 
                     default:
                         throw new Error(error);

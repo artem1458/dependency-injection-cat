@@ -6,17 +6,17 @@ import { isBeanDecorator } from '../../decorator-helpers/isBeanDecorator';
 import { getMethodBeanInfo } from '../../bean-info/getMethodBeanInfo';
 import { END_QUALIFIER_TOKEN, START_QUALIFIER_TOKEN } from '../common/parseTokens';
 
-export function methodBeanTypeIdQualifier(method: ts.MethodDeclaration): ITypeIdQualifierResult {
-    if (method.type === undefined) {
-        throw new Error('Bean should should have a type' + getClassMemberLocationMessage(method));
+export function classPropertyBeanTypeIdQualifier(property: ts.PropertyDeclaration): ITypeIdQualifierResult {
+    if (property.type === undefined) {
+        throw new Error('Bean should should have a type' + getClassMemberLocationMessage(property));
     }
 
-    const baseType = typeIdQualifier(method.type);
+    const baseType = typeIdQualifier(property.type);
 
     let beansDecoratorsCount = 0;
     let bean: ts.Decorator | undefined = undefined;
 
-    method.decorators?.forEach(it => {
+    property.decorators?.forEach(it => {
         if (isBeanDecorator(it)) {
             beansDecoratorsCount++;
             bean = it;
@@ -24,11 +24,11 @@ export function methodBeanTypeIdQualifier(method: ts.MethodDeclaration): ITypeId
     });
 
     if (beansDecoratorsCount === 0 || bean === undefined) {
-        throw new Error('Bean method should have @Bean decorator (how is it possible?)' + getClassMemberLocationMessage(method));
+        throw new Error('Bean method should have @Bean decorator (how is it possible?)' + getClassMemberLocationMessage(property));
     }
 
     if (beansDecoratorsCount > 1) {
-        throw new Error('Bean method should have only 1 @Bean decorator' + getClassMemberLocationMessage(method));
+        throw new Error('Bean method should have only 1 @Bean decorator' + getClassMemberLocationMessage(property));
     }
 
     const beanInfo = getMethodBeanInfo(bean);

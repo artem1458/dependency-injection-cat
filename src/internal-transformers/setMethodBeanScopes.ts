@@ -5,7 +5,9 @@ import { methodBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifi
 import { ICreateFactoriesContext } from '../factories/ICreateFactoriesContext';
 import { getPrivateIdentifier } from '../typescript-helpers/getPrivateIdentifier';
 
-export const setMethodBeanScopes = (factoryContext: ICreateFactoriesContext): ts.TransformerFactory<ts.SourceFile> => context => {
+export const setMethodBeanScopes = (
+    factoryContext: ICreateFactoriesContext,
+): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
         const visitor: ts.Visitor = (node: ts.Node) => {
             if (isMethodBean(node)) {

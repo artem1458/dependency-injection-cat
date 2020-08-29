@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { getMethodLocationMessage } from '../../getMethodLocationMessage';
+import { getClassMemberLocationMessage } from '../../getClassMemberLocationMessage';
 import { typeIdQualifier } from '../common/typeIdQualifier';
 import { isParameterQualifierDecorator } from '../../decorator-helpers/isParameterQualifierDecorator';
 import { removeQuotesFromString } from '../../../utils/removeQuotesFromString';
@@ -8,7 +8,7 @@ import { ITypeIdQualifierResult } from '../common/types';
 
 export function parameterTypeIdQualifier(parameter: ts.ParameterDeclaration): ITypeIdQualifierResult {
     if (parameter.type === undefined) {
-        throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(parameter.parent as ts.MethodDeclaration));
+        throw new Error('All parameters in Bean should have type' + getClassMemberLocationMessage(parameter.parent as ts.MethodDeclaration));
     }
 
     const baseType = typeIdQualifier(parameter.type);
@@ -30,21 +30,21 @@ export function parameterTypeIdQualifier(parameter: ts.ParameterDeclaration): IT
     const parent = parameter.parent as ts.MethodDeclaration;
 
     if (qualifierExpressionsCount > 1) {
-        throw new Error('Parameter can not have more that 1 @Qualifier' + getMethodLocationMessage(parent));
+        throw new Error('Parameter can not have more that 1 @Qualifier' + getClassMemberLocationMessage(parent));
     }
 
     if (qualifierCallExpression.arguments.length === 0) {
-        throw new Error('You should pass argument to @Qualifier' + getMethodLocationMessage(parent));
+        throw new Error('You should pass argument to @Qualifier' + getClassMemberLocationMessage(parent));
     }
 
     if (!ts.isStringLiteral(qualifierCallExpression.arguments[0])) {
-        throw new Error('Argument in @Qualifier should be a string literal' + getMethodLocationMessage(parent));
+        throw new Error('Argument in @Qualifier should be a string literal' + getClassMemberLocationMessage(parent));
     }
 
     const qualifier = removeQuotesFromString(qualifierCallExpression.arguments[0].getText());
 
     if (qualifier === '') {
-        throw new Error('Argument in @Qualifier should not be empty string' + getMethodLocationMessage(parent));
+        throw new Error('Argument in @Qualifier should not be empty string' + getClassMemberLocationMessage(parent));
     }
 
     return {

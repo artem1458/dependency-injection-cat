@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
 import { getFactoryDependencies } from '../factories/utils/getFactoryDependencies';
-import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
+import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMemberLocationMessage';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { getFactoryNameForNamespaceImport } from '../factories/utils/getFactoryNameForNamespaceImport';
 import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';
@@ -19,7 +19,7 @@ export const replaceParametersWithConstants = (factoryId: string): ts.Transforme
                 if (isMethodBean(node)) {
                     const parameters: IParameter[] = node.parameters.map(it => {
                         if (it.type === undefined) {
-                            throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
+                            throw new Error('All parameters in Bean should have type' + getClassMemberLocationMessage(node));
                         }
 
                         const { typeId } = parameterTypeIdQualifier(it);

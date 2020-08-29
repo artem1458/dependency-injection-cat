@@ -1,7 +1,8 @@
 import * as ts from 'typescript';
 import { getNodeSourceDescriptorFromImports } from '../node-source-descriptor';
 import { libraryName } from '../../constants/libraryName';
-import { getMethodBeanInfo } from '../bean-info/getMethodBeanInfo';
+
+const BeanName = 'Bean';
 
 export function isBeanDecorator(decorator: ts.Decorator): boolean {
     let nameToFind: string | undefined = undefined;
@@ -26,9 +27,5 @@ export function isBeanDecorator(decorator: ts.Decorator): boolean {
         return false;
     }
 
-    if (sourceDescriptor.name === 'Bean' && sourceDescriptor.path === libraryName) {
-        const aaa = getMethodBeanInfo(decorator);
-    }
-
-    return sourceDescriptor.name === 'Bean' && sourceDescriptor.path === libraryName;
+    return sourceDescriptor.name === BeanName && sourceDescriptor.path === libraryName;
 }

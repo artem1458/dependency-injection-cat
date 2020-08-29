@@ -1,3 +1,2 @@
-export { Bean } from './Bean';
-export { Singleton } from './Singleton';
+export { Bean, TClassConstructor } from './Bean';
 export { Qualifier } from './Qualifier';

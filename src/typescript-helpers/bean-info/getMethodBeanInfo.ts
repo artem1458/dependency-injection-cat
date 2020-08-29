@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { IBeanInfo, TBeanScope } from '../../decorators/Bean';
 import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
-import { getMethodLocationMessage } from '../getMethodLocationMessage';
+import { getClassMemberLocationMessage } from '../getClassMemberLocationMessage';
 
 const scopes: Array<string | undefined> = ['singleton', 'prototype', undefined];
 
@@ -18,7 +18,7 @@ export function getMethodBeanInfo(bean: ts.Decorator): IBeanInfo {
         const firstArg = expression.arguments[0];
 
         if (!ts.isObjectLiteralExpression(firstArg)) {
-            throw new Error('Argument in bean should be object literal' + getMethodLocationMessage(method));
+            throw new Error('Argument in bean should be object literal' + getClassMemberLocationMessage(method));
         }
 
         return {
@@ -40,7 +40,7 @@ function getQualifierValue(expression: ts.ObjectLiteralExpression, method: ts.Me
 
     if (ts.isPropertyAssignment(qualifierNode)) {
         if (!ts.isStringLiteral(qualifierNode.initializer)) {
-            throw new Error('Qualifier in bean should be a string literal' + getMethodLocationMessage(method));
+            throw new Error('Qualifier in bean should be a string literal' + getClassMemberLocationMessage(method));
         }
 
         qualifierValue = removeQuotesFromString(qualifierNode.initializer.getText());
@@ -59,14 +59,14 @@ function getScopeValue(expression: ts.ObjectLiteralExpression, method: ts.Method
 
     if (ts.isPropertyAssignment(scopeNode)) {
         if (!ts.isStringLiteral(scopeNode.initializer)) {
-            throw new Error('Scope in bean should be a string literal' + getMethodLocationMessage(method));
+            throw new Error('Scope in bean should be a string literal' + getClassMemberLocationMessage(method));
         }
 
         scopeValue = removeQuotesFromString(scopeNode.initializer.getText());
     }
 
     if (!scopes.includes(scopeValue)) {
-        throw new Error('Scope in bean should be a "prototype" or "singleton"' + getMethodLocationMessage(method));
+        throw new Error('Scope in bean should be a "prototype" or "singleton"' + getClassMemberLocationMessage(method));
     }
 
     return scopeValue as TBeanScope | undefined;

@@ -3,14 +3,13 @@ import { DiConfigRepository } from '../di-config-repository';
 import {
     methodBeanTypeIdQualifier,
     parameterTypeIdQualifier,
-    typeIdQualifier,
     TypeQualifierError
 } from '../typescript-helpers/type-id-qualifier';
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { ProgramRepository } from '../program/ProgramRepository';
 import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
-import { getMethodLocationMessage } from '../typescript-helpers/getMethodLocationMessage';
+import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMemberLocationMessage';
 
 export function registerDependencies(): void {
     const program = ProgramRepository.program;
@@ -29,14 +28,14 @@ export function registerDependencies(): void {
     function travelSourceFile(node: ts.Node): void {
         if (isMethodBean(node)) {
             if (node.type === undefined) {
-                throw new Error('Bean should have return type' + getMethodLocationMessage(node));
+                throw new Error('Bean should have return type' + getClassMemberLocationMessage(node));
             }
 
             const dependencies: Array<string> = [];
 
             node.parameters.forEach(parameter => {
                  if (parameter.type === undefined) {
-                     throw new Error('All parameters in Bean should have type' + getMethodLocationMessage(node));
+                     throw new Error('All parameters in Bean should have type' + getClassMemberLocationMessage(node));
                  }
 
                 try {
@@ -46,7 +45,7 @@ export function registerDependencies(): void {
                 } catch (error) {
                     switch (error) {
                         case TypeQualifierError.TypeIsPrimitive:
-                            throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getMethodLocationMessage(node));
+                            throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
 
                         default:
                             throw new Error(error);
