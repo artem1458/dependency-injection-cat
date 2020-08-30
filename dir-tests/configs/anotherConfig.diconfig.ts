@@ -4,9 +4,9 @@ import { Requester } from '../Requester';
 import { ILogger } from '../ILogger';
 
 export class AnotherConfigDiconfig {
-    @Bean
+    @Bean({ qualifier: '123' })
     requester(
-        @Qualifier('Loggger') logger: ILogger,
+        @Qualifier('consoleLogger') logger: ILogger,
     ): IRequester {
         return new Requester(logger);
     }

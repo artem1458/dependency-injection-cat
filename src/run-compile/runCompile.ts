@@ -5,7 +5,7 @@ import { registerTypes } from '../type-register/registerTypes';
 import { registerDependencies } from '../types-dependencies-register/registerDependencies';
 import { createFactories } from '../factories/createFactories';
 
-export const runCompile = ((): void => {
+export const runCompile = (): void => {
     TypeRegisterRepository.clearRepository();
     TypeDependencyRepository.clearRepository();
     ProgramRepository.initProgram();
@@ -13,4 +13,4 @@ export const runCompile = ((): void => {
     registerTypes();
     registerDependencies();
     createFactories();
-});
+};

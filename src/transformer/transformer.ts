@@ -20,8 +20,6 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
     initContainer();
     initWatcher();
 
-    console.log(TypeRegisterRepository.repository)
-
     const typeChecker = program.getTypeChecker();
 
     return context => {
@@ -35,6 +33,7 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
                     }
 
                     const type = getCallTypeIdQualifier(node);
+                    console.log(type);
 
                     const typeInfo = TypeRegisterRepository.getTypeById(type.typeId);
 
