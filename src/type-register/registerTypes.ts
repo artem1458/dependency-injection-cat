@@ -12,6 +12,8 @@ import { checkTypeForCorrectness } from '../typescript-helpers/type-id-qualifier
 import { isBeanDecorator } from '../typescript-helpers/decorator-helpers/isBeanDecorator';
 import { getMethodBeanInfo } from '../typescript-helpers/bean-info/getMethodBeanInfo';
 import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
+import { classPropertyBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/class-property-bean/classPropertyBeanTypeIdQualifier';
+import { getPropertyBeanInfo } from '../typescript-helpers/bean-info/getPropertyBeanInfo';
 
 export function registerTypes(): void {
     const program = ProgramRepository.program;
@@ -31,10 +33,6 @@ export function registerTypes(): void {
         isClassPropertyBean(node);
 
         if (isMethodBean(node)) {
-            if (node.type === undefined) {
-                throw new Error('Bean should have return type' + getClassMemberLocationMessage(node));
-            }
-
             try {
                 if (!ts.isClassDeclaration(node.parent) || !node.parent.name) {
                     throw new Error('Configs must be a Named Class Declaration' + getClassMemberLocationMessage(node));
@@ -69,7 +67,47 @@ export function registerTypes(): void {
                         throw new Error('Can not generate type for' + getClassMemberLocationMessage(node));
 
                     default:
-                        throw new Error(error);
+                        throw error;
+                }
+            }
+        }
+
+        if (isClassPropertyBean(node)) {
+            try {
+                if (!ts.isClassDeclaration(node.parent) || !node.parent.name) {
+                    throw new Error('Configs must be a Named Class Declaration' + getClassMemberLocationMessage(node));
+                }
+
+                const { typeId, originalTypeName } = classPropertyBeanTypeIdQualifier(node);
+                const configName = node.parent.name.getText();
+                const beanName = node.name.getText();
+                const beanExpression = node.initializer;
+
+                if (beanExpression === undefined) {
+                    throw new Error('Bean property should have @Bean decorator (how is it possible?)' + getClassMemberLocationMessage(node));
+                }
+
+                const beanInfo = getPropertyBeanInfo(beanExpression);
+
+                checkTypeForCorrectness(typeId);
+                TypeRegisterRepository.registerType({
+                    typeId,
+                    originalTypeName,
+                    configPath,
+                    configName,
+                    beanName,
+                    beanInfo,
+                });
+            } catch (error) {
+                switch (error) {
+                    case TypeQualifierError.TypeIsPrimitive:
+                        throw new Error('Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
+
+                    case TypeQualifierError.CanNotGenerateType:
+                        throw new Error('Can not generate type for' + getClassMemberLocationMessage(node));
+
+                    default:
+                        throw error;
                 }
             }
         }

@@ -7,6 +7,8 @@ import {
     NodeArray,
     TypeNode,
     TypeReferenceNode,
+    PropertyDeclaration,
+    CallExpression,
 } from 'typescript';
 
 export type TAvailableTypes =
@@ -33,4 +35,8 @@ export interface ITypeReferenceNode extends TypeReferenceNode {
 export interface ITypeIdQualifierResult {
     originalTypeName: string;
     typeId: string;
+}
+
+export interface IClassPropertyDeclaration extends PropertyDeclaration {
+    initializer: CallExpression;
 }

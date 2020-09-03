@@ -5,6 +5,7 @@ import { isTypeReferenceNode } from './utils/isTypeReferenceNode';
 import { typeIdQualifierBase } from './typeIdQualifierBase';
 import { typeKeywords, typeKeywordsDictionary } from './constants';
 import {
+    ARRAY_TYPE_TOKEN,
     CLOSE_TYPE_ARGUMENTS_TOKEN,
     OPEN_TYPE_ARGUMENTS_TOKEN,
     TUPLE_TYPE_TOKEN,
@@ -20,8 +21,18 @@ export function typeIdQualifier(typeNode: ts.TypeNode): ITypeIdQualifierResult {
 }
 
 function getTypesNameDeep(node: ts.Node, prevType: string = '', deepness: number = 0): string {
+    if (deepness === 0 && typeKeywords.includes(node.kind)) {
+        throw new Error(TypeQualifierError.TypeIsPrimitive);
+    }
+
     if (typeKeywords.includes(node.kind)) {
         return typeKeywordsDictionary[node.kind];
+    }
+
+    if (ts.isArrayTypeNode(node)) {
+        const nodeName = getTypesNameDeep(node.elementType, prevType, deepness);
+
+        return `${nodeName}${ARRAY_TYPE_TOKEN}`;
     }
 
     if (ts.isUnionTypeNode(node)) {

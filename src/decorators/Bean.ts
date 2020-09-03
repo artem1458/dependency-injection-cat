@@ -16,6 +16,11 @@ export function Bean<T>(
 ): typeof Bean;
 
 export function Bean<T>(
+    classIml: TClassConstructor<T>,
+    beanProps?: IBeanInfo,
+): T;
+
+export function Bean<T>(
     target: any,
     propertyKey: string | symbol,
 ): void;

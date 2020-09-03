@@ -22,6 +22,8 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
 
     const typeChecker = program.getTypeChecker();
 
+    console.log(TypeRegisterRepository.repository)
+
     return context => {
         return sourceFile => {
             let imports: ts.ImportDeclaration[] = [];
@@ -33,7 +35,6 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
                     }
 
                     const type = getCallTypeIdQualifier(node);
-                    console.log(type);
 
                     const typeInfo = TypeRegisterRepository.getTypeById(type.typeId);
 
