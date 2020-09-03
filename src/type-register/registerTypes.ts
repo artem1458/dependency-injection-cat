@@ -84,7 +84,7 @@ export function registerTypes(): void {
                 const beanExpression = node.initializer;
 
                 if (beanExpression === undefined) {
-                    throw new Error('Bean property should have @Bean decorator (how is it possible?)' + getClassMemberLocationMessage(node));
+                    throw new Error('Bean property should have Bean call expression (how is it possible?)' + getClassMemberLocationMessage(node));
                 }
 
                 const beanInfo = getPropertyBeanInfo(beanExpression);

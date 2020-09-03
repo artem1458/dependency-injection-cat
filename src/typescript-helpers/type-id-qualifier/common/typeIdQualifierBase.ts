@@ -1,8 +1,8 @@
 import * as ts from 'typescript';
 import { TypeQualifierError } from './TypeQualifierError';
 import { getNodeSourceDescriptorFromImports, ImportType } from '../../node-source-descriptor';
-import { getTypeSourceDescriptorFromTopStatements } from './getTypeSourceDescriptorFromTopStatements';
 import { END_PATH_TOKEN, START_PATH_TOKEN } from './parseTokens';
+import { getTypeSourceDescriptorFromTopStatements } from '../../node-source-descriptor';
 
 export function typeIdQualifierBase(node: ts.TypeReferenceNode): string {
     if (node.typeName === undefined) {

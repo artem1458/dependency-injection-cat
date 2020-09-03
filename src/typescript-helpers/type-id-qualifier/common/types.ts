@@ -37,6 +37,6 @@ export interface ITypeIdQualifierResult {
     typeId: string;
 }
 
-export interface IClassPropertyDeclaration extends PropertyDeclaration {
+export interface IClassPropertyDeclarationWithInitializer extends PropertyDeclaration {
     initializer: CallExpression;
 }

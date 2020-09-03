@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
+import { INodeSourceDescriptor } from './types';
+import { TNamedAvailableTypes } from '../type-id-qualifier/common/types';
 import { get } from 'lodash';
-import { TNamedAvailableTypes } from './types';
-import { INodeSourceDescriptor } from '../../node-source-descriptor/types';
 
 export function getTypeSourceDescriptorFromTopStatements(sourceFile: ts.SourceFile, nameToFind: string): INodeSourceDescriptor | undefined {
     const statement = sourceFile.statements.filter(isNamedExportStatement).find(it => it.name.escapedText === nameToFind);
