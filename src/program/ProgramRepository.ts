@@ -7,7 +7,7 @@ export class ProgramRepository {
 
     static initProgram(): void {
         const newProgram = createProgram(DiConfigRepository.data, CompilerOptionsProvider.options);
-        //CRUTCH???
+        //SETTING PARENT PROPERTY OF ALL NODES
         newProgram.getTypeChecker();
         ProgramRepository._program = newProgram;
     }

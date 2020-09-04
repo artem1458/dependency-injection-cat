@@ -11,6 +11,7 @@ import { PathResolver } from '../typescript-helpers/path-resolver/PathResolver';
 import { clearFactoriesDir } from '../factories/clearFactoriesDir';
 import { initWatcher } from '../watcher/initWatcher';
 import { getCallTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/get-call/getCallTypeIdQualifier';
+import { TypeDependencyRepository } from '../types-dependencies-register/TypeDependencyRepository';
 
 const transformer = (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
     clearFactoriesDir();
@@ -22,7 +23,7 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
 
     const typeChecker = program.getTypeChecker();
 
-    console.log(TypeRegisterRepository.repository)
+    console.log(TypeDependencyRepository.graph.g)
 
     return context => {
         return sourceFile => {

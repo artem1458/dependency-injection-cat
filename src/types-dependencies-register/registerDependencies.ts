@@ -81,6 +81,8 @@ function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): A
     }
 
     const program = createProgram([importSourceDescriptor.path], CompilerOptionsProvider.options);
+    //SETTING PARENT PROPERTY OF ALL NODES
+    program.getTypeChecker();
     const file = program.getSourceFile(importSourceDescriptor.path);
 
     if (file === undefined) {
@@ -123,7 +125,7 @@ function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): A
         } catch (error) {
             switch (error) {
                 case TypeQualifierError.TypeIsPrimitive:
-                    throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(classConstructor));
+                    throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(constructor));
 
                 default:
                     throw error;
