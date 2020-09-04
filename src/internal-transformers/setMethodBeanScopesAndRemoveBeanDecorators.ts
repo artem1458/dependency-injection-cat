@@ -4,8 +4,9 @@ import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository'
 import { methodBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier';
 import { ICreateFactoriesContext } from '../factories/ICreateFactoriesContext';
 import { getPrivateIdentifier } from '../typescript-helpers/getPrivateIdentifier';
+import { isBeanDecorator } from '../typescript-helpers/decorator-helpers/isBeanDecorator';
 
-export const setMethodBeanScopes = (
+export const setMethodBeanScopesAndRemoveBeanDecorators = (
     factoryContext: ICreateFactoriesContext,
 ): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
@@ -19,7 +20,7 @@ export const setMethodBeanScopes = (
                 if (scope === 'singleton' || scope === undefined) {
                     factoryContext.hasSingleton = true;
 
-                    const decorators = node.decorators || [];
+                    const decorators = node.decorators?.filter(it => !isBeanDecorator(it)) || [];
                     const decorator = ts.createDecorator(getPrivateIdentifier('Singleton'));
 
                     return ts.updateMethod(

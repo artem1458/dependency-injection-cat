@@ -31,12 +31,7 @@
     ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@src/*": [
-        "src/*"
-      ]
-    }
+    "baseUrl": "."
   },
   "include": [
     "./src"

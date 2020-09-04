@@ -2,7 +2,7 @@ import { Bean } from 'ts-pring';
 import { ILogger } from '../ILogger';
 import { Logger } from '../Logger';
 import { IRequester } from '../IRequester';
-import { Requester } from '@src/../dir-tests/Requester';
+import { Requester } from '../Requester';
 
 export class FileDiconfig {
     someBean = Bean<IRequester>(Requester, { qualifier: 'erer' });

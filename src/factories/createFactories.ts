@@ -9,9 +9,8 @@ import { makeFactorySingleton } from '../internal-transformers/makeFactorySingle
 import { getImportsForFactory } from './utils/getImportsForFactory';
 import { addImportsInFactory } from '../internal-transformers/addImportsInFactory';
 import { replaceParametersWithConstants } from '../internal-transformers/replaceParametersWithConstants';
-import { setMethodBeanScopes } from '../internal-transformers/setMethodBeanScopes';
+import { setMethodBeanScopesAndRemoveBeanDecorators } from '../internal-transformers/setMethodBeanScopesAndRemoveBeanDecorators';
 import { ICreateFactoriesContext } from './ICreateFactoriesContext';
-import { getImportForSingleton } from './utils/getImportForSingleton';
 
 export function createFactories(): void {
     const program = ProgramRepository.program;
@@ -36,7 +35,7 @@ export function createFactories(): void {
             absolutizeImports(filePath),
             makeFactorySingleton,
             replaceParametersWithConstants(factoryId),
-            setMethodBeanScopes(context),
+            setMethodBeanScopesAndRemoveBeanDecorators(context),
             addImportsInFactory(imports, context),
         ]);
 
