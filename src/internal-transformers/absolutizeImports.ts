@@ -14,12 +14,15 @@ export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory
                     }
 
                     const importPath = removeQuotesFromString(node.moduleSpecifier.getText());
+                    const resolvedPath = PathResolver.resolve(sourceFilePath, importPath);
+                    const pathWithoutExtension = resolvedPath.replace(/\.[^/.]+$/, "");
+
                     return ts.updateImportDeclaration(
                         node,
                         node.decorators,
                         node.modifiers,
                         node.importClause,
-                        ts.createLiteral(PathResolver.resolve(sourceFilePath, importPath)),
+                        ts.createLiteral(pathWithoutExtension),
                     );
                 }
 

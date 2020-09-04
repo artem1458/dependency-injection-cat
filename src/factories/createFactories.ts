@@ -11,6 +11,7 @@ import { addImportsInFactory } from '../internal-transformers/addImportsInFactor
 import { replaceParametersWithConstants } from '../internal-transformers/replaceParametersWithConstants';
 import { setMethodBeanScopesAndRemoveBeanDecorators } from '../internal-transformers/setMethodBeanScopesAndRemoveBeanDecorators';
 import { ICreateFactoriesContext } from './ICreateFactoriesContext';
+import { replaceClassPropertyBean } from '../internal-transformers/replaceClassPropertyBean';
 
 export function createFactories(): void {
     const program = ProgramRepository.program;
@@ -37,6 +38,7 @@ export function createFactories(): void {
             replaceParametersWithConstants(factoryId),
             setMethodBeanScopesAndRemoveBeanDecorators(context),
             addImportsInFactory(imports, context),
+            replaceClassPropertyBean(factoryId),
         ]);
 
         fs.writeFile(getFactoryPath(factoryId), printer.printFile(newSourceFile.transformed[0]), (err) => {
