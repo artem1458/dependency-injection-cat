@@ -5,7 +5,7 @@ import { IRequester } from '../IRequester';
 import { Requester } from '../Requester';
 
 export class FileDiconfig {
-    someBean = Bean<IRequester>(Requester, { qualifier: 'erer' });
+    someBean = Bean<IRequester>(Requester, { qualifier: 'SuperCoolRequester', scope: 'singleton' });
     someBean2 = Bean<IRequester>(Requester, { qualifier: 'prototype' });
 
     @Bean({ qualifier: 'consoleLogger' })

@@ -1,9 +1,7 @@
 import { container } from 'ts-pring';
-import { ILogger } from './ILogger';
 import { IRequester } from './IRequester';
 
-const logger = container.get<IRequester>('123');
-const logger2 = container.get<IRequester>('123');
+const requester0 = container.get<IRequester>('SuperCoolRequester');
+const requester1 = container.get<IRequester>('SuperCoolRequester');
 
-console.log(logger);
-console.log(logger === logger2, 'Logger 1 is equal to 2');
+console.log(requester0 === requester1, 'Logger 1 is equal to 2');

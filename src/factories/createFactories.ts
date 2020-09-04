@@ -37,8 +37,8 @@ export function createFactories(): void {
             makeFactorySingleton,
             replaceParametersWithConstants(factoryId),
             setMethodBeanScopesAndRemoveBeanDecorators(context),
+            replaceClassPropertyBean(factoryId, context),
             addImportsInFactory(imports, context),
-            replaceClassPropertyBean(factoryId),
         ]);
 
         fs.writeFile(getFactoryPath(factoryId), printer.printFile(newSourceFile.transformed[0]), (err) => {

@@ -26,13 +26,13 @@ export function Bean<T>(
 ): void;
 
 export function Bean<T>(...args: any[]) {
-    if (args.length > 1) {
-        return;
-    }
+    throw new Error('Trying to use Bean property without configured di-container, or not in class');
 
     return function (
         target: any,
         propertyKey: string | symbol,
         descriptor: TypedPropertyDescriptor<T>,
-    ): void {}
+    ): void {
+        throw new Error('Trying to use Bean property without configured di-container, or not in class');
+    }
 }

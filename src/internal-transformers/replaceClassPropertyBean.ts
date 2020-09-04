@@ -6,8 +6,10 @@ import { classPropertyBeanTypeIdQualifier } from '../typescript-helpers/type-id-
 import { TypeDependencyRepository } from '../types-dependencies-register/TypeDependencyRepository';
 import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';
 import { getFactoryNameForNamespaceImport } from '../factories/utils/getFactoryNameForNamespaceImport';
+import { ICreateFactoriesContext } from '../factories/ICreateFactoriesContext';
+import { getPrivateIdentifier } from '../typescript-helpers/getPrivateIdentifier';
 
-export const replaceClassPropertyBean = (factoryId: string): ts.TransformerFactory<ts.SourceFile> =>
+export const replaceClassPropertyBean = (factoryId: string, factoryContext: ICreateFactoriesContext): ts.TransformerFactory<ts.SourceFile> =>
     context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
@@ -15,11 +17,20 @@ export const replaceClassPropertyBean = (factoryId: string): ts.TransformerFacto
                     const nodeTypeArguments = node.initializer.typeArguments ?? [];
                     const nodeType = nodeTypeArguments[0];
                     const { typeId } = classPropertyBeanTypeIdQualifier(node);
+                    const { beanInfo } = TypeRegisterRepository.getTypeById(typeId);
+                    const decorators = [];
 
+                    if (beanInfo.scope === 'singleton' || beanInfo.scope === undefined) {
+                        factoryContext.hasSingleton = true;
+                        decorators.push(ts.createDecorator(getPrivateIdentifier('Singleton')));
+                    }
+
+                        //Creating constants
                     const dependencies = TypeDependencyRepository.getDependencies(typeId);
                     const dependenciesStatements = getConstantsStatements(factoryId, dependencies);
                     const dependenciesIdentifiers = dependenciesStatements.map((_, index) => ts.createIdentifier(`arg_${index}`));
 
+                    //Creating return statement
                     const classIdentifier = node.initializer.arguments[0] as ts.Identifier;
                     const returnStatement = ts.createReturn(ts.createNew(
                         classIdentifier,
@@ -36,7 +47,7 @@ export const replaceClassPropertyBean = (factoryId: string): ts.TransformerFacto
                     );
 
                     return ts.createMethod(
-                        undefined,
+                        decorators,
                         undefined,
                         undefined,
                         node.name,
