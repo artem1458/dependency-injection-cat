@@ -46,6 +46,8 @@ export class PathResolver {
     }
 }
 
+
+//TODO resolve with TS
 function resolvePathWithExtension(filePath: string): string {
     const normalized = path.normalize(filePath);
 
