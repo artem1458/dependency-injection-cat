@@ -8,9 +8,13 @@ const extensionsToResolve: Array<string> = [
     '.ts',
     '.tsx',
     '.d.ts',
-    'index.ts',
-    'index.tsx',
-    'index.d.ts',
+    '/index.ts',
+    '/index.tsx',
+    '/index.d.ts',
+    '.js',
+    '.jsx',
+    '/index.js',
+    '/index.jsx',
 ];
 
 export class PathResolver {
