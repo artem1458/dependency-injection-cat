@@ -1,4 +1,4 @@
-import { Bean } from 'ts-pring';
+import { Bean } from 'di-cat';
 import { ILogger } from '../ILogger';
 import { Logger } from '../Logger';
 import { IRequester } from '../IRequester';

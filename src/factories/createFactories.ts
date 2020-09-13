@@ -1,5 +1,4 @@
 import fs from 'fs';
-import nodePath from 'path';
 import * as ts from 'typescript';
 import { DiConfigRepository } from '../di-config-repository';
 import { ProgramRepository } from '../program/ProgramRepository';
@@ -24,7 +23,6 @@ export function createFactories(): void {
         };
 
         const path = filePath as ts.Path;
-        const factoryExt = nodePath.extname(path);
         const sourceFile = program.getSourceFileByPath(path);
 
         if (sourceFile === undefined) {
@@ -43,7 +41,7 @@ export function createFactories(): void {
             addImportsInFactory(imports, context),
         ]);
 
-        fs.writeFile(getFactoryPath(factoryId, factoryExt), printer.printFile(newSourceFile.transformed[0]), (err) => {
+        fs.writeFile(getFactoryPath(factoryId), printer.printFile(newSourceFile.transformed[0]), (err) => {
             if (err !== null) {
                 throw err;
             }

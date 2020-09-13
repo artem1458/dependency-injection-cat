@@ -10,7 +10,7 @@ module.exports = {
     devtool: 'source-map',
     resolve: {
         alias: {
-            'ts-pring': path.resolve(__dirname, 'dist/src'),
+            'di-cat': path.resolve(__dirname, 'dist/src'),
         },
         extensions: ['.js', '.ts'],
         plugins: [new TsconfigPathsPlugin()]

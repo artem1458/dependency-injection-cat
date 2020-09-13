@@ -1,3 +1,3 @@
-const libraryName = 'ts-pring';
+const libraryName = 'di-cat';
 
 module.exports = { libraryName }

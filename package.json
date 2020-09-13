@@ -1,5 +1,5 @@
 {
-  "name": "ts-pring",
+  "name": "di-cat",
   "version": "0.0.1",
   "main": "index.js",
   "types": "index.d.ts",
@@ -43,7 +43,7 @@
     "ts-loader": "^7.0.5",
     "ts-mockito": "^2.6.1",
     "ts-node": "^8.10.2",
-    "ts-pring": "./dist/src",
+    "di-cat": "./dist/src",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "ttypescript": "^1.5.10",
     "webpack": "^4.43.0",
