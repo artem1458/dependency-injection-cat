@@ -11,10 +11,6 @@ const extensionsToResolve: Array<string> = [
     '/index.ts',
     '/index.tsx',
     '/index.d.ts',
-    '.js',
-    '.jsx',
-    '/index.js',
-    '/index.jsx',
 ];
 
 export class PathResolver {
@@ -31,32 +27,29 @@ export class PathResolver {
         PathResolver.resolver = createMatchPath(config.absoluteBaseUrl, config.paths);
     }
 
-    //Transform to absolute path, only if it's relative or aliased by paths defined in tsConfig.json
-    static resolve(sourceFilePath: string, targetPath: string): string {
+    static resolveWithoutExtension(sourceFilePath: string, targetPath: string): string {
         if (isPathRelative(targetPath)) {
             const newSourceFilePath = path.dirname(sourceFilePath);
-            return resolvePathWithExtension(path.resolve(newSourceFilePath, targetPath));
+            const resolved = path.resolve(newSourceFilePath, targetPath);
+
+            return path.normalize(resolved);
         }
 
         const resolved = PathResolver.resolver(targetPath) ?? targetPath;
 
-        return path.isAbsolute(resolved)
-            ? resolvePathWithExtension(resolved)
-            : resolved;
-    }
-}
-
-
-//TODO resolve with TS
-function resolvePathWithExtension(filePath: string): string {
-    const normalized = path.normalize(filePath);
-
-    const filesPaths = extensionsToResolve.map(it => normalized + it);
-    const resolved = filesPaths.find(it => fs.existsSync(it));
-
-    if (resolved === undefined) {
-        throw new Error(`Can not resolve file ${filePath}`);
+        return path.normalize(resolved);
     }
 
-    return resolved;
+    //Use only for ts.createProgram!
+    static resolveWithExtension(sourceFilePath: string, filePath: string): string {
+        const withoutExt = this.resolveWithoutExtension(sourceFilePath, filePath);
+        const filesPaths = extensionsToResolve.map(it => withoutExt + it);
+        const resolved = filesPaths.find(it => fs.existsSync(it));
+
+        if (resolved === undefined) {
+            throw new Error(`Can not resolve file ${filePath}`);
+        }
+
+        return resolved;
+    }
 }

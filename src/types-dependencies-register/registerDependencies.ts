@@ -11,13 +11,12 @@ import { ProgramRepository } from '../program/ProgramRepository';
 import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
 import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMemberLocationMessage';
 import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
-import { getPropertyBeanInfo } from '../typescript-helpers/bean-info/getPropertyBeanInfo';
 import { classPropertyBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/class-property-bean/classPropertyBeanTypeIdQualifier';
 import { IClassPropertyDeclarationWithInitializer } from '../typescript-helpers/type-id-qualifier/common/types';
 import { getNodeSourceDescriptorFromImports } from '../typescript-helpers/node-source-descriptor';
 import { createProgram } from 'typescript';
 import { CompilerOptionsProvider } from '../compiler-options-provider/CompilerOptionsProvider';
-import { removeQuotesFromString } from '../utils/removeQuotesFromString';
+import { PathResolver } from '../typescript-helpers/path-resolver/PathResolver';
 
 export function registerDependencies(): void {
     const program = ProgramRepository.program;
@@ -74,16 +73,19 @@ export function registerDependencies(): void {
 
 function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): Array<string> {
     const nameToFind  = node.initializer.arguments[0].getText();
-    const importSourceDescriptor = getNodeSourceDescriptorFromImports(node.getSourceFile(), nameToFind);
+    const sourceFile = node.getSourceFile();
+    const importSourceDescriptor = getNodeSourceDescriptorFromImports(sourceFile, nameToFind);
 
     if (importSourceDescriptor === undefined) {
         throw new Error('Can not find import for bean implementation' + getClassMemberLocationMessage(node));
     }
 
-    const program = createProgram([importSourceDescriptor.path], CompilerOptionsProvider.options);
+    const pathWithExt = PathResolver.resolveWithExtension(sourceFile.fileName, importSourceDescriptor.path)
+
+    const program = createProgram([pathWithExt], CompilerOptionsProvider.options);
     //SETTING PARENT PROPERTY OF ALL NODES
     program.getTypeChecker();
-    const file = program.getSourceFile(importSourceDescriptor.path);
+    const file = program.getSourceFile(pathWithExt);
 
     if (file === undefined) {
         throw new Error(`File not found in program, ${importSourceDescriptor.path}`);

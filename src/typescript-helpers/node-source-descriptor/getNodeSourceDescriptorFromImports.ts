@@ -13,7 +13,7 @@ export function getNodeSourceDescriptorFromImports(sourceFile: ts.SourceFile, na
         }
 
         //Transform to absolute path, only if it's relative or aliased by paths defined in tsConfig.json
-        const importPath = PathResolver.resolve(sourceFile.fileName, removeQuotesFromString(imp.moduleSpecifier.getText()));
+        const importPath = PathResolver.resolveWithoutExtension(sourceFile.fileName, removeQuotesFromString(imp.moduleSpecifier.getText()));
         if (imp.importClause === undefined) {
             return;
         }
