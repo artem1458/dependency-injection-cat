@@ -11,7 +11,7 @@ import { PathResolver } from '../typescript-helpers/path-resolver/PathResolver';
 import { clearFactoriesDir } from '../factories/clearFactoriesDir';
 import { initWatcher } from '../watcher/initWatcher';
 import { getCallTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/get-call/getCallTypeIdQualifier';
-import { TypeDependencyRepository } from '../types-dependencies-register/TypeDependencyRepository';
+import { isCallExpressionWithTypeArguments } from '../typescript-helpers/call-expression/isCallExpressionWithTypeArguments';
 
 const transformer = (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
     clearFactoriesDir();
@@ -23,15 +23,13 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
 
     const typeChecker = program.getTypeChecker();
 
-    console.log(TypeDependencyRepository.graph.g)
-
     return context => {
         return sourceFile => {
             let imports: ts.ImportDeclaration[] = [];
 
             const visitor: ts.Visitor = (node: ts.Node) => {
                 if (ts.isCallExpression(node) && isContainerGetCall(typeChecker, node)) {
-                    if (node.typeArguments === undefined) {
+                    if (!isCallExpressionWithTypeArguments(node)) {
                         throw new Error(`It seems you forgot to pass generic type to container.get call, ${node.getText()}, ${sourceFile.fileName}`);
                     }
 

@@ -3,12 +3,9 @@ import { ITypeIdQualifierResult } from '../common/types';
 import { typeIdQualifier } from '../common/typeIdQualifier';
 import { END_QUALIFIER_TOKEN, START_QUALIFIER_TOKEN } from '../common/parseTokens';
 import { removeQuotesFromString } from '../../../utils/removeQuotesFromString';
+import { CallExpressionWithTypeArguments } from '../../call-expression/CallExpressionWithTypeArguments';
 
-export function getCallTypeIdQualifier(callExpression: ts.CallExpression): ITypeIdQualifierResult {
-    if (callExpression.typeArguments === undefined) {
-        throw new Error(`It seems you forgot to pass generic type to container.get call, ${callExpression.getText()}, ${callExpression.getSourceFile().fileName}`);
-    }
-
+export function getCallTypeIdQualifier(callExpression: CallExpressionWithTypeArguments): ITypeIdQualifierResult {
     const baseType = typeIdQualifier(callExpression.typeArguments[0]);
 
     if (callExpression.arguments.length === 0) {

@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { getNodeSourceDescriptorFromImports, ImportType } from '../node-source-descriptor';
-import { isCallExpressionFromFile } from '../isCallExpressionFromFile';
 import { libraryName } from '../../constants/libraryName';
+import { isCallExpressionFromFile } from '../call-expression/isCallExpressionFromFile';
 
 export function isContainerGetCall(typeChecker: ts.TypeChecker, node: ts.CallExpression): boolean {
     if (isCallExpressionFromFile(typeChecker, node, node.getSourceFile().fileName)) {

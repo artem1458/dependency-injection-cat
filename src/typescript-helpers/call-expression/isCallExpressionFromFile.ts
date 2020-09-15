@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { removeExtensionFromPath } from '../utils/removeExtensionFromPath';
+import { removeExtensionFromPath } from '../../utils/removeExtensionFromPath';
 
 export function isCallExpressionFromFile(typeChecker: ts.TypeChecker, node: ts.CallLikeExpression, fileName: string): boolean {
     const resolved = typeChecker.getResolvedSignature(node);
