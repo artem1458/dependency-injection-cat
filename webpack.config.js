@@ -10,7 +10,7 @@ module.exports = {
     devtool: 'source-map',
     resolve: {
         alias: {
-            'di-cat': path.resolve(__dirname, 'dist/src'),
+            'dependency-injection-cat': path.resolve(__dirname, 'dist/src'),
         },
         extensions: ['.js', '.ts'],
         plugins: [new TsconfigPathsPlugin()]

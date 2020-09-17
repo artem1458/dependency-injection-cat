@@ -1,4 +1,4 @@
-# DI-CAT
+# dependency-injection-cat
 
 Dependency Injection Cat is a TypeScript-only library which allows you to implement
 the Dependency Inversion pattern with Dependency Injection
@@ -6,18 +6,18 @@ the Dependency Inversion pattern with Dependency Injection
 ## Installation
 Install with yarn
 ```bash
-yarn add di-cat
+yarn add dependency-injection-cat
 ```
 Install with npm
 ```bash
-npm install di-cat
+npm install dependency-injection-cat
 ```
 
 ## Usage
 Simple case
 ```typescript
 // requesters.diconfig.ts
-import { Bean, Qualifier } from 'di-cat';
+import { Bean, Qualifier } from 'dependency-injection-cat';
 import { IRequester } from '../IRequester';
 import { Requester } from '../Requester';
 import { ILogger } from '../ILogger';
@@ -32,7 +32,7 @@ export class Requesters {
 }
 
 // loggers.diconfig.ts
-import { Bean } from 'di-cat';
+import { Bean } from 'dependency-injection-cat';
 import { ILogger } from '../ILogger';
 import { Logger } from '../Logger';
 
@@ -47,7 +47,7 @@ export class Loggers {
 }
 
 // main.ts
-import { container } from 'di-cat';
+import { container } from 'dependency-injection-cat';
 import { IRequester } from './IRequester';
 
 const requester = container.get<IRequester>();

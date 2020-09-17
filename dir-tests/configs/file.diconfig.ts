@@ -1,4 +1,4 @@
-import { Bean } from 'di-cat';
+import { Bean } from 'dependency-injection-cat';
 import { ILogger } from '../ILogger';
 import { Logger } from '../Logger';
 import { IRequester } from '../IRequester';

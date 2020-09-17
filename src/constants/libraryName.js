@@ -1,3 +1,3 @@
-const libraryName = 'di-cat';
+const libraryName = 'dependency-injection-cat';
 
 module.exports = { libraryName }

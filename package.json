@@ -1,5 +1,5 @@
 {
-  "name": "di-cat",
+  "name": "dependency-injection-cat",
   "version": "0.0.1",
   "main": "index.js",
   "types": "index.d.ts",
@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": false,
   "repository": {
-    "url": "https://github.com/artem1458/di-cat"
+    "url": "https://github.com/artem1458/dependency-injection-cat"
   },
   "scripts": {
     "test": "jest",
@@ -46,7 +46,7 @@
     "ts-loader": "^7.0.5",
     "ts-mockito": "^2.6.1",
     "ts-node": "^8.10.2",
-    "di-cat": "./dist/src",
+    "dependency-injection-cat": "./dist/src",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "ttypescript": "^1.5.10",
     "webpack": "^4.43.0",

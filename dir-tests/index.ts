@@ -1,4 +1,4 @@
-import { container } from 'di-cat';
+import { container } from 'dependency-injection-cat';
 import { IRequester } from './IRequester';
 
 const requester0 = container.get<IRequester>('SuperCoolRequester');
