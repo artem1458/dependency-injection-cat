@@ -6,6 +6,9 @@
   "author": "Artem Kornev",
   "license": "MIT",
   "private": false,
+  "repository": {
+    "url": "https://github.com/artem1458/di-cat"
+  },
   "scripts": {
     "test": "jest",
     "build": "rm -rf ./dist && tsc --p tsconfig.json && node scripts/beforePublish.js",
