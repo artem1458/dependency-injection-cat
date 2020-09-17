@@ -16,7 +16,7 @@
     "start-no-open-debug": "webpack-dev-server --config webpack.config.debug.js --inspect"
   },
   "peerDependencies": {
-    "typescript": "^3.9.5"
+    "typescript": "^3.8.2"
   },
   "devDependencies": {
     "@types/chokidar": "^2.1.3",
