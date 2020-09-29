@@ -4,11 +4,11 @@ Dependency Injection Cat is a TypeScript-only library which allows you to implem
 the Dependency Inversion pattern with Dependency Injection
 
 ## Installation
-Install with yarn
+Yarn
 ```bash
 yarn add dependency-injection-cat
 ```
-Install with npm
+NPM
 ```bash
 npm install dependency-injection-cat
 ```
