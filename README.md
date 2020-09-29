@@ -148,7 +148,7 @@ import { IRequester } from './IRequester';
 
 const requester = container.get<IRequester>();
 
-requester.makeRequest....
+requester.makeRequest();
 ```
 
 ## Bean
