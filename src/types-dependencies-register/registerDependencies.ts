@@ -13,10 +13,8 @@ import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMem
 import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
 import { classPropertyBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/class-property-bean/classPropertyBeanTypeIdQualifier';
 import { IClassPropertyDeclarationWithInitializer } from '../typescript-helpers/type-id-qualifier/common/types';
-import { getNodeSourceDescriptorFromImports } from '../typescript-helpers/node-source-descriptor';
-import { createProgram } from 'typescript';
-import { CompilerOptionsProvider } from '../compiler-options-provider/CompilerOptionsProvider';
-import { PathResolver } from '../typescript-helpers/path-resolver/PathResolver';
+import { getNodeSourceDescriptorDeep } from '../typescript-helpers/node-source-descriptor/getNodeSourceDescriptorDeep';
+import { SourceFilesCache } from '../typescript-helpers/node-source-descriptor/SourceFilesCache';
 
 export function registerDependencies(): void {
     const program = ProgramRepository.program;
@@ -74,22 +72,13 @@ export function registerDependencies(): void {
 function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): Array<string> {
     const nameToFind  = node.initializer.arguments[0].getText();
     const sourceFile = node.getSourceFile();
-    const importSourceDescriptor = getNodeSourceDescriptorFromImports(sourceFile, nameToFind);
+    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(sourceFile, nameToFind);
 
-    if (importSourceDescriptor === undefined) {
+    if (nodeSourceDescriptor === null) {
         throw new Error('Can not find import for bean implementation' + getClassMemberLocationMessage(node));
     }
 
-    const pathWithExt = PathResolver.resolveWithExtension(sourceFile.fileName, importSourceDescriptor.path)
-
-    const program = createProgram([pathWithExt], CompilerOptionsProvider.options);
-    //SETTING PARENT PROPERTY OF ALL NODES
-    program.getTypeChecker();
-    const file = program.getSourceFile(pathWithExt);
-
-    if (file === undefined) {
-        throw new Error(`File not found in program, ${importSourceDescriptor.path}`);
-    }
+    const file = SourceFilesCache.getSourceFileByPath(nodeSourceDescriptor.path);
 
     let dependencies: Array<string> = [];
 
@@ -98,7 +87,7 @@ function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): A
             return false;
         }
 
-        if (it.name && it.name.escapedText.toString() === importSourceDescriptor.name) {
+        if (it.name && it.name.escapedText.toString() === nodeSourceDescriptor.name) {
             return true;
         }
 
@@ -106,7 +95,7 @@ function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): A
     });
 
     if (classDeclaration === undefined) {
-        throw new Error(`Can not find class declaration for ${importSourceDescriptor.name} in file ${importSourceDescriptor.path}`);
+        throw new Error(`Can not find class declaration for ${nodeSourceDescriptor.name} in file ${nodeSourceDescriptor.path}`);
     }
 
     const constructor = classDeclaration.members.find(ts.isConstructorDeclaration);
@@ -117,7 +106,7 @@ function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): A
 
     constructor.parameters.forEach(parameter => {
         if (parameter.type === undefined) {
-            throw new Error(`All parameters in Class declaration that you are use in Bean property should have a type, ${importSourceDescriptor.name} file ${importSourceDescriptor.path}`);
+            throw new Error(`All parameters in Class declaration that you are use in Bean property should have a type, ${nodeSourceDescriptor.name} file ${nodeSourceDescriptor.path}`);
         }
 
         try {

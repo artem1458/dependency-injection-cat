@@ -4,10 +4,14 @@ import { TypeDependencyRepository } from '../types-dependencies-register/TypeDep
 import { registerTypes } from '../type-register/registerTypes';
 import { registerDependencies } from '../types-dependencies-register/registerDependencies';
 import { createFactories } from '../factories/createFactories';
+import { SourceFilesCache } from '../typescript-helpers/node-source-descriptor/SourceFilesCache';
+import { PathResolverCache } from '../typescript-helpers/path-resolver/PathResolverCache';
 
 export const runCompile = (): void => {
     TypeRegisterRepository.clearRepository();
     TypeDependencyRepository.clearRepository();
+    SourceFilesCache.clearCache();
+    PathResolverCache.clearCache();
     ProgramRepository.initProgram();
 
     registerTypes();

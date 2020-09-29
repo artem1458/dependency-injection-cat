@@ -1,82 +1,17 @@
 import * as ts from 'typescript';
 import { TypeQualifierError } from './TypeQualifierError';
-import { getNodeSourceDescriptorFromImports, ImportType } from '../../node-source-descriptor';
 import { END_PATH_TOKEN, START_PATH_TOKEN } from './parseTokens';
-import { getTypeSourceDescriptorFromTopStatements } from '../../node-source-descriptor';
+import { getNodeSourceDescriptorDeep } from '../../node-source-descriptor';
 
 export function typeIdQualifierBase(node: ts.TypeReferenceNode): string {
-    if (node.typeName === undefined) {
-        throw new Error(TypeQualifierError.NoTypeNameFound);
-    }
+    const sourceFile = node.getSourceFile();
+    const nameToFind = node.getText();
 
-    const referTypeName = getReferTypeName(node.typeName);
-    const leftSideName = referTypeName.split('.')[0];
-    const typeName = getBaseTypeNameAndPath(node, leftSideName, referTypeName);
+    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(sourceFile, nameToFind);
 
-    if (typeName === undefined) {
+    if (nodeSourceDescriptor === null) {
         throw new Error(TypeQualifierError.CanNotGenerateType);
     }
 
-    return typeName;
-}
-
-function getBaseTypeNameAndPath(node: ts.Node, nameToFind: string, referTypeName: string): string | undefined {
-    const sourceFile = node.getSourceFile();
-    const typeFromImport = getNodeSourceDescriptorFromImports(sourceFile, nameToFind);
-    const typeFromStatement = getTypeSourceDescriptorFromTopStatements(sourceFile, nameToFind);
-
-    if (typeFromImport && typeFromStatement && typeFromImport.name === typeFromStatement.name) {
-        throw new Error(`Duplicate identifiers detected, when trying to resolve TypeReference ${nameToFind}, Path ${sourceFile.fileName}`);
-    }
-
-    if (typeFromImport) {
-        let actualName: string;
-        switch (typeFromImport.importType) {
-            case ImportType.Default:
-                actualName = 'default';
-                break;
-
-            case ImportType.Namespace:
-                actualName = referTypeName.split('.').slice(1).join('.');
-                break;
-
-            case ImportType.Named:
-                actualName = [typeFromImport.name, ...referTypeName.split('.').slice(1)].join('.');
-                break;
-
-            default:
-                actualName = referTypeName;
-        }
-
-        return `${START_PATH_TOKEN}${typeFromImport.path}${END_PATH_TOKEN}${actualName}`;
-    }
-
-    if (typeFromStatement) {
-        //TODO Check for default export of classes
-        return `${START_PATH_TOKEN}${typeFromStatement.path}${END_PATH_TOKEN}${referTypeName}`
-    }
-
-    return undefined;
-}
-
-function getReferTypeName(node: ts.EntityName, prevText = ''): string {
-    if (node.kind === ts.SyntaxKind.Identifier) {
-        const text = node.escapedText;
-        if (text === undefined) {
-            throw new Error('node.escapedText have no text');
-        }
-
-        return `${text}.${prevText}`.replace(/\.$/, '');
-    }
-
-    if (node.kind === ts.SyntaxKind.QualifiedName) {
-        const text = node.right.escapedText;
-        if (text === undefined) {
-            throw new Error('node.right.escapedText have no text');
-        }
-
-        return getReferTypeName(node.left, `${text.toString()}.${prevText}`);
-    }
-
-    return prevText.replace(/\.$/, '');
+    return `${START_PATH_TOKEN}${nodeSourceDescriptor.path}${END_PATH_TOKEN}${nodeSourceDescriptor.name}`;
 }

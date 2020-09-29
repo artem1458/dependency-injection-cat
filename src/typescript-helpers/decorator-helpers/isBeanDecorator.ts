@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
-import { getNodeSourceDescriptorFromImports } from '../node-source-descriptor';
 import { libraryName } from '../../constants/libraryName';
+import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 
 export function isBeanDecorator(decorator: ts.Decorator): boolean {
     let nameToFind: string | undefined = undefined;
@@ -19,11 +19,11 @@ export function isBeanDecorator(decorator: ts.Decorator): boolean {
         return false;
     }
 
-    const sourceDescriptor = getNodeSourceDescriptorFromImports(decorator.getSourceFile(), nameToFind);
+    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(decorator.getSourceFile(), nameToFind);
 
-    if (sourceDescriptor === undefined) {
+    if (nodeSourceDescriptor === null) {
         return false;
     }
 
-    return sourceDescriptor.name === 'Bean' && sourceDescriptor.path === libraryName;
+    return nodeSourceDescriptor.name === 'Bean' && nodeSourceDescriptor.path === libraryName;
 }

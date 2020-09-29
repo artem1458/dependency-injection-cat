@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
-import { getNodeSourceDescriptorFromImports } from '../node-source-descriptor';
 import { libraryName } from '../../constants/libraryName';
+import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 
 export function isParameterQualifierDecorator(decoratorNode: ts.Decorator): boolean {
     const decoratorExpression = decoratorNode.expression;
@@ -11,11 +11,11 @@ export function isParameterQualifierDecorator(decoratorNode: ts.Decorator): bool
 
     const nameToFind = decoratorExpression.expression.getText();
 
-    const sourceDescriptor = getNodeSourceDescriptorFromImports(decoratorNode.getSourceFile(), nameToFind);
+    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(decoratorNode.getSourceFile(), nameToFind);
 
-    if (sourceDescriptor === undefined) {
+    if (nodeSourceDescriptor === null) {
         return false;
     }
 
-    return sourceDescriptor.name === 'Qualifier' && sourceDescriptor.path === libraryName;
+    return nodeSourceDescriptor.name === 'Qualifier' && nodeSourceDescriptor.path === libraryName;
 }
