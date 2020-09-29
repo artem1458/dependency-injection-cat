@@ -31,3 +31,22 @@ export const typeKeywordsDictionary: Record<number, string> = {
     [SyntaxKind.NullKeyword]: 'null',
     [SyntaxKind.NeverKeyword]: 'never',
 };
+
+export const typescriptUtilityTypes: Array<string> = [
+    'Partial',
+    'Readonly',
+    'Record',
+    'Pick',
+    'Omit',
+    'Exclude',
+    'Extract',
+    'NonNullable',
+    'Parameters',
+    'ConstructorParameters',
+    'ReturnType',
+    'InstanceType',
+    'Required',
+    'ThisParameterType',
+    'OmitThisParameter',
+    'ThisType',
+];

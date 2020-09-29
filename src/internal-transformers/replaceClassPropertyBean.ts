@@ -25,7 +25,7 @@ export const replaceClassPropertyBean = (factoryId: string, factoryContext: ICre
                         decorators.push(ts.createDecorator(getPrivateIdentifier('Singleton')));
                     }
 
-                        //Creating constants
+                    //Creating constants
                     const dependencies = TypeDependencyRepository.getDependencies(typeId);
                     const dependenciesStatements = getConstantsStatements(factoryId, dependencies);
                     const dependenciesIdentifiers = dependenciesStatements.map((_, index) => ts.createIdentifier(`arg_${index}`));
