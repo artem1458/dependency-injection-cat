@@ -1,11 +1,14 @@
 {
-  "name": "di-cat",
-  "version": "0.0.1",
+  "name": "dependency-injection-cat",
+  "version": "0.0.2",
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Artem Kornev",
   "license": "MIT",
   "private": false,
+  "repository": {
+    "url": "https://github.com/artem1458/dependency-injection-cat"
+  },
   "scripts": {
     "test": "jest",
     "build": "rm -rf ./dist && tsc --p tsconfig.json && node scripts/beforePublish.js",
@@ -16,7 +19,7 @@
     "start-no-open-debug": "webpack-dev-server --config webpack.config.debug.js --inspect"
   },
   "peerDependencies": {
-    "typescript": "^3.9.5"
+    "typescript": "^3.8.2"
   },
   "devDependencies": {
     "@types/chokidar": "^2.1.3",
@@ -43,7 +46,7 @@
     "ts-loader": "^7.0.5",
     "ts-mockito": "^2.6.1",
     "ts-node": "^8.10.2",
-    "di-cat": "./dist/src",
+    "dependency-injection-cat": "./dist/src",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "ttypescript": "^1.5.10",
     "webpack": "^4.43.0",
