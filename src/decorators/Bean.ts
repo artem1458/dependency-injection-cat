@@ -32,7 +32,5 @@ export function Bean<T>(...args: any[]) {
         target: any,
         propertyKey: string | symbol,
         descriptor: TypedPropertyDescriptor<T>,
-    ): void {
-        throw new Error('Trying to use Bean property without configured di-container, or not in class');
-    }
+    ): void {}
 }
