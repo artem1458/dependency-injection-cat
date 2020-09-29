@@ -20,7 +20,6 @@ the Dependency Inversion pattern with Dependency Injection
 - [Container](#container)
     * [Rules](#container-rules)
     * [Syntax](#container-syntax)
-    
 <!-- tocstop -->
 
 ## Installation
@@ -43,8 +42,8 @@ interface TransformerConfig {
 
 #### Configuration with Webpack
 Dependency Injection Cat supports transpileOnly mode for faster builds! [More Info](https://github.com/TypeStrong/ts-loader#transpileonly)
-<hr/>
-With Webpack, You can use any TypeScript-related loader that supports custom transformers, e.g. awesome-typescript-loader or ts-loader:
+<br/>
+With Webpack, You can use any TypeScript-related loader that supports custom transformers, e.g. awesome-typescript-loader or ts-loader
 
 <h5>webpack.config.js</h5>
 
@@ -160,15 +159,15 @@ requester.makeRequest();
 
 <h4 id="bean-rules">Rules</h4>
 
-<ul>
-    <li>Bean should be a class member (property or method)</li>
-    <li>Beans should not have cyclic dependencies (it will throw compilation error)</li>
-    <li>Beans should not have duplicate declarations</li>
-    <li>Beans can be used only in <b>diconfig.ts</b> files (or files with another pattern declared in transformer config)</li>
-    <li>Bean type should not be empty (it will throw compilation error)</li>
-    <li>Bean type should not be primitive (it will throw compilation error)</li>
-    <li>All bean dependencies should be typed, and type should not be primitive</li>
-</ul>
+<!-- toc -->
+- Bean should be a class member (property or method)
+- Beans should not have cyclic dependencies (it will throw compilation error)
+- Beans should not have duplicate declarations
+- Beans can be used only in **diconfig.ts** files (or files with another pattern declared in transformer config)
+- Bean type should not be empty (it will throw compilation error)
+- Bean type should not be primitive (it will throw compilation error)
+- All bean dependencies should be typed, and type should not be primitive
+<!-- tocstop -->
 
 <h4 id="bean-syntax">Syntax</h4>
 Beans support 2 kinds of syntax
@@ -263,10 +262,10 @@ In fact, Qualifier it's just a name of Bean
 You can use it, if you have a few different implementations of interface 
 
 <h4 id="qualifier-rules">Rules</h4>
-<ul>
-    <li>Qualifier be a string, and should not be empty string</li>
-    <li>Qualifier should not be dynamically calculated (no template strings, or references to constants/properties)</li>
-</ul>
+<!-- toc -->
+- Qualifier be a string, and should not be empty string
+- Qualifier should not be dynamically calculated (no template strings, or references to constants/properties)
+<!-- tocstop -->
 
 <h4 id="qualifier-syntax">Syntax</h4>
 
@@ -309,9 +308,9 @@ class SuperClass {
 Container has only one method "get"
 
 <h4 id="container-rules">Rules</h4>
-<ul>
-    <li>You should pass type as generic in get method of Container</li>
-</ul>
+<!-- toc -->
+- You should pass type as generic in get method of Container
+<!-- tocstop -->
 
 <h4 id="container-syntax">Syntax</h4>
 
