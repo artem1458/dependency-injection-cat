@@ -34,7 +34,7 @@ npm install dependency-injection-cat
 ```
 
 #### Config options
-```typescript
+```
 interface TransformerConfig {
     diConfigPattern?: string; // Glob pattern, default value = '**/*.diconfig.ts'
     ignorePatterns?: string[]; // Array of Glob patterns, default value = ['**/node_modules/**']
@@ -111,7 +111,7 @@ Check out ttypescript's [README](https://github.com/cevek/ttypescript/blob/maste
 ```
 
 ## Usage
-```typescript
+```
 // requesters.diconfig.ts
 import { Bean, Qualifier } from 'dependency-injection-cat';
 import { IRequester } from '../IRequester';
@@ -168,7 +168,7 @@ requester.makeRequest....
 Beans support 2 kinds of syntax
 
 <h5>First</h5>
-```typescript
+```
 import { Bean } from 'dependency-injection-cat';
 
 class SuperClass {
@@ -223,7 +223,7 @@ class SuperClass {
 }
 ```
 <h5>Second</h5>
-```typescript
+```
 import { Bean } from 'dependency-injection-cat';
 
 class SuperClass {
@@ -238,7 +238,7 @@ class SuperClass {
 ```
 
 <h4 id="bean-configuration-object">Bean configuration object</h4>
-```typescript
+```
 interface BeanConfiguration {
     //By default all beans are singleton, if you will set scope 'prototype' Bean will no longer be a singleton
     scope?: 'prototype' | 'singleton';
@@ -259,7 +259,7 @@ You can use it, if you have a few different implementations of interface
 </ul>
 
 <h4 id="qualifier-syntax">Syntax</h4>
-```typescript
+```
 import { Bean, Qualifier } from 'dependency-injection-cat';
 
 class SuperClass {
@@ -272,7 +272,7 @@ class SuperClass {
     }
 }
 ```
-```typescript
+```
 //Wrong examples
 import { Bean, Qualifier } from 'dependency-injection-cat';
 
@@ -304,7 +304,7 @@ Container has only one method "get"
 
 <h4 id="container-syntax">Syntax</h4>
 
-```typescript
+```
 //Any TypeScript file in project
 import { container } from 'dependency-injection-cat';
 
