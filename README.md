@@ -258,10 +258,12 @@ interface BeanConfiguration {
 
 ## Qualifier
 <h4 id="what-is-it">What is it?</h4>
+
 In fact, Qualifier it's just a name of Bean
 You can use it, if you have a few different implementations of interface 
 
 <h4 id="qualifier-rules">Rules</h4>
+
 <!-- toc -->
 - Qualifier be a string, and should not be empty string
 - Qualifier should not be dynamically calculated (no template strings, or references to constants/properties)
@@ -308,6 +310,7 @@ class SuperClass {
 Container has only one method "get"
 
 <h4 id="container-rules">Rules</h4>
+
 <!-- toc -->
 - You should pass type as generic in get method of Container
 <!-- tocstop -->
