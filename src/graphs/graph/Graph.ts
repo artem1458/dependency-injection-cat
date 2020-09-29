@@ -15,7 +15,7 @@ export class Graph implements IGraph {
     }
 
     hasNode(node: string): boolean {
-        return this.g.hasOwnProperty(node);
+        return Object.prototype.hasOwnProperty.call(this.g, node);
     }
 
     addEdges(node: string, ...edges: Array<string>): void {

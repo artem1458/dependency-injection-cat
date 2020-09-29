@@ -240,6 +240,7 @@ class SuperClass {
 
     //With Bean configuration
     //First argument in Bean should always be implementation of interface, second is configuration object
+    //When using this syntax, implementation should be a class 
     //You should pass Bean type in generic
     someBeanProperty = Bean<Interface>(ImplementationOfInterface, { qualifier: 'someCoolImpl' });
 }

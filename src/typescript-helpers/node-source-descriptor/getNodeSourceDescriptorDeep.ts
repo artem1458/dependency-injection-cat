@@ -13,7 +13,7 @@ import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './Export
 
 //TODO Add support for default imports/exports
 export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string): INodeSourceDescriptor | null {
-    let splittedNameToFind = nameToFind.split('.');
+    const splittedNameToFind = nameToFind.split('.');
 
     //Trying to Find in imports-----------------------------------------------------------------------------------------
     const namedImports = sourceFile.statements.filter(isNamedImports);

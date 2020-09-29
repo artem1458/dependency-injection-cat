@@ -1,6 +1,6 @@
 import chokidar from 'chokidar';
 import { transformerConfig } from '../transformer-config';
-import nodePath from "path";
+import nodePath from 'path';
 import { ConfigIdRepository } from '../factories/ConfigIdRepository';
 import { DiConfigRepository } from '../di-config-repository';
 import { runCompile } from '../run-compile/runCompile';

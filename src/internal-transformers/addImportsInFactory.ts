@@ -20,4 +20,4 @@ export const addImportsInFactory = (
                 ...sourceFile.statements,
             ],
         );
-    }
+    };

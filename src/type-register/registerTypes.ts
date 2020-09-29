@@ -60,14 +60,14 @@ export function registerTypes(): void {
                 });
             } catch (error) {
                 switch (error) {
-                    case TypeQualifierError.TypeIsPrimitive:
-                        throw new Error('Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
+                case TypeQualifierError.TypeIsPrimitive:
+                    throw new Error('Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
 
-                    case TypeQualifierError.CanNotGenerateType:
-                        throw new Error('Can not generate type for' + getClassMemberLocationMessage(node));
+                case TypeQualifierError.CanNotGenerateType:
+                    throw new Error('Can not generate type for' + getClassMemberLocationMessage(node));
 
-                    default:
-                        throw error;
+                default:
+                    throw error;
                 }
             }
         }
@@ -100,14 +100,14 @@ export function registerTypes(): void {
                 });
             } catch (error) {
                 switch (error) {
-                    case TypeQualifierError.TypeIsPrimitive:
-                        throw new Error('Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
+                case TypeQualifierError.TypeIsPrimitive:
+                    throw new Error('Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
 
-                    case TypeQualifierError.CanNotGenerateType:
-                        throw new Error('Can not generate type for' + getClassMemberLocationMessage(node));
+                case TypeQualifierError.CanNotGenerateType:
+                    throw new Error('Can not generate type for' + getClassMemberLocationMessage(node));
 
-                    default:
-                        throw error;
+                default:
+                    throw error;
                 }
             }
         }

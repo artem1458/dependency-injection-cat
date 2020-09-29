@@ -15,7 +15,7 @@ export const absolutizeImports = (sourceFilePath: string): ts.TransformerFactory
 
                     const importPath = removeQuotesFromString(node.moduleSpecifier.getText());
                     const resolvedPath = PathResolver.resolveWithoutExtension(sourceFilePath, importPath);
-                    const pathWithoutExtension = resolvedPath.replace(/\.[^/.]+$/, "");
+                    const pathWithoutExtension = resolvedPath.replace(/\.[^/.]+$/, '');
 
                     return ts.updateImportDeclaration(
                         node,

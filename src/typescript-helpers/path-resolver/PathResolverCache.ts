@@ -1,6 +1,6 @@
 import { PathResolver } from './PathResolver';
 import path from 'path';
-import fs from "fs";
+import fs from 'fs';
 
 const extensionsToResolve: Array<string> = [
     '.ts',

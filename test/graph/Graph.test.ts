@@ -28,7 +28,7 @@ describe('Graph tests', () => {
             const innerGraph = {
                 a: ['b', 'c', 'd'],
             };
-            Object.defineProperty(graph, '_graph', { value: innerGraph })
+            Object.defineProperty(graph, '_graph', { value: innerGraph });
 
             //When
             graph.addNode('a');
@@ -104,7 +104,7 @@ describe('Graph tests', () => {
         const innerGraph = {
             a: ['b', 'c'],
             b: [],
-        }
+        };
         Object.defineProperty(graph, '_graph', { value: innerGraph });
 
         //When
@@ -120,7 +120,7 @@ describe('Graph tests', () => {
             const graph = new Graph();
             const innerGraph = {
                 a: ['b', 'c'],
-            }
+            };
             Object.defineProperty(graph, '_graph', { value: innerGraph });
 
             //When
@@ -133,7 +133,7 @@ describe('Graph tests', () => {
         it('should return empty list, when node not exist in graph', () => {
             //Given
             const graph = new Graph();
-            const innerGraph = {}
+            const innerGraph = {};
             Object.defineProperty(graph, '_graph', { value: innerGraph });
 
             //When

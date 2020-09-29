@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 export function Qualifier(beanName: string): (
-    target: Object,
+    target: object,
     propertyKey: string | symbol,
     parameterIndex: number,
 ) => void {
     return (
-        target: Object,
+        target: object,
         propertyKey: string | symbol,
         parameterIndex: number,
-    ) => {}
+    ) => {};
 }

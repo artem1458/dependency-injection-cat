@@ -1,3 +1,3 @@
 export class ShouldReinitializeRepository  {
-    static value: boolean = true;
+    static value = true;
 }

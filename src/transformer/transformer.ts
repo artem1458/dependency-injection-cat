@@ -25,7 +25,7 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
 
     return context => {
         return sourceFile => {
-            let imports: ts.ImportDeclaration[] = [];
+            const imports: ts.ImportDeclaration[] = [];
 
             const visitor: ts.Visitor = (node: ts.Node) => {
                 if (ts.isCallExpression(node) && isContainerGetCall(typeChecker, node)) {
@@ -73,14 +73,14 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
                 return ts.visitEachChild(node, visitor, context);
             };
 
-            let newSourceFile = ts.visitNode(sourceFile, visitor);
+            const newSourceFile = ts.visitNode(sourceFile, visitor);
             return ts.updateSourceFileNode(sourceFile, [
                 ...imports,
                 ...newSourceFile.statements,
             ]);
         };
     };
-}
+};
 
 export default transformer;
 

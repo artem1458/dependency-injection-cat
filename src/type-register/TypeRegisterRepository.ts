@@ -19,7 +19,7 @@ export class TypeRegisterRepository {
             factoryName: configName,
             beanName,
             beanInfo,
-        }
+        };
 
         TypeRegisterRepository.repository[typeId] = typeInfo;
     }

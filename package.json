@@ -16,7 +16,8 @@
     "build-dir-tests-watch": "yarn run build && webpack --watch",
     "start": "yarn run build && webpack-dev-server --open --inspect",
     "start-no-open": "yarn run build && webpack-dev-server --inspect",
-    "start-no-open-debug": "webpack-dev-server --config webpack.config.debug.js --inspect"
+    "start-no-open-debug": "webpack-dev-server --config webpack.config.debug.js --inspect",
+    "lint": "eslint './src/**/*.ts'"
   },
   "peerDependencies": {
     "typescript": "^3.8.2"
@@ -31,8 +32,12 @@
     "@types/sinon": "^9.0.4",
     "@types/typescript": "^2.0.0",
     "@types/webpack": "^4.41.21",
+    "@typescript-eslint/eslint-plugin": "^4.3.0",
+    "@typescript-eslint/parser": "^4.3.0",
     "awesome-typescript-loader": "^5.2.1",
     "clean-webpack-plugin": "^3.0.0",
+    "dependency-injection-cat": "./dist/src",
+    "eslint": "^7.10.0",
     "html-webpack-plugin": "^4.3.0",
     "jest": "^26.1.0",
     "jest-sinon": "^1.0.4",
@@ -46,7 +51,6 @@
     "ts-loader": "^7.0.5",
     "ts-mockito": "^2.6.1",
     "ts-node": "^8.10.2",
-    "dependency-injection-cat": "./dist/src",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "ttypescript": "^1.5.10",
     "webpack": "^4.43.0",

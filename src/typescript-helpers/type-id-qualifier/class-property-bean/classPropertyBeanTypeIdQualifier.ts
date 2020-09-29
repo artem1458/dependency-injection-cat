@@ -21,5 +21,5 @@ export function classPropertyBeanTypeIdQualifier(property: IClassPropertyDeclara
     return {
         typeId: `${baseType.typeId}${START_QUALIFIER_TOKEN}${beanInfo.qualifier}${END_QUALIFIER_TOKEN}`,
         originalTypeName: baseType.originalTypeName,
-    }
+    };
 }

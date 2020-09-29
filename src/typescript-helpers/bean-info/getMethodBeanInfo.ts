@@ -23,7 +23,7 @@ export function getMethodBeanInfo(bean: ts.Decorator): IBeanInfo {
         return {
             qualifier: getQualifierValue(firstArg, method),
             scope: getScopeValue(firstArg, method),
-        }
+        };
     }
 
     return {};

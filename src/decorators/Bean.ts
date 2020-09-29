@@ -11,7 +11,7 @@ export function Bean<T>(
     descriptor: TypedPropertyDescriptor<T>,
 ): void;
 
-export function Bean<T>(
+export function Bean(
     beanProps: IBeanInfo,
 ): typeof Bean;
 
@@ -20,7 +20,7 @@ export function Bean<T>(
     beanProps?: IBeanInfo,
 ): T;
 
-export function Bean<T>(
+export function Bean(
     target: any,
     propertyKey: string | symbol,
 ): void;
@@ -32,5 +32,5 @@ export function Bean<T>(...args: any[]) {
         target: any,
         propertyKey: string | symbol,
         descriptor: TypedPropertyDescriptor<T>,
-    ): void {}
+    ): void {};
 }

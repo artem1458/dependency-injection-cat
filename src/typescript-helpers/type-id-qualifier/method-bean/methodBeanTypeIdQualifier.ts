@@ -40,5 +40,5 @@ export function methodBeanTypeIdQualifier(method: ts.MethodDeclaration): ITypeId
     return {
         typeId: `${baseType.typeId}${START_QUALIFIER_TOKEN}${beanInfo.qualifier}${END_QUALIFIER_TOKEN}`,
         originalTypeName: baseType.originalTypeName,
-    }
+    };
 }

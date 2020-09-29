@@ -35,9 +35,9 @@ export function registerDependencies(): void {
             const dependencies: Array<string> = [];
 
             node.parameters.forEach(parameter => {
-                 if (parameter.type === undefined) {
-                     throw new Error('All parameters in Bean should have type' + getClassMemberLocationMessage(node));
-                 }
+                if (parameter.type === undefined) {
+                    throw new Error('All parameters in Bean should have type' + getClassMemberLocationMessage(node));
+                }
 
                 try {
                     const { typeId } = parameterTypeIdQualifier(parameter);
@@ -45,11 +45,11 @@ export function registerDependencies(): void {
                     dependencies.push(typeId);
                 } catch (error) {
                     switch (error) {
-                        case TypeQualifierError.TypeIsPrimitive:
-                            throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
+                    case TypeQualifierError.TypeIsPrimitive:
+                        throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(node));
 
-                        default:
-                            throw new Error(error);
+                    default:
+                        throw new Error(error);
                     }
                 }
             });
@@ -80,7 +80,7 @@ function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): A
 
     const file = SourceFilesCache.getSourceFileByPath(nodeSourceDescriptor.path);
 
-    let dependencies: Array<string> = [];
+    const dependencies: Array<string> = [];
 
     const classDeclaration = file.statements.find((it): it is ts.ClassDeclaration => {
         if (!ts.isClassDeclaration(it)) {
@@ -115,11 +115,11 @@ function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): A
             dependencies.push(typeId);
         } catch (error) {
             switch (error) {
-                case TypeQualifierError.TypeIsPrimitive:
-                    throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(constructor));
+            case TypeQualifierError.TypeIsPrimitive:
+                throw new Error('All parameters in Bean should have complex return type (interfaces, ...etc)' + getClassMemberLocationMessage(constructor));
 
-                default:
-                    throw error;
+            default:
+                throw error;
             }
         }
     });

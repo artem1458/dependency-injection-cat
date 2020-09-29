@@ -24,7 +24,7 @@ export class AcyclicGraph extends Graph implements IAcyclicGraph {
     detectCycleForNode(node: string, visited: Record<string, boolean>, stack: Record<string, boolean>): boolean {
         if (!visited[node]) {
             const nodeNeighbors = this.g[node] || [];
-            let hasCycle: boolean = false;
+            let hasCycle = false;
 
             visited[node] = true;
             stack[node] = true;

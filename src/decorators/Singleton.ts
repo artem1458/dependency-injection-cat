@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 export function Singleton<T extends Function>(
     target: any,
     propertyKey: string | symbol,
@@ -12,7 +14,7 @@ export function Singleton<T extends Function>(
                     cached = descriptor.value!(...args);
                 }
                 return cached;
-            }
+            };
         }
-    }
+    };
 }

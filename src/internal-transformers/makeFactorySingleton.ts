@@ -75,7 +75,7 @@ export const makeFactorySingleton: ts.TransformerFactory<ts.SourceFile> =
                                 true
                             )
                         )
-                    ]
+                    ];
 
 
                     return ts.updateClassDeclaration(

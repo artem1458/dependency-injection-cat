@@ -20,7 +20,7 @@ export function typeIdQualifier(typeNode: ts.TypeNode): ITypeIdQualifierResult {
     };
 }
 
-function getTypesNameDeep(node: ts.Node, prevType: string = '', deepness: number = 0): string {
+function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string {
     if (deepness === 0 && typeKeywords.includes(node.kind)) {
         throw new Error(TypeQualifierError.TypeIsPrimitive);
     }
@@ -65,7 +65,7 @@ function getTypesNameDeep(node: ts.Node, prevType: string = '', deepness: number
         const types = node.typeArguments.map(it => getTypesNameDeep(it, prevType, deepness + 1));
         const nodeName = typeIdQualifierBase(node);
 
-        return `${nodeName}${OPEN_TYPE_ARGUMENTS_TOKEN}${types.join(', ')}${CLOSE_TYPE_ARGUMENTS_TOKEN}`
+        return `${nodeName}${OPEN_TYPE_ARGUMENTS_TOKEN}${types.join(', ')}${CLOSE_TYPE_ARGUMENTS_TOKEN}`;
     }
 
     return typeIdQualifierBase(node as ts.TypeReferenceNode);

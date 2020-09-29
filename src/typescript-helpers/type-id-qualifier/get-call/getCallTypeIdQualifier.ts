@@ -27,5 +27,5 @@ export function getCallTypeIdQualifier(callExpression: CallExpressionWithTypeArg
     return {
         typeId: `${baseType.typeId}${START_QUALIFIER_TOKEN}${qualifier}${END_QUALIFIER_TOKEN}`,
         originalTypeName: baseType.originalTypeName,
-    }
+    };
 }

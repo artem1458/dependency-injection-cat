@@ -1,4 +1,4 @@
-import * as ts from 'typescript'
+import * as ts from 'typescript';
 import { isBeanDecorator } from './isBeanDecorator';
 
 export function isMethodBean(node: ts.Node): node is ts.MethodDeclaration {

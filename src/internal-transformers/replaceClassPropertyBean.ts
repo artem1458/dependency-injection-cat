@@ -73,7 +73,7 @@ function getConstantsStatements(factoryId: string, dependencies: Array<string>):
     return dependencies.map((dependencyTypeId, index) => {
         const driverType = factoryOutDependencies.find(type => type.id === dependencyTypeId);
         const drivenType = factoryInDependencies.find(type => type.id === dependencyTypeId);
-        const parameterName = `arg_${index}`
+        const parameterName = `arg_${index}`;
 
         if (driverType !== undefined) {
             return ts.createVariableStatement(
@@ -125,5 +125,5 @@ function getConstantsStatements(factoryId: string, dependencies: Array<string>):
         } else {
             throw new Error('Type of dependency not register in config ' + dependencyTypeId); //TODO Add more readable error
         }
-    })
+    });
 }

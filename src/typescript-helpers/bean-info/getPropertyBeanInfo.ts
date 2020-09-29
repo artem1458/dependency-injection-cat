@@ -24,5 +24,5 @@ export function getPropertyBeanInfo(beanCall: ts.CallExpression): IBeanInfo {
     return {
         qualifier: getQualifierValue(secondArg, method),
         scope: getScopeValue(secondArg, method),
-    }
+    };
 }

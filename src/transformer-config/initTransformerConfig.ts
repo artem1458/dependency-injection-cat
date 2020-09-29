@@ -15,6 +15,6 @@ export const initTransformerConfig = (config?: ITransformerConfig): void => {
             return objValue.concat(srcValue);
         }
 
-        return undefined
-    })
-}
+        return undefined;
+    });
+};
