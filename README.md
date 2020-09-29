@@ -47,6 +47,7 @@ Dependency Injection Cat supports transpileOnly mode for faster builds! [More In
 With Webpack, You can use any TypeScript-related loader that supports custom transformers, e.g. awesome-typescript-loader or ts-loader:
 
 <h5>webpack.config.js</h5>
+
 ```js
 const dependencyInjectionCatTransformer = require('dependency-injection-cat/transformer').default;
 module.exports = {
@@ -85,6 +86,7 @@ before: [
 Check out ttypescript's [README](https://github.com/cevek/ttypescript/blob/master/README.md) for more information
 
 <h5>tsconfig.json</h5>
+
 ```json
 {
   "compilerOptions": {
@@ -96,7 +98,9 @@ Check out ttypescript's [README](https://github.com/cevek/ttypescript/blob/maste
   }
 }
 ```
+
 <h5>With custom options</h5>
+
 ```json
 {
   "compilerOptions": {
@@ -111,6 +115,7 @@ Check out ttypescript's [README](https://github.com/cevek/ttypescript/blob/maste
 ```
 
 ## Usage
+
 ```ts
 // requesters.diconfig.ts
 import { Bean, Qualifier } from 'dependency-injection-cat';
@@ -154,6 +159,7 @@ requester.makeRequest();
 ## Bean
 
 <h4 id="bean-rules">Rules</h4>
+
 <ul>
     <li>Bean should be a class member (property or method)</li>
     <li>Beans should not have cyclic dependencies (it will throw compilation error)</li>
@@ -168,6 +174,7 @@ requester.makeRequest();
 Beans support 2 kinds of syntax
 
 <h5>First</h5>
+
 ```ts
 import { Bean } from 'dependency-injection-cat';
 
@@ -222,7 +229,9 @@ class SuperClass {
     }
 }
 ```
+
 <h5>Second</h5>
+
 ```ts
 import { Bean } from 'dependency-injection-cat';
 
@@ -238,6 +247,7 @@ class SuperClass {
 ```
 
 <h4 id="bean-configuration-object">Bean configuration object</h4>
+
 ```ts
 interface BeanConfiguration {
     //By default all beans are singleton, if you will set scope 'prototype' Bean will no longer be a singleton
@@ -259,6 +269,7 @@ You can use it, if you have a few different implementations of interface
 </ul>
 
 <h4 id="qualifier-syntax">Syntax</h4>
+
 ```ts
 import { Bean, Qualifier } from 'dependency-injection-cat';
 
