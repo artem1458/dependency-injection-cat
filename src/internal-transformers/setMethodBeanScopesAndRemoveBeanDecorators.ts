@@ -16,29 +16,26 @@ export const setMethodBeanScopesAndRemoveBeanDecorators = (
                 const typeInfo = TypeRegisterRepository.getTypeById(typeId);
 
                 const scope = typeInfo.beanInfo.scope;
+                const decorators = node.decorators?.filter(it => !isBeanDecorator(it)) || [];
 
                 if (scope === 'singleton' || scope === undefined) {
                     factoryContext.hasSingleton = true;
 
-                    const decorators = node.decorators?.filter(it => !isBeanDecorator(it)) || [];
-                    const decorator = ts.createDecorator(getPrivateIdentifier('Singleton'));
-
-                    return ts.updateMethod(
-                        node,
-                        [
-                            decorator,
-                            ...decorators,
-                        ],
-                        node.modifiers,
-                        node.asteriskToken,
-                        node.name,
-                        node.questionToken,
-                        node.typeParameters,
-                        node.parameters,
-                        node.type,
-                        node.body,
-                    );
+                    decorators.push(ts.createDecorator(getPrivateIdentifier('Singleton')));
                 }
+
+                return ts.updateMethod(
+                    node,
+                    decorators,
+                    node.modifiers,
+                    node.asteriskToken,
+                    node.name,
+                    node.questionToken,
+                    node.typeParameters,
+                    node.parameters,
+                    node.type,
+                    node.body,
+                );
             }
 
             return ts.visitEachChild(node, visitor, context);
