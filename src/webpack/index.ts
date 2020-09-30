@@ -1,10 +1,7 @@
-import webpack from 'webpack';
 import { WatchModeRepository } from '../watcher/WatchModeRepository';
 
 export default class DiContainerWebpackPlugin {
-    apply(compiler: webpack.Compiler) {
-        if (compiler.options.watch) {
-            WatchModeRepository.isWatchMode = true;
-        }
+    constructor(watchMode: boolean) {
+        WatchModeRepository.isWatchMode = watchMode;
     }
 }
