@@ -30,10 +30,12 @@ export class PathResolverCache {
             return cached;
         }
 
-        const candidatesFilePath = [
-            resolved,
-            ...extensionsToResolve.map(it => path.resolve(`${resolved}${it}`)),
-        ];
+        const candidatesFilePath = extensionsToResolve.map(it => path.resolve(`${resolved}${it}`));
+
+        if (extensionsToResolve.includes(path.extname(resolved))) {
+            candidatesFilePath.unshift(resolved);
+        }
+
         const pathWithExtension = candidatesFilePath.find(it => fs.existsSync(it));
 
         if (pathWithExtension === undefined) {
