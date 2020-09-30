@@ -16,7 +16,7 @@ import {
 } from './ExternalExportDeclaration';
 
 //TODO Add support for default imports/exports
-export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string): INodeSourceDescriptor | null {
+export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string, exportNodesStack: ts.ExportDeclaration[] = []): INodeSourceDescriptor | null {
     const splittedNameToFind = nameToFind.split('.');
 
     //Trying to Find in imports-----------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
 
         const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
 
-        return getNodeSourceDescriptorDeep(newSourceFile, newNameToFind);
+        return getNodeSourceDescriptorDeep(newSourceFile, newNameToFind, exportNodesStack);
     }
 
     //Trying to find in NamedImports import { dd as cc } from ''--------------------------------------------------------
@@ -84,7 +84,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
 
         const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
 
-        return getNodeSourceDescriptorDeep(newSourceFile, newNameToFind);
+        return getNodeSourceDescriptorDeep(newSourceFile, newNameToFind, exportNodesStack);
     }
 
     //Trying to find named export statement in current file-------------------------------------------------------------
@@ -137,7 +137,8 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         return false;
     });
 
-    if (externalNamespaceExport !== undefined) {
+    if (externalNamespaceExport !== undefined && !exportNodesStack.includes(externalNamespaceExport)) {
+        exportNodesStack.push(externalNamespaceExport);
         const modulePath = removeQuotesFromString(externalNamespaceExport.moduleSpecifier.getText());
         const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
             sourceFile.fileName,
@@ -154,7 +155,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
 
         const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
 
-        return getNodeSourceDescriptorDeep(newSourceFile, splittedNameToFind[1]);
+        return getNodeSourceDescriptorDeep(newSourceFile, splittedNameToFind[1], exportNodesStack);
     }
 
     const externalNamedExports = externalExports.filter(isNamedExternalExportsDeclaration);
@@ -162,15 +163,16 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
     const externalExportClauseElements = flatten(externalNamedExports.map(it => it.exportClause.elements));
     const externalExportSpecifier = externalExportClauseElements.find(it => it.name.getText() === splittedNameToFind[0]);
 
-    if (externalExportSpecifier !== undefined) {
+    if (externalExportSpecifier !== undefined && !exportNodesStack.includes(externalExportSpecifier.parent.parent)) {
+        const exportExpression = externalExportSpecifier.parent.parent;
+        exportNodesStack.push(exportExpression);
+
         const externalExportNameToFind = externalExportSpecifier.propertyName
             ? [
                 externalExportSpecifier.propertyName.getText(),
                 ...splittedNameToFind.slice(1),
             ].join('.')
             : splittedNameToFind.join('.');
-
-        const exportExpression = externalExportSpecifier.parent.parent;
         const modulePath = removeQuotesFromString(exportExpression.moduleSpecifier!.getText());
         const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
             sourceFile.fileName,
@@ -187,7 +189,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
 
         const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
 
-        return getNodeSourceDescriptorDeep(newSourceFile, externalExportNameToFind);
+        return getNodeSourceDescriptorDeep(newSourceFile, externalExportNameToFind, exportNodesStack);
     }
 
     //Trying to find in export * from '' declarations
@@ -209,11 +211,16 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             `);
         }
 
-        const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
+        if (!exportNodesStack.includes(it)) {
+            exportNodesStack.push(it);
+            const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
 
-        result = getNodeSourceDescriptorDeep(newSourceFile, nameToFind);
+            result = getNodeSourceDescriptorDeep(newSourceFile, nameToFind, exportNodesStack);
 
-        return Boolean(result);
+            return Boolean(result);
+        }
+
+        return false;
     });
 
     return result;

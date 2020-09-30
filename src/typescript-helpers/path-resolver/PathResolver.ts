@@ -2,6 +2,7 @@ import path from 'path';
 import { createMatchPath, MatchPath, loadConfig } from 'tsconfig-paths';
 import { isPathRelative } from '../../utils/isPathRelative';
 import { CompilerOptionsProvider } from '../../compiler-options-provider/CompilerOptionsProvider';
+import { extensionsToResolve } from './constants';
 
 export class PathResolver {
     private static resolver: MatchPath;
@@ -25,7 +26,12 @@ export class PathResolver {
             return path.normalize(resolved);
         }
 
-        const resolved = PathResolver.resolver(targetPath) ?? targetPath;
+        const resolved = PathResolver.resolver(
+            targetPath,
+            undefined,
+            undefined,
+            extensionsToResolve,
+        ) ?? targetPath;
 
         return path.normalize(resolved);
     }

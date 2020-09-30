@@ -1,19 +1,7 @@
 import { PathResolver } from './PathResolver';
 import path from 'path';
 import fs from 'fs';
-
-const extensionsToResolve: Array<string> = [
-    '.ts',
-    '.tsx',
-    '.d.ts',
-    '.js',
-    '.jsx',
-    `${path.sep}index.ts`,
-    `${path.sep}index.tsx`,
-    `${path.sep}index.d.ts`,
-    `${path.sep}index.js`,
-    `${path.sep}index.jsx`,
-];
+import { extensionsToResolve } from './constants';
 
 export class PathResolverCache {
     private static cache: Record<string, string | undefined> = {};
@@ -31,10 +19,6 @@ export class PathResolverCache {
         }
 
         const candidatesFilePath = extensionsToResolve.map(it => path.resolve(`${resolved}${it}`));
-
-        if (extensionsToResolve.includes(path.extname(resolved))) {
-            candidatesFilePath.unshift(resolved);
-        }
 
         const pathWithExtension = candidatesFilePath.find(it => fs.existsSync(it));
 
