@@ -10,6 +10,10 @@ import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 import { PathResolverCache } from '../path-resolver/PathResolverCache';
 import { SourceFilesCache } from './SourceFilesCache';
 import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './ExportDeclarationWithoutClauseAndModuleSpecifier';
+import {
+    isExternalExportDeclaration,
+    isNamedExternalExportsDeclaration
+} from './ExternalExportDeclaration';
 
 //TODO Add support for default imports/exports
 export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string): INodeSourceDescriptor | null {
@@ -123,6 +127,69 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         }
     }
 
+    //Trying to find node in external exports
+    const externalExports = exportDeclarations.filter(isExternalExportDeclaration);
+    const externalNamespaceExport = externalExports.find(it => {
+        if (ts.isNamespaceExport(it.exportClause)) {
+            return it.exportClause.name.getText() === splittedNameToFind[0];
+        }
+
+        return false;
+    });
+
+    if (externalNamespaceExport !== undefined) {
+        const modulePath = removeQuotesFromString(externalNamespaceExport.moduleSpecifier.getText());
+        const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
+            sourceFile.fileName,
+            modulePath,
+        );
+
+        if (!path.isAbsolute(resolvedPath)) {
+            throw new Error(`
+            DI container does not support export * as Something from 'node-module'
+            ${externalNamespaceExport.getText()}
+            in ${sourceFile.fileName}
+            `);
+        }
+
+        const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
+
+        return getNodeSourceDescriptorDeep(newSourceFile, splittedNameToFind[1]);
+    }
+
+    const externalNamedExports = externalExports.filter(isNamedExternalExportsDeclaration);
+
+    const externalExportClauseElements = flatten(externalNamedExports.map(it => it.exportClause.elements));
+    const externalExportSpecifier = externalExportClauseElements.find(it => it.name.getText() === splittedNameToFind[0]);
+
+    if (externalExportSpecifier !== undefined) {
+        const externalExportNameToFind = externalExportSpecifier.propertyName
+            ? [
+                externalExportSpecifier.propertyName.getText(),
+                ...splittedNameToFind.slice(1),
+            ].join('.')
+            : splittedNameToFind.join('.');
+
+        const exportExpression = externalExportSpecifier.parent.parent;
+        const modulePath = removeQuotesFromString(exportExpression.moduleSpecifier!.getText());
+        const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
+            sourceFile.fileName,
+            modulePath,
+        );
+
+        if (!path.isAbsolute(resolvedPath)) {
+            throw new Error(`
+            DI container does not support export * as Something from 'node-module'
+            ${exportExpression.getText()}
+            in ${sourceFile.fileName}
+            `);
+        }
+
+        const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
+
+        return getNodeSourceDescriptorDeep(newSourceFile, externalExportNameToFind);
+    }
+
     //Trying to find in export * from '' declarations
     const exportAllStatements = exportDeclarations.filter(isExportDeclarationWithoutClauseAndWithModuleSpecifier);
     let result: INodeSourceDescriptor | null = null;
@@ -136,7 +203,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
 
         if (!path.isAbsolute(resolvedPath)) {
             throw new Error(`
-            DI container does not support "export * from 'node-module'
+            DI container does not support export * from 'node-module'
             ${it.getText()}
             in ${sourceFile.fileName}
             `);
