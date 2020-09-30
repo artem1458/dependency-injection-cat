@@ -58,15 +58,19 @@ module.exports = {
         loader: 'ts-loader', // or 'awesome-typescript-loader'
         options: {
           transpileOnly: true, // If set transpileOnly: true, you're loosing TypeChecking
+          
+          //If you're using ttypescript
+          compiler: 'ttypescript',
+          //If you don't use ttypescript, you should pass transformer
           getCustomTransformers: program => ({
               before: [
-                  dependencyInjectionCatTransformer(program)
-              ]
-          })
-        }
-      }
-    ]
-  }
+                  dependencyInjectionCatTransformer(program),
+              ],
+          }),
+        },
+      },
+    ],
+  },
 };
 ```
 
@@ -266,8 +270,9 @@ You can use it, if you have a few different implementations of interface
 <h4 id="qualifier-rules">Rules</h4>
 
 <!-- toc -->
-- Qualifier be a string, and should not be empty string
-- Qualifier should not be dynamically calculated (no template strings, or references to constants/properties)
+- Qualifier should be a string
+- Qualifier should not be empty string
+- Qualifier should not be dynamically calculated (no template strings, or references to constants/object properties)
 <!-- tocstop -->
 
 <h4 id="qualifier-syntax">Syntax</h4>
