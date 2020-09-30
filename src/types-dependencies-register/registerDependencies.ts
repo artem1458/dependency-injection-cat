@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+import path from 'path';
 import { DiConfigRepository } from '../di-config-repository';
 import {
     methodBeanTypeIdQualifier,
@@ -69,6 +70,11 @@ export function registerDependencies(): void {
     }
 }
 
+const restrictedExtentions = [
+    '.js',
+    '.jsx',
+];
+
 function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): Array<string> {
     const nameToFind  = node.initializer.arguments[0].getText();
     const sourceFile = node.getSourceFile();
@@ -76,6 +82,10 @@ function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): A
 
     if (nodeSourceDescriptor === null) {
         throw new Error('Can not find import for bean implementation' + getClassMemberLocationMessage(node));
+    }
+
+    if (restrictedExtentions.includes(path.extname(nodeSourceDescriptor.path))) {
+        throw new Error('Can not use bean implementation from js or jsx files' + getClassMemberLocationMessage(node));
     }
 
     const file = SourceFilesCache.getSourceFileByPath(nodeSourceDescriptor.path);

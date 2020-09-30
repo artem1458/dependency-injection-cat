@@ -25,7 +25,7 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
 
     return context => {
         return sourceFile => {
-            const imports: ts.ImportDeclaration[] = [];
+            const imports: Record<string, ts.ImportDeclaration | undefined> = {};
 
             const visitor: ts.Visitor = (node: ts.Node) => {
                 if (ts.isCallExpression(node) && isContainerGetCall(typeChecker, node)) {
@@ -37,8 +37,8 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
 
                     const typeInfo = TypeRegisterRepository.getTypeById(type.typeId);
 
-                    imports.push(
-                        ts.createImportDeclaration(
+                    if (imports[typeInfo.configId] === undefined) {
+                        imports[typeInfo.configId] = ts.createImportDeclaration(
                             undefined,
                             undefined,
                             ts.createImportClause(
@@ -51,8 +51,8 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
                                 false
                             ),
                             ts.createStringLiteral(getConfigPathWithoutExtension(typeInfo.configId)),
-                        ),
-                    );
+                        );
+                    }
 
                     return ts.createCall(
                         ts.createPropertyAccess(
@@ -74,8 +74,10 @@ const transformer = (program: ts.Program, config?: ITransformerConfig): ts.Trans
             };
 
             const newSourceFile = ts.visitNode(sourceFile, visitor);
+            const newImports = Object.values(imports).filter((it): it is ts.ImportDeclaration => it !== undefined);
+
             return ts.updateSourceFileNode(sourceFile, [
-                ...imports,
+                ...newImports,
                 ...newSourceFile.statements,
             ]);
         };

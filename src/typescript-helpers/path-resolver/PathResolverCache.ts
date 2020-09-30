@@ -6,9 +6,13 @@ const extensionsToResolve: Array<string> = [
     '.ts',
     '.tsx',
     '.d.ts',
+    '.js',
+    '.jsx',
     `${path.sep}index.ts`,
     `${path.sep}index.tsx`,
     `${path.sep}index.d.ts`,
+    `${path.sep}index.js`,
+    `${path.sep}index.jsx`,
 ];
 
 export class PathResolverCache {
@@ -26,7 +30,10 @@ export class PathResolverCache {
             return cached;
         }
 
-        const candidatesFilePath = extensionsToResolve.map(it => path.resolve(`${resolved}${it}`));
+        const candidatesFilePath = [
+            resolved,
+            ...extensionsToResolve.map(it => path.resolve(`${resolved}${it}`)),
+        ];
         const pathWithExtension = candidatesFilePath.find(it => fs.existsSync(it));
 
         if (pathWithExtension === undefined) {
