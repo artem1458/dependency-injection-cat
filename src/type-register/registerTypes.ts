@@ -8,7 +8,6 @@ import {
 import { ProgramRepository } from '../program/ProgramRepository';
 import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
 import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMemberLocationMessage';
-import { checkTypeForCorrectness } from '../typescript-helpers/type-id-qualifier/common/utils/checkTypeForCorrectness';
 import { isBeanDecorator } from '../typescript-helpers/decorator-helpers/isBeanDecorator';
 import { getMethodBeanInfo } from '../typescript-helpers/bean-info/getMethodBeanInfo';
 import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
@@ -49,7 +48,6 @@ export function registerTypes(): void {
 
                 const beanInfo = getMethodBeanInfo(bean);
 
-                checkTypeForCorrectness(typeId);
                 TypeRegisterRepository.registerType({
                     typeId,
                     originalTypeName,
@@ -89,7 +87,6 @@ export function registerTypes(): void {
 
                 const beanInfo = getPropertyBeanInfo(beanExpression);
 
-                checkTypeForCorrectness(typeId);
                 TypeRegisterRepository.registerType({
                     typeId,
                     originalTypeName,

@@ -12,9 +12,11 @@ import { replaceParametersWithConstants } from '../internal-transformers/replace
 import { setMethodBeanScopesAndRemoveBeanDecorators } from '../internal-transformers/setMethodBeanScopesAndRemoveBeanDecorators';
 import { ICreateFactoriesContext } from './ICreateFactoriesContext';
 import { replaceClassPropertyBean } from '../internal-transformers/replaceClassPropertyBean';
+import { checkForContainerGetCall } from '../internal-transformers/checkForContainerGetCall';
 
 export function createFactories(): void {
     const program = ProgramRepository.program;
+    const typeChecker = program.getTypeChecker();
     const printer = ts.createPrinter();
 
     DiConfigRepository.data.forEach(filePath => {
@@ -33,6 +35,7 @@ export function createFactories(): void {
         const imports = getImportsForFactory(factoryId);
 
         const newSourceFile = ts.transform(sourceFile, [
+            checkForContainerGetCall(typeChecker),
             absolutizeImports(filePath),
             makeFactorySingleton,
             replaceParametersWithConstants(factoryId),
