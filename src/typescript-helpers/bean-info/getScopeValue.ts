@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { TBeanScope } from '../../decorators/Bean';
+import { TBeanScope } from '../../ports/out/decorators/Bean';
 import { getClassMemberLocationMessage } from '../getClassMemberLocationMessage';
 import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 

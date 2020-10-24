@@ -37,7 +37,6 @@
     "@typescript-eslint/parser": "^4.3.0",
     "awesome-typescript-loader": "^5.2.1",
     "clean-webpack-plugin": "^3.0.0",
-    "dependency-injection-cat": "./dist/src",
     "eslint": "^7.10.0",
     "html-webpack-plugin": "^4.3.0",
     "jest": "^26.1.0",
@@ -61,6 +60,7 @@
   },
   "dependencies": {
     "chokidar": "^3.4.2",
+    "chalk": "^4.1.0",
     "glob": "^7.1.6",
     "lodash": "^4.17.20",
     "tsconfig-paths": "^3.9.0"

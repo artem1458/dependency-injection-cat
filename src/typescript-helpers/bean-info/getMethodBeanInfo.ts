@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { IBeanInfo } from '../../decorators/Bean';
+import { IBeanInfo } from '../../ports/out/decorators/Bean';
 import { getClassMemberLocationMessage } from '../getClassMemberLocationMessage';
 import { getScopeValue } from './getScopeValue';
 import { getQualifierValue } from './getQualifierValue';

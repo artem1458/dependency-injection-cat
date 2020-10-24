@@ -1,4 +1,4 @@
-import { IBeanInfo } from '../decorators/Bean';
+import { IBeanInfo } from '../ports/out/decorators/Bean';
 
 export interface ITypeInfo {
     id: string;

@@ -1,20 +1,29 @@
-import { Bean } from 'dependency-injection-cat';
+import { Bean, CatContext } from 'dependency-injection-cat';
 import { ILogger } from '../ILogger';
 import { Logger } from '../Logger';
 import { IRequester } from '../IRequester';
 import { Requester } from '../Requester';
 
+//Check for uniq
+@CatContext('ds')
 export class FileDiconfig {
-    someBean = Bean<IRequester>(Requester, { qualifier: 'SuperCoolRequester', scope: 'prototype' });
-    someBean2 = Bean<IRequester>(Requester, { qualifier: 'prototype' });
-
     @Bean({ qualifier: 'consoleLogger' })
     logger(): ILogger {
         return new Logger();
     }
 
-    @Bean
     logger2(): ILogger {
-        return new Logger();
+        return new SentryLogger();
     }
 }
+
+//Добавить воможность указывать вместо квалифаера имя функции
+context.getBean<ILogger>('logger2');
+
+
+//Initialization of context
+const context: IContext<IOptions> = container.initContext<IOptions, IBeans>(contextName, options: IOptions);
+const context = container.get<IBeans>(contextName);
+const logger = context.getBean<T extends keyof IBeans>('qualifier': T ): IBeans[T];
+Get all beans
+context.getBeans();

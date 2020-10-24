@@ -1,11 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "paths": {
-      "@src/*": [
-        "src/*"
-      ]
-    },
     "plugins": [
       {
         "transform": "./src/transformer/index.ts"

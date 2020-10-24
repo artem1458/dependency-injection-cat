@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
-export function Qualifier(beanName: string): (
+import { NotEmptyString } from '../NotEmptyString';
+
+export function Qualifier<T extends string>(beanName: NotEmptyString<T>): (
     target: object,
     propertyKey: string | symbol,
     parameterIndex: number,
