@@ -18,7 +18,7 @@ export class Graph implements IGraph {
         return Object.prototype.hasOwnProperty.call(this.g, node);
     }
 
-    addEdges(node: string, ...edges: Array<string>): void {
+    addVertices(node: string, ...edges: Array<string>): void {
         this.addNode(node);
 
         const nodeEdges = this._graph[node] || [];
@@ -32,13 +32,13 @@ export class Graph implements IGraph {
         });
     }
 
-    hasEdges(node: string): boolean {
+    hasVertices(node: string): boolean {
         const list = this.g[node] || [];
 
         return list.length > 0;
     }
 
-    getEdges(node: string): Array<string> {
+    getVertices(node: string): Array<string> {
         return this.g[node] || [];
     }
 

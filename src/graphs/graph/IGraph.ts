@@ -6,9 +6,9 @@ export interface IGraph {
     addNode(node: string): void;
     hasNode(node: string): boolean;
 
-    addEdges(node: string, ...edges: Array<string>): void;
-    hasEdges(node: string): boolean;
-    getEdges(node: string): Array<string>;
+    addVertices(node: string, ...edges: Array<string>): void;
+    hasVertices(node: string): boolean;
+    getVertices(node: string): Array<string>;
     clearGraph(): void;
 }
 

@@ -2,8 +2,8 @@ import { Graph } from '../graph';
 import { IAcyclicGraph } from './IAcyclicGraph';
 
 export class AcyclicGraph extends Graph implements IAcyclicGraph {
-    addEdges(node: string, ...edges: Array<string>): void {
-        super.addEdges(node, ...edges);
+    addVertices(node: string, ...edges: Array<string>): void {
+        super.addVertices(node, ...edges);
 
         this.detectCycle();
     }

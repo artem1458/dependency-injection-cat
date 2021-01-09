@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 export function Singleton<T extends Function>(
     target: any,
     propertyKey: string | symbol,
