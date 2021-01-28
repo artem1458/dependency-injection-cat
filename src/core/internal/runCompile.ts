@@ -1,7 +1,8 @@
 import { getContextPaths } from './context/getContextPaths';
 import { ProgramRepository } from './program/ProgramRepository';
 import { registerContexts } from './context/registerContexts';
-import { ContextRepository } from './context/ContextRepository';
+import { registerBeans } from './beans/registerBeans';
+import { CompilationContext } from '../compilation-context/CompilationContext';
 
 let wasInitiated = false;
 
@@ -15,7 +16,8 @@ export const runCompile = () => {
 
     ProgramRepository.initProgram(contextPaths);
     registerContexts(contextPaths);
-    ContextRepository.repository.forEach((value, key) => {
-        key;
-    });
+    registerBeans();
+
+
+    CompilationContext.throw();
 };

@@ -7,7 +7,7 @@ import { getConfigPathWithoutExtension } from '../factories/utils/getConfigPathW
 import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';
 import { initContainer } from '../init-container';
 import { CompilerOptionsProvider } from '../compiler-options-provider/CompilerOptionsProvider';
-import { PathResolver } from '../typescript-helpers/path-resolver/PathResolver';
+import { PathResolver } from '../core/internal/ts-helpers/path-resolver/PathResolver';
 import { clearFactoriesDir } from '../factories/clearFactoriesDir';
 import { initWatcher } from '../watcher/initWatcher';
 import { getCallTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/get-call/getCallTypeIdQualifier';

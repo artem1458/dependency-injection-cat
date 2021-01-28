@@ -9,7 +9,3 @@ export class CatContext<TConfig = null> {
         throw new UsingCatContextWithoutConfiguredDI();
     }
 }
-
-class XZ extends CatContext {
-
-}

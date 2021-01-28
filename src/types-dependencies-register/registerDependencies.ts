@@ -14,8 +14,8 @@ import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMem
 import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
 import { classPropertyBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/class-property-bean/classPropertyBeanTypeIdQualifier';
 import { IClassPropertyDeclarationWithInitializer } from '../typescript-helpers/type-id-qualifier/common/types';
-import { getNodeSourceDescriptorDeep } from '../typescript-helpers/node-source-descriptor/getNodeSourceDescriptorDeep';
-import { SourceFilesCache } from '../typescript-helpers/node-source-descriptor/SourceFilesCache';
+import { getNodeSourceDescriptorDeep } from '../core/internal/ts-helpers/node-source-descriptor/getNodeSourceDescriptorDeep';
+import { SourceFilesCache } from '../core/internal/ts-helpers/node-source-descriptor/SourceFilesCache';
 
 export function registerDependencies(): void {
     const program = ProgramRepository.program;

@@ -4,8 +4,8 @@ import { TypeDependencyRepository } from '../types-dependencies-register/TypeDep
 import { registerTypes } from '../type-register/registerTypes';
 import { registerDependencies } from '../types-dependencies-register/registerDependencies';
 import { createFactories } from '../factories/createFactories';
-import { SourceFilesCache } from '../typescript-helpers/node-source-descriptor/SourceFilesCache';
-import { PathResolverCache } from '../typescript-helpers/path-resolver/PathResolverCache';
+import { SourceFilesCache } from '../core/internal/ts-helpers/node-source-descriptor/SourceFilesCache';
+import { PathResolverCache } from '../core/internal/ts-helpers/path-resolver/PathResolverCache';
 
 export const runCompile = (): void => {
     TypeRegisterRepository.clearRepository();

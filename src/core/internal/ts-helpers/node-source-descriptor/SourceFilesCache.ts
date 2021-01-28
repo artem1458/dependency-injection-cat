@@ -1,6 +1,6 @@
 import fs from 'fs';
 import * as ts from 'typescript';
-import { CompilerOptionsProvider } from '../../compiler-options-provider/CompilerOptionsProvider';
+import { CompilerOptionsProvider } from '../../../../compiler-options-provider/CompilerOptionsProvider';
 
 export class SourceFilesCache {
     private static cache: Record<string, ts.SourceFile | undefined> = {};

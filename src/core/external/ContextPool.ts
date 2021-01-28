@@ -10,7 +10,7 @@ export abstract class ContextPool {
     private DEFAULT_CONTEXT_KEY = {};
     private pool = new Map();
 
-    constructor(
+    protected constructor(
         private contextName: string,
         private context: new () => InternalCatContext,
     ) {}
@@ -27,7 +27,7 @@ export abstract class ContextPool {
         return newContext;
     }
 
-    getContext({key = this.DEFAULT_CONTEXT_KEY}: IContextProps): any {
+    getContext({ key = this.DEFAULT_CONTEXT_KEY }: IContextProps): any {
         const context = this.pool.get(key);
 
         if (context === undefined) {
@@ -37,7 +37,7 @@ export abstract class ContextPool {
         return context;
     }
 
-    clearContext({key = this.DEFAULT_CONTEXT_KEY}: IContextProps): void {
+    clearContext({ key = this.DEFAULT_CONTEXT_KEY }: IContextProps): void {
         this.pool.delete(key);
     }
 }
