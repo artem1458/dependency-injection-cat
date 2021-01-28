@@ -70,7 +70,7 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
     if (nodeSourceDescriptor === null) {
         CompilationContext.reportError({
             node: firstArgument,
-            message: 'Can\'t qualify type for Bean, please specify type explicitly'
+            message: 'Can\'t qualify type of Bean, please specify type explicitly'
         });
 
         return null;

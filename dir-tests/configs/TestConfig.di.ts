@@ -6,12 +6,12 @@ export interface XZ {}
 export class AA {}
 
 export class TestConfig2 extends CatContext {
-    beann = Bean(AA)
+    // beann = Bean(AA)
 
-    // @Bean
-    // someBean(): IT {
-    //     return {};
-    // }
+    @Bean
+    someBean() {
+        return new AA();
+    }
     //
     // @Bean
     // someBean232(): XZ {
