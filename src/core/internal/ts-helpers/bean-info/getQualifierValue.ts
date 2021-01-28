@@ -1,21 +1,31 @@
 import * as ts from 'typescript';
-import { getClassMemberLocationMessage } from '../getClassMemberLocationMessage';
-import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
+import { removeQuotesFromString } from '../../../../utils/removeQuotesFromString';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
-export function getQualifierValue(expression: ts.ObjectLiteralExpression, method: ts.MethodDeclaration): string | undefined {
+export function getQualifierValue(expression: ts.ObjectLiteralExpression): string | null {
     const qualifierNode = expression.properties.find(it => it.name?.getText() === 'qualifier');
     if (qualifierNode === undefined) {
-        return undefined;
+        return null;
     }
 
-    let qualifierValue: string | undefined = undefined;
+    let qualifierValue: string | null = null;
 
     if (ts.isPropertyAssignment(qualifierNode)) {
         if (!ts.isStringLiteral(qualifierNode.initializer)) {
-            throw new Error('Qualifier in bean should be a string literal' + getClassMemberLocationMessage(method));
+            CompilationContext.reportError({
+                message: 'Bean qualifier should be a string literal',
+                node: expression,
+            });
         }
 
         qualifierValue = removeQuotesFromString(qualifierNode.initializer.getText());
+    }
+
+    if (qualifierValue === '') {
+        CompilationContext.reportError({
+            message: 'Qualifier should not be empty string',
+            node: qualifierNode,
+        });
     }
 
     return qualifierValue;

@@ -1,5 +1,5 @@
 import path from 'path';
-import { createMatchPath, MatchPath, loadConfig } from 'tsconfig-paths';
+import { createMatchPath, loadConfig, MatchPath } from 'tsconfig-paths';
 import { isPathRelative } from '../../../../utils/isPathRelative';
 import { CompilerOptionsProvider } from '../../../../compiler-options-provider/CompilerOptionsProvider';
 import { extensionsToResolve } from './constants';

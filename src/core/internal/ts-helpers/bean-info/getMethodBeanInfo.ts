@@ -1,14 +1,22 @@
 import * as ts from 'typescript';
 import { getScopeValue } from './getScopeValue';
 import { getQualifierValue } from './getQualifierValue';
-import { IBeanInfo } from '../../../external/decorators/Bean';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { isBeanDecorator } from '../predicates/isBeanDecorator';
+import { ICompilationBeanInfo } from './ICompilationBeanInfo';
+import { EMPTY_COMPILATION_BEAN_INFO } from './constants';
 
-export function getMethodBeanInfo(bean: ts.Decorator): IBeanInfo {
-    const method = bean.parent as ts.MethodDeclaration;
+export function getMethodBeanInfo(methodDeclaration: ts.MethodDeclaration): ICompilationBeanInfo {
+    const bean = methodDeclaration.decorators?.find(isBeanDecorator)
+        ?? CompilationContext.reportAndThrowError({
+            node: methodDeclaration,
+            message: 'Bean should have @Bean decorator',
+        });
+
     const expression = bean.expression;
 
     if (ts.isIdentifier(expression)) {
-        return {};
+        return EMPTY_COMPILATION_BEAN_INFO;
     }
 
 
@@ -16,14 +24,17 @@ export function getMethodBeanInfo(bean: ts.Decorator): IBeanInfo {
         const firstArg = expression.arguments[0];
 
         if (!ts.isObjectLiteralExpression(firstArg)) {
-            throw new Error('Argument in bean should be object literal' + getClassMemberLocationMessage(method));
+            CompilationContext.reportAndThrowError({
+                message: 'Bean configuration should be an object literal',
+                node: bean,
+            });
         }
 
         return {
-            qualifier: getQualifierValue(firstArg, method),
-            scope: getScopeValue(firstArg, method),
+            qualifier: getQualifierValue(firstArg),
+            scope: getScopeValue(firstArg),
         };
     }
 
-    return {};
+    return EMPTY_COMPILATION_BEAN_INFO;
 }

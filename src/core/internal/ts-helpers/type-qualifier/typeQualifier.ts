@@ -12,7 +12,6 @@ import {
 } from './parseTokens';
 import { IQualifiedType } from './types';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
-import { getPositionOfNode } from '../../utils/getPositionOfNode';
 
 export function typeQualifier(typeNode: ts.TypeNode): IQualifiedType {
     return {
@@ -24,9 +23,8 @@ export function typeQualifier(typeNode: ts.TypeNode): IQualifiedType {
 function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string {
     if (deepness === 0 && typeKeywords.includes(node.kind)) {
         CompilationContext.reportAndThrowError({
-            path: node.getSourceFile().fileName,
-            nodePosition: getPositionOfNode(node),
-            errorMessage: 'Primitive types is not allowed as Bean types',
+            node: node,
+            message: 'Primitive types is not allowed as Bean types',
         });
     }
 
@@ -44,9 +42,8 @@ function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string {
     if (ts.isUnionTypeNode(node)) {
         if (deepness === 0 && node.types.every(isTypeRestrictedOnTopLevel)) {
             CompilationContext.reportAndThrowError({
-                path: node.getSourceFile().fileName,
-                nodePosition: getPositionOfNode(node),
-                errorMessage: 'Primitive union types is not allowed as Bean types',
+                node: node,
+                message: 'Primitive union types is not allowed as Bean types',
             });
         }
 
@@ -57,18 +54,16 @@ function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string {
 
     if (!ts.isIntersectionTypeNode(node) && deepness === 0 && isTypeRestrictedOnTopLevel(node)) {
         CompilationContext.reportAndThrowError({
-            path: node.getSourceFile().fileName,
-            nodePosition: getPositionOfNode(node),
-            errorMessage: 'Primitive types is not allowed as Bean types',
+            node: node,
+            message: 'Primitive types is not allowed as Bean types',
         });
     }
 
     if (ts.isIntersectionTypeNode(node)) {
         if (deepness === 0 && node.types.every(isTypeRestrictedOnTopLevel)) {
             CompilationContext.reportAndThrowError({
-                path: node.getSourceFile().fileName,
-                nodePosition: getPositionOfNode(node),
-                errorMessage: 'Primitive types is not allowed as Bean types',
+                node: node,
+                message: 'Primitive types is not allowed as Bean types',
             });
         }
 

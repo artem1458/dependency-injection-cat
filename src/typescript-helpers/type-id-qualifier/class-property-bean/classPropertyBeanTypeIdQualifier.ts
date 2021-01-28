@@ -1,11 +1,12 @@
-import { IClassPropertyDeclarationWithInitializer, ITypeIdQualifierResult } from '../common/types';
+import { ITypeIdQualifierResult } from '../common/types';
 import { getClassMemberLocationMessage } from '../../getClassMemberLocationMessage';
 import { typeIdQualifier } from '../common/typeIdQualifier';
 import { END_QUALIFIER_TOKEN, START_QUALIFIER_TOKEN } from '../common/parseTokens';
 import { getPropertyBeanInfo } from '../../bean-info/getPropertyBeanInfo';
 import { isCallExpressionWithTypeArguments } from '../../call-expression/isCallExpressionWithTypeArguments';
+import { ClassPropertyDeclarationWithInitializer } from '../../../core/internal/ts-helpers/types';
 
-export function classPropertyBeanTypeIdQualifier(property: IClassPropertyDeclarationWithInitializer): ITypeIdQualifierResult {
+export function classPropertyBeanTypeIdQualifier(property: ClassPropertyDeclarationWithInitializer): ITypeIdQualifierResult {
     if (!isCallExpressionWithTypeArguments(property.initializer)) {
         throw new Error('Bean should should have a type' + getClassMemberLocationMessage(property));
     }

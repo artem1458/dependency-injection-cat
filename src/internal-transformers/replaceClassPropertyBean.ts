@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
+import { isClassPropertyBean } from '../core/internal/ts-helpers/predicates/isClassPropertyBean';
 import { getFactoryDependencies } from '../factories/utils/getFactoryDependencies';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { classPropertyBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/class-property-bean/classPropertyBeanTypeIdQualifier';

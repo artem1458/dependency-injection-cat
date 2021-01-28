@@ -1,16 +1,13 @@
 import * as ts from 'typescript';
 import { DiConfigRepository } from '../di-config-repository';
 import { TypeRegisterRepository } from './TypeRegisterRepository';
-import {
-    methodBeanTypeIdQualifier,
-    TypeQualifierError
-} from '../typescript-helpers/type-id-qualifier';
+import { methodBeanTypeIdQualifier, TypeQualifierError } from '../typescript-helpers/type-id-qualifier';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
+import { isMethodBean } from '../core/internal/ts-helpers/predicates/isMethodBean';
 import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMemberLocationMessage';
-import { isBeanDecorator } from '../typescript-helpers/decorator-helpers/isBeanDecorator';
+import { isBeanDecorator } from '../core/internal/ts-helpers/predicates/isBeanDecorator';
 import { getMethodBeanInfo } from '../typescript-helpers/bean-info/getMethodBeanInfo';
-import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
+import { isClassPropertyBean } from '../core/internal/ts-helpers/predicates/isClassPropertyBean';
 import { classPropertyBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/class-property-bean/classPropertyBeanTypeIdQualifier';
 import { getPropertyBeanInfo } from '../typescript-helpers/bean-info/getPropertyBeanInfo';
 

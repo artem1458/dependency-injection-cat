@@ -1,4 +1,4 @@
-import { mergeWith, isArray } from 'lodash';
+import { isArray, mergeWith } from 'lodash';
 import { ITransformerConfig } from './ITransformerConfig';
 import { transformerConfig } from './transformerConfig';
 

@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
-import { libraryName } from '../../../constants/libraryName';
-import { getNodeSourceDescriptorDeep } from './node-source-descriptor';
+import { libraryName } from '../../../../constants/libraryName';
+import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 
 export const isExtendsCatContextContext = (node: ts.Node): node is ts.ClassDeclaration => {
     if (!ts.isClassDeclaration(node)) {

@@ -1,10 +1,4 @@
-import {
-    NodeArray,
-    TypeNode,
-    TypeReferenceNode,
-    PropertyDeclaration,
-    CallExpression,
-} from 'typescript';
+import { NodeArray, TypeNode, TypeReferenceNode, } from 'typescript';
 
 export interface ITypeReferenceNode extends TypeReferenceNode {
     typeArguments: NodeArray<TypeNode>;
@@ -15,6 +9,3 @@ export interface ITypeIdQualifierResult {
     typeId: string;
 }
 
-export interface IClassPropertyDeclarationWithInitializer extends PropertyDeclaration {
-    initializer: CallExpression;
-}

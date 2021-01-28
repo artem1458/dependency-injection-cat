@@ -1,9 +1,9 @@
 import * as ts from 'typescript';
-import { IClassPropertyDeclarationWithInitializer } from '../type-id-qualifier/common/types';
-import { libraryName } from '../../constants/libraryName';
-import { getNodeSourceDescriptorDeep } from '../../core/internal/ts-helpers/node-source-descriptor';
+import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
+import { libraryName } from '../../../../constants/libraryName';
+import { ClassPropertyDeclarationWithInitializer } from '../types';
 
-export function isClassPropertyBean(node: ts.Node): node is IClassPropertyDeclarationWithInitializer {
+export function isClassPropertyBean(node: ts.Node): node is ClassPropertyDeclarationWithInitializer {
     return ts.isPropertyDeclaration(node) && hasBeanCallExpression(node);
 }
 

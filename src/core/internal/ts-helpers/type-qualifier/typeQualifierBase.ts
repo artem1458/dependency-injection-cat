@@ -1,7 +1,6 @@
 import * as ts from 'typescript';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
-import { getPositionOfNode } from '../../utils/getPositionOfNode';
 import { END_PATH_TOKEN, END_UTILITY_TYPE, START_PATH_TOKEN, START_UTILITY_TYPE } from './parseTokens';
 import { typescriptUtilityTypes } from './constants';
 
@@ -20,8 +19,7 @@ export const typeQualifierBase = (node: ts.TypeReferenceNode): string => {
     }
 
     CompilationContext.reportAndThrowError({
-        path: sourceFile.fileName,
-        errorMessage: 'Can\'t generate type',
-        nodePosition: getPositionOfNode(node),
+        message: 'Can\'t generate type',
+        node: node,
     });
 };

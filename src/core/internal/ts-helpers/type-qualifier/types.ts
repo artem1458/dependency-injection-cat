@@ -1,10 +1,4 @@
-import {
-    NodeArray,
-    TypeNode,
-    TypeReferenceNode,
-    PropertyDeclaration,
-    CallExpression,
-} from 'typescript';
+import { CallExpression, NodeArray, PropertyDeclaration, TypeNode, TypeReferenceNode, } from 'typescript';
 
 export interface ITypeReferenceNode extends TypeReferenceNode {
     typeArguments: NodeArray<TypeNode>;

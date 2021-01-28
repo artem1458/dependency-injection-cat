@@ -2,7 +2,7 @@ import * as ts from 'typescript';
 import { ITypeIdQualifierResult } from '../common/types';
 import { getClassMemberLocationMessage } from '../../getClassMemberLocationMessage';
 import { typeIdQualifier } from '../common/typeIdQualifier';
-import { isBeanDecorator } from '../../decorator-helpers/isBeanDecorator';
+import { isBeanDecorator } from '../../../core/internal/ts-helpers/predicates/isBeanDecorator';
 import { getMethodBeanInfo } from '../../bean-info/getMethodBeanInfo';
 import { END_QUALIFIER_TOKEN, START_QUALIFIER_TOKEN } from '../common/parseTokens';
 

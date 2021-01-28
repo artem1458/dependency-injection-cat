@@ -1,9 +1,9 @@
 import { ProgramRepository } from '../program/ProgramRepository';
 import { SourceFileNotFound } from '../../exceptions/compilation/SourceFileNotFound';
-import { isExtendsCatContextContext } from '../ts-helpers/isExtendsCatContextContext';
+import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCatContextContext';
 import { UnnamedContext } from '../../exceptions/compilation/UnnamedContext';
 import { ContextRepository } from './ContextRepository';
-import { isNamedClassDeclaration } from '../ts-helpers/isNamedClassDeclaration';
+import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 
 export const registerContexts = (contextPaths: Array<string>) => {
     const sourceFiles = contextPaths.map(file => {

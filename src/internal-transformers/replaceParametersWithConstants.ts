@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
+import { isMethodBean } from '../core/internal/ts-helpers/predicates/isMethodBean';
 import { getFactoryDependencies } from '../factories/utils/getFactoryDependencies';
 import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMemberLocationMessage';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';

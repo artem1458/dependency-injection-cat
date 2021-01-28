@@ -1,4 +1,5 @@
 import { ICompilationContextError } from './ICompilationContextError';
+import { getPositionOfNode } from '../internal/utils/getPositionOfNode';
 
 interface ICompilationContext {
     errors: ICompilationContextError[];
@@ -40,7 +41,10 @@ export class CompilationContext {
         throw new CompilationError(errorMessages.join('\n'));
     }
 
-    private static formatCompilationContextError({ path, errorMessage, nodePosition }: ICompilationContextError): string {
-        return `${errorMessage}\nAt: (${path}:${nodePosition[0]}:${nodePosition[1]})\n`;
+    private static formatCompilationContextError({ message, node }: ICompilationContextError): string {
+        const nodePosition = getPositionOfNode(node);
+        const path = node.getSourceFile().fileName;
+
+        return `${message}\nAt: (${path}:${nodePosition[0]}:${nodePosition[1]})\n`;
     }
 }

@@ -1,5 +1,6 @@
+import ts from 'typescript';
+
 export interface ICompilationContextError {
-    path: string;
-    errorMessage: string;
-    nodePosition: [number, number];
+    message: string;
+    node: ts.Node
 }

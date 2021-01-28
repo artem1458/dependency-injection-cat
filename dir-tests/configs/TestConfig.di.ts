@@ -1,16 +1,21 @@
 import { CatContext, Bean } from 'dependency-injection-cat';
 
-interface IT {}
+export interface IT {}
+export interface XZ {}
+
+export class AA {}
 
 export class TestConfig2 extends CatContext {
-    @Bean
-    someBean(): IT {
-        return {};
-    }
+    beann = Bean(AA)
 
-    @Bean
-    someBean232() {
-        return {};
-    }
+    // @Bean
+    // someBean(): IT {
+    //     return {};
+    // }
+    //
+    // @Bean
+    // someBean232(): XZ {
+    //     return {};
+    // }
 
 }

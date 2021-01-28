@@ -10,10 +10,7 @@ import { removeQuotesFromString } from '../../../../utils/removeQuotesFromString
 import { PathResolverCache } from '../path-resolver/PathResolverCache';
 import { SourceFilesCache } from './SourceFilesCache';
 import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './ExportDeclarationWithoutClauseAndModuleSpecifier';
-import {
-    isExternalExportDeclaration,
-    isNamedExternalExportsDeclaration
-} from './ExternalExportDeclaration';
+import { isExternalExportDeclaration, isNamedExternalExportsDeclaration } from './ExternalExportDeclaration';
 
 //TODO Add support for default imports/exports
 export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string, exportNodesStack: ts.ExportDeclaration[] = []): INodeSourceDescriptor | null {

@@ -1,10 +1,10 @@
 import * as ts from 'typescript';
-import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
+import { isMethodBean } from '../core/internal/ts-helpers/predicates/isMethodBean';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { methodBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier';
 import { ICreateFactoriesContext } from '../factories/ICreateFactoriesContext';
 import { getPrivateIdentifier } from '../typescript-helpers/getPrivateIdentifier';
-import { isBeanDecorator } from '../typescript-helpers/decorator-helpers/isBeanDecorator';
+import { isBeanDecorator } from '../core/internal/ts-helpers/predicates/isBeanDecorator';
 
 export const setMethodBeanScopesAndRemoveBeanDecorators = (
     factoryContext: ICreateFactoriesContext,

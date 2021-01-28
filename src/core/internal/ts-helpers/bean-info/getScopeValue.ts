@@ -1,29 +1,35 @@
 import * as ts from 'typescript';
-import { TBeanScope } from '../../decorators/Bean';
-import { getClassMemberLocationMessage } from '../getClassMemberLocationMessage';
-import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { removeQuotesFromString } from '../../../../utils/removeQuotesFromString';
+import { TBeanScopeValue } from './ICompilationBeanInfo';
 
-const scopes: Array<string | undefined> = ['singleton', 'prototype', undefined];
+const scopes: Array<TBeanScopeValue | null> = ['singleton', 'prototype'];
 
-export function getScopeValue(expression: ts.ObjectLiteralExpression, method: ts.MethodDeclaration): TBeanScope | undefined {
+export function getScopeValue(expression: ts.ObjectLiteralExpression): TBeanScopeValue {
     const scopeNode = expression.properties.find(it => it.name?.getText() === 'scope');
     if (scopeNode === undefined) {
-        return undefined;
+        return 'singleton';
     }
 
-    let scopeValue: string | undefined = undefined;
+    let scopeValue: string | null = null;
 
     if (ts.isPropertyAssignment(scopeNode)) {
         if (!ts.isStringLiteral(scopeNode.initializer)) {
-            throw new Error('Scope in bean should be a string literal' + getClassMemberLocationMessage(method));
+            CompilationContext.reportError({
+                message: 'Bean scope should be a string literal',
+                node: scopeNode
+            });
         }
 
         scopeValue = removeQuotesFromString(scopeNode.initializer.getText());
     }
 
-    if (!scopes.includes(scopeValue)) {
-        throw new Error('Scope in bean should be a "prototype" or "singleton"' + getClassMemberLocationMessage(method));
+    if (!scopes.includes(scopeValue as TBeanScopeValue)) {
+        CompilationContext.reportError({
+            message: 'Scope in bean should be a "prototype" or "singleton"',
+            node: scopeNode
+        });
     }
 
-    return scopeValue as TBeanScope | undefined;
+    return 'singleton';
 }

@@ -9,13 +9,13 @@ import {
 import { TypeDependencyRepository } from './TypeDependencyRepository';
 import { TypeRegisterRepository } from '../type-register/TypeRegisterRepository';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { isMethodBean } from '../typescript-helpers/decorator-helpers/isMethodBean';
+import { isMethodBean } from '../core/internal/ts-helpers/predicates/isMethodBean';
 import { getClassMemberLocationMessage } from '../typescript-helpers/getClassMemberLocationMessage';
-import { isClassPropertyBean } from '../typescript-helpers/decorator-helpers/isClassPropertyBean';
+import { isClassPropertyBean } from '../core/internal/ts-helpers/predicates/isClassPropertyBean';
 import { classPropertyBeanTypeIdQualifier } from '../typescript-helpers/type-id-qualifier/class-property-bean/classPropertyBeanTypeIdQualifier';
-import { IClassPropertyDeclarationWithInitializer } from '../typescript-helpers/type-id-qualifier/common/types';
 import { getNodeSourceDescriptorDeep } from '../core/internal/ts-helpers/node-source-descriptor/getNodeSourceDescriptorDeep';
 import { SourceFilesCache } from '../core/internal/ts-helpers/node-source-descriptor/SourceFilesCache';
+import {ClassPropertyDeclarationWithInitializer} from '../core/internal/ts-helpers/types';
 
 export function registerDependencies(): void {
     const program = ProgramRepository.program;
@@ -75,7 +75,7 @@ const restrictedExtentions = [
     '.jsx',
 ];
 
-function getClassDependencies(node: IClassPropertyDeclarationWithInitializer): Array<string> {
+function getClassDependencies(node: ClassPropertyDeclarationWithInitializer): Array<string> {
     const nameToFind  = node.initializer.arguments[0].getText();
     const sourceFile = node.getSourceFile();
     const nodeSourceDescriptor = getNodeSourceDescriptorDeep(sourceFile, nameToFind);

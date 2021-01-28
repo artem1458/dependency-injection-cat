@@ -11,6 +11,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowJs": true,
+    "allowUnreachableCode": true,
     "checkJs": false,
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,

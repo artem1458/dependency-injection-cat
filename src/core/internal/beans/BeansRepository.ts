@@ -1,12 +1,13 @@
 import ts from 'typescript';
+import { TBeanScopeValue } from '../ts-helpers/bean-info/ICompilationBeanInfo';
 
 export interface IBeanDescriptor {
-    classPropertyName: string;
-    qualifierName: string;
+    classMemberName: string;
+    qualifierName: string | null;
     contextName: string;
     typeId: string;
     originalTypeName: string;
-    scope: 'prototype' | 'singleton';
+    scope: TBeanScopeValue;
     node: ts.MethodDeclaration | ts.PropertyDeclaration;
 }
 
@@ -14,25 +15,7 @@ export interface IBeanDescriptor {
 export class BeansRepository {
     static beansDescriptorRepository = new Map<ts.MethodDeclaration | ts.PropertyDeclaration, IBeanDescriptor>();
 
-    static registerMethodBean(
-        classPropertyName: string,
-        qualifierName: string,
-        contextName: string,
-        typeId: string,
-        originalTypeName: string,
-        scope: 'prototype' | 'singleton',
-        node: ts.MethodDeclaration | ts.PropertyDeclaration,
-    ): void {
-        const descriptor: IBeanDescriptor = {
-            classPropertyName,
-            qualifierName,
-            contextName,
-            typeId,
-            originalTypeName,
-            scope,
-            node,
-        };
-
-        this.beansDescriptorRepository.set(node, descriptor);
+    static registerMethodBean(descriptor: IBeanDescriptor): void {
+        this.beansDescriptorRepository.set(descriptor.node, descriptor);
     }
 }
