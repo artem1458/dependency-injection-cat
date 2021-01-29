@@ -10,6 +10,7 @@ class CompilationError extends Error {
         public message: string,
     ) {
         super();
+        this.stack = undefined;
     }
 }
 
@@ -31,7 +32,9 @@ export class CompilationContext {
             return;
         }
 
-        const errorMessages = ['\n'];
+        const errorMessages: string[] = [
+            '\n/-/-/-/-/-/-/-/-/-/-/-/-/ Compilation errors /-/-/-/-/-/-/-/-/-/-/-/-/-/-/\n'
+        ];
 
 
         this.compilationContext.errors.forEach(error => {
