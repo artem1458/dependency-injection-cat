@@ -11,6 +11,7 @@ import { PathResolverCache } from '../path-resolver/PathResolverCache';
 import { SourceFilesCache } from './SourceFilesCache';
 import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './ExportDeclarationWithoutClauseAndModuleSpecifier';
 import { isExternalExportDeclaration, isNamedExternalExportsDeclaration } from './ExternalExportDeclaration';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
 //TODO Add support for default imports/exports
 export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string, exportNodesStack: ts.ExportDeclaration[] = []): INodeSourceDescriptor | null {
@@ -143,11 +144,12 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         );
 
         if (!path.isAbsolute(resolvedPath)) {
-            throw new Error(`
-            DI container does not support export * as Something from 'node-module'
-            ${externalNamespaceExport.getText()}
-            in ${sourceFile.fileName}
-            `);
+            CompilationContext.reportError({
+                node: externalNamespaceExport,
+                message: 'DI container does not support export * as Something from "node-module"'
+            });
+
+            return null;
         }
 
         const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
@@ -177,11 +179,12 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         );
 
         if (!path.isAbsolute(resolvedPath)) {
-            throw new Error(`
-            DI container does not support export * as Something from 'node-module'
-            ${exportExpression.getText()}
-            in ${sourceFile.fileName}
-            `);
+            CompilationContext.reportError({
+                node: externalExportSpecifier,
+                message: 'DI container does not support export * as Something from "node-module"',
+            });
+
+            return null;
         }
 
         const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
@@ -201,11 +204,12 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         );
 
         if (!path.isAbsolute(resolvedPath)) {
-            throw new Error(`
-            DI container does not support export * from 'node-module'
-            ${it.getText()}
-            in ${sourceFile.fileName}
-            `);
+            CompilationContext.reportError({
+                message: 'DI container does not support export * from "node-module"',
+                node: it,
+            });
+
+            return null;
         }
 
         if (!exportNodesStack.includes(it)) {

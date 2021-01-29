@@ -1,34 +1,41 @@
+import ts from 'typescript';
 import { ProgramRepository } from '../program/ProgramRepository';
-import { SourceFileNotFound } from '../../exceptions/compilation/SourceFileNotFound';
 import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCatContextContext';
-import { UnnamedContext } from '../../exceptions/compilation/UnnamedContext';
 import { ContextRepository } from './ContextRepository';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export const registerContexts = (contextPaths: Array<string>) => {
     const sourceFiles = contextPaths.map(file => {
         const sourceFile = ProgramRepository.program.getSourceFile(file);
 
         if (!sourceFile) {
-            throw new SourceFileNotFound(file);
+            CompilationContext.reportErrorMessage(`Source file not found, ${file}`);
+
+            return;
         }
 
         return sourceFile;
-    });
+    }).filter((it): it is ts.SourceFile => it !== undefined);
 
     sourceFiles.forEach(sourceFile => {
-        const contexts = sourceFile.statements.filter(isExtendsCatContextContext);
+        const classDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
 
-        contexts.forEach(context => {
-            if (!isNamedClassDeclaration(context)) {
-                throw new UnnamedContext(sourceFile.fileName);
+        classDeclarations.forEach(classDeclaration => {
+            if (!isNamedClassDeclaration(classDeclaration)) {
+                CompilationContext.reportError({
+                    message: 'Context should be a named class declaration',
+                    node: classDeclaration
+                });
+
+                return;
             }
 
-            const name = context.name.getText();
+            const name = classDeclaration.name.getText();
 
             ContextRepository.registerContext(
                 name,
-                context,
+                classDeclaration,
             );
         });
     });

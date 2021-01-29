@@ -7,11 +7,16 @@ import { ICompilationBeanInfo } from './ICompilationBeanInfo';
 import { EMPTY_COMPILATION_BEAN_INFO } from './constants';
 
 export function getMethodBeanInfo(methodDeclaration: ts.MethodDeclaration): ICompilationBeanInfo {
-    const bean = methodDeclaration.decorators?.find(isBeanDecorator)
-        ?? CompilationContext.reportAndThrowError({
+    const bean = methodDeclaration.decorators?.find(isBeanDecorator) ?? null;
+
+    if (bean === null) {
+        CompilationContext.reportError({
             node: methodDeclaration,
             message: 'Bean should have @Bean decorator',
         });
+
+        return EMPTY_COMPILATION_BEAN_INFO;
+    }
 
     const expression = bean.expression;
 
@@ -19,15 +24,16 @@ export function getMethodBeanInfo(methodDeclaration: ts.MethodDeclaration): ICom
         return EMPTY_COMPILATION_BEAN_INFO;
     }
 
-
     if (ts.isCallExpression(expression)) {
         const firstArg = expression.arguments[0];
 
         if (!ts.isObjectLiteralExpression(firstArg)) {
-            CompilationContext.reportAndThrowError({
+            CompilationContext.reportError({
                 message: 'Bean configuration should be an object literal',
                 node: bean,
             });
+
+            return EMPTY_COMPILATION_BEAN_INFO;
         }
 
         return {

@@ -18,8 +18,10 @@ export const typeQualifierBase = (node: ts.TypeReferenceNode): string => {
         return `${START_UTILITY_TYPE}${nameToFind}${END_UTILITY_TYPE}`;
     }
 
-    CompilationContext.reportAndThrowError({
+    CompilationContext.reportError({
         message: 'Can\'t generate type',
         node: node,
     });
+
+    return 'UNDEFINED_TYPE';
 };

@@ -3,6 +3,7 @@ import { getPositionOfNode } from '../internal/utils/getPositionOfNode';
 
 interface ICompilationContext {
     errors: ICompilationContextError[];
+    textErrors: string[];
 }
 
 class CompilationError extends Error {
@@ -17,6 +18,7 @@ class CompilationError extends Error {
 export class CompilationContext {
     static compilationContext: ICompilationContext = {
         errors: [],
+        textErrors: [],
     };
 
     static reportError(error: ICompilationContextError): void {
@@ -25,6 +27,14 @@ export class CompilationContext {
 
     static reportAndThrowError(error: ICompilationContextError): never {
         throw new CompilationError(this.formatCompilationContextError(error));
+    }
+
+    static reportErrorMessage(message: string): void {
+        this.compilationContext.textErrors.push(message);
+    }
+
+    static reportAndThrowErrorMessage(message: string): never {
+        throw new CompilationError(message);
     }
 
     static throw(): void {
@@ -36,6 +46,7 @@ export class CompilationContext {
             '\n/-/-/-/-/-/-/-/-/-/-/-/-/ Compilation errors /-/-/-/-/-/-/-/-/-/-/-/-/-/-/\n'
         ];
 
+        this.compilationContext.textErrors.forEach(error => errorMessages.push(error));
 
         this.compilationContext.errors.forEach(error => {
             errorMessages.push(this.formatCompilationContextError(error));
