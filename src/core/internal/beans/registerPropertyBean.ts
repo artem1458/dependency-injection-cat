@@ -38,8 +38,25 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
         const resolvedPropertyType = typeQualifier(propertyType);
         const resolvedBeanGenericType = typeQualifier(beanGenericType);
 
+        if (resolvedPropertyType === null && resolvedBeanGenericType === null) {
+            return null;
+        }
+
+        if (resolvedBeanGenericType !== null) {
+            return resolvedBeanGenericType;
+        }
+
+        if (resolvedPropertyType !== null) {
+            return resolvedPropertyType;
+        }
+
         if (isEqual(resolvedPropertyType, resolvedBeanGenericType)) {
             return resolvedBeanGenericType;
+        } else {
+            CompilationContext.reportError({
+                node: beanGenericType,
+                message: 'Bean generic type and property type should be equal',
+            });
         }
     }
 
