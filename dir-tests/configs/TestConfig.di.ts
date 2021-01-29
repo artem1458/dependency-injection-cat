@@ -1,4 +1,4 @@
-import { CatContext, Bean } from 'dependency-injection-cat';
+import { CatContext, Bean, Qualifier } from 'dependency-injection-cat';
 import { XZ } from './types';
 
 export interface IT {}

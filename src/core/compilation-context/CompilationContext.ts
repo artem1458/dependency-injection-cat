@@ -25,10 +25,6 @@ export class CompilationContext {
         this.compilationContext.errors.push(error);
     }
 
-    static reportAndThrowError(error: ICompilationContextError): never {
-        throw new CompilationError(this.formatCompilationContextError(error));
-    }
-
     static reportErrorMessage(message: string): void {
         this.compilationContext.textErrors.push(message);
     }

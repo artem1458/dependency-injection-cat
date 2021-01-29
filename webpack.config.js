@@ -26,7 +26,7 @@ module.exports = {
                 loader: 'ts-loader',
                 options: {
                     compiler: 'ttypescript',
-                    transpileOnly: true,
+                    transpileOnly: false,
                 }
             }
         ],
