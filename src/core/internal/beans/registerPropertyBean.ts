@@ -42,21 +42,21 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
             return null;
         }
 
-        if (resolvedBeanGenericType !== null) {
-            return resolvedBeanGenericType;
-        }
-
-        if (resolvedPropertyType !== null) {
-            return resolvedPropertyType;
-        }
-
-        if (isEqual(resolvedPropertyType, resolvedBeanGenericType)) {
+        if (resolvedPropertyType !== null && resolvedBeanGenericType !== null && isEqual(resolvedPropertyType, resolvedBeanGenericType)) {
             return resolvedBeanGenericType;
         } else {
             CompilationContext.reportError({
                 node: beanGenericType,
                 message: 'Bean generic type and property type should be equal',
             });
+        }
+
+        if (resolvedBeanGenericType !== null) {
+            return resolvedBeanGenericType;
+        }
+
+        if (resolvedPropertyType !== null) {
+            return resolvedPropertyType;
         }
     }
 

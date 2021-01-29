@@ -8,9 +8,13 @@ export class AA {}
 export class TestConfig2 extends CatContext {
     beann: IT = Bean<XZ>(AA)
 
-    // @Bean
-    // someBean232(): XZ {
-    //     return {};
-    // }
+    @Bean
+    someBean232() {
+        return {};
+    }
 
+    @Bean({ qualifier: '' })
+    someBean232232() {
+        return {};
+    }
 }
