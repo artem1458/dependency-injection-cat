@@ -28,11 +28,6 @@ export function typeQualifier(typeNode: ts.TypeNode): IQualifiedType | null {
 
 function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string | null {
     if (deepness === 0 && typeKeywords.includes(node.kind)) {
-        CompilationContext.reportError({
-            node: node,
-            message: 'Primitive types is not allowed as a Bean type',
-        });
-
         return null;
     }
 
@@ -49,11 +44,6 @@ function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string | 
 
     if (ts.isUnionTypeNode(node)) {
         if (deepness === 0 && node.types.every(isTypeRestrictedOnTopLevel)) {
-            CompilationContext.reportError({
-                node: node,
-                message: 'Primitive union types is not allowed as a Bean type',
-            });
-
             return null;
         }
 
@@ -73,11 +63,6 @@ function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string | 
 
     if (ts.isIntersectionTypeNode(node)) {
         if (deepness === 0 && node.types.every(isTypeRestrictedOnTopLevel)) {
-            CompilationContext.reportError({
-                node: node,
-                message: 'Primitive types is not allowed as a Bean type',
-            });
-
             return null;
         }
 
@@ -91,6 +76,10 @@ function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string | 
     if (isTypeReferenceNode(node)) {
         const types = node.typeArguments.map(it => getTypesNameDeep(it, prevType, deepness + 1));
         const nodeName = typeQualifierBase(node);
+
+        if (nodeName === null) {
+            return null;
+        }
 
         return `${nodeName}${OPEN_TYPE_ARGUMENTS_TOKEN}${types.join(', ')}${CLOSE_TYPE_ARGUMENTS_TOKEN}`;
     }

@@ -14,11 +14,11 @@ export function registerMethodBean(contextDescriptor: IContextDescriptor, classE
         return;
     }
 
-    BeansRepository.registerMethodBean({
+    BeansRepository.registerBean({
         classMemberName: classElement.name.getText(),
-        qualifierName: beanInfo.qualifier,
+        qualifier: beanInfo.qualifier,
         contextName: contextDescriptor.name,
-        typeId: typeInfo.typeId,
+        type: typeInfo.typeId,
         originalTypeName: typeInfo.originalTypeName,
         scope: beanInfo.scope,
         node: classElement,

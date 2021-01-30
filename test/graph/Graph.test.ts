@@ -1,143 +1,147 @@
-import { spy, verify, when } from 'ts-mockito';
-import { Graph } from '@src/graphs/graph/Graph';
+import { anything, spy, verify, when } from 'ts-mockito';
+import { Graph, IGraph } from '../../src/graphs/graph';
+import { random } from '../testUtils/random';
 
 describe('Graph tests', () => {
-    describe('addNode should add node to graph', () => {
-        it('should add empty node to graph', () => {
-            //Given
-            const expected = {
-                a: [],
-            };
+    let graph: IGraph<string>;
 
-            const graph = new Graph();
+    beforeEach(() => {
+        graph = new Graph();
+    });
+
+    describe('addVertex tests', () => {
+        it('should add empty vertex to graph', () => {
+            //Given
+            const vertex = random.nextString();
+            const expected: any[] = [];
 
             //When
-            graph.addNode('a');
+            graph.addVertex(vertex);
 
             //Then
-            expect(graph.g).toEqual(expected);
+            expect(graph.g.get(vertex)).toEqual(expected);
         });
 
         it('should not rewrite exist node', () => {
             //Given
-            const expected = {
-                a: ['b', 'c', 'd'],
-            };
+            const vertex = random.nextString();
+            const savedEdges = random.listOfString();
 
-            const graph = new Graph();
-            const innerGraph = {
-                a: ['b', 'c', 'd'],
-            };
-            Object.defineProperty(graph, '_graph', { value: innerGraph });
+            graph.g.set(vertex, savedEdges);
 
             //When
-            graph.addNode('a');
+            graph.addVertex(vertex);
 
             //Then
-            expect(graph.g).toEqual(expected);
+            expect(graph.g.get(vertex)).toEqual(savedEdges);
         });
     });
 
-    it.each`
-        node        |       expected
-        ${'a'}      |       ${true}
-        ${'b'}      |       ${false}
-    `('hasNode should check, if there is node in graph, should return $expected, for node=$node', ({ node, expected }) => {
-        //Given
-        const graph = new Graph();
-        graph.addNode('a');
+    describe('hasVertex tests', () => {
+        it('should return false, when has no vertex', () => {
+            //When
+            const actual = graph.hasVertex(random.nextString());
 
-        //When
-        const actual = graph.hasNode(node);
+            //Then
+            expect(actual).toBe(false);
+        });
 
-        //Then
-        expect(actual).toEqual(expected);
+        it('should return true, when graph has vertex', () => {
+            //Given
+            const vertex = random.nextString();
+
+            graph.addVertex(vertex);
+
+            //When
+            const actual = graph.hasVertex(vertex);
+
+            //Then
+            expect(actual).toBe(true);
+        });
     });
 
     describe('addEdges should add edges to node, and create node, if it\'s not exist', () => {
         it('should create node if it\'s not exist in graph', () => {
             //Given
-            const graph = new Graph();
+            const vertex = random.nextString();
+
             const instanceSpy = spy(graph);
-            when(instanceSpy.hasNode('a')).thenReturn(false);
+            when(instanceSpy.hasVertex(anything())).thenReturn(false);
 
             //When
-            graph.addEdges('a');
+            graph.addEdges(vertex);
 
             //Then
-            verify(instanceSpy.hasNode('a')).called();
-            verify(instanceSpy.addNode('a')).once();
+            verify(instanceSpy.hasVertex(vertex)).once();
+            verify(instanceSpy.addVertex(vertex)).once();
         });
 
-        it('should add edges to node, and not duplicate them, also should add empty nodes to graph with dependencies', () => {
+        it('should add edges to vertex, and not duplicate them, also should add empty ventricles to graph with empty dependencies', () => {
             //Given
-            const expected = {
-                a: ['b', 'c', 'd', 'e', 'f'],
-                b: [],
-                c: [],
-                d: [],
-                e: [],
-                f: [],
-            };
+            const vertex = random.nextString();
+            const edges = random.listOfString(5);
 
-            const graph = new Graph();
-            const innerGraph = {
-                a: ['b', 'c'],
-            };
-            Object.defineProperty(graph, '_graph', { value: innerGraph });
+            graph.addEdges(vertex, ...edges.slice(0, 2));
 
             //When
-            graph.addEdges('a', 'b', 'c', 'd', 'e', 'f');
+            graph.addEdges(vertex, ...edges);
 
             //Then
-            expect(graph.g).toEqual(expected);
+            expect(graph.getEdges(vertex)).toEqual(edges);
+            expect(graph.hasVertex(edges[0])).toBe(true);
+            expect(graph.hasVertex(edges[1])).toBe(true);
+            expect(graph.hasVertex(edges[2])).toBe(true);
+            expect(graph.hasVertex(edges[3])).toBe(true);
+            expect(graph.hasVertex(edges[4])).toBe(true);
         });
     });
 
-    it.each`
-        node        |       expected
-        ${'a'}      |       ${true}
-        ${'b'}      |       ${false}
-    `('hasEdges should check, if there is edges in node, should return $expected, for node=$node', ({ node, expected }) => {
-        //Given
-        const graph = new Graph();
-        const innerGraph = {
-            a: ['b', 'c'],
-            b: [],
-        };
-        Object.defineProperty(graph, '_graph', { value: innerGraph });
-
-        //When
-        const actual = graph.hasEdges(node);
-
-        //Then
-        expect(actual).toEqual(expected);
-    });
-
-    describe('getEdges', () => {
-        it('should return list edges of node, when node exist', () => {
+    describe('hasEdges tests', () => {
+        it('should return false, when has no edges', () => {
             //Given
-            const graph = new Graph();
-            const innerGraph = {
-                a: ['b', 'c'],
-            };
-            Object.defineProperty(graph, '_graph', { value: innerGraph });
+            const vertex = random.nextString();
+
+            graph.addVertex(vertex);
 
             //When
-            const actual = graph.getEdges('a');
+            const actual = graph.hasEdges(vertex);
 
             //Then
-            expect(actual).toEqual(innerGraph.a);
+            expect(actual).toBe(false);
         });
 
-        it('should return empty list, when node not exist in graph', () => {
+        it('should return true, when has edges', () => {
             //Given
-            const graph = new Graph();
-            const innerGraph = {};
-            Object.defineProperty(graph, '_graph', { value: innerGraph });
+            const vertex = random.nextString();
+
+            graph.addEdges(vertex, ...random.listOfString());
 
             //When
-            const actual = graph.getEdges('a');
+            const actual = graph.hasEdges(vertex);
+
+            //Then
+            expect(actual).toBe(true);
+        });
+    });
+
+    describe('getEdges tests', () => {
+        it('should return list edges of vertex, when node exist', () => {
+            //Given
+            const vertex = random.nextString();
+            const edges = random.listOfString();
+
+            graph.addEdges(vertex, ...edges);
+
+            //When
+            const actual = graph.getEdges(vertex);
+
+            //Then
+            expect(actual).toEqual(edges);
+        });
+
+        it('should return empty list, when vertex does not exist in graph', () => {
+            //When
+            const actual = graph.getEdges(random.nextString());
 
             //Then
             expect(actual).toEqual([]);

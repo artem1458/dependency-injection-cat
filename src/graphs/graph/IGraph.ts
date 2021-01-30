@@ -1,14 +1,14 @@
 import { TGraphEntity } from './TGraphEntity';
 
-export interface IGraph {
-    readonly g: Readonly<TGraphEntity>;
+export interface IGraph<TEntity> {
+    readonly g: Readonly<TGraphEntity<TEntity>>;
 
-    addNode(node: string): void;
-    hasNode(node: string): boolean;
+    addVertex(vertex: TEntity): void;
+    hasVertex(vertex: TEntity): boolean;
 
-    addVertices(node: string, ...edges: Array<string>): void;
-    hasVertices(node: string): boolean;
-    getVertices(node: string): Array<string>;
+    addEdges(vertex: TEntity, ...edges: Array<TEntity>): void;
+    hasEdges(vertex: TEntity): boolean;
+    getEdges(vertex: TEntity): Array<TEntity>;
     clearGraph(): void;
 }
 

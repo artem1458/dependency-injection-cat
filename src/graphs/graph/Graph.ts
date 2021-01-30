@@ -1,48 +1,48 @@
 import { IGraph } from './IGraph';
 import { TGraphEntity } from './TGraphEntity';
 
-export class Graph implements IGraph {
-    protected _graph: TGraphEntity = {};
+export class Graph<TEntity> implements IGraph<TEntity> {
+    protected _graph: TGraphEntity<TEntity> = new Map<TEntity, Array<TEntity>>();
 
-    get g(): Readonly<TGraphEntity> {
+    get g(): Readonly<TGraphEntity<TEntity>> {
         return this._graph;
     }
 
-    addNode(node: string): void {
-        if (!this.hasNode(node)) {
-            this._graph[node] = [];
+    addVertex(vertex: TEntity): void {
+        if (!this.hasVertex(vertex)) {
+            this._graph.set(vertex, []);
         }
     }
 
-    hasNode(node: string): boolean {
-        return Object.prototype.hasOwnProperty.call(this.g, node);
+    hasVertex(vertex: TEntity): boolean {
+        return this.g.has(vertex);
     }
 
-    addVertices(node: string, ...edges: Array<string>): void {
-        this.addNode(node);
+    addEdges(vertex: TEntity, ...newEdges: Array<TEntity>): void {
+        this.addVertex(vertex);
 
-        const nodeEdges = this._graph[node] || [];
+        const existEdges = this._graph.get(vertex) || [];
 
-        edges.forEach(edge => {
-            this.addNode(edge);
+        newEdges.forEach(newEdge => {
+            this.addVertex(newEdge);
 
-            if (!nodeEdges.includes(edge)) {
-                nodeEdges.push(edge);
+            if (!existEdges.includes(newEdge)) {
+                existEdges.push(newEdge);
             }
         });
     }
 
-    hasVertices(node: string): boolean {
-        const list = this.g[node] || [];
+    hasEdges(vertex: TEntity): boolean {
+        const list = this.g.get(vertex) || [];
 
         return list.length > 0;
     }
 
-    getVertices(node: string): Array<string> {
-        return this.g[node] || [];
+    getEdges(vertex: TEntity): Array<TEntity> {
+        return this.g.get(vertex) || [];
     }
 
     clearGraph(): void {
-        this._graph = {};
+        this._graph.clear();
     }
 }

@@ -18,11 +18,11 @@ export function registerPropertyBean(contextDescriptor: IContextDescriptor, clas
         return;
     }
 
-    BeansRepository.registerMethodBean({
+    BeansRepository.registerBean({
         classMemberName: classElement.name.getText(),
-        qualifierName: beanInfo.qualifier,
+        qualifier: beanInfo.qualifier,
         contextName: contextDescriptor.name,
-        typeId: typeInfo.typeId,
+        type: typeInfo.typeId,
         originalTypeName: typeInfo.originalTypeName,
         scope: beanInfo.scope,
         node: classElement,
@@ -73,7 +73,7 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
     if (!ts.isIdentifier(firstArgument)) {
         CompilationContext.reportError({
             node: firstArgument,
-            message: 'First argument in Property-Bean should be a reference',
+            message: 'First argument in Property-Bean should be a class reference',
         });
 
         return null;

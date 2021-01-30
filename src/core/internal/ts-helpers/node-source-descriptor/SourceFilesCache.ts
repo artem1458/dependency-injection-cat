@@ -1,6 +1,6 @@
 import fs from 'fs';
 import * as ts from 'typescript';
-import { CompilerOptionsProvider } from '../../../../compiler-options-provider/CompilerOptionsProvider';
+import { ProgramRepository } from '../../program/ProgramRepository';
 
 export class SourceFilesCache {
     private static cache: Record<string, ts.SourceFile | undefined> = {};
@@ -13,7 +13,7 @@ export class SourceFilesCache {
             const sourceFile = ts.createSourceFile(
                 filePath,
                 fileText,
-                CompilerOptionsProvider.options.target ?? ts.ScriptTarget.ES2015,
+                ProgramRepository.program.getCompilerOptions().target ?? ts.ScriptTarget.ES2015,
                 true,
             );
             this.cache[filePath] = sourceFile;

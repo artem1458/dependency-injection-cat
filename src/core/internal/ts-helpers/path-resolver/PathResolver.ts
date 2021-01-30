@@ -1,15 +1,14 @@
 import path from 'path';
 import { createMatchPath, loadConfig, MatchPath } from 'tsconfig-paths';
 import { isPathRelative } from '../../../../utils/isPathRelative';
-import { CompilerOptionsProvider } from '../../../../compiler-options-provider/CompilerOptionsProvider';
+import { TsConfigProvider } from '../../../../compiler-options-provider/TsConfigProvider';
 import { extensionsToResolve } from './constants';
 
 export class PathResolver {
     private static resolver: MatchPath;
 
     static init(): void {
-        const tsConfigPath = CompilerOptionsProvider.options.configFilePath as string;
-        const config = loadConfig(tsConfigPath);
+        const config = loadConfig(TsConfigProvider.tsConfigPath);
 
         if (config.resultType === 'failed') {
             throw new Error('Can not load tsconfig file');

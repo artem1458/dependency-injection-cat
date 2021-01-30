@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "paths": {
-    },
+    "paths": {},
     "plugins": [
       {
         "transform": "./src/core/external/transformers/typescript/index.ts"

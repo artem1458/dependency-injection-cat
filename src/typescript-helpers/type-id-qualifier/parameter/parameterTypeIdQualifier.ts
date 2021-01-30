@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { getClassMemberLocationMessage } from '../../getClassMemberLocationMessage';
 import { typeIdQualifier } from '../common/typeIdQualifier';
-import { isParameterQualifierDecorator } from '../../decorator-helpers/isParameterQualifierDecorator';
+import { isParameterQualifierDecorator } from '../../../core/internal/ts-helpers/predicates/isParameterQualifierDecorator';
 import { removeQuotesFromString } from '../../../utils/removeQuotesFromString';
 import { END_QUALIFIER_TOKEN, START_QUALIFIER_TOKEN } from '../common/parseTokens';
 import { ITypeIdQualifierResult } from '../common/types';

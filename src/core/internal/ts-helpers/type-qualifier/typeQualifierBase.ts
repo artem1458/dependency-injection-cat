@@ -1,10 +1,9 @@
 import * as ts from 'typescript';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { END_PATH_TOKEN, END_UTILITY_TYPE, START_PATH_TOKEN, START_UTILITY_TYPE } from './parseTokens';
 import { typescriptUtilityTypes } from './constants';
 
-export const typeQualifierBase = (node: ts.TypeReferenceNode): string => {
+export const typeQualifierBase = (node: ts.TypeReferenceNode): string | null => {
     const sourceFile = node.getSourceFile();
     const nameToFind = node.typeName.getText();
 
@@ -18,10 +17,5 @@ export const typeQualifierBase = (node: ts.TypeReferenceNode): string => {
         return `${START_UTILITY_TYPE}${nameToFind}${END_UTILITY_TYPE}`;
     }
 
-    CompilationContext.reportError({
-        message: 'Can\'t generate type',
-        node: node,
-    });
-
-    return 'UNDEFINED_TYPE';
+    return null;
 };

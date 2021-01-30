@@ -6,7 +6,7 @@ import { getFactoryNameForNamespaceImport } from '../factories/utils/getFactoryN
 import { getConfigPathWithoutExtension } from '../factories/utils/getConfigPathWithoutExtension';
 import { getPublicInstanceIdentifier } from '../typescript-helpers/getPublicInstanceIdentifier';
 import { initContainer } from '../init-container';
-import { CompilerOptionsProvider } from '../compiler-options-provider/CompilerOptionsProvider';
+import { TsConfigProvider } from '../compiler-options-provider/TsConfigProvider';
 import { PathResolver } from '../core/internal/ts-helpers/path-resolver/PathResolver';
 import { clearFactoriesDir } from '../factories/clearFactoriesDir';
 import { initWatcher } from '../watcher/initWatcher';
@@ -16,7 +16,7 @@ import { isCallExpressionWithTypeArguments } from '../typescript-helpers/call-ex
 const transformer = (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
     clearFactoriesDir();
     initTransformerConfig(config);
-    CompilerOptionsProvider.options = program.getCompilerOptions();
+    TsConfigProvider.options = program.getCompilerOptions();
     PathResolver.init();
     initContainer();
     initWatcher();

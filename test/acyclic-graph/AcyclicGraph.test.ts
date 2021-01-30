@@ -1,72 +1,36 @@
-import { spy, verify, when } from 'ts-mockito';
-import { AcyclicGraph } from '@src/graphs/acyclic-graph';
-import { Graph } from '@src/graphs/graph';
+import { AcyclicGraph, IAcyclicGraph } from '../../src/graphs/acyclic-graph';
+import { Graph } from '../../src/graphs/graph';
+import { random } from '../testUtils/random';
 
 describe('AcyclicGraph tests', () => {
+    let acyclicGraph: IAcyclicGraph<string>;
+
+    beforeEach(() => {
+        acyclicGraph = new AcyclicGraph();
+    });
+
     it('should be instance of Graph', () => {
         expect(new AcyclicGraph()).toBeInstanceOf(Graph);
     });
 
-    describe('addEdges should add edges to node, and create node, if it\'s not exist. Should throw error, when cyclic dependency detected', () => {
-        it('should create node if it\'s not exist in graph', () => {
-            //Given
-            const acyclicGraph = new Graph();
-            const instanceSpy = spy(acyclicGraph);
-            when(instanceSpy.hasNode('a')).thenReturn(false);
+    it('should return list of vertices with cyclic dependencies', () => {
+        //Given
+        const vertex0 = 'vertex0';
+        const vertex1 = 'vertex1';
+        const vertex2 = 'vertex2';
+        const vertex3 = 'vertex3';
 
-            //When
-            acyclicGraph.addEdges('a');
+        const expected = [vertex0, vertex2];
 
-            //Then
-            verify(instanceSpy.hasNode('a')).called();
-            verify(instanceSpy.addNode('a')).once();
-        });
+        acyclicGraph.addEdges(vertex0, ...random.shuffle([vertex1, ...random.listOfString()]));
+        acyclicGraph.addEdges(vertex1, ...random.shuffle([vertex0, ...random.listOfString()]));
+        acyclicGraph.addEdges(vertex2, ...random.shuffle([vertex3, ...random.listOfString()]));
+        acyclicGraph.addEdges(vertex3, ...random.shuffle([vertex2, ...random.listOfString()]));
 
-        it('should add edges to node, and not duplicate them', () => {
-            //Given
-            const expected = {
-                a: ['b', 'c', 'd', 'e', 'f'],
-                b: [],
-                c: [],
-                d: [],
-                e: [],
-                f: [],
-            };
+        //When
+        const actual = acyclicGraph.getCycleVertices();
 
-            const acyclicGraph = new Graph();
-            const innerGraph = {
-                a: ['b', 'c'],
-            };
-            Object.defineProperty(acyclicGraph, '_graph', { value: innerGraph });
-
-            //When
-            acyclicGraph.addEdges('a', 'b', 'c', 'd', 'e', 'f');
-
-            //Then
-            expect(acyclicGraph.g).toEqual(expected);
-        });
-
-        it.each`
-            newEdges              |     error
-            ${['a', 'a']}         |     ${'Cyclic dependency detected in a'}
-            ${['b', 'b']}         |     ${'Cyclic dependency detected in b'}
-            ${['c', 'c']}         |     ${'Cyclic dependency detected in a'}
-            ${['c', 'b', 'c']}    |     ${'Cyclic dependency detected in a'}
-        `('should throw error=$error, when adding nodes with cyclic dependencies, newEdges=$newEdges', ({ newEdges,error }: { newEdges: [string], error: string }) => {
-            //Given
-            const acyclicGraph = new AcyclicGraph();
-            const innerGraph = {
-                a: ['c'],
-                b: ['c'],
-                c: [],
-            };
-            Object.defineProperty(acyclicGraph, '_graph', { value: innerGraph });
-
-            //When
-            const errorCall = () => acyclicGraph.addEdges(...newEdges);
-
-            //Then
-            expect(errorCall).toThrow(error);
-        });
+        //Then
+        expect(actual).toEqual(expected);
     });
 });

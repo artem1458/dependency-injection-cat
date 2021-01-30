@@ -1,3 +1,5 @@
 import { IGraph } from '../graph';
 
-export interface IAcyclicGraph extends IGraph {}
+export interface IAcyclicGraph<TEntity> extends IGraph<TEntity> {
+    getCycleVertices(): TEntity[];
+}

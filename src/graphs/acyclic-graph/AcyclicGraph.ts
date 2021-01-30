@@ -1,36 +1,33 @@
 import { Graph } from '../graph';
 import { IAcyclicGraph } from './IAcyclicGraph';
 
-export class AcyclicGraph extends Graph implements IAcyclicGraph {
-    addVertices(node: string, ...edges: Array<string>): void {
-        super.addVertices(node, ...edges);
+export class AcyclicGraph<TEntity> extends Graph<TEntity> implements IAcyclicGraph<TEntity> {
+    getCycleVertices(): TEntity[] {
+        const visited: Map<TEntity, boolean> = new Map<TEntity, boolean>();
+        const stack: Map<TEntity, boolean> = new Map<TEntity, boolean>();
 
-        this.detectCycle();
-    }
+        const cyclicVertices: TEntity[] = [];
 
-    detectCycle(): void {
-        const nodes = Object.keys(this.g);
-        const visited: Record<string, boolean> = {};
-        const stack: Record<string, boolean> = {};
-
-        nodes.forEach(node => {
-            if (this.detectCycleForNode(node, visited, stack)) {
-                throw new Error(`Cyclic dependency detected in ${node}`);
+        this.g.forEach((edges, vertex) => {
+            if (this.detectCycleForNode(vertex, visited, stack)) {
+                cyclicVertices.push(vertex);
             }
         });
+
+        return cyclicVertices;
     }
 
     //TODO Find out, how to correctly log cyclic dependencies
-    detectCycleForNode(node: string, visited: Record<string, boolean>, stack: Record<string, boolean>): boolean {
-        if (!visited[node]) {
-            const nodeNeighbors = this.g[node] || [];
+    detectCycleForNode(vertex: TEntity, visited: Map<TEntity, boolean>, stack: Map<TEntity, boolean>): boolean {
+        if (!visited.get(vertex)) {
+            const vertexNeighbors = this.g.get(vertex) || [];
             let hasCycle = false;
 
-            visited[node] = true;
-            stack[node] = true;
+            visited.set(vertex, true);
+            stack.set(vertex, true);
 
-            nodeNeighbors.forEach(node => {
-                if (!visited[node] && this.detectCycleForNode(node, visited, stack) || stack[node]) {
+            vertexNeighbors.forEach(vertex => {
+                if (!visited.has(vertex) && this.detectCycleForNode(vertex, visited, stack) || stack.has(vertex)) {
                     hasCycle = true;
                 }
             });
@@ -40,7 +37,7 @@ export class AcyclicGraph extends Graph implements IAcyclicGraph {
             }
         }
 
-        stack[node] = false;
+        stack.set(vertex, false);
 
         return false;
     }
