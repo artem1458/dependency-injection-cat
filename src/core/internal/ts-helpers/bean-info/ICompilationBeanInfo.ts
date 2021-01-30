@@ -1,6 +1,6 @@
 export type TBeanScopeValue = 'prototype' | 'singleton';
 
 export interface ICompilationBeanInfo {
-    qualifier: string | null;
+    qualifier: string;
     scope: TBeanScopeValue;
 }

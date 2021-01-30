@@ -1,15 +1,19 @@
 import ts from 'typescript';
-import { IBeanDescriptor } from '../bean/BeansRepository';
+import { IBeanDescriptor } from '../bean/BeanRepository';
 import { isParameterQualifierDecorator } from '../ts-helpers/predicates/isParameterQualifierDecorator';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
+import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
+import { isMethodBean } from '../ts-helpers/predicates/isMethodBean';
+import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
+import { getAllBeanNamesInContextByBeanDescriptor } from './getAllBeanNamesInContextByBeanDescriptor';
 
 export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.MethodDeclaration>) => {
     const parameters = descriptor.node.parameters;
 
     parameters.forEach(parameter => {
-        const qualifier = getQualifierValue(parameter);
+        const qualifier = getQualifierValue(parameter, descriptor);
         const type = getParameterType(parameter);
 
         if (type === null) {
@@ -34,7 +38,7 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
     });
 };
 
-function getQualifierValue(parameter: ts.ParameterDeclaration): string | null {
+function getQualifierValue(parameter: ts.ParameterDeclaration, descriptor: IBeanDescriptor): string | null {
     const qualifierDecorators = parameter.decorators?.filter(isParameterQualifierDecorator) ?? [];
 
     if (qualifierDecorators.length === 0) {
@@ -89,11 +93,14 @@ function getQualifierValue(parameter: ts.ParameterDeclaration): string | null {
             return null;
         }
 
-        if (qualifierValue.text === '') {
+        const contextBeanNames = getAllBeanNamesInContextByBeanDescriptor(descriptor);
+
+        if (!contextBeanNames.includes(qualifierValue.text)) {
             CompilationContext.reportError({
                 node: decoratorExpression,
-                message: 'Qualifier should not be empty string'
+                message: `Bean with qualifier "${qualifierValue.text}" does not exist in context`,
             });
+            return null;
         }
 
         return qualifierValue.text;

@@ -4,6 +4,8 @@ import { registerContexts } from './context/registerContexts';
 import { registerBeans } from './bean/registerBeans';
 import { CompilationContext } from '../compilation-context/CompilationContext';
 import { registerBeanDependencies } from './bean-dependencies/registerBeanDependencies';
+import { buildDependencyGraph } from './connect-dependencies/buildDependencyGraph';
+import { DependencyGraph } from './connect-dependencies/DependencyGraph';
 
 let wasInitiated = false;
 
@@ -19,7 +21,11 @@ export const runCompile = () => {
     registerContexts(contextPaths);
     registerBeans();
     registerBeanDependencies();
+    buildDependencyGraph();
+    const cycleVertices = DependencyGraph.graph.getCycleVertices();
 
 
+    cycleVertices;
+    cycleVertices.length;
     CompilationContext.throw();
 };

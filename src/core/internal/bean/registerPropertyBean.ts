@@ -3,7 +3,7 @@ import { isEqual } from 'lodash';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getPropertyBeanInfo } from '../ts-helpers/bean-info/getPropertyBeanInfo';
-import { BeansRepository } from './BeansRepository';
+import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
@@ -18,7 +18,7 @@ export function registerPropertyBean(contextDescriptor: IContextDescriptor, clas
         return;
     }
 
-    BeansRepository.registerBean({
+    BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
         qualifier: beanInfo.qualifier,
         contextName: contextDescriptor.name,

@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { BeansRepository, IBeanDescriptor } from '../bean/BeansRepository';
+import { BeanRepository, IBeanDescriptor } from '../bean/BeanRepository';
 import { isMethodBean } from '../ts-helpers/predicates/isMethodBean';
 import { registerMethodBeanDependencies } from './registerMethodBeanDependencies';
 import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
@@ -7,7 +7,7 @@ import { registerPropertyBeanDependencies } from './registerPropertyBeanDependen
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 
 export const registerBeanDependencies = () => {
-    BeansRepository.beansDescriptorRepository.forEach((beanTypeMap) => {
+    BeanRepository.beanDescriptorRepository.forEach((beanTypeMap) => {
         beanTypeMap.forEach((beanDescriptorList) => {
             beanDescriptorList.forEach(descriptor => {
                 if (isMethodBean(descriptor.node)) {

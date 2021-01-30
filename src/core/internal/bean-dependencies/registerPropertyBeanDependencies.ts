@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { IBeanDescriptor } from '../bean/BeansRepository';
+import { IBeanDescriptor } from '../bean/BeanRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
@@ -69,10 +69,10 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
     }
 
     const unQualifiedParametersText = unQualifiedParameters
-        .map(([parameter]) => parameter.getText()).join('\n');
+        .map(([parameter]) => `${parameter.getText()} <--`).join('\n');
 
     CompilationContext.reportError({
         node: classReference,
-        message: `This class have some unqualified dependencies, please try to use method-bean instead\n${unQualifiedParametersText}`
+        message: `Class "${classReference.getText()}" have some unqualified dependencies, please try to use method-bean instead:\n${unQualifiedParametersText}`
     });
 };

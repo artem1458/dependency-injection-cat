@@ -1,25 +1,31 @@
 import * as ts from 'typescript';
-import { getQualifierValue } from './getQualifierValue';
 import { getScopeValue } from './getScopeValue';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { ClassPropertyDeclarationWithInitializer } from '../types';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
-import { EMPTY_COMPILATION_BEAN_INFO } from './constants';
 
 export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclarationWithInitializer): ICompilationBeanInfo {
     const beanCall = propertyDeclaration.initializer;
+    const qualifier = propertyDeclaration.name.getText();
 
     if (beanCall.arguments.length === 0) {
         CompilationContext.reportError({
             node: beanCall.expression,
             message: 'You should pass at least 1 argument to the Bean call'
         });
+        return {
+            scope: 'singleton',
+            qualifier,
+        };
     }
 
     const secondArg = beanCall.arguments[1];
 
     if (secondArg === undefined) {
-        return EMPTY_COMPILATION_BEAN_INFO;
+        return {
+            scope: 'singleton',
+            qualifier,
+        };
     }
 
     if (!ts.isObjectLiteralExpression(secondArg)) {
@@ -28,11 +34,14 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
             message: 'Argument in bean should be object literal',
         });
 
-        return EMPTY_COMPILATION_BEAN_INFO;
+        return {
+            scope: 'singleton',
+            qualifier,
+        };
     }
 
     return {
-        qualifier: getQualifierValue(secondArg),
+        qualifier,
         scope: getScopeValue(secondArg),
     };
 }

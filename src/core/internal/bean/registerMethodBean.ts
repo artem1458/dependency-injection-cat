@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { getMethodBeanInfo } from '../ts-helpers/bean-info/getMethodBeanInfo';
-import { BeansRepository } from './BeansRepository';
+import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 
 export function registerMethodBean(contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void {
@@ -14,7 +14,7 @@ export function registerMethodBean(contextDescriptor: IContextDescriptor, classE
         return;
     }
 
-    BeansRepository.registerBean({
+    BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
         qualifier: beanInfo.qualifier,
         contextName: contextDescriptor.name,

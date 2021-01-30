@@ -14,20 +14,20 @@ export interface IBeanDescriptor<T extends ts.MethodDeclaration | ClassPropertyD
 
 type TContextName = string;
 type TBeanType = string;
-type TBeanQualifier = string | null;
+type TBeanQualifier = string;
 
 //Repository for return types of bean
-export class BeansRepository {
-    static beansDescriptorRepository = new Map<TContextName, Map<TBeanType, IBeanDescriptor[]>>();
+export class BeanRepository {
+    static beanDescriptorRepository = new Map<TContextName, Map<TBeanType, IBeanDescriptor[]>>();
 
     static registerBean(descriptor: IBeanDescriptor): void {
         const { contextName, type } = descriptor;
 
-        let contextMap = this.beansDescriptorRepository.get(contextName) ?? null;
+        let contextMap = this.beanDescriptorRepository.get(contextName) ?? null;
 
         if (contextMap === null) {
             contextMap = new Map();
-            this.beansDescriptorRepository.set(contextName, contextMap);
+            this.beanDescriptorRepository.set(contextName, contextMap);
         }
 
         let beanDescriptorList = contextMap.get(type) ?? null;
@@ -41,6 +41,6 @@ export class BeansRepository {
     }
 
     static getBeanDescriptorsByType(contextName: TContextName, type: TBeanType): IBeanDescriptor[] {
-        return this.beansDescriptorRepository.get(contextName)?.get(type) ?? [];
+        return this.beanDescriptorRepository.get(contextName)?.get(type) ?? [];
     }
 }

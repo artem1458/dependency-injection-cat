@@ -2,6 +2,7 @@ import * as ts from 'typescript';
 import { removeQuotesFromString } from '../../../../utils/removeQuotesFromString';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
+//TODO Maybe remove
 export function getQualifierValue(expression: ts.ObjectLiteralExpression): string | null {
     const qualifierNode = expression.properties.find(it => it.name?.getText() === 'qualifier');
     if (qualifierNode === undefined) {

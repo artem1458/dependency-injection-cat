@@ -19,7 +19,7 @@ export class AcyclicGraph<TEntity> extends Graph<TEntity> implements IAcyclicGra
 
     //TODO Find out, how to correctly log cyclic dependencies
     detectCycleForNode(vertex: TEntity, visited: Map<TEntity, boolean>, stack: Map<TEntity, boolean>): boolean {
-        if (!visited.get(vertex)) {
+        if (!visited.has(vertex)) {
             const vertexNeighbors = this.g.get(vertex) || [];
             let hasCycle = false;
 

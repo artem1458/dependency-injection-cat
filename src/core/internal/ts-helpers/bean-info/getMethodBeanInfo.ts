@@ -1,13 +1,12 @@
 import * as ts from 'typescript';
 import { getScopeValue } from './getScopeValue';
-import { getQualifierValue } from './getQualifierValue';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { isBeanDecorator } from '../predicates/isBeanDecorator';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
-import { EMPTY_COMPILATION_BEAN_INFO } from './constants';
 
 export function getMethodBeanInfo(methodDeclaration: ts.MethodDeclaration): ICompilationBeanInfo {
     const bean = methodDeclaration.decorators?.find(isBeanDecorator) ?? null;
+    const qualifier = methodDeclaration.name.getText();
 
     if (bean === null) {
         CompilationContext.reportError({
@@ -15,13 +14,19 @@ export function getMethodBeanInfo(methodDeclaration: ts.MethodDeclaration): ICom
             message: 'Bean should have @Bean decorator',
         });
 
-        return EMPTY_COMPILATION_BEAN_INFO;
+        return {
+            scope: 'singleton',
+            qualifier,
+        };
     }
 
     const expression = bean.expression;
 
     if (ts.isIdentifier(expression)) {
-        return EMPTY_COMPILATION_BEAN_INFO;
+        return {
+            scope: 'singleton',
+            qualifier,
+        };
     }
 
     if (ts.isCallExpression(expression)) {
@@ -33,14 +38,20 @@ export function getMethodBeanInfo(methodDeclaration: ts.MethodDeclaration): ICom
                 node: bean,
             });
 
-            return EMPTY_COMPILATION_BEAN_INFO;
+            return {
+                scope: 'singleton',
+                qualifier,
+            };
         }
 
         return {
-            qualifier: getQualifierValue(firstArg),
+            qualifier,
             scope: getScopeValue(firstArg),
         };
     }
 
-    return EMPTY_COMPILATION_BEAN_INFO;
+    return {
+        scope: 'singleton',
+        qualifier: methodDeclaration.name.getText(),
+    };
 }

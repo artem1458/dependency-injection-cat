@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { IBeanDescriptor } from '../bean/BeansRepository';
+import { IBeanDescriptor } from '../bean/BeanRepository';
 
 export interface IBeanDependencyDescriptor {
     parameterName: string;
@@ -33,5 +33,9 @@ export class BeanDependenciesRepository {
         }
 
         beanDependencyDescriptors.push(dependencyDescriptor);
+    }
+
+    static getBeanDescriptorMapByContextName(contextName: TContextName): Map<IBeanDescriptor, IBeanDependencyDescriptor[]> | null {
+        return this.beanDependenciesRepository.get(contextName) ?? null;
     }
 }
