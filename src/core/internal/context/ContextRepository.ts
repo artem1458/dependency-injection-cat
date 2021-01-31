@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { NamedClassDeclaration } from '../ts-helpers/types';
-import { uniqId } from '../../../utils/uniqId';
+import { uniqId } from '../utils/uniqId';
 
 type TContextName = string;
 

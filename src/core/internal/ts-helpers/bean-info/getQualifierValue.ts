@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { removeQuotesFromString } from '../../../../utils/removeQuotesFromString';
+import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
 //TODO Maybe remove

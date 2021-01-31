@@ -1,9 +1,6 @@
 import * as ts from 'typescript';
-import { ITransformerConfig } from '../../../../transformer-config';
-import { initTransformerConfig } from '../config';
-import { TsConfigProvider } from '../../../../compiler-options-provider/TsConfigProvider';
+import { initTransformerConfig, ITransformerConfig } from '../config';
 import { runCompile } from '../../../internal/runCompile';
-import { PathResolver } from '../../../internal/ts-helpers/path-resolver/PathResolver';
 
 console.log(`
 __/\\\\\\\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\______________________/\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_        
@@ -18,9 +15,7 @@ __/\\\\\\\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\______________________/\\
 `);
 
 export default (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
-    TsConfigProvider.init();
     initTransformerConfig(config);
-    PathResolver.init();
     runCompile();
 
     return context => {

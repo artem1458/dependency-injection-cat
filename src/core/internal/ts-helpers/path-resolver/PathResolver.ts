@@ -1,7 +1,7 @@
 import path from 'path';
 import { createMatchPath, loadConfig, MatchPath } from 'tsconfig-paths';
-import { isPathRelative } from '../../../../utils/isPathRelative';
-import { TsConfigProvider } from '../../../../compiler-options-provider/TsConfigProvider';
+import { isPathRelative } from '../../utils/isPathRelative';
+import { TsConfigProvider } from '../../ts-config-path-provider/TsConfigProvider';
 import { extensionsToResolve } from './constants';
 
 export class PathResolver {

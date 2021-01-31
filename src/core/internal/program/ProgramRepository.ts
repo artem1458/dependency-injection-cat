@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { TsConfigProvider } from '../../../compiler-options-provider/TsConfigProvider';
+import { TsConfigProvider } from '../ts-config-path-provider/TsConfigProvider';
 
 export class ProgramRepository {
     private static _program: ts.Program | undefined;

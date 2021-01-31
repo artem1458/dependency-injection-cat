@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
-import { removeQuotesFromString } from '../../../../utils/removeQuotesFromString';
+import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 import { TBeanScopeValue } from './ICompilationBeanInfo';
 
 const scopes: Array<TBeanScopeValue | null> = ['singleton', 'prototype'];

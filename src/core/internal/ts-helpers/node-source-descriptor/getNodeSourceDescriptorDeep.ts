@@ -6,7 +6,7 @@ import { isLocalExportDeclaration } from './LocalExportDeclaration';
 import { isNamedStatement } from './NamedStatement';
 import { isNamedExportStatement } from './NamedExportStatement';
 import { isNamedImports, isNamespaceImportDeclaration } from './ImportDeclarationWithClauseAndNamedBindings';
-import { removeQuotesFromString } from '../../../../utils/removeQuotesFromString';
+import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 import { PathResolverCache } from '../path-resolver/PathResolverCache';
 import { SourceFilesCache } from './SourceFilesCache';
 import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './ExportDeclarationWithoutClauseAndModuleSpecifier';
