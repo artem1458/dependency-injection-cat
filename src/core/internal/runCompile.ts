@@ -5,7 +5,7 @@ import { registerBeans } from './bean/registerBeans';
 import { CompilationContext } from '../compilation-context/CompilationContext';
 import { registerBeanDependencies } from './bean-dependencies/registerBeanDependencies';
 import { buildDependencyGraph } from './connect-dependencies/buildDependencyGraph';
-import { DependencyGraph } from './connect-dependencies/DependencyGraph';
+import { reportAboutCyclicDependencies } from './report-cyclic-dependencies/reportAboutCyclicDependencies';
 
 let wasInitiated = false;
 
@@ -22,10 +22,7 @@ export const runCompile = () => {
     registerBeans();
     registerBeanDependencies();
     buildDependencyGraph();
-    const cycleVertices = DependencyGraph.graph.getCycleVertices();
+    reportAboutCyclicDependencies();
 
-
-    cycleVertices;
-    cycleVertices.length;
     CompilationContext.throw();
 };

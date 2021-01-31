@@ -1,13 +1,12 @@
-export interface XZ {}
-export interface Dep1 {}
-export interface Dep2 {}
-export interface Dep3 {}
+export interface Requester {}
+export interface Logger {}
+export interface IUseCase {}
+export interface SomeAnotherUseCase {}
 
-export class SomeClass {
+export class UseCase {
     constructor(
-        xz: XZ,
-        xz1: Dep1,
-        xz2: Dep2,
-        xz3: Dep3,
+        requester: Requester,
+        logger: Logger,
+        // anotherUseCase: SomeAnotherUseCase,
     ) {}
 }

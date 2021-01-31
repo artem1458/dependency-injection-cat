@@ -8,7 +8,7 @@ export const buildDependencyGraph = () => {
         const beanDependenciesMap = BeanDependenciesRepository.getBeanDescriptorMapByContextName(contextName);
 
         if (beanDependenciesMap === null) {
-            CompilationContext.reportErrorMessage(`No bean dependencies registered for the context ${contextName}`);
+            CompilationContext.reportErrorMessage(`No Bean dependencies registered for the context ${contextName}`);
             return;
         }
 
@@ -42,7 +42,7 @@ export const buildDependencyGraph = () => {
                             return;
                         }
 
-                        DependencyGraph.graph.addEdges(beanDescriptor, assumedBean);
+                        DependencyGraph.addNodeWithEdges(beanDescriptor, assumedBean);
                         return;
                     }
 
@@ -53,7 +53,7 @@ export const buildDependencyGraph = () => {
                         });
                         return;
                     }
-                    DependencyGraph.graph.addEdges(beanDescriptor, beanCandidates[0]);
+                    DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidates[0]);
                 });
             });
         });

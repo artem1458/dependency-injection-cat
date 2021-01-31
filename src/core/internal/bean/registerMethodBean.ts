@@ -11,6 +11,10 @@ export function registerMethodBean(contextDescriptor: IContextDescriptor, classE
     const beanInfo = getMethodBeanInfo(classElement);
 
     if (typeInfo === null) {
+        CompilationContext.reportError({
+            node: classElement,
+            message: 'Can\'t qualify type of Bean',
+        });
         return;
     }
 

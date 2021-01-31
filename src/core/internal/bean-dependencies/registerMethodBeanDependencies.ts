@@ -4,9 +4,6 @@ import { isParameterQualifierDecorator } from '../ts-helpers/predicates/isParame
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
-import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
-import { isMethodBean } from '../ts-helpers/predicates/isMethodBean';
-import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getAllBeanNamesInContextByBeanDescriptor } from './getAllBeanNamesInContextByBeanDescriptor';
 
 export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.MethodDeclaration>) => {

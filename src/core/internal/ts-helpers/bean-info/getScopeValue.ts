@@ -26,7 +26,7 @@ export function getScopeValue(expression: ts.ObjectLiteralExpression): TBeanScop
 
     if (!scopes.includes(scopeValue as TBeanScopeValue)) {
         CompilationContext.reportError({
-            message: 'Scope in bean should be a "prototype" or "singleton"',
+            message: 'Scope in Bean should be a "prototype" or "singleton"',
             node: scopeNode
         });
     }
