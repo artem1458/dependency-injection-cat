@@ -3,11 +3,10 @@ import { TBeanScopeValue } from '../ts-helpers/bean-info/ICompilationBeanInfo';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { v4 as uuid } from 'uuid';
 
-type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer
+export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer
 
 export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     classMemberName: string;
-    qualifier: TBeanQualifier;
     contextName: TContextName;
     type: TBeanType;
     originalTypeName: string;
@@ -27,6 +26,8 @@ type TBeanQualifier = string;
 export class BeanRepository {
     static beanDescriptorRepository = new Map<TContextName, Map<TBeanType, IBeanDescriptorWithId[]>>();
     static idToBeanDescriptorMap = new Map<string, IBeanDescriptorWithId>();
+    static contextNameToBeanDescriptorsMap = new Map<TContextName, IBeanDescriptorWithId[]>();
+    static beanNodeToBeanDescriptorMap = new Map<TBeanNode, IBeanDescriptorWithId>()
 
     static registerBean(descriptor: IBeanDescriptor): void {
         const descriptorWithId: IBeanDescriptorWithId = {
@@ -51,6 +52,15 @@ export class BeanRepository {
 
         beanDescriptorList.push(descriptorWithId);
         this.idToBeanDescriptorMap.set(descriptorWithId.id, descriptorWithId);
+        this.beanNodeToBeanDescriptorMap.set(descriptorWithId.node, descriptorWithId);
+
+        let contextDescriptors = this.contextNameToBeanDescriptorsMap.get(descriptor.contextName) ?? null;
+
+        if (contextDescriptors === null) {
+            contextDescriptors = [];
+            this.contextNameToBeanDescriptorsMap.set(descriptor.contextName, contextDescriptors);
+        }
+        contextDescriptors.push(descriptorWithId);
     }
 
     static getBeanDescriptorsByType(contextName: TContextName, type: TBeanType): IBeanDescriptor[] {

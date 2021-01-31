@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { initTransformerConfig, ITransformerConfig } from '../config';
+import { IDiConfig, initDiConfig } from '../config';
 import { runCompile } from '../../../internal/runCompile';
 
 console.log(`
@@ -14,8 +14,8 @@ __/\\\\\\\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\______________________/\\
         _\\////////////_____\\///////////______________________\\/////////__\\///________\\///________\\///________
 `);
 
-export default (program: ts.Program, config?: ITransformerConfig): ts.TransformerFactory<ts.SourceFile> => {
-    initTransformerConfig(config);
+export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<ts.SourceFile> => {
+    initDiConfig(config);
     runCompile();
 
     return context => {

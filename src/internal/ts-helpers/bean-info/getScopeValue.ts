@@ -19,6 +19,7 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
                 message: 'Bean scope should be a string literal',
                 node: scopeNode
             });
+            return 'singleton';
         }
 
         scopeValue = removeQuotesFromString(scopeNode.initializer.getText());
@@ -29,7 +30,8 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
             message: 'Scope in Bean should be a "prototype" or "singleton"',
             node: scopeNode
         });
+        return 'singleton';
     }
 
-    return 'singleton';
+    return scopeValue as TBeanScopeValue;
 };

@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { IBeanDescriptor } from '../bean/BeanRepository';
+import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
 
 export interface IBeanDependencyDescriptor {
     parameterName: string;
@@ -8,6 +8,7 @@ export interface IBeanDependencyDescriptor {
     type: TBeanDependencyType;
     originalTypeName: string;
     node: ts.ParameterDeclaration;
+    qualifiedBean: IBeanDescriptorWithId | null;
 }
 
 type TBeanDependencyQualifier = string | null;
@@ -16,7 +17,7 @@ type TBeanDependencyType = string;
 
 export class BeanDependenciesRepository {
     static beanDependenciesRepository = new Map<TContextName, Map<IBeanDescriptor, IBeanDependencyDescriptor[]>>();
-    static propertyToDependencyDescriptorMap = new Map<ts.ParameterDeclaration, IBeanDependencyDescriptor>();
+    static classPropertyToDependencyDescriptorMap = new Map<ts.ParameterDeclaration, IBeanDependencyDescriptor>();
 
     static registerBeanDependency(beanDescriptor: IBeanDescriptor, dependencyDescriptor: IBeanDependencyDescriptor) {
         let dependenciesMap = this.beanDependenciesRepository.get(dependencyDescriptor.contextName) ?? null;
@@ -34,7 +35,7 @@ export class BeanDependenciesRepository {
         }
 
         beanDependencyDescriptors.push(dependencyDescriptor);
-        this.propertyToDependencyDescriptorMap.set(dependencyDescriptor.node, dependencyDescriptor);
+        this.classPropertyToDependencyDescriptorMap.set(dependencyDescriptor.node, dependencyDescriptor);
     }
 
     static getBeanDescriptorMapByContextName(contextName: TContextName): Map<IBeanDescriptor, IBeanDependencyDescriptor[]> | null {

@@ -1,3 +1,3 @@
-export { transformerConfig } from './transformerConfig';
-export { initTransformerConfig } from './initTransformerConfig';
-export { ITransformerConfig } from './ITransformerConfig';
+export { diConfig } from './diConfig';
+export { initDiConfig } from './initDiConfig';
+export { IDiConfig } from './IDiConfig';

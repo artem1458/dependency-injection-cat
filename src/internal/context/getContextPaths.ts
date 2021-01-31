@@ -1,10 +1,10 @@
 import glob from 'glob';
-import { transformerConfig } from '../../external/transformers/config';
+import { diConfig } from '../../external/transformers/config';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { GITHUB_REPO_LINK } from '../../exceptions/constants';
 
 export const getContextPaths = (): Array<string> => {
-    const { diConfigPattern, ignorePatterns } = transformerConfig;
+    const { diConfigPattern, ignorePatterns } = diConfig;
 
     if (!diConfigPattern) {
         CompilationContext

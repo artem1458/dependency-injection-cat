@@ -6,15 +6,15 @@ type TBeanName = string;
 
 export type TInternalCatContext = new (
     contextName: string,
-    beanConfigurationMap: Map<TBeanName, IBeanConfig>,
+    beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
 ) => InternalCatContext;
 
 export abstract class InternalCatContext {
-    [bean: string]: any;
+    [beanName: string]: any;
 
-    protected constructor(
+    constructor(
         private contextName: string,
-        private beanConfigurationMap: Map<TBeanName, IBeanConfig>,
+        private beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
     ) {}
 
     private singletonMap = new Map<TBeanName, any>();
@@ -33,7 +33,7 @@ export abstract class InternalCatContext {
     }
 
     getBean(beanName: TBeanName): any {
-        const beanConfiguration = this.beanConfigurationMap.get(beanName) ?? null;
+        const beanConfiguration = this.beanConfigurationRecord[beanName] ?? null;
 
         if (beanConfiguration === null) {
             throw new BeanNotFoundInContext(this.contextName, beanName);

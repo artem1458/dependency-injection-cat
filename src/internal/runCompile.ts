@@ -4,10 +4,11 @@ import { registerContexts } from './context/registerContexts';
 import { registerBeans } from './bean/registerBeans';
 import { CompilationContext } from '../compilation-context/CompilationContext';
 import { registerBeanDependencies } from './bean-dependencies/registerBeanDependencies';
-import { buildDependencyGraph } from './connect-dependencies/buildDependencyGraph';
+import { buildDependencyGraphAndFillQualifiedBeans } from './connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
 import { reportAboutCyclicDependencies } from './report-cyclic-dependencies/reportAboutCyclicDependencies';
 import { TsConfigProvider } from './ts-config-path-provider/TsConfigProvider';
 import { PathResolver } from './ts-helpers/path-resolver/PathResolver';
+import { buildContexts } from './build-context/buildContexts';
 
 let wasInitiated = false;
 
@@ -26,8 +27,9 @@ export const runCompile = () => {
     registerContexts(contextPaths);
     registerBeans();
     registerBeanDependencies();
-    buildDependencyGraph();
+    buildDependencyGraphAndFillQualifiedBeans();
     reportAboutCyclicDependencies();
 
     CompilationContext.throw();
+    buildContexts();
 };

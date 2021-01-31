@@ -6,7 +6,6 @@ import { ICompilationBeanInfo } from './ICompilationBeanInfo';
 
 export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICompilationBeanInfo => {
     const bean = methodDeclaration.decorators?.find(isBeanDecorator) ?? null;
-    const qualifier = methodDeclaration.name.getText();
 
     if (bean === null) {
         CompilationContext.reportError({
@@ -16,7 +15,6 @@ export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICom
 
         return {
             scope: 'singleton',
-            qualifier,
         };
     }
 
@@ -25,7 +23,6 @@ export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICom
     if (ts.isIdentifier(expression)) {
         return {
             scope: 'singleton',
-            qualifier,
         };
     }
 
@@ -40,18 +37,15 @@ export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICom
 
             return {
                 scope: 'singleton',
-                qualifier,
             };
         }
 
         return {
-            qualifier,
             scope: getScopeValue(firstArg),
         };
     }
 
     return {
         scope: 'singleton',
-        qualifier: methodDeclaration.name.getText(),
     };
 };

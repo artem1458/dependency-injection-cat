@@ -13,9 +13,9 @@ export class ContextPool {
     private DEFAULT_CONTEXT_KEY = {};
     private pool = new Map();
 
-    protected constructor(
+    constructor(
         private contextName: string,
-        private beansConfig: Map<TBeanName, IBeanConfig>,
+        private beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
         private context: TInternalCatContext
     ) {}
 
@@ -23,7 +23,7 @@ export class ContextPool {
         key = this.DEFAULT_CONTEXT_KEY,
         config,
     }: IContextProps): any {
-        const newContext = new this.context(this.contextName, this.beansConfig);
+        const newContext = new this.context(this.contextName, this.beanConfigurationRecord);
         newContext.config = config;
 
         this.pool.set(key, newContext);

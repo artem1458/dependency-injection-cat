@@ -75,7 +75,7 @@ export class CompilationContext {
             `At: (${paths[index]}:${nodePositions[index][0]}:${nodePositions[index][1]})`
         ).join('\n');
 
-        return `${message}\n${nodesMessage}`;
+        return `${message}\n${nodesMessage}\n`;
     }
 
     private static areErrorsEmpty(): boolean {

@@ -6,7 +6,6 @@ import { ICompilationBeanInfo } from './ICompilationBeanInfo';
 
 export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclarationWithInitializer): ICompilationBeanInfo {
     const beanCall = propertyDeclaration.initializer;
-    const qualifier = propertyDeclaration.name.getText();
 
     if (beanCall.arguments.length === 0) {
         CompilationContext.reportError({
@@ -15,7 +14,6 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
         });
         return {
             scope: 'singleton',
-            qualifier,
         };
     }
 
@@ -24,7 +22,6 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
     if (secondArg === undefined) {
         return {
             scope: 'singleton',
-            qualifier,
         };
     }
 
@@ -36,12 +33,10 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
 
         return {
             scope: 'singleton',
-            qualifier,
         };
     }
 
     return {
-        qualifier,
         scope: getScopeValue(secondArg),
     };
 }

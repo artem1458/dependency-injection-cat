@@ -14,6 +14,13 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         });
         return;
     }
+    if (classElement.body === undefined) {
+        CompilationContext.reportError({
+            node: classElement,
+            message: 'Method Bean should have a body',
+        });
+        return;
+    }
 
     const typeInfo = getBeanTypeInfoFromMethod(classElement);
     const beanInfo = getMethodBeanInfo(classElement);
@@ -28,7 +35,6 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
 
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
-        qualifier: beanInfo.qualifier,
         contextName: contextDescriptor.name,
         type: typeInfo.typeId,
         originalTypeName: typeInfo.originalTypeName,

@@ -1,6 +1,4 @@
-import { CatContext } from 'dependency-injection-cat';
-
-export class TestConfig2 extends CatContext {
+export class TestConfig2 {
     // @Bean
     // xzxz() {
     //     return {};

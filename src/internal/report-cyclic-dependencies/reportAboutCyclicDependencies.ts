@@ -11,7 +11,7 @@ export const reportAboutCyclicDependencies = () => {
             const nodes: ts.Node[] = [];
 
             cycle.forEach(it => {
-                names.push(it.qualifier);
+                names.push(it.classMemberName);
                 nodes.push(it.node);
             });
 

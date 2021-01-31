@@ -28,7 +28,6 @@ export const registerPropertyBean = (contextDescriptor: IContextDescriptor, clas
 
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
-        qualifier: beanInfo.qualifier,
         contextName: contextDescriptor.name,
         type: typeInfo.typeId,
         originalTypeName: typeInfo.originalTypeName,
