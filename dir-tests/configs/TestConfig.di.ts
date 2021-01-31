@@ -1,13 +1,11 @@
-import { CatContext, Bean, Qualifier } from 'dependency-injection-cat';
+import { CatContext } from 'dependency-injection-cat';
 
 export class TestConfig2 extends CatContext {
     // @Bean
-    // xzxz(
-    //     xz: Dep2
-    // ): Dep1 {
+    // xzxz() {
     //     return {};
     // }
-    //
+
     // @Bean
     // xzxz2(
     //     xz: Dep1,

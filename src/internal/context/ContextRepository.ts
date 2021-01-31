@@ -1,4 +1,3 @@
-import ts from 'typescript';
 import { NamedClassDeclaration } from '../ts-helpers/types';
 import { uniqId } from '../utils/uniqId';
 
@@ -12,7 +11,7 @@ export interface IContextDescriptor {
 }
 
 export class ContextRepository {
-    static repository = new Map<ts.ClassDeclaration, IContextDescriptor>();
+    static repository = new Map<TContextName, IContextDescriptor>();
 
     static registerContext(
         name: string,
@@ -28,16 +27,16 @@ export class ContextRepository {
             node: classDeclaration,
         };
 
-        this.repository.set(classDeclaration, descriptor);
+        this.repository.set(name, descriptor);
 
         return descriptor;
     }
 
-    static getContext(classDeclaration: ts.ClassDeclaration): IContextDescriptor | null {
-        return this.repository.get(classDeclaration) ?? null;
+    static getContextByName(name: TContextName): IContextDescriptor | null {
+        return this.repository.get(name) ?? null;
     }
 
-    static hasContext(classDeclaration: ts.ClassDeclaration): boolean {
-        return this.repository.has(classDeclaration);
+    static hasContext(name: TContextName): boolean {
+        return this.repository.has(name);
     }
 }

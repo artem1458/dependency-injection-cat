@@ -5,8 +5,8 @@ import { registerPropertyBean } from './registerPropertyBean';
 import { registerMethodBean } from './registerMethodBean';
 
 export const registerBeans = () => {
-    ContextRepository.repository.forEach((contextDescriptor, contextDeclaration) => {
-        contextDeclaration.members.forEach((classElement) => {
+    ContextRepository.repository.forEach((contextDescriptor, contextName) => {
+        contextDescriptor.node.members.forEach((classElement) => {
             if (isMethodBean(classElement)) {
                 registerMethodBean(contextDescriptor, classElement);
             }

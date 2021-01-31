@@ -10,7 +10,7 @@ import { CompilationContext } from '../../compilation-context/CompilationContext
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { END_PATH_TOKEN, START_PATH_TOKEN } from '../ts-helpers/type-qualifier/parseTokens';
 
-export function registerPropertyBean(contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void {
+export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
     const typeInfo = getBeanTypeInfoFromClassProperty(classElement);
     const beanInfo = getPropertyBeanInfo(classElement);
 
@@ -27,7 +27,7 @@ export function registerPropertyBean(contextDescriptor: IContextDescriptor, clas
         scope: beanInfo.scope,
         node: classElement,
     });
-}
+};
 
 function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclarationWithInitializer): IQualifiedType | null {
     const propertyType = classElement.type ?? null;

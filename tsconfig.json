@@ -4,7 +4,7 @@
     "paths": {},
     "plugins": [
       {
-        "transform": "./src/core/external/transformers/typescript/index.ts"
+        "transform": "./src/external/transformers/typescript/index.ts"
       }
     ]
   }

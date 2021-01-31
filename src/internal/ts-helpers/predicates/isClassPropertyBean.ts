@@ -1,11 +1,10 @@
 import * as ts from 'typescript';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
-import { libraryName } from '../../../../constants/libraryName';
+import { libraryName } from '../../../constants/libraryName';
 import { ClassPropertyDeclarationWithInitializer } from '../types';
 
-export function isClassPropertyBean(node: ts.Node): node is ClassPropertyDeclarationWithInitializer {
-    return ts.isPropertyDeclaration(node) && hasBeanCallExpression(node);
-}
+export const isClassPropertyBean = (node: ts.Node): node is ClassPropertyDeclarationWithInitializer =>
+    ts.isPropertyDeclaration(node) && hasBeanCallExpression(node);
 
 function hasBeanCallExpression(node: ts.PropertyDeclaration): boolean {
     const initializer = node.initializer;

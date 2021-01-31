@@ -6,7 +6,7 @@ import { getMethodBeanInfo } from '../ts-helpers/bean-info/getMethodBeanInfo';
 import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 
-export function registerMethodBean(contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void {
+export const registerMethodBean = (contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void => {
     const typeInfo = getBeanTypeInfoFromMethod(classElement);
     const beanInfo = getMethodBeanInfo(classElement);
 
@@ -27,7 +27,7 @@ export function registerMethodBean(contextDescriptor: IContextDescriptor, classE
         scope: beanInfo.scope,
         node: classElement,
     });
-}
+};
 
 function getBeanTypeInfoFromMethod(classElement: ts.MethodDeclaration): IQualifiedType | null {
     const methodReturnType = classElement.type ?? null;

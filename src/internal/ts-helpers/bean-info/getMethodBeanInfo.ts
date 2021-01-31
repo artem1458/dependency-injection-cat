@@ -4,7 +4,7 @@ import { CompilationContext } from '../../../compilation-context/CompilationCont
 import { isBeanDecorator } from '../predicates/isBeanDecorator';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
 
-export function getMethodBeanInfo(methodDeclaration: ts.MethodDeclaration): ICompilationBeanInfo {
+export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICompilationBeanInfo => {
     const bean = methodDeclaration.decorators?.find(isBeanDecorator) ?? null;
     const qualifier = methodDeclaration.name.getText();
 
@@ -54,4 +54,4 @@ export function getMethodBeanInfo(methodDeclaration: ts.MethodDeclaration): ICom
         scope: 'singleton',
         qualifier: methodDeclaration.name.getText(),
     };
-}
+};

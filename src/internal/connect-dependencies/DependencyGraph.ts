@@ -1,4 +1,4 @@
-import { Graph, alg } from 'graphlib';
+import { alg, Graph } from 'graphlib';
 import { BeanRepository, IBeanDescriptorWithId } from '../bean/BeanRepository';
 
 type TContextName = string;

@@ -5,7 +5,7 @@ import { TBeanScopeValue } from './ICompilationBeanInfo';
 
 const scopes: Array<TBeanScopeValue | null> = ['singleton', 'prototype'];
 
-export function getScopeValue(expression: ts.ObjectLiteralExpression): TBeanScopeValue {
+export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScopeValue => {
     const scopeNode = expression.properties.find(it => it.name?.getText() === 'scope');
     if (scopeNode === undefined) {
         return 'singleton';
@@ -32,4 +32,4 @@ export function getScopeValue(expression: ts.ObjectLiteralExpression): TBeanScop
     }
 
     return 'singleton';
-}
+};

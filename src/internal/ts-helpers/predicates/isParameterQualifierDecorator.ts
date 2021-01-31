@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { libraryName } from '../../../../constants/libraryName';
+import { libraryName } from '../../../constants/libraryName';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 
 export function isParameterQualifierDecorator(decoratorNode: ts.Decorator): boolean {

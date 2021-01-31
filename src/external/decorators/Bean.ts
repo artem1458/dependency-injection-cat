@@ -1,6 +1,6 @@
 export type TClassConstructor<T> = new (...args: any[]) => T;
 export type TBeanScope = 'prototype' | 'singleton';
-export interface IBeanInfo {
+export interface IBeanConfig {
     scope?: TBeanScope;
 }
 
@@ -11,12 +11,12 @@ export function Bean<T>(
 ): void;
 
 export function Bean(
-    beanProps: IBeanInfo,
+    beanConfig: IBeanConfig,
 ): typeof Bean;
 
 export function Bean<T>(
     classIml: TClassConstructor<T>,
-    beanProps?: IBeanInfo,
+    beanConfig?: IBeanConfig,
 ): T;
 
 export function Bean(
@@ -25,5 +25,5 @@ export function Bean(
 ): void;
 
 export function Bean(): never {
-    throw new Error('Trying to use Bean property without configured di-container, or not in class');
+    throw new Error('Trying to use @Bean without configured di-container, or not in context-class');
 }

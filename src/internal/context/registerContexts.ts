@@ -33,6 +33,14 @@ export const registerContexts = (contextPaths: Array<string>) => {
 
             const name = classDeclaration.name.getText();
 
+            if (ContextRepository.hasContext(name)) {
+                CompilationContext.reportError({
+                    node: classDeclaration,
+                    message: 'Context should have uniq name',
+                });
+                return;
+            }
+
             ContextRepository.registerContext(
                 name,
                 classDeclaration,

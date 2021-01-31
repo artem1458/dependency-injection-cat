@@ -4,9 +4,9 @@ import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
 import { isMethodBean } from '../ts-helpers/predicates/isMethodBean';
 
-export function getAllBeanNamesInContextByBeanDescriptor(descriptor: IBeanDescriptor): string[] {
+export const getAllBeanNamesInContextByBeanDescriptor = (descriptor: IBeanDescriptor): string[] => {
     const parent = descriptor.node.parent as ts.ClassDeclaration;
     return parent.members
         .filter((it): it is ClassPropertyDeclarationWithInitializer | ts.MethodDeclaration => isClassPropertyBean(it) || isMethodBean(it))
         .map(it => it.name.getText());
-}
+};
