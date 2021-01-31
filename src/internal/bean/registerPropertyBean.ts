@@ -11,6 +11,14 @@ import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descripto
 import { END_PATH_TOKEN, START_PATH_TOKEN } from '../ts-helpers/type-qualifier/parseTokens';
 
 export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
+    if (classElement.name.getText() === 'getBean') {
+        CompilationContext.reportError({
+            node: classElement,
+            message: '"getBean" property is reserved for the di-container, please use another name instead'
+        });
+        return;
+    }
+
     const typeInfo = getBeanTypeInfoFromClassProperty(classElement);
     const beanInfo = getPropertyBeanInfo(classElement);
 

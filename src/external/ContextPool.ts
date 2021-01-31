@@ -1,25 +1,29 @@
-import { InternalCatContext } from './InternalCatContext';
+import { TInternalCatContext } from './InternalCatContext';
 import { NoContextByKey } from '../exceptions/runtime/NoContextByKey';
+import { IBeanConfig } from './decorators/Bean';
 
 interface IContextProps {
     key: any;
     config: any;
 }
 
-export abstract class ContextPool {
+type TBeanName = string;
+
+export class ContextPool {
     private DEFAULT_CONTEXT_KEY = {};
     private pool = new Map();
 
     protected constructor(
         private contextName: string,
-        private context: new () => InternalCatContext,
+        private beansConfig: Map<TBeanName, IBeanConfig>,
+        private context: TInternalCatContext
     ) {}
 
     initContext({
         key = this.DEFAULT_CONTEXT_KEY,
         config,
     }: IContextProps): any {
-        const newContext = new this.context();
+        const newContext = new this.context(this.contextName, this.beansConfig);
         newContext.config = config;
 
         this.pool.set(key, newContext);

@@ -7,6 +7,14 @@ import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 
 export const registerMethodBean = (contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void => {
+    if (classElement.name.getText() === 'getBean') {
+        CompilationContext.reportError({
+            node: classElement,
+            message: '"getBean" method is reserved for the di-container, please use another name instead'
+        });
+        return;
+    }
+
     const typeInfo = getBeanTypeInfoFromMethod(classElement);
     const beanInfo = getMethodBeanInfo(classElement);
 
