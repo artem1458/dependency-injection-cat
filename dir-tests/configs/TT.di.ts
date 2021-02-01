@@ -1,5 +1,5 @@
 import { Bean, CatContext } from 'dependency-injection-cat';
-import { IUseCase, Logger, Requester, UseCase } from '@xz/types2';
+import { IUseCase, Logger, Requester, UseCase } from './UseCase';
 
 export class TTDi extends CatContext {
     useCase: IUseCase = Bean(UseCase)
@@ -12,7 +12,8 @@ export class TTDi extends CatContext {
     }
 
     @Bean
-    logger(): Logger {
+    logger(
+    ): Logger {
         return {};
     }
 }

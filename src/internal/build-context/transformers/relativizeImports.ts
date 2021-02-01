@@ -1,8 +1,8 @@
-import upath from 'path';
 import ts, { factory } from 'typescript';
+import upath from 'path';
 import { getBuildedContextDirectory } from '../utils/getBuildedContextDirectory';
 import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
-import { PathResolver } from '../../ts-helpers/path-resolver/PathResolver';
+import { PathResolverCache } from '../../ts-helpers/path-resolver/PathResolverCache';
 
 export const relativizeImports = (): ts.TransformerFactory<ts.SourceFile> => {
     return (context) => sourceFile => {
@@ -10,17 +10,20 @@ export const relativizeImports = (): ts.TransformerFactory<ts.SourceFile> => {
             if (ts.isImportDeclaration(node)) {
                 const moduleSpecifier = removeQuotesFromString(node.moduleSpecifier.getText());
 
-                const absolutePathFromResolver = PathResolver.resolve(
+                const absolutePathFromResolverWithExtension = PathResolverCache.getAbsolutePathWithExtension(
                     sourceFile.fileName,
                     moduleSpecifier,
                 );
 
-                //TODO resolve problem with extensions
-                if (upath.isAbsolute(absolutePathFromResolver)) {
+
+                if (upath.isAbsolute(absolutePathFromResolverWithExtension)) {
                     const buildedContextDirectory = getBuildedContextDirectory();
+                    const absoluteImportPathWithoutExtension = removeExtensionFromPath(
+                        absolutePathFromResolverWithExtension,
+                    );
                     const newRelative = upath.relative(
                         buildedContextDirectory,
-                        absolutePathFromResolver,
+                        absoluteImportPathWithoutExtension,
                     );
 
                     return factory.updateImportDeclaration(
@@ -39,3 +42,8 @@ export const relativizeImports = (): ts.TransformerFactory<ts.SourceFile> => {
         return ts.visitNode(sourceFile, visitor);
     };
 };
+
+function removeExtensionFromPath(path: string): string {
+    const ext = upath.extname(path);
+    return path.slice(0, -ext.length);
+}

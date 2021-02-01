@@ -5,6 +5,7 @@ import { PRIVATE_TOKEN } from '../constants';
 import { CONTEXT_POOL_IMPORT } from './addNecessaryImports';
 
 const beanConfigDeclarationName = `beanConfig${PRIVATE_TOKEN}`;
+export const CONTEXT_POOL_POSTFIX = `_POOL_${PRIVATE_TOKEN}`;
 
 export const addContextPool = (contextDescriptor: IContextDescriptor): ts.TransformerFactory<ts.SourceFile> => {
     return () => sourceFile => {
@@ -79,7 +80,7 @@ function createContextNamePool(contextDescriptor: IContextDescriptor): ts.Statem
         [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
         factory.createVariableDeclarationList(
             [factory.createVariableDeclaration(
-                factory.createIdentifier(`${contextDescriptor.name}_POOL_${PRIVATE_TOKEN}`),
+                factory.createIdentifier(`${contextDescriptor.name}${CONTEXT_POOL_POSTFIX}`),
                 undefined,
                 undefined,
                 factory.createNewExpression(
