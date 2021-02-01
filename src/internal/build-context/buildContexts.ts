@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import fs from 'fs';
-import path from 'path';
+import path from 'upath';
 import glob from 'glob';
 import { ContextRepository, IContextDescriptor } from '../context/ContextRepository';
 import { addNecessaryImports } from './transformers/addNecessaryImports';
@@ -9,12 +9,14 @@ import { addContextPool } from './transformers/addContextPool';
 import { replacePropertyBeans } from './transformers/replacePropertyBeans';
 import { transformMethodBeans } from './transformers/transformMethodBeans';
 import { getBuildedContextDirectory } from './utils/getBuildedContextDirectory';
+import { relativizeImports } from './transformers/relativizeImports';
 
 export const buildContexts = () => {
     clearOldContexts();
 
     ContextRepository.repository.forEach((contextDescriptor, contextName) => {
         const transformers: ts.TransformerFactory<any>[] = [
+            relativizeImports(),
             addNecessaryImports(),
             addContextPool(contextDescriptor),
             replaceExtendingFromCatContext(contextDescriptor),

@@ -7,7 +7,7 @@ export class PathResolverCache {
     private static cache: Record<string, string | undefined> = {};
 
     static getAbsolutePathWithExtension(sourceFilePath: string, targetPath: string): string {
-        const resolved = PathResolver.resolveWithoutExtension(sourceFilePath, targetPath);
+        const resolved = PathResolver.resolve(sourceFilePath, targetPath);
         if(!path.isAbsolute(resolved)) {
             return resolved;
         }

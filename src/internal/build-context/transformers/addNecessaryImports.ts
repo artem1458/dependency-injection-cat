@@ -1,5 +1,5 @@
 import ts, { factory } from 'typescript';
-import path from 'path';
+import upath from 'upath';
 import { PRIVATE_TOKEN } from '../constants';
 import { getRelativePathToExternalDirectoryFromSourceFile } from '../utils/getRelativePathToExternalDirectoryFromSourceFile';
 import { getBuildedContextDirectory } from '../utils/getBuildedContextDirectory';
@@ -12,11 +12,11 @@ export const addNecessaryImports = (): ts.TransformerFactory<ts.SourceFile> => {
         const relativePathToEXTERNALDirectory = getRelativePathToExternalDirectoryFromSourceFile(
             getBuildedContextDirectory()
         );
-        const pathForInternalCatContext = path.join(
+        const pathForInternalCatContext = upath.join(
             relativePathToEXTERNALDirectory,
             'InternalCatContext',
         );
-        const pathForContextPool = path.join(
+        const pathForContextPool = upath.join(
             relativePathToEXTERNALDirectory,
             'ContextPool',
         );
