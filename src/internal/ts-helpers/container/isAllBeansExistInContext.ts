@@ -8,6 +8,12 @@ export const isAllBeansExistInContext = (node: IContainerAccessNode): boolean =>
         return false;
     }
 
+    const typeArgs = node.typeArguments ?? null;
+
+    if (typeArgs === null) {
+        return true;
+    }
+
     return true;
 
 };
