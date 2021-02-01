@@ -41,7 +41,7 @@ function getBeanBlock(beanDescriptor: IBeanDescriptor): ts.Block {
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {
         return factory.createCallExpression(
             factory.createPropertyAccessExpression(
-                factory.createThis(),
+                factory.createSuper(),
                 factory.createIdentifier('getBean')
             ),
             undefined,

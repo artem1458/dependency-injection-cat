@@ -61,6 +61,7 @@
     "webpack-watch-files-plugin": "^1.0.3"
   },
   "dependencies": {
+    "auto-bind": "^4.0.0",
     "chokidar": "^3.4.2",
     "find-up": "^5.0.0",
     "glob": "^7.1.6",

@@ -5,7 +5,7 @@ export interface SomeAnotherUseCase {}
 
 export class UseCase implements IUseCase {
     constructor(
-        requester: Requester,
-        logger: Logger,
+        private requester: Requester,
+        private logger: Logger,
     ) {}
 }

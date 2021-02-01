@@ -40,13 +40,13 @@ export abstract class InternalCatContext {
         }
 
         if (beanConfiguration.scope !== 'singleton') {
-            return new this[beanName]();
+            return this[beanName]();
         }
 
         let savedInstance = this.singletonMap.get(beanName) ?? null;
 
         if (savedInstance === null) {
-            savedInstance = new this[beanName]();
+            savedInstance = this[beanName]();
             this.singletonMap.set(beanName, savedInstance);
         }
 
