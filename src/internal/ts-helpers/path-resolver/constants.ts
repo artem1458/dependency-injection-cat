@@ -1,4 +1,4 @@
-import path from 'path';
+import upath from 'upath';
 
 export const extensionsToResolve: Array<string> = [
     '.ts',
@@ -6,9 +6,9 @@ export const extensionsToResolve: Array<string> = [
     '.d.ts',
     '.js',
     '.jsx',
-    `${path.sep}index.ts`,
-    `${path.sep}index.tsx`,
-    `${path.sep}index.d.ts`,
-    `${path.sep}index.js`,
-    `${path.sep}index.jsx`,
+    `${upath.sep}index.ts`,
+    `${upath.sep}index.tsx`,
+    `${upath.sep}index.d.ts`,
+    `${upath.sep}index.js`,
+    `${upath.sep}index.jsx`,
 ];

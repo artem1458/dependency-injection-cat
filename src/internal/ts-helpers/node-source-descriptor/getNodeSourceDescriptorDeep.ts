@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import path from 'path';
+import upath from 'upath';
 import { flatten } from 'lodash';
 import { INodeSourceDescriptor } from './INodeSourceDescriptor';
 import { isLocalExportDeclaration } from './LocalExportDeclaration';
@@ -34,7 +34,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
 
         const newNameToFind = splittedNameToFind.slice(1).join('.');
 
-        if (!path.isAbsolute(resolvedPath)) {
+        if (!upath.isAbsolute(resolvedPath)) {
             return getNodeSourceDescriptorDeep(
                 SourceFilesCache.getSourceFileByPath(resolvedPath),
                 nameToFind,
@@ -74,7 +74,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             ...splittedNameToFind.slice(1),
         ].join('.');
 
-        if (!path.isAbsolute(resolvedPath)) {
+        if (!upath.isAbsolute(resolvedPath)) {
             return {
                 path: resolvedPath,
                 name: newNameToFind,
@@ -146,7 +146,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             modulePath,
         );
 
-        if (!path.isAbsolute(resolvedPath)) {
+        if (!upath.isAbsolute(resolvedPath)) {
             CompilationContext.reportError({
                 node: externalNamespaceExport,
                 message: 'DI container does not support export * as Something from "node-module"'
@@ -181,7 +181,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             modulePath,
         );
 
-        if (!path.isAbsolute(resolvedPath)) {
+        if (!upath.isAbsolute(resolvedPath)) {
             CompilationContext.reportError({
                 node: externalExportSpecifier,
                 message: 'DI container does not support export * as Something from "node-module"',
@@ -206,7 +206,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             modulePath,
         );
 
-        if (!path.isAbsolute(resolvedPath)) {
+        if (!upath.isAbsolute(resolvedPath)) {
             CompilationContext.reportError({
                 message: 'DI container does not support export * from "node-module"',
                 node: it,

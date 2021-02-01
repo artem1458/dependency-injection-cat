@@ -12,4 +12,4 @@ const context = container.initContext<IBeans>({
 });
 
 
-console.log(context.getBean('useCase'));
+console.log(context.getBeans());

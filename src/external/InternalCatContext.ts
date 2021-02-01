@@ -53,7 +53,11 @@ export abstract class InternalCatContext {
         return savedInstance;
     }
 
-    getBeans(): any[] {
-        return Object.keys(this.beanConfigurationRecord).map(it => this.getBean(it));
+    getBeans(): Record<string, any> {
+        return Object.keys(this.beanConfigurationRecord)
+            .reduce((previousValue, currentValue) => ({
+                ...previousValue,
+                [currentValue]: this.getBean(currentValue),
+            }), {});
     }
 }

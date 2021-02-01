@@ -1,4 +1,4 @@
-import path from 'upath';
+import upath from 'upath';
 import { createMatchPath, loadConfig, MatchPath } from 'tsconfig-paths';
 import { isPathRelative } from '../../utils/isPathRelative';
 import { TsConfigProvider } from '../../ts-config-path-provider/TsConfigProvider';
@@ -18,14 +18,14 @@ export class PathResolver {
     }
 
     static resolve(sourceFilePath: string, targetPath: string): string {
-        const normalizedSourceFilePath = path.toUnix(sourceFilePath);
-        const normalizedTargetPath = path.toUnix(targetPath);
+        const normalizedSourceFilePath = upath.toUnix(sourceFilePath);
+        const normalizedTargetPath = upath.toUnix(targetPath);
 
         if (isPathRelative(normalizedTargetPath)) {
-            const newSourceFilePath = path.dirname(normalizedSourceFilePath);
-            const resolved = path.resolve(newSourceFilePath, normalizedTargetPath);
+            const newSourceFilePath = upath.dirname(normalizedSourceFilePath);
+            const resolved = upath.resolve(newSourceFilePath, normalizedTargetPath);
 
-            return path.normalize(resolved);
+            return upath.normalize(resolved);
         }
 
         const resolved = PathResolver.resolver(
@@ -35,6 +35,6 @@ export class PathResolver {
             extensionsToResolve,
         ) ?? normalizedTargetPath;
 
-        return path.normalize(resolved);
+        return upath.normalize(resolved);
     }
 }

@@ -1,8 +1,8 @@
-import path from 'path';
+import upath from 'upath';
 import { escapeRegExp } from 'lodash';
 
 export function removeExtensionFromPath(oldPath: string): string {
-    const ext = path.extname(oldPath);
+    const ext = upath.extname(oldPath);
     if (ext === '') {
         return oldPath;
     }

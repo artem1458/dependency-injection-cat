@@ -1,5 +1,5 @@
 import ts, { factory } from 'typescript';
-import upath from 'path';
+import upath from 'upath';
 import { getBuildedContextDirectory } from '../utils/getBuildedContextDirectory';
 import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 import { PathResolverCache } from '../../ts-helpers/path-resolver/PathResolverCache';

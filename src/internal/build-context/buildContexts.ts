@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import fs from 'fs';
-import path from 'upath';
+import upath from 'upath';
 import glob from 'glob';
 import { ContextRepository, IContextDescriptor } from '../context/ContextRepository';
 import { addNecessaryImports } from './transformers/addNecessaryImports';
@@ -40,9 +40,9 @@ export const buildContexts = () => {
 const printer = ts.createPrinter();
 
 function writeBuildedContext(contextDescriptor: IContextDescriptor, sourceFile: ts.SourceFile) {
-    const ext = path.extname(contextDescriptor.absolutePath);
+    const ext = upath.extname(contextDescriptor.absolutePath);
     const outDirectory = getBuildedContextDirectory();
-    const newPath = path.join(
+    const newPath = upath.join(
         getBuildedContextDirectory(),
         `context_${contextDescriptor.id}${ext}`,
     );

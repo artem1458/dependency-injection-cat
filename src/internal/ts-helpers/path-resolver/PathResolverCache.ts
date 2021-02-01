@@ -1,5 +1,5 @@
 import { PathResolver } from './PathResolver';
-import path from 'path';
+import upath from 'upath';
 import fs from 'fs';
 import { extensionsToResolve } from './constants';
 
@@ -8,7 +8,7 @@ export class PathResolverCache {
 
     static getAbsolutePathWithExtension(sourceFilePath: string, targetPath: string): string {
         const resolved = PathResolver.resolve(sourceFilePath, targetPath);
-        if(!path.isAbsolute(resolved)) {
+        if(!upath.isAbsolute(resolved)) {
             return resolved;
         }
 
@@ -18,9 +18,9 @@ export class PathResolverCache {
             return cached;
         }
 
-        const candidatesFilePath = extensionsToResolve.map(it => path.resolve(`${resolved}${it}`));
+        const candidatesFilePath = extensionsToResolve.map(it => upath.resolve(`${resolved}${it}`));
 
-        if (extensionsToResolve.includes(path.extname(resolved))) {
+        if (extensionsToResolve.includes(upath.extname(resolved))) {
             candidatesFilePath.unshift(resolved);
         }
 
