@@ -41,10 +41,15 @@ const printer = ts.createPrinter();
 
 function writeBuildedContext(contextDescriptor: IContextDescriptor, sourceFile: ts.SourceFile) {
     const ext = path.extname(contextDescriptor.absolutePath);
+    const outDirectory = getBuildedContextDirectory();
     const newPath = path.join(
         getBuildedContextDirectory(),
         `context_${contextDescriptor.id}${ext}`,
     );
+
+    if (!fs.existsSync(outDirectory)) {
+        fs.mkdirSync(outDirectory);
+    }
 
     fs.writeFile(
         newPath,
@@ -53,7 +58,7 @@ function writeBuildedContext(contextDescriptor: IContextDescriptor, sourceFile: 
             if (err) {
                 throw err;
             }
-        }
+        },
     );
 }
 

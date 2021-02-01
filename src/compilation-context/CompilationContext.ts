@@ -1,5 +1,6 @@
 import { ICompilationContextError, ICompilationContextErrorWithMultipleNodes } from './ICompilationContextError';
 import { getPositionOfNode } from '../internal/utils/getPositionOfNode';
+import chalk from 'chalk';
 
 interface ICompilationContext {
     errors: ICompilationContextError[];
@@ -9,10 +10,11 @@ interface ICompilationContext {
 
 class CompilationError extends Error {
     constructor(
-        public message: string,
+        message: string,
     ) {
         super();
         this.stack = undefined;
+        this.message = chalk.red(message);
     }
 }
 
@@ -45,7 +47,7 @@ export class CompilationContext {
         }
 
         const errorMessages: string[] = [
-            '\n/-/-/-/-/-/-/-/-/-/-/-/-/ Compilation errors /-/-/-/-/-/-/-/-/-/-/-/-/-/-/\n'
+            '\n/-/-/-/-/-/-/-/-/-/-/-/-/ DI-CAT /-/-/-/-/-/-/-/-/-/-/-/-/-/-/\n'
         ];
 
         this.compilationContext.textErrors.forEach(error => errorMessages.push(error));
@@ -57,6 +59,12 @@ export class CompilationContext {
         this.compilationContext.errorsWithMultipleNodes.forEach(error => {
             errorMessages.push(this.formatCompilationContextErrorWithMultipleNodes(error));
         });
+
+        this.compilationContext = {
+            errorsWithMultipleNodes: [],
+            textErrors: [],
+            errors: []
+        };
 
         throw new CompilationError(errorMessages.join('\n'));
     }

@@ -4,7 +4,6 @@ import { IContainerAccessNode } from './isContainerAccess';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { getContextNameFromContainerCall } from './getContextNameFromContainerCall';
 import { ContextRepository } from '../../context/ContextRepository';
-import { getRelativePathToExternalDirectoryFromSourceFile } from '../../build-context/utils/getRelativePathToExternalDirectoryFromSourceFile';
 import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContextPool';
 import { getBuildedContextDirectory } from '../../build-context/utils/getBuildedContextDirectory';
 
@@ -43,10 +42,12 @@ export const replaceContainerCall = (node: IContainerAccessNode, importsToAdd: t
         upath.dirname(node.getSourceFile().fileName),
         getBuildedContextDirectory(),
     );
-    const importPath = upath.join(
-        relativePathToExternalDirectory,
-        `context_${contextDescriptor.id}`
-    );
+    const importPath = `./${
+        upath.join(
+            relativePathToExternalDirectory,
+            `context_${contextDescriptor.id}`
+        )
+    }`;
     const importNamespaceName = `${contextDescriptor.name}${CONTEXT_POOL_POSTFIX}`;
     const importDeclaration = factory.createImportDeclaration(
         undefined,

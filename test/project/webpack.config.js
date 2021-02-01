@@ -4,18 +4,15 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
-    entry: './dir-tests/index.ts',
+    entry: './src/index.ts',
     mode: 'development',
     devtool: 'source-map',
     resolve: {
         extensions: ['.js', '.ts'],
-        plugins: [new TsconfigPathsPlugin()],
-        alias: {
-            'dependency-injection-cat': path.resolve(__dirname, 'dist/src'),
-        },
+        plugins: [new TsconfigPathsPlugin()]
     },
     output: {
-        path: path.resolve(__dirname, 'dist2'),
+        path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
     },
     module: {
@@ -25,7 +22,7 @@ module.exports = {
                 loader: 'ts-loader',
                 options: {
                     compiler: 'ttypescript',
-                    transpileOnly: true,
+                    transpileOnly: false,
                 }
             }
         ],

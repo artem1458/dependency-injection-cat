@@ -3,6 +3,7 @@ import { IDiConfig, initDiConfig } from '../config';
 import { runCompile } from '../../../internal/runCompile';
 import { isContainerAccess } from '../../../internal/ts-helpers/container/isContainerAccess';
 import { replaceContainerCall } from '../../../internal/ts-helpers/container/replaceContainerCall';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
 console.log(`
 __/\\\\\\\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\______________________/\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_        
@@ -26,7 +27,11 @@ export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<
 
             const visitor: ts.Visitor = (node => {
                 if (isContainerAccess(node)) {
-                    return replaceContainerCall(node, importsToAdd);
+                    const replaced = replaceContainerCall(node, importsToAdd);
+
+                    CompilationContext.throw();
+
+                    return replaced;
                 }
 
                 return ts.visitEachChild(node, visitor, context);

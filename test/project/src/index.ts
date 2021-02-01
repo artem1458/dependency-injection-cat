@@ -11,4 +11,5 @@ const context = container.initContext<IBeans>({
     name: 'TTDi',
 });
 
-console.log(context.getBeans());
+
+console.log(context.getBean('useCase'));
