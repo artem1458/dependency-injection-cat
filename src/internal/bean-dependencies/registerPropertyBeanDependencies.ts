@@ -59,6 +59,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
                 contextName: descriptor.contextName,
                 parameterName: parameter.name.getText(),
                 node: parameter,
+                qualifiedBean: null,
             }
         );
     });

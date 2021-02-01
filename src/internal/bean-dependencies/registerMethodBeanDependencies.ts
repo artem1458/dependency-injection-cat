@@ -30,6 +30,7 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
                 type: type.typeId,
                 parameterName: parameter.name.getText(),
                 qualifier,
+                qualifiedBean: null
             }
         );
     });

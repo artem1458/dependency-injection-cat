@@ -35,10 +35,11 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         const newNameToFind = splittedNameToFind.slice(1).join('.');
 
         if (!path.isAbsolute(resolvedPath)) {
-            return {
-                path: resolvedPath,
-                name: newNameToFind,
-            };
+            return getNodeSourceDescriptorDeep(
+                SourceFilesCache.getSourceFileByPath(resolvedPath),
+                nameToFind,
+                exportNodesStack,
+            );
         }
 
         const newSourceFile = SourceFilesCache.getSourceFileByPath(resolvedPath);
@@ -77,6 +78,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             return {
                 path: resolvedPath,
                 name: newNameToFind,
+                node: null,
             };
         }
 
@@ -121,6 +123,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             return {
                 path: sourceFile.fileName,
                 name: joinedLocalName,
+                node: statement,
             };
         }
     }
@@ -240,5 +243,6 @@ function getNodeSourceDescriptorFromTopStatements(sourceFile: ts.SourceFile, nam
     return {
         name: nameToFind,
         path: sourceFile.fileName,
+        node: statement,
     };
 }

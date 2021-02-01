@@ -7,7 +7,7 @@ interface IInitContextProps {
 }
 
 interface IInitContextPropsWithConfig<TConfig> extends IInitContextProps {
-    config: TConfig extends undefined ? never : TConfig;
+    config?: TConfig;
 }
 
 type TBeanName = string
@@ -31,7 +31,7 @@ class Container {
         Container.throwInitializationError();
     }
 
-    clearContext(props: Container): void {
+    clearContext(props: IInitContextProps): void {
         Container.throwInitializationError();
     }
 

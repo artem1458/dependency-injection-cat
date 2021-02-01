@@ -1,6 +1,8 @@
-import * as ts from 'typescript';
+import ts, { factory } from 'typescript';
 import { IDiConfig, initDiConfig } from '../config';
 import { runCompile } from '../../../internal/runCompile';
+import { isContainerAccess } from '../../../internal/ts-helpers/container/isContainerAccess';
+import { replaceContainerCall } from '../../../internal/ts-helpers/container/replaceContainerCall';
 
 console.log(`
 __/\\\\\\\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\______________________/\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_        
@@ -19,8 +21,33 @@ export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<
     runCompile();
 
     return context => {
-        return node => {
-            return node;
+        return sourceFile => {
+            const importsToAdd: ts.ImportDeclaration[] = [];
+
+            const visitor: ts.Visitor = (node => {
+                if (isContainerAccess(node)) {
+                    return replaceContainerCall(node, importsToAdd);
+                }
+
+                return ts.visitEachChild(node, visitor, context);
+            });
+
+            const newSourceFile = ts.visitNode(sourceFile, visitor);
+
+            const updated = factory.updateSourceFile(
+                sourceFile,
+                [
+                    ...importsToAdd,
+                    ...newSourceFile.statements,
+                ],
+                sourceFile.isDeclarationFile,
+                sourceFile.referencedFiles,
+                undefined,
+                sourceFile.hasNoDefaultLib,
+                undefined,
+            );
+
+            return updated;
         };
     };
 };

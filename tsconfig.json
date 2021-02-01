@@ -1,9 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "paths": {
-      "@xz/*": ["./dir-tests/configs/*"]
-    },
+    "paths": {},
     "plugins": [
       {
         "transform": "./src/external/transformers/typescript/index.ts"

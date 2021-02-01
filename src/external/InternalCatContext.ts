@@ -52,4 +52,8 @@ export abstract class InternalCatContext {
 
         return savedInstance;
     }
+
+    getBeans(): any[] {
+        return Object.keys(this.beanConfigurationRecord).map(it => this.getBean(it));
+    }
 }
