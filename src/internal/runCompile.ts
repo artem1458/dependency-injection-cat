@@ -9,6 +9,7 @@ import { reportAboutCyclicDependencies } from './report-cyclic-dependencies/repo
 import { TsConfigProvider } from './ts-config-path-provider/TsConfigProvider';
 import { PathResolver } from './ts-helpers/path-resolver/PathResolver';
 import { buildContexts } from './build-context/buildContexts';
+import { checkIsAllBeansRegisteredInContext } from './bean/checkIsAllBeansRegisteredInContext';
 
 let wasInitiated = false;
 
@@ -26,6 +27,7 @@ export const runCompile = () => {
 
     registerContexts(contextPaths);
     registerBeans();
+    checkIsAllBeansRegisteredInContext();
     registerBeanDependencies();
     buildDependencyGraphAndFillQualifiedBeans();
     reportAboutCyclicDependencies();

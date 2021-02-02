@@ -1,7 +1,7 @@
 import { container } from 'dependency-injection-cat';
 import { IUseCase, Logger, Requester } from './configs/UseCase';
 
-interface IBeans {
+export interface IBeans {
     useCase: IUseCase;
     requester: Requester;
     logger: Logger;

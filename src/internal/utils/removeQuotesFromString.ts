@@ -3,5 +3,5 @@ export function removeQuotesFromString(str: string): string {
         return str.slice(1, -1);
     }
 
-    throw new Error(`removeQuotesFromString error ${str}`);
+    return str;
 }

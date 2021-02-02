@@ -1,6 +1,5 @@
 import { ICompilationContextError, ICompilationContextErrorWithMultipleNodes } from './ICompilationContextError';
 import { getPositionOfNode } from '../internal/utils/getPositionOfNode';
-import chalk from 'chalk';
 
 interface ICompilationContext {
     errors: ICompilationContextError[];
@@ -10,11 +9,10 @@ interface ICompilationContext {
 
 class CompilationError extends Error {
     constructor(
-        message: string,
+        public message: string,
     ) {
         super();
         this.stack = undefined;
-        this.message = chalk.red(message);
     }
 }
 
@@ -53,11 +51,11 @@ export class CompilationContext {
         this.compilationContext.textErrors.forEach(error => errorMessages.push(error));
 
         this.compilationContext.errors.forEach(error => {
-            errorMessages.push(this.formatCompilationContextError(error));
+            errorMessages.push(this.formatCompilationContextData(error));
         });
 
         this.compilationContext.errorsWithMultipleNodes.forEach(error => {
-            errorMessages.push(this.formatCompilationContextErrorWithMultipleNodes(error));
+            errorMessages.push(this.formatCompilationContextDataWithMultipleNodes(error));
         });
 
         this.compilationContext = {
@@ -69,14 +67,14 @@ export class CompilationContext {
         throw new CompilationError(errorMessages.join('\n'));
     }
 
-    private static formatCompilationContextError({ message, node }: ICompilationContextError): string {
+    private static formatCompilationContextData({ message, node }: ICompilationContextError): string {
         const nodePosition = getPositionOfNode(node);
         const path = node.getSourceFile().fileName;
 
         return `${message}\nAt: (${path}:${nodePosition[0]}:${nodePosition[1]})\n`;
     }
 
-    private static formatCompilationContextErrorWithMultipleNodes({ message, nodes }: ICompilationContextErrorWithMultipleNodes): string {
+    private static formatCompilationContextDataWithMultipleNodes({ message, nodes }: ICompilationContextErrorWithMultipleNodes): string {
         const nodePositions = nodes.map(node => getPositionOfNode(node));
         const paths = nodes.map(it => it.getSourceFile().fileName);
         const nodesMessage = paths.map((_,index) =>

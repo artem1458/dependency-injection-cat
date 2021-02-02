@@ -1,6 +1,6 @@
 import { UsingCatContextWithoutConfiguredDI } from '../exceptions/runtime/UsingCatContextWithoutConfiguredDI';
 
-export abstract class CatContext<TConfig = null> {
+export abstract class CatContext<TBeans, TConfig = null> {
     protected constructor() {
         throw new UsingCatContextWithoutConfiguredDI();
     }
