@@ -8,7 +8,6 @@ export const buildDependencyGraphAndFillQualifiedBeans = () => {
         const beanDependenciesMap = BeanDependenciesRepository.getBeanDescriptorMapByContextName(contextName);
 
         if (beanDependenciesMap === null) {
-            CompilationContext.reportErrorMessage(`No Bean dependencies registered for the context ${contextName}`);
             return;
         }
 

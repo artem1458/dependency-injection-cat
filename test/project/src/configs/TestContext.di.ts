@@ -5,19 +5,9 @@ export interface IBeans {
     logger: Logger;
 }
 
-export class TTDi extends CatContext<IBeans> {
-    useCase: IUseCase = Bean(UseCase)
-
+export class TestContextDi extends CatContext<IBeans> {
     @Bean
-    requester(
-        logger: Logger,
-    ): Requester {
-        return {};
-    }
-
-    @Bean
-    logger(
-    ): Logger {
+    logger(): Logger {
         return {};
     }
 }

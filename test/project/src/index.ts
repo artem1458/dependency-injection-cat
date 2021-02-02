@@ -11,5 +11,10 @@ const context = container.initContext<IBeans>({
     name: 'TTDi',
 });
 
+const context2 = container.initContext<IBeans>({
+    name: 'TestContextDi',
+});
+
 
 console.log(context.getBeans());
+console.log(context2.getBeans());
