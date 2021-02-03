@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-    "target": "es5",
+    "target": "ES6",
     "module": "commonjs",
+    "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -11,7 +12,7 @@
     "plugins": [
       {
         "transform": "../../src/transformers/typescript/index.ts",
-        "compiledContextOutputDir": "./node_modules/compiled-context"
+        "compiledContextOutputDir": "./compiled-context"
       }
     ]
   }

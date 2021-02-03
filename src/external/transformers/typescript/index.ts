@@ -3,6 +3,7 @@ import { IDiConfig, initDiConfig } from '../config';
 import { runCompile } from '../../../internal/runCompile';
 import { isContainerAccess } from '../../../internal/ts-helpers/container/isContainerAccess';
 import { replaceContainerCall } from '../../../internal/ts-helpers/container/replaceContainerCall';
+import { removeDIImportsFromStatements } from '../../../internal/ts-helpers/removeDIImports';
 
 console.log(`
 __/\\\\\\\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\______________________/\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_        
@@ -23,24 +24,27 @@ export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<
     return context => {
         return sourceFile => {
             const importsToAdd: ts.ImportDeclaration[] = [];
+            let hasContainerAccess = false;
 
             const visitor: ts.Visitor = (node => {
                 if (isContainerAccess(node)) {
-                    const replaced = replaceContainerCall(node, importsToAdd);
-
-                    return replaced;
+                    hasContainerAccess = true;
+                    return replaceContainerCall(node, importsToAdd);
                 }
 
                 return ts.visitEachChild(node, visitor, context);
             });
 
             const newSourceFile = ts.visitNode(sourceFile, visitor);
+            const filteredStatements = hasContainerAccess ?
+                removeDIImportsFromStatements(newSourceFile.statements)
+                : newSourceFile.statements;
 
-            const updated = factory.updateSourceFile(
+            return factory.updateSourceFile(
                 sourceFile,
                 [
                     ...importsToAdd,
-                    ...newSourceFile.statements,
+                    ...filteredStatements,
                 ],
                 sourceFile.isDeclarationFile,
                 sourceFile.referencedFiles,
@@ -48,8 +52,6 @@ export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<
                 sourceFile.hasNoDefaultLib,
                 undefined,
             );
-
-            return updated;
         };
     };
 };

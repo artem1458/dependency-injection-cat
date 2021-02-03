@@ -10,3 +10,4 @@ yarn-error.log
 Thumbs.db
 .jest-cache
 src/external/builded-context/context_*
+compiled-context

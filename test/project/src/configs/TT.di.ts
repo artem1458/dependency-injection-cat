@@ -5,13 +5,19 @@ export interface IBeans {
     logger: Logger;
 }
 
-export class TTDi extends CatContext<IBeans> {
+export interface IConfig {
+    data: string;
+}
+
+export class SomeContext extends CatContext<IBeans, IConfig> {
     useCase: IUseCase = Bean(UseCase)
 
     @Bean
     requester(
         logger: Logger,
     ): Requester {
+        this.config.data;
+
         return {};
     }
 

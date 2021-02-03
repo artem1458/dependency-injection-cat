@@ -10,6 +10,7 @@ import { replacePropertyBeans } from './transformers/replacePropertyBeans';
 import { transformMethodBeans } from './transformers/transformMethodBeans';
 import { getBuildedContextDirectory } from './utils/getBuildedContextDirectory';
 import { relativizeImports } from './transformers/relativizeImports';
+import { removeDIImports } from '../ts-helpers/removeDIImports';
 
 export const buildContexts = () => {
     clearOldContexts();
@@ -21,7 +22,8 @@ export const buildContexts = () => {
             addContextPool(contextDescriptor),
             replaceExtendingFromCatContext(contextDescriptor),
             replacePropertyBeans(),
-            transformMethodBeans()
+            transformMethodBeans(),
+            removeDIImports(),
         ];
 
         const sourceFile = contextDescriptor.node.getSourceFile();
@@ -51,32 +53,21 @@ function writeBuildedContext(contextDescriptor: IContextDescriptor, sourceFile: 
         fs.mkdirSync(outDirectory);
     }
 
-    fs.writeFile(
+    fs.writeFileSync(
         newPath,
         printer.printFile(sourceFile),
-        (err: NodeJS.ErrnoException | null) => {
-            if (err) {
-                throw err;
-            }
-        },
     );
 }
 
 function clearOldContexts() {
-    glob(`${getBuildedContextDirectory()}/context_*`, function (err, files) {
-        if (err) {
-            throw err;
-        }
-
-        files.forEach(file => {
-            fs.unlink(
-                file,
-                (err: NodeJS.ErrnoException | null) => {
-                    if (err) {
-                        throw err;
-                    }
+    glob.sync(`${getBuildedContextDirectory()}/context_*`).forEach(file => {
+        fs.unlink(
+            file,
+            (err: NodeJS.ErrnoException | null) => {
+                if (err) {
+                    throw err;
                 }
-            );
-        });
+            }
+        );
     });
 }
