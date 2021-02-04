@@ -1,5 +1,5 @@
 import glob from 'glob';
-import { diConfig } from '../../external/transformers/config';
+import { diConfig } from '../../external/config';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { GITHUB_REPO_LINK } from '../../exceptions/constants';
 
