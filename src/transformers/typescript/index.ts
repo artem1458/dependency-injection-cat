@@ -1,8 +1,8 @@
 import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
 import { runCompile } from '../../internal/runCompile';
-import { getTransformerFactory } from '../../external/transformers/getTransformerFactory';
-import { logLogo } from '../../external/transformers/logLogo';
+import { getTransformerFactory } from '../../internal/transformers/getTransformerFactory';
+import { logLogo } from '../../internal/transformers/logLogo';
 
 logLogo();
 

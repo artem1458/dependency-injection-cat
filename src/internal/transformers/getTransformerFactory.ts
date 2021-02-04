@@ -1,7 +1,8 @@
 import ts, { factory } from 'typescript';
-import { isContainerAccess } from '../../internal/ts-helpers/container/isContainerAccess';
-import { replaceContainerCall } from '../../internal/ts-helpers/container/replaceContainerCall';
-import { removeDIImportsFromStatements } from '../../internal/ts-helpers/removeDIImports';
+import { isContainerAccess } from '../ts-helpers/container/isContainerAccess';
+import { replaceContainerCall } from '../ts-helpers/container/replaceContainerCall';
+import { removeDIImportsFromStatements } from '../ts-helpers/removeDIImports';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
@@ -21,6 +22,8 @@ export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> =>
         const filteredStatements = hasContainerAccess ?
             removeDIImportsFromStatements(newSourceFile.statements)
             : newSourceFile.statements;
+
+        CompilationContext.throw();
 
         return factory.updateSourceFile(
             sourceFile,

@@ -2,7 +2,6 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const diCatTransformer = require('dependency-injection-cat/transformers/babel')
 
 module.exports = {
     entry: './src/index.ts',
@@ -18,32 +17,32 @@ module.exports = {
     },
     module: {
         rules: [
-            // {
-            //     test: /\.ts$/,
-            //     loader: 'ts-loader',
-            //     options: {
-            //         compiler: 'ttypescript',
-            //         transpileOnly: false,
-            //     }
-            // }
             {
-                test: /\.(t|j)s$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        plugins: [
-                            [
-                                diCatTransformer,
-                                {
-                                    "compiledContextOutputDir": "./compiled-context"
-                                }
-                            ]
-                        ],
-                        presets: ['@babel/preset-env', '@babel/preset-typescript']
-                    }
+                test: /\.ts$/,
+                loader: 'awesome-typescript-loader',
+                options: {
+                    compiler: 'ttypescript',
+                    transpileOnly: false,
                 }
             }
+            // {
+            //     test: /\.(t|j)s$/,
+            //     exclude: /(node_modules|bower_components)/,
+            //     use: {
+            //         loader: 'babel-loader',
+            //         options: {
+            //             plugins: [
+            //                 [
+            //                     require('dependency-injection-cat/transformers/babel'),
+            //                     {
+            //                         "compiledContextOutputDir": "./compiled-context"
+            //                     }
+            //                 ]
+            //             ],
+            //             presets: ['@babel/preset-env', '@babel/preset-typescript']
+            //         }
+            //     }
+            // }
         ],
     },
     plugins: [

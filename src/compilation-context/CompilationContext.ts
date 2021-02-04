@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { ICompilationContextError, ICompilationContextErrorWithMultipleNodes } from './ICompilationContextError';
 import { getPositionOfNode } from '../internal/utils/getPositionOfNode';
 
@@ -64,7 +65,9 @@ export class CompilationContext {
             errors: []
         };
 
-        throw new CompilationError(errorMessages.join('\n'));
+        const message = chalk.red(errorMessages.join('\n'));
+
+        throw new CompilationError(message);
     }
 
     private static formatCompilationContextData({ message, node }: ICompilationContextError): string {
