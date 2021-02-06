@@ -20,7 +20,6 @@ export interface IBeanDescriptorWithId<T extends TBeanNode = TBeanNode> extends 
 
 type TContextName = string;
 type TBeanType = string;
-type TBeanQualifier = string;
 
 //Repository for return types of bean
 export class BeanRepository {

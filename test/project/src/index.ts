@@ -1,14 +1,11 @@
 import { container } from 'dependency-injection-cat';
-import { IUseCase, Logger, Requester } from './configs/UseCase';
-
-export interface IBeans {
-    useCase: IUseCase;
-    requester: Requester;
-    logger: Logger;
-}
+import { IBeans } from './IBeans';
 
 const context = container.initContext<IBeans>({
-    name: 'SomeContext',
+    name: 'ApplicationContext',
 });
 
-console.log(context.getBeans());
+const useCase = context.getBean('useCase');
+console.log(useCase);
+useCase.makeSomeBusinessLogic();
+

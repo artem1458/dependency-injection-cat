@@ -32,7 +32,7 @@ export abstract class InternalCatContext {
         this._config = config;
     }
 
-    getBean(beanName: TBeanName): any {
+    getBean<T>(beanName: TBeanName): T {
         const beanConfiguration = this.beanConfigurationRecord[beanName] ?? null;
 
         if (beanConfiguration === null) {

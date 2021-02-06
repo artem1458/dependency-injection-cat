@@ -53,7 +53,7 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId): ts.Block {
                     dependencyDescriptor.node.type,
                     factory.createCallExpression(
                         factory.createPropertyAccessExpression(
-                            factory.createSuper(),
+                            factory.createThis(),
                             factory.createIdentifier('getBean')
                         ),
                         undefined,

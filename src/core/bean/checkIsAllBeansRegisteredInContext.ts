@@ -70,6 +70,8 @@ export const checkIsAllBeansRegisteredInContext = () => {
             return;
         }
 
+        ContextRepository.registerBeanType(contextDescriptor.name, nodeDescriptor);
+
         const requiredBeanProperties: ts.PropertySignature[] = nodeDescriptor.node.members.map((it) => it as ts.PropertySignature);
 
         const registeredBeanNames = BeanRepository
@@ -89,7 +91,7 @@ export const checkIsAllBeansRegisteredInContext = () => {
             const missingBeansText = missingBeans.map(it => removeQuotesFromString(it.name.getText())).join(', ');
             CompilationContext.reportErrorWithMultipleNodes({
                 nodes: [type, ...missingBeans],
-                message: `Some beans not registered in Context "${contextDescriptor.name}": ${missingBeansText}`,
+                message: `Some beans is not registered in Context "${contextDescriptor.name}": [ ${missingBeansText} ]`,
             });
             return;
         }

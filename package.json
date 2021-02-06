@@ -12,7 +12,9 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc --p tsconfig.json && node scripts/beforePublish.js",
     "test": "jest",
-    "lint": "eslint './src/**/*.ts'"
+    "lint": "eslint './src/**/*.ts'",
+    "build-all": "sh scripts/buildAll.sh",
+    "build-all-start": "sh scripts/buildAllAndStart.sh"
   },
   "devDependencies": {
     "@types/find-up": "^4.0.0",
@@ -40,8 +42,8 @@
     "ts-loader": "^7.0.5"
   },
   "dependencies": {
-    "find-up": "^5.0.0",
     "chalk": "^4.1.0",
+    "find-up": "^5.0.0",
     "glob": "^7.1.6",
     "graphlib": "^2.1.8",
     "line-column": "^1.0.2",

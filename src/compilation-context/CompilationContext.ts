@@ -1,20 +1,12 @@
 import chalk from 'chalk';
 import { ICompilationContextError, ICompilationContextErrorWithMultipleNodes } from './ICompilationContextError';
-import { getPositionOfNode } from '../internal/utils/getPositionOfNode';
+import { getPositionOfNode } from '../core/utils/getPositionOfNode';
+import { CompilationError } from './CompilationError';
 
 interface ICompilationContext {
     errors: ICompilationContextError[];
     errorsWithMultipleNodes: ICompilationContextErrorWithMultipleNodes[];
     textErrors: string[];
-}
-
-class CompilationError extends Error {
-    constructor(
-        public message: string,
-    ) {
-        super();
-        this.stack = undefined;
-    }
 }
 
 export class CompilationContext {
@@ -41,8 +33,18 @@ export class CompilationContext {
     }
 
     static throw(): void {
-        if (this.areErrorsEmpty()) {
+        const message = this.getErrorMessage();
+
+        if (message === null) {
             return;
+        }
+
+        throw new CompilationError(message);
+    }
+
+    static getErrorMessage(): string | null {
+        if (this.areErrorsEmpty()) {
+            return null;
         }
 
         const errorMessages: string[] = [
@@ -65,9 +67,7 @@ export class CompilationContext {
             errors: []
         };
 
-        const message = chalk.red(errorMessages.join('\n'));
-
-        throw new CompilationError(message);
+        return chalk.red(errorMessages.join('\n'));
     }
 
     private static formatCompilationContextData({ message, node }: ICompilationContextError): string {

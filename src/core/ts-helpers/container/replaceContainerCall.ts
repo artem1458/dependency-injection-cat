@@ -6,12 +6,8 @@ import { getContextNameFromContainerCall } from './getContextNameFromContainerCa
 import { ContextRepository } from '../../context/ContextRepository';
 import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContextPool';
 import { getBuildedContextDirectory } from '../../build-context/utils/getBuildedContextDirectory';
-
-const validContainerKeys = [
-    'initContext',
-    'getContext',
-    'clearContext',
-];
+import { validContainerKeys } from './validContainerKeys';
+import { checkBeansInterface } from './checkBeansInterface';
 
 export const replaceContainerCall = (node: IContainerAccessNode, importsToAdd: ts.ImportDeclaration[]): ts.Node => {
     if (!validContainerKeys.includes(node.expression.name.getText())) {
@@ -37,6 +33,8 @@ export const replaceContainerCall = (node: IContainerAccessNode, importsToAdd: t
         });
         return node;
     }
+
+    checkBeansInterface(node, contextDescriptor);
 
     const relativePathToExternalDirectory = upath.relative(
         upath.dirname(node.getSourceFile().fileName),

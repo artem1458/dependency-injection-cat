@@ -1,10 +1,10 @@
 import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
-import { runCompile } from '../../internal/runCompile';
-import { logLogo } from '../../internal/transformers/logLogo';
-import { getTransformerFactory } from '../../internal/transformers/getTransformerFactory';
+import { runCompile } from '../../core/runCompile';
+import { logLogo } from '../../core/transformers/logLogo';
+import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { libraryName } from '../../constants/libraryName';
-import { ProgramRepository } from '../../internal/program/ProgramRepository';
+import { ProgramRepository } from '../../core/program/ProgramRepository';
 
 logLogo();
 

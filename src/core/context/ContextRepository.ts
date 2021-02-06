@@ -1,5 +1,6 @@
 import { NamedClassDeclaration } from '../ts-helpers/types';
 import { uniqId } from '../utils/uniqId';
+import { INodeSourceDescriptor } from '../ts-helpers/node-source-descriptor';
 
 type TContextName = string;
 
@@ -12,6 +13,7 @@ export interface IContextDescriptor {
 
 export class ContextRepository {
     static repository = new Map<TContextName, IContextDescriptor>();
+    static contextNameToTBeanNodeSourceDescriptor = new Map<TContextName, INodeSourceDescriptor>();
 
     static registerContext(
         name: string,
@@ -38,5 +40,9 @@ export class ContextRepository {
 
     static hasContext(name: TContextName): boolean {
         return this.repository.has(name);
+    }
+
+    static registerBeanType(contextName: TContextName, beanType: INodeSourceDescriptor) {
+        this.contextNameToTBeanNodeSourceDescriptor.set(contextName, beanType);
     }
 }
