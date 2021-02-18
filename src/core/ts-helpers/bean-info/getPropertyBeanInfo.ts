@@ -28,7 +28,7 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
     if (!ts.isObjectLiteralExpression(secondArg)) {
         CompilationContext.reportError({
             node: secondArg,
-            message: 'Argument in bean should be object literal',
+            message: 'Argument in Bean should be object literal',
         });
 
         return {

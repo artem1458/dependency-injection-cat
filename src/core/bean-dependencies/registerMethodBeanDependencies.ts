@@ -16,7 +16,7 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
         if (type === null) {
             CompilationContext.reportError({
                 node: parameter,
-                message: 'Can\'t qualify type of bean parameter',
+                message: 'Can\'t qualify type of Bean parameter',
             });
             return;
         }

@@ -8,7 +8,7 @@ import { isNamedExportStatement } from './NamedExportStatement';
 import { isNamedImports, isNamespaceImportDeclaration } from './ImportDeclarationWithClauseAndNamedBindings';
 import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 import { PathResolverCache } from '../path-resolver/PathResolverCache';
-import { SourceFilesCache } from './SourceFilesCache';
+import { SourceFilesCache } from '../source-files-cache/SourceFilesCache';
 import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './ExportDeclarationWithoutClauseAndModuleSpecifier';
 import { isExternalExportDeclaration, isNamedExternalExportsDeclaration } from './ExternalExportDeclaration';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';

@@ -1,6 +1,4 @@
-import { escapeRegExp } from 'lodash';
-
-const relativeRegexp = new RegExp(`^..?${escapeRegExp('/')}`);
+const relativeRegexp = /^\.\.?($|[\\/])/;
 
 export function isPathRelative(filePath: string): boolean {
     return relativeRegexp.test(filePath);

@@ -3,7 +3,7 @@ import { IBeanDescriptor } from '../bean/BeanRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { SourceFilesCache } from '../ts-helpers/node-source-descriptor/SourceFilesCache';
+import { SourceFilesCache } from '../ts-helpers/source-files-cache/SourceFilesCache';
 import { findClassDeclarationInSourceFileByName } from '../ts-helpers/predicates/findClassDeclarationInSourceFileByName';
 import { getParameterType } from './getParameterType';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
@@ -21,7 +21,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
     if (nodeSourceDescriptor === null) {
         CompilationContext.reportError({
             node: classReference,
-            message: 'Can\'t qualify property bean dependencies, please try to use method bean',
+            message: 'Can\'t qualify property Bean dependencies, please try to use method Bean',
         });
         return;
     }
@@ -32,7 +32,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
     if (classDeclaration === null) {
         CompilationContext.reportError({
             node: classReference,
-            message: 'Can\'t qualify property bean dependencies, please try to use method bean',
+            message: 'Can\'t qualify property Bean dependencies, please try to use method bean',
         });
         return;
     }
@@ -74,6 +74,6 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
 
     CompilationContext.reportError({
         node: classReference,
-        message: `Class "${classReference.getText()}" have some unqualified dependencies, please try to use method-bean instead:\n${unQualifiedParametersText}`
+        message: `Class "${classReference.getText()}" have some unqualified dependencies, please try to use "method Bean" instead:\n${unQualifiedParametersText}`
     });
 };
