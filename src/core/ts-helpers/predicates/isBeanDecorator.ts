@@ -11,7 +11,7 @@ export function isBeanDecorator(decorator: ts.Decorator): boolean {
         nameToFind = expression.expression.getText();
     }
 
-    if (ts.isIdentifier(expression)) {
+    if (ts.isIdentifier(expression) || ts.isPropertyAccessExpression(expression)) {
         nameToFind = expression.getText();
     }
 

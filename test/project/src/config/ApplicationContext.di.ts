@@ -1,4 +1,4 @@
-import { Bean, CatContext } from 'dependency-injection-cat';
+import * as DICAt from 'dependency-injection-cat';
 import { IBeans } from '../IBeans';
 import { UseCase as XZXZXZ } from '../lib/use-case/UseCase';
 import { IUseCase } from '../lib/use-case/IUseCase';
@@ -10,12 +10,12 @@ import { ModelRequester } from '../lib/requester/ModelRequester';
 import { IRepository } from '../lib/repository/IRepository';
 import { ModelRepository } from '../lib/repository/ModelRepository';
 
-export class ApplicationContext extends CatContext<IBeans> {
-    useCase = Bean<IUseCase>(XZXZXZ);
-    requester = Bean<IRequester<IModel>>(ModelRequester)
-    repository = Bean<IRepository<IModel>>(ModelRepository)
+export class ApplicationContext extends DICAt.CatContext<IBeans> {
+    useCase = DICAt.Bean<IUseCase>(XZXZXZ);
+    requester = DICAt.Bean<IRequester<IModel>>(ModelRequester)
+    repository = DICAt.Bean<IRepository<IModel>>(ModelRepository)
 
-    @Bean
+    @DICAt.Bean
     logger(): ILogger {
         return new Logger();
     }

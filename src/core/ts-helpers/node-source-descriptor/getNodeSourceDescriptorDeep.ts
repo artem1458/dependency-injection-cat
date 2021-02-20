@@ -12,6 +12,7 @@ import { SourceFilesCache } from '../source-files-cache/SourceFilesCache';
 import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './ExportDeclarationWithoutClauseAndModuleSpecifier';
 import { isExternalExportDeclaration, isNamedExternalExportsDeclaration } from './ExternalExportDeclaration';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { isPathRelative } from '../../utils/isPathRelative';
 
 //TODO Add support for default imports/exports
 export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string, exportNodesStack: ts.ExportDeclaration[] = []): INodeSourceDescriptor | null {
@@ -33,6 +34,14 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         );
 
         const newNameToFind = splittedNameToFind.slice(1).join('.');
+
+        if (!upath.isAbsolute(resolvedPath) && !isPathRelative(resolvedPath)) {
+            return {
+                node: null,
+                path: resolvedPath,
+                name: newNameToFind,
+            };
+        }
 
         if (!upath.isAbsolute(resolvedPath)) {
             return getNodeSourceDescriptorDeep(
