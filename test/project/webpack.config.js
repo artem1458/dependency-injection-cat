@@ -3,7 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
-// const diCatTsTransformer = require('dependency-injection-cat/transformers/typescript').default;
+const diCatTsTransformer = require('dependency-injection-cat/transformers/typescript').default;
 
 module.exports = {
     entry: './src/index.ts',
@@ -23,12 +23,12 @@ module.exports = {
                 test: /\.ts$/,
                 loader: 'awesome-typescript-loader',
                 options: {
-                    compiler: 'ttypescript',
-                    // getCustomTransformers: (program) => ({
-                    //     before: [diCatTsTransformer(program, {
-                    //         compiledContextOutputDir: './compiled-context'
-                    //     })],
-                    // }),
+                    // compiler: 'ttypescript',
+                    getCustomTransformers: (program) => ({
+                        before: [diCatTsTransformer(program, {
+                            compiledContextOutputDir: './compiled-context'
+                        })],
+                    }),
                     transpileOnly: false,
                 }
             }
