@@ -12,7 +12,8 @@
     "plugins": [
       {
         "transform": "../../src/transformers/typescript/index.ts",
-        "compiledContextOutputDir": "./compiled-context"
+        "compiledContextOutputDir": "./compiled-context",
+        "errorMessageType": "debug"
       }
     ]
   }

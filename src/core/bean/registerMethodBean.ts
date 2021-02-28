@@ -40,14 +40,22 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         originalTypeName: typeInfo.originalTypeName,
         scope: beanInfo.scope,
         node: classElement,
+        typeNode: classElement.type!,
     });
 };
 
-function getBeanTypeInfoFromMethod(classElement: ts.MethodDeclaration): IQualifiedType | null {
+function getBeanTypeInfoFromMethod(classElement: ts.MethodDeclaration): IQualifiedTypeWithTypeNode | null {
     const methodReturnType = classElement.type ?? null;
 
     if (methodReturnType !== null) {
-        return typeQualifier(methodReturnType);
+        const qualified = typeQualifier(methodReturnType);
+
+        return qualified ?
+            {
+                ...qualified,
+                typeNode: methodReturnType,
+            }
+            : null;
     } else {
         CompilationContext.reportError({
             node: classElement,
@@ -56,4 +64,8 @@ function getBeanTypeInfoFromMethod(classElement: ts.MethodDeclaration): IQualifi
 
         return null;
     }
+}
+
+interface IQualifiedTypeWithTypeNode extends IQualifiedType {
+    typeNode: ts.TypeNode;
 }

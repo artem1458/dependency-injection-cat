@@ -8,7 +8,7 @@ import { replaceExtendingFromCatContext } from './transformers/replaceExtendingF
 import { addContextPool } from './transformers/addContextPool';
 import { replacePropertyBeans } from './transformers/replacePropertyBeans';
 import { transformMethodBeans } from './transformers/transformMethodBeans';
-import { getBuildedContextDirectory } from './utils/getBuildedContextDirectory';
+import { getBuiltContextDirectory } from './utils/getBuiltContextDirectory';
 import { relativizeImports } from './transformers/relativizeImports';
 import { removeDIImports } from '../ts-helpers/removeDIImports';
 
@@ -43,9 +43,9 @@ const printer = ts.createPrinter();
 
 function writeBuildedContext(contextDescriptor: IContextDescriptor, sourceFile: ts.SourceFile) {
     const ext = upath.extname(contextDescriptor.absolutePath);
-    const outDirectory = getBuildedContextDirectory();
+    const outDirectory = getBuiltContextDirectory();
     const newPath = upath.join(
-        getBuildedContextDirectory(),
+        getBuiltContextDirectory(),
         `context_${contextDescriptor.id}${ext}`,
     );
 
@@ -60,7 +60,7 @@ function writeBuildedContext(contextDescriptor: IContextDescriptor, sourceFile: 
 }
 
 function clearOldContexts() {
-    glob.sync(`${getBuildedContextDirectory()}/context_*`).forEach(file => {
+    glob.sync(`${getBuiltContextDirectory()}/context_*`).forEach(file => {
         fs.unlink(
             file,
             (err: NodeJS.ErrnoException | null) => {

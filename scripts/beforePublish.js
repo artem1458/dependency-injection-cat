@@ -9,7 +9,8 @@ const newJson = {
     ...packageJson,
     name: libraryName,
     scripts: undefined,
+    devDependencies: undefined,
 };
 
-fs.writeFileSync(path.resolve(__dirname, '../dist/src/package.json'), beautify(newJson, null, 2, 1));
-fs.writeFileSync(path.resolve(__dirname, '../dist/src/README.md'), readmeMd);
+fs.writeFileSync(path.resolve(__dirname, '../dist/package.json'), beautify(newJson, null, 2, 1));
+fs.writeFileSync(path.resolve(__dirname, '../dist/README.md'), readmeMd);

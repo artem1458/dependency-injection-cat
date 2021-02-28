@@ -1,4 +1,4 @@
-import { TInternalCatContext } from './InternalCatContext';
+import { TRealCatContext } from './RealCatContext';
 import { NoContextByKey } from '../exceptions/runtime/NoContextByKey';
 import { IBeanConfig } from './decorators/Bean';
 
@@ -16,7 +16,7 @@ export class ContextPool {
     constructor(
         private contextName: string,
         private beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
-        private context: TInternalCatContext
+        private context: TRealCatContext
     ) {}
 
     initContext({

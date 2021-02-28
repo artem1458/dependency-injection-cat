@@ -1,9 +1,9 @@
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { CompilationError } from '../../compilation-context/CompilationError';
 
-export default class TestFile {
+export default class {
     apply(compiler: any) {
-        compiler.hooks.afterCompile.tap('MyPlugin', (compilation: any) => {
+        compiler.hooks.afterCompile.tap('Report DI Errors', (compilation: any) => {
             const message = CompilationContext.getErrorMessage();
 
             if (message === null) {
@@ -11,8 +11,6 @@ export default class TestFile {
             }
 
             compilation.errors.push(new CompilationError(message));
-
-
         });
     }
 }

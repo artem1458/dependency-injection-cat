@@ -12,6 +12,7 @@ export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     originalTypeName: string;
     scope: TBeanScopeValue;
     node: T;
+    typeNode: ts.TypeNode;
 }
 
 export interface IBeanDescriptorWithId<T extends TBeanNode = TBeanNode> extends IBeanDescriptor<T> {

@@ -9,5 +9,5 @@ yarn-error.log
 .DS_Store
 Thumbs.db
 .jest-cache
-src/external/builded-context/context_*
+src/external/built-context/context_*
 compiled-context

@@ -5,7 +5,7 @@ import { CompilationContext } from '../../../compilation-context/CompilationCont
 import { getContextNameFromContainerCall } from './getContextNameFromContainerCall';
 import { ContextRepository } from '../../context/ContextRepository';
 import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContextPool';
-import { getBuildedContextDirectory } from '../../build-context/utils/getBuildedContextDirectory';
+import { getBuiltContextDirectory } from '../../build-context/utils/getBuiltContextDirectory';
 import { validContainerKeys } from './validContainerKeys';
 import { checkBeansInterface } from './checkBeansInterface';
 
@@ -38,7 +38,7 @@ export const replaceContainerCall = (node: IContainerAccessNode, importsToAdd: t
 
     const relativePathToExternalDirectory = upath.relative(
         upath.dirname(node.getSourceFile().fileName),
-        getBuildedContextDirectory(),
+        getBuiltContextDirectory(),
     );
     const importPath = `./${
         upath.join(

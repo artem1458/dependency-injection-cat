@@ -4,12 +4,12 @@ import { BeanNotFoundInContext } from '../exceptions/runtime/BeanNotFoundInConte
 
 type TBeanName = string;
 
-export type TInternalCatContext = new (
+export type TRealCatContext = new (
     contextName: string,
     beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
-) => InternalCatContext;
+) => RealCatContext;
 
-export abstract class InternalCatContext {
+export abstract class RealCatContext {
     [beanName: string]: any;
 
     constructor(

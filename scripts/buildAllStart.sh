@@ -1,3 +1,3 @@
 yarn run build &&
 cd ./test/project;
-yarn run build
+yarn run start

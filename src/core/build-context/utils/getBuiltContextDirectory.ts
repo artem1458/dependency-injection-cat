@@ -1,9 +1,9 @@
 import upath from 'upath';
 import { diConfig } from '../../../external/config';
-import { BUILDED_CONTEXT_DIRECTORY } from '../../../external/builded-context/__dirname';
+import { BUILT_CONTEXT_DIRECTORY } from '../../../external/built-context/__dirname';
 import { TsConfigProvider } from '../../ts-config-path-provider/TsConfigProvider';
 
-export const getBuildedContextDirectory = (): string => {
+export const getBuiltContextDirectory = (): string => {
     if (diConfig.compiledContextOutputDir) {
         return upath.resolve(
             upath.dirname(TsConfigProvider.tsConfigPath),
@@ -11,5 +11,5 @@ export const getBuildedContextDirectory = (): string => {
         );
     }
 
-    return BUILDED_CONTEXT_DIRECTORY;
+    return BUILT_CONTEXT_DIRECTORY;
 };

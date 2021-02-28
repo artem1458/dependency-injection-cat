@@ -14,9 +14,4 @@ export class ApplicationContext extends DICAt.CatContext<IBeans> {
     useCase = DICAt.Bean<IUseCase>(XZXZXZ);
     requester = DICAt.Bean<IRequester<IModel>>(ModelRequester)
     repository = DICAt.Bean<IRepository<IModel>>(ModelRepository)
-
-    @DICAt.Bean
-    logger(): ILogger {
-        return new Logger();
-    }
 }

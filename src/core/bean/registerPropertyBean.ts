@@ -33,10 +33,11 @@ export const registerPropertyBean = (contextDescriptor: IContextDescriptor, clas
         originalTypeName: typeInfo.originalTypeName,
         scope: beanInfo.scope,
         node: classElement,
+        typeNode: typeInfo.typeNode,
     });
 };
 
-function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclarationWithInitializer): IQualifiedType | null {
+function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclarationWithInitializer): IQualifiedTypeWithTypeNode | null {
     const propertyType = classElement.type ?? null;
     const beanGenericType = (classElement.initializer.typeArguments ?? [])[0] ?? null;
 
@@ -50,7 +51,10 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
         }
 
         if (resolvedPropertyType !== null && resolvedBeanGenericType !== null && isEqual(resolvedPropertyType, resolvedBeanGenericType)) {
-            return resolvedBeanGenericType;
+            return {
+                ...resolvedBeanGenericType,
+                typeNode: propertyType,
+            };
         } else {
             CompilationContext.reportError({
                 node: beanGenericType,
@@ -59,20 +63,40 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
         }
 
         if (resolvedBeanGenericType !== null) {
-            return resolvedBeanGenericType;
+            return {
+                ...resolvedBeanGenericType,
+                typeNode: beanGenericType,
+            };
         }
 
         if (resolvedPropertyType !== null) {
-            return resolvedPropertyType;
+            return {
+                ...resolvedPropertyType,
+                typeNode: propertyType,
+            };
         }
     }
 
     if (propertyType === null && beanGenericType !== null) {
-        return typeQualifier(beanGenericType);
+        const qualified = typeQualifier(beanGenericType);
+
+        return qualified ?
+            {
+                ...qualified,
+                typeNode: beanGenericType,
+            }
+            : null;
     }
 
     if (beanGenericType === null && propertyType !== null) {
-        return typeQualifier(propertyType);
+        const qualified = typeQualifier(beanGenericType);
+
+        return qualified ?
+            {
+                ...qualified,
+                typeNode: beanGenericType
+            }
+            : null;
     }
 
     const firstArgument = classElement.initializer.arguments[0];
@@ -102,6 +126,11 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
 
     return {
         originalTypeName: nodeSourceDescriptor.name,
-        typeId: `${START_PATH_TOKEN}${nodeSourceDescriptor.path}${END_PATH_TOKEN}${nodeSourceDescriptor.name}`
+        typeId: `${START_PATH_TOKEN}${nodeSourceDescriptor.path}${END_PATH_TOKEN}${nodeSourceDescriptor.name}`,
+        typeNode: ts.factory.createTypeReferenceNode(firstArgument),
     };
+}
+
+interface IQualifiedTypeWithTypeNode extends IQualifiedType {
+    typeNode: ts.TypeNode;
 }

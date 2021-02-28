@@ -21,7 +21,7 @@ export const replacePropertyBeans = (): ts.TransformerFactory<ts.SourceFile> => 
                         undefined,
                         undefined,
                         [],
-                        beanDescriptor.node.type,
+                        beanDescriptor.typeNode,
                         getBeanBlock(beanDescriptor),
                     );
                 }

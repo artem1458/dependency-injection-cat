@@ -1,11 +1,9 @@
 import { container } from 'dependency-injection-cat';
 import { IBeans } from './IBeans';
 
-const context = container.initContext<IBeans>({
+const beans = container.initContext<IBeans>({
     name: 'ApplicationContext',
-});
+}).getBeans();
 
-const useCase = context.getBean('useCase');
-console.log(useCase);
-useCase.makeSomeBusinessLogic();
+console.log(beans.logger);
 

@@ -26,7 +26,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "dependency-injection-cat": "link:../../dist/src",
+    "dependency-injection-cat": "link:../../dist",
     "typescript": "^4.1.3"
   }
 }

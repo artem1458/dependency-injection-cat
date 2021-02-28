@@ -4,5 +4,6 @@ export class CompilationError extends Error {
     ) {
         super();
         this.stack = undefined;
+        this.name = 'CompilationContextError';
     }
 }

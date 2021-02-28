@@ -2,36 +2,36 @@ import ts, { factory } from 'typescript';
 import upath from 'upath';
 import { PRIVATE_TOKEN } from '../constants';
 import { getRelativePathToExternalDirectoryFromSourceFile } from '../utils/getRelativePathToExternalDirectoryFromSourceFile';
-import { getBuildedContextDirectory } from '../utils/getBuildedContextDirectory';
+import { getBuiltContextDirectory } from '../utils/getBuiltContextDirectory';
 
-export const INTERNAL_CAT_CONTEXT_IMPORT = `INTERNAL_CAT_CONTEXT_IMPORT${PRIVATE_TOKEN}`;
+export const REAL_CAT_CONTEXT_IMPORT = `REAL_CAT_CONTEXT_IMPORT${PRIVATE_TOKEN}`;
 export const CONTEXT_POOL_IMPORT = `CONTEXT_POOL_IMPORT${PRIVATE_TOKEN}`;
 
 export const addNecessaryImports = (): ts.TransformerFactory<ts.SourceFile> => {
     return () => sourceFile => {
         const relativePathToEXTERNALDirectory = getRelativePathToExternalDirectoryFromSourceFile(
-            getBuildedContextDirectory()
+            getBuiltContextDirectory()
         );
-        const pathForInternalCatContext = upath.join(
+        const pathForRealCatContext = upath.join(
             relativePathToEXTERNALDirectory,
-            'InternalCatContext',
+            'RealCatContext',
         );
         const pathForContextPool = upath.join(
             relativePathToEXTERNALDirectory,
             'ContextPool',
         );
 
-        const internalCatContextImport = factory.createImportDeclaration(
+        const realCatContextImport = factory.createImportDeclaration(
             undefined,
             undefined,
             factory.createImportClause(
                 false,
                 undefined,
                 factory.createNamespaceImport(
-                    factory.createIdentifier(INTERNAL_CAT_CONTEXT_IMPORT)
+                    factory.createIdentifier(REAL_CAT_CONTEXT_IMPORT)
                 )
             ),
-            factory.createStringLiteral(pathForInternalCatContext)
+            factory.createStringLiteral(pathForRealCatContext)
         );
 
         const contextPoolImport = factory.createImportDeclaration(
@@ -50,7 +50,7 @@ export const addNecessaryImports = (): ts.TransformerFactory<ts.SourceFile> => {
         return ts.factory.updateSourceFile(
             sourceFile,
             [
-                internalCatContextImport,
+                realCatContextImport,
                 contextPoolImport,
                 ...sourceFile.statements,
             ]

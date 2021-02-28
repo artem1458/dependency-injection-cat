@@ -2,11 +2,26 @@ import chalk from 'chalk';
 import { ICompilationContextError, ICompilationContextErrorWithMultipleNodes } from './ICompilationContextError';
 import { getPositionOfNode } from '../core/utils/getPositionOfNode';
 import { CompilationError } from './CompilationError';
+import { diConfig } from '../external/config';
 
 interface ICompilationContext {
     errors: ICompilationContextError[];
     errorsWithMultipleNodes: ICompilationContextErrorWithMultipleNodes[];
     textErrors: string[];
+}
+
+interface IDebugErrorWithSingleNode {
+    message: string;
+    file: string;
+    position: [number, number];
+}
+
+interface IDebugErrorWithMultipleNodes {
+    message: string;
+    nodes: {
+        file: string;
+        position: [number, number];
+    }[];
 }
 
 export class CompilationContext {
@@ -43,6 +58,33 @@ export class CompilationContext {
     }
 
     static getErrorMessage(): string | null {
+        switch (diConfig.errorMessageType) {
+        case 'human':
+            return this.getErrorMessagesForHuman();
+
+        case 'debug':
+            return this.getErrorMessagesForDebug();
+        }
+    }
+
+    private static getErrorMessagesForDebug(): string | null {
+        if (this.areErrorsEmpty()) {
+            return null;
+        }
+
+        const errorsWithSingleNode: IDebugErrorWithSingleNode[] = this.compilationContext.errors.map(this.formatDebugErrorWithSingleNode);
+        const errorsWithMultipleNodes: IDebugErrorWithMultipleNodes[] = this.compilationContext.errorsWithMultipleNodes.map(this.formatDebugErrorWithMultipleNodes);
+
+        const result = {
+            errors: errorsWithSingleNode,
+            errorsWithMultipleNodes: errorsWithMultipleNodes,
+            textErrors: this.compilationContext.textErrors
+        };
+
+        return JSON.stringify(result);
+    }
+
+    private static getErrorMessagesForHuman(): string | null {
         if (this.areErrorsEmpty()) {
             return null;
         }
@@ -70,17 +112,44 @@ export class CompilationContext {
         return chalk.red(errorMessages.join('\n'));
     }
 
-    private static formatCompilationContextData({ message, node }: ICompilationContextError): string {
+    private static formatDebugErrorWithSingleNode({
+        message,
+        node
+    }: ICompilationContextError): IDebugErrorWithSingleNode {
+        return {
+            message,
+            file: node.getSourceFile().fileName,
+            position: getPositionOfNode(node)
+        };
+    }
+
+    private static formatDebugErrorWithMultipleNodes({
+        message,
+        nodes
+    }: ICompilationContextErrorWithMultipleNodes): IDebugErrorWithMultipleNodes {
+        return {
+            message,
+            nodes: nodes.map(it => ({
+                file: it.getSourceFile().fileName,
+                position: getPositionOfNode(it)
+            }))
+        };
+    }
+
+    private static formatCompilationContextData({message, node}: ICompilationContextError): string {
         const nodePosition = getPositionOfNode(node);
         const path = node.getSourceFile().fileName;
 
         return `${message}\nAt: (${path}:${nodePosition[0]}:${nodePosition[1]})\n`;
     }
 
-    private static formatCompilationContextDataWithMultipleNodes({ message, nodes }: ICompilationContextErrorWithMultipleNodes): string {
+    private static formatCompilationContextDataWithMultipleNodes({
+        message,
+        nodes
+    }: ICompilationContextErrorWithMultipleNodes): string {
         const nodePositions = nodes.map(node => getPositionOfNode(node));
         const paths = nodes.map(it => it.getSourceFile().fileName);
-        const nodesMessage = paths.map((_,index) =>
+        const nodesMessage = paths.map((_, index) =>
             `At: (${paths[index]}:${nodePositions[index][0]}:${nodePositions[index][1]})`
         ).join('\n');
 

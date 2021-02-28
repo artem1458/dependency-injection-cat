@@ -1,6 +1,6 @@
 import ts, { factory } from 'typescript';
 import upath from 'upath';
-import { getBuildedContextDirectory } from '../utils/getBuildedContextDirectory';
+import { getBuiltContextDirectory } from '../utils/getBuiltContextDirectory';
 import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 import { PathResolverCache } from '../../ts-helpers/path-resolver/PathResolverCache';
 
@@ -17,7 +17,7 @@ export const relativizeImports = (): ts.TransformerFactory<ts.SourceFile> => {
 
 
                 if (upath.isAbsolute(absolutePathFromResolverWithExtension)) {
-                    const buildedContextDirectory = getBuildedContextDirectory();
+                    const buildedContextDirectory = getBuiltContextDirectory();
                     const absoluteImportPathWithoutExtension = removeExtensionFromPath(
                         absolutePathFromResolverWithExtension,
                     );
