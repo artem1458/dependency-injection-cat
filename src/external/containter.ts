@@ -7,7 +7,7 @@ interface IInitContextProps {
 }
 
 interface IInitContextPropsWithConfig<TConfig> extends IInitContextProps {
-    config?: TConfig;
+    config: TConfig;
 }
 
 type TBeanName = string
@@ -16,9 +16,13 @@ class Container {
     /**
      * TBeans should be a plain interface or type without extending
      */
-    initContext<TBeans extends Record<TBeanName, any>, TConfig = undefined>(
+    initContext<TBeans extends Record<TBeanName, any>>(
+        props: IInitContextProps
+    ): IContext<TBeans>
+    initContext<TBeans extends Record<TBeanName, any>, TConfig>(
         props: IInitContextPropsWithConfig<TConfig>
-    ): IContext<TBeans> {
+    ): IContext<TBeans>
+    initContext<TBeans extends Record<TBeanName, any>>(): IContext<TBeans> {
         Container.throwInitializationError();
     }
 
