@@ -89,12 +89,12 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
     }
 
     if (beanGenericType === null && propertyType !== null) {
-        const qualified = typeQualifier(beanGenericType);
+        const qualified = typeQualifier(propertyType);
 
         return qualified ?
             {
                 ...qualified,
-                typeNode: beanGenericType
+                typeNode: propertyType
             }
             : null;
     }
