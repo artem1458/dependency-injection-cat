@@ -1,4 +1,4 @@
-import { TRealCatContext } from './RealCatContext';
+import { RealCatContext, TRealCatContext } from './RealCatContext';
 import { NoContextByKey } from '../exceptions/runtime/NoContextByKey';
 import { IBeanConfig } from './decorators/Bean';
 
@@ -57,3 +57,9 @@ export class ContextPool {
         return key === this.DEFAULT_CONTEXT_KEY;
     }
 }
+
+class AppContext extends RealCatContext {
+    bean(): void {}
+}
+
+new ContextPool('', {}, AppContext);

@@ -4,12 +4,20 @@ import { BeanNotFoundInContext } from '../exceptions/runtime/BeanNotFoundInConte
 
 type TBeanName = string;
 
-export type TRealCatContext = new (
-    contextName: string,
-    beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
-) => RealCatContext;
+export type TRealCatContext = {
+    new(
+        contextName: string,
+        beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
+    ): IRealCatContext
+};
 
-export abstract class RealCatContext {
+export interface IRealCatContext {
+    config: any;
+    getBean<T>(beanName: TBeanName): T;
+    getBeans(): Record<string, any>;
+}
+
+export abstract class RealCatContext implements IRealCatContext {
     [beanName: string]: any;
 
     constructor(
@@ -28,6 +36,7 @@ export abstract class RealCatContext {
 
         return this._config;
     }
+
     set config(config: any) {
         this._config = config;
     }
