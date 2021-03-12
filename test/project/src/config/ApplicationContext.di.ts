@@ -12,7 +12,6 @@ export class ApplicationContext extends CatContext<IBeans> {
     useCase = Bean<IUseCase>(UseCase);
     requester = Bean<IRequester<IModel>>(ModelRequester);
     logger = Bean<ILogger>(Logger);
-    logger2 = Bean<ILogger>(Logger);
 
     @Bean
     str(): TString {
