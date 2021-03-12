@@ -1,4 +1,4 @@
-import { IContext } from './IContext';
+import { IDIContext } from './IDIContext';
 import { DIContainerNotInitialized } from '../exceptions/runtime/DIContainerNotInitialized';
 
 interface IInitContextProps {
@@ -16,13 +16,13 @@ class Container {
     /**
      * TBeans should be a plain interface or type without extending
      */
-    initContext<TBeans extends Record<TBeanName, any>>(
+    initContext<TBeans>(
         props: IInitContextProps
-    ): IContext<TBeans>
-    initContext<TBeans extends Record<TBeanName, any>, TConfig>(
+    ): IDIContext<TBeans>
+    initContext<TBeans, TConfig>(
         props: IInitContextPropsWithConfig<TConfig>
-    ): IContext<TBeans>
-    initContext<TBeans extends Record<TBeanName, any>>(): IContext<TBeans> {
+    ): IDIContext<TBeans>
+    initContext<TBeans>(): IDIContext<TBeans> {
         Container.throwInitializationError();
     }
 
@@ -31,7 +31,7 @@ class Container {
      */
     getContext<TBeans extends Record<TBeanName, any>>(
         props: IInitContextProps
-    ): IContext<TBeans> {
+    ): IDIContext<TBeans> {
         Container.throwInitializationError();
     }
 

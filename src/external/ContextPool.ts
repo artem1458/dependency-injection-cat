@@ -42,6 +42,18 @@ export class ContextPool {
     }
 
     clearContext({ key = this.DEFAULT_CONTEXT_KEY }: IContextProps): void {
+        if (!this.pool.has(key)) {
+            if (this.isDefaultKey(key)) {
+                console.warn(`Trying to clear not initialized context, contextName: ${this.contextName}`);
+            } else {
+                console.warn(`Trying to clear not initialized context, contextName: ${this.contextName}, key: ${key}`);
+            }
+        }
+
         this.pool.delete(key);
+    }
+
+    private isDefaultKey(key: any): boolean {
+        return key === this.DEFAULT_CONTEXT_KEY;
     }
 }
