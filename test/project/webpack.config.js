@@ -21,9 +21,9 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                loader: 'awesome-typescript-loader',
+                loader: 'ts-loader',
                 options: {
-                    // compiler: 'ttypescript',
+                    compiler: 'ttypescript',
                     getCustomTransformers: (program) => ({
                         before: [diCatTsTransformer(program, {
                             compiledContextOutputDir: './compiled-context',
@@ -35,19 +35,17 @@ module.exports = {
             // {
             //     test: /\.(t|j)s$/,
             //     exclude: /(node_modules|bower_components)/,
-            //     use: {
-            //         loader: 'babel-loader',
-            //         options: {
-            //             plugins: [
-            //                 [
-            //                     require('dependency-injection-cat/transformers/babel'),
-            //                     {
-            //                         "compiledContextOutputDir": "./compiled-context"
-            //                     }
-            //                 ]
-            //             ],
-            //             presets: ['@babel/preset-env', '@babel/preset-typescript']
-            //         }
+            //     loader: 'babel-loader',
+            //     options: {
+            //         plugins: [
+            //             [
+            //                 require('dependency-injection-cat/transformers/babel'),
+            //                 {
+            //                     "compiledContextOutputDir": "./compiled-context"
+            //                 }
+            //             ]
+            //         ],
+            //         presets: ['@babel/preset-env', '@babel/preset-typescript']
             //     }
             // }
         ],

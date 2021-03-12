@@ -1,9 +1,9 @@
 import { container } from 'dependency-injection-cat';
 import { IBeans } from './IBeans';
 
-const appContext = container.initContext<IBeans>({
+const context = container.initContext<IBeans>({
     name: 'ApplicationContext',
 });
 
-appContext.getBean('logger');
+console.log(context.getBean('logger').logError(''));
 

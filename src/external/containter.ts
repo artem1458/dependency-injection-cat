@@ -14,7 +14,7 @@ type TBeanName = string
 
 class Container {
     /**
-     * TBeans should be a plain interface or type without extending
+     * TBeans should be a plain interface without extending
      */
     initContext<TBeans>(
         props: IInitContextProps
@@ -27,7 +27,7 @@ class Container {
     }
 
     /**
-     * TBeans should be a plain interface or type without extending
+     * TBeans should be a plain interface without extending
      */
     getContext<TBeans extends Record<TBeanName, any>>(
         props: IInitContextProps
