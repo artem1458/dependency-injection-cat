@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "plugins": [
+      {
+        "transform": "../../src/transformers/typescript/index.ts",
+//        "compiledContextOutputDir": "./compiled-context",
+        "errorMessageType": "debug"
+      }
+    ]
+  }
+}

@@ -1,12 +1,13 @@
-/dist
+dist
 /dist2
 /tmp
 /out-tsc
-/node_modules
+node_modules
 .idea
 npm-debug.log
 yarn-error.log
 .DS_Store
 Thumbs.db
 .jest-cache
-src/factories/list
+src/external/built-context/context_*
+compiled-context

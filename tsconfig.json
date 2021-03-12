@@ -1,15 +1,29 @@
 {
-  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "paths": {
-      "@src/*": [
-        "src/*"
-      ]
-    },
-    "plugins": [
-      {
-        "transform": "./src/transformer/index.ts"
-      }
+    "experimentalDecorators": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "target": "es5",
+    "module": "CommonJS",
+    "strict": true,
+    "baseUrl": "./src",
+    "rootDir": "./src",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "checkJs": false,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "es5",
+      "es6",
+      "es2017",
+      "scripthost"
     ]
-  }
+  },
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "./src/external/built-context"
+  ]
 }
