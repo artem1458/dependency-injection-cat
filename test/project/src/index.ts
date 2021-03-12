@@ -5,5 +5,5 @@ const context = container.initContext<IBeans>({
     name: 'ApplicationContext',
 });
 
-console.log(context.getBean('logger').logError(''));
+context.getBean('logger').logError('21312312132123312');
 
