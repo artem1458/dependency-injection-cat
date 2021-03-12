@@ -47,7 +47,7 @@ export const checkBeansInterface = (node: IContainerAccessNode, contextDescripto
         return;
     }
 
-    if (nodeDescriptor.node !== contextBeansInterfaceNodeSourceDescriptor.node) {
+    if (nodeDescriptor.name !== contextBeansInterfaceNodeSourceDescriptor.name || nodeDescriptor.path !== contextBeansInterfaceNodeSourceDescriptor.path) {
         CompilationContext.reportErrorWithMultipleNodes({
             nodes: [
                 contextBeansInterfaceNodeSourceDescriptor.node,
