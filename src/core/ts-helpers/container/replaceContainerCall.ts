@@ -9,7 +9,7 @@ import { getBuiltContextDirectory } from '../../build-context/utils/getBuiltCont
 import { validContainerKeys } from './validContainerKeys';
 import { checkBeansInterface } from './checkBeansInterface';
 
-export const replaceContainerCall = (node: IContainerAccessNode, importsToAdd: ts.ImportDeclaration[]): ts.Node => {
+export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsToAdd: ts.ImportDeclaration[]): ts.Node => {
     if (!validContainerKeys.includes(node.expression.name.getText())) {
         CompilationContext.reportError({
             node: node,
@@ -59,7 +59,7 @@ export const replaceContainerCall = (node: IContainerAccessNode, importsToAdd: t
         ),
         factory.createStringLiteral(importPath)
     );
-    importsToAdd.push(importDeclaration);
+    factoryImportsToAdd.push(importDeclaration);
 
     return factory.updateCallExpression(
         node,
