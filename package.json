@@ -1,11 +1,20 @@
 {
   "name": "dependency-injection-cat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Artem Kornev",
   "license": "MIT",
   "private": false,
+  "keywords": [
+    "ioc",
+    "inversion of control",
+    "di",
+    "dependency injection",
+    "typescript",
+    "babel",
+    "webpack"
+  ],
   "repository": {
     "url": "https://github.com/artem1458/dependency-injection-cat"
   },
