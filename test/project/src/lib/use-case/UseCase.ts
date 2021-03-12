@@ -20,5 +20,4 @@ export class UseCase implements IUseCase {
             this.logger.logError(error.message);
         }
     }
-
 }

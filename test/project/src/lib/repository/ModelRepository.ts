@@ -1,7 +1,11 @@
 import { IRepository } from './IRepository';
 
 export class ModelRepository<TData> implements IRepository<TData> {
-    data: TData | null = null;
+    data: TData | null;
+
+    constructor() {
+        this.data = null;
+    }
 
     clearData(): void {
         this.data = null;
