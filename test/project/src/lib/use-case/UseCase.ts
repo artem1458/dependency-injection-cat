@@ -10,14 +10,13 @@ export class UseCase implements IUseCase {
     constructor(
         private requester: IRequester<IModel>,
         private logger: ILogger,
-        private str: TString,
     ) {}
 
     async makeSomeBusinessLogic(): Promise<void> {
         try {
-            const response = await this.requester.get('http://someUrl.com');
+            // const response = await this.requester.get('http://someUrl.com');
 
-            // this.repository.saveData(response);
+            // this.contextMap.saveData(response);
         } catch (error) {
             this.logger.logError(error.message);
         }

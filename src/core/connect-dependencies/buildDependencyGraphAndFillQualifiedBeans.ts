@@ -2,6 +2,7 @@ import { BeanRepository } from '../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../bean-dependencies/BeanDependenciesRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { DependencyGraph } from './DependencyGraph';
+import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 
 export const buildDependencyGraphAndFillQualifiedBeans = () => {
     BeanRepository.beanDescriptorRepository.forEach((beansMap, contextName) => {
@@ -20,44 +21,58 @@ export const buildDependencyGraphAndFillQualifiedBeans = () => {
                 }
 
                 dependencies.forEach(dependencyDescriptor => {
-                    const beanCandidates = beansMap.get(dependencyDescriptor.type) ?? null;
+                    let beanCandidatesFromCurrentContext = beansMap.get(dependencyDescriptor.type) ?? [];
+                    let beanCandidatesFromGlobalContext = BeanRepository.beanDescriptorRepository
+                        .get(GLOBAL_CONTEXT_NAME)?.get(dependencyDescriptor.type) ?? [];
 
-                    if (beanCandidates === null || beanCandidates.length === 0) {
+                    if (dependencyDescriptor.qualifier !== null) {
+                        beanCandidatesFromCurrentContext = beanCandidatesFromCurrentContext
+                            .filter(it => it.classMemberName === dependencyDescriptor.qualifier);
+                        beanCandidatesFromGlobalContext = beanCandidatesFromGlobalContext
+                            .filter(it => it.classMemberName === dependencyDescriptor.qualifier);
+                    }
+
+                    if (beanCandidatesFromCurrentContext.length === 0 && beanCandidatesFromGlobalContext.length === 0) {
                         CompilationContext.reportError({
                             node: dependencyDescriptor.node,
-                            message: 'Bean for this dependency is not registered',
+                            message: 'Bean for dependency is not registered',
                         });
                         return;
                     }
 
-                    if (dependencyDescriptor.qualifier !== null) {
-                        const assumedBean = beanCandidates.find(it => it.classMemberName === dependencyDescriptor.qualifier) ?? null;
-
-                        if (assumedBean === null) {
-                            CompilationContext.reportError({
-                                node: dependencyDescriptor.node,
-                                message: `Bean with qualifier "${dependencyDescriptor.qualifier}" and type "${dependencyDescriptor.originalTypeName}" not found`,
-                            });
-                            return;
-                        }
-
-                        dependencyDescriptor.qualifiedBean = assumedBean;
-                        DependencyGraph.addNodeWithEdges(beanDescriptor, assumedBean);
+                    if (beanCandidatesFromCurrentContext.length === 1) {
+                        dependencyDescriptor.qualifiedBean = beanCandidatesFromCurrentContext[0];
+                        DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidatesFromCurrentContext[0]);
                         return;
                     }
 
-                    if (beanCandidates.length > 1) {
+                    if (beanCandidatesFromCurrentContext.length > 1) {
                         CompilationContext.reportErrorWithMultipleNodes({
                             nodes: [
                                 dependencyDescriptor.node,
-                                ...beanCandidates.map(it => it.node),
+                                ...beanCandidatesFromCurrentContext.map(it => it.node),
                             ],
-                            message: `Found ${beanCandidates.length} Bean candidates, please use @Qualifier to specify which Bean should be injected`,
+                            message: `Found ${beanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier to specify which Bean should be injected`,
                         });
                         return;
                     }
-                    dependencyDescriptor.qualifiedBean = beanCandidates[0];
-                    DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidates[0]);
+
+                    if (beanCandidatesFromGlobalContext.length === 1) {
+                        dependencyDescriptor.qualifiedBean = beanCandidatesFromGlobalContext[0];
+                        DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidatesFromGlobalContext[0]);
+                        return;
+                    }
+
+                    if (beanCandidatesFromGlobalContext.length > 1) {
+                        CompilationContext.reportErrorWithMultipleNodes({
+                            nodes: [
+                                dependencyDescriptor.node,
+                                ...beanCandidatesFromGlobalContext.map(it => it.node),
+                            ],
+                            message: `Found ${beanCandidatesFromGlobalContext.length} Bean candidates in Global context, please use @Qualifier to specify which Bean should be injected`,
+                        });
+                        return;
+                    }
                 });
             });
         });

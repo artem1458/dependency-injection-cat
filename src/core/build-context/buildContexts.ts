@@ -11,19 +11,47 @@ import { transformMethodBeans } from './transformers/transformMethodBeans';
 import { getBuiltContextDirectory } from './utils/getBuiltContextDirectory';
 import { relativizeImports } from './transformers/relativizeImports';
 import { removeDIImports } from '../ts-helpers/removeDIImports';
+import { addGlobalContextInstance } from './transformers/addGlobalContextInstance';
 
 export const buildContexts = () => {
     clearOldContexts();
 
-    ContextRepository.repository.forEach((contextDescriptor, contextName) => {
+    ContextRepository.contextMap.forEach((contextDescriptor, contextName) => {
+        const globalContextIdsToAdd: string[] = [];
+
         const transformers: ts.TransformerFactory<any>[] = [
             relativizeImports(),
-            addNecessaryImports(),
             addContextPool(contextDescriptor),
             replaceExtendingFromCatContext(contextDescriptor),
-            replacePropertyBeans(),
-            transformMethodBeans(),
+            replacePropertyBeans(globalContextIdsToAdd),
+            transformMethodBeans(globalContextIdsToAdd),
             removeDIImports(),
+            addNecessaryImports(globalContextIdsToAdd),
+        ];
+
+        const sourceFile = contextDescriptor.node.getSourceFile();
+
+        const result = ts.transform<ts.SourceFile>(
+            sourceFile,
+            transformers,
+        );
+
+        const transformedSourceFile = result.transformed[0];
+
+        writeBuildedContext(contextDescriptor, transformedSourceFile);
+    });
+
+    ContextRepository.globalContexts.forEach((contextDescriptor, contextId) => {
+        const globalContextIdsToAdd: string[] = [];
+
+        const transformers: ts.TransformerFactory<any>[] = [
+            relativizeImports(),
+            addGlobalContextInstance(contextDescriptor),
+            replaceExtendingFromCatContext(contextDescriptor),
+            replacePropertyBeans(globalContextIdsToAdd),
+            transformMethodBeans(globalContextIdsToAdd),
+            removeDIImports(),
+            addNecessaryImports(globalContextIdsToAdd),
         ];
 
         const sourceFile = contextDescriptor.node.getSourceFile();

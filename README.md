@@ -13,27 +13,27 @@ DI Cat is a truly clean DI-container, which allows you not to pollute your busin
 ```tsx
 //ApplicationContext.di.ts
 export class ApplicationContext extends CatContext<IBeans> {
-    useCase = Bean<IUseCase>(UseCase)
-    mobxRepository = Bean<IRepository>(MobxRepository)
+  useCase = Bean<IUseCase>(UseCase)
+  mobxRepository = Bean<IRepository>(MobxRepository)
 }
 
 //UseCase.ts
 export class UseCase implements IUseCase {
-    constructor(
-    	private repository: IRepository,
-    ) {}
-    
-    makeBusinessLogic() {...}
+  constructor(
+          private repository: IRepository,
+  ) {}
+
+  makeBusinessLogic() {...}
 }
 
 //Your application.tsx
 export const UIComponent: React.FC = () => {
-    const appContext = container.getContext<IBeans>({ name: 'ApplicationContext' });
-    const { useCase } = appContext.getBeans();
-    
-    return (
-    	<button onClick={useCase.makeBusinessLogic}> Click me! </button>
-    )
+  const appContext = container.getContext<IBeans>({ name: 'ApplicationContext' });
+  const { useCase } = appContext.getBeans();
+
+  return (
+          <button onClick={useCase.makeBusinessLogic}> Click me! </button>
+  )
 }
 ```
 
@@ -55,9 +55,9 @@ npm install dependency-injection-cat
 
 ```json
 {
-    "compilerOptions": {
-        "baseUrl": "Base url should be specified!"
-    }
+  "compilerOptions": {
+    "baseUrl": "Base url should be specified!"
+  }
 }
 ```
 
@@ -70,37 +70,37 @@ npm install dependency-injection-cat
 const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
 
 module.exports = {
-    ...
-    module: {
-        rules: [
+  ...
+          module: {
+  rules: [
+    {
+      test: /\.(t|j)sx?$/,
+      loader: 'babel-loader',
+      options: {
+        plugins: [
+          [
+            require('dependency-injection-cat/transformers/babel'),
             {
-                test: /\.(t|j)sx?$/,
-                loader: 'babel-loader',
-                options: {
-                    plugins: [
-                        [
-                            require('dependency-injection-cat/transformers/babel'),
-                            {
-                                //Here is configuration options, see below
-                            }
-                        ]
-                    ]
-                }
+              //Here is configuration options, see below
             }
+          ]
         ]
-    },
-    plugins: [
-        //Without this plugin, a compilation with DI errors will be successful
-        new ReportDiErrorsPlugin(),	
-    ]
+      }
+    }
+  ]
+},
+plugins: [
+  //Without this plugin, a compilation with DI errors will be successful
+  new ReportDiErrorsPlugin(),
+]
 }
 
 //tsconfig.json
 {
-    "compilerOptions": {
-        //Should be specified
-        "baseUrl": "your base url"
-    }
+  "compilerOptions": {
+  //Should be specified
+  "baseUrl": "your base url"
+}
 }
 ```
 
@@ -113,36 +113,36 @@ const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/R
 const diCatTransformer = require('dependency-injection-cat/transformers/typescript').default;
 
 module.exports = {
-    ...
-    module: {
-        rules: [
-            {
-                test: /\.(t|j)sx?$/,
-                use: {
-                    loader: 'ts-loader',
-                    options: {
-                        getCustomTransformers: (program) => ({
-                        before: [diCatTransformer(program, {
-                            //Here is configuration options, see below
-                        })],
-                    }),
-                    }
-                }
-            }
-        ]
-    },
-    plugins: [
-        //Without this plugin, a compilation with DI errors will be successful
-        new ReportDiErrorsPlugin(),	
-    ]
+  ...
+          module: {
+  rules: [
+    {
+      test: /\.(t|j)sx?$/,
+      use: {
+        loader: 'ts-loader',
+        options: {
+          getCustomTransformers: (program) => ({
+            before: [diCatTransformer(program, {
+              //Here is configuration options, see below
+            })],
+          }),
+        }
+      }
+    }
+  ]
+},
+plugins: [
+  //Without this plugin, a compilation with DI errors will be successful
+  new ReportDiErrorsPlugin(),
+]
 }
 
 //tsconfig.json
 {
-    "compilerOptions": {
-        //Should be specified
-        "baseUrl": "your base url"
-    }
+  "compilerOptions": {
+  //Should be specified
+  "baseUrl": "your base url"
+}
 }
 ```
 
@@ -154,38 +154,38 @@ module.exports = {
 const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
 
 module.exports = {
-    ...
-    module: {
-        rules: [
-            {
-                test: /\.(t|j)sx?$/,
-                use: {
-                    loader: 'ts-loader',
-                    options: {
-                        compiler: 'ttypescript'
-                    }
-                }
-            }
-        ]
-    },
-    plugins: [
-        //Without this plugin, a compilation with DI errors will be successful
-        new ReportDiErrorsPlugin(),	
-    ]
+  ...
+          module: {
+  rules: [
+    {
+      test: /\.(t|j)sx?$/,
+      use: {
+        loader: 'ts-loader',
+        options: {
+          compiler: 'ttypescript'
+        }
+      }
+    }
+  ]
+},
+plugins: [
+  //Without this plugin, a compilation with DI errors will be successful
+  new ReportDiErrorsPlugin(),
+]
 }
 
 //tsconfig.json
 {
-    "compilerOptions": {
-        //Should be specified
-        "baseUrl": "your base url",
-        "plugins": [
-            {
-                "transform": "dependency-injection-cat/transformers/typescript",
-                //Here is configuration options, see below
-            }
-        ]
+  "compilerOptions": {
+  //Should be specified
+  "baseUrl": "your base url",
+          "plugins": [
+    {
+      "transform": "dependency-injection-cat/transformers/typescript",
+      //Here is configuration options, see below
     }
+  ]
+}
 }
 ```
 
@@ -195,9 +195,9 @@ module.exports = {
 
 ```typescript
 {
-    diConfigPattern ?: string; // Glob pattern, default value. Default: '**/*.di.ts'
-    ignorePatterns ?: string[]; // Array of Glob patterns, default value. Default: ['**/node_modules/**']
-    compiledContextOutputDir ?: string; // Output directory of transformed contexts, can be specified for debug purposes. Default: node_modules/dependency-injection-cat/external/built-context
+  diConfigPattern ?: string; // Glob pattern, default value. Default: '**/*.di.ts'
+  ignorePatterns ?: string[]; // Array of Glob patterns, default value. Default: ['**/node_modules/**']
+  compiledContextOutputDir ?: string; // Output directory of transformed contextMap, can be specified for debug purposes. Default: node_modules/dependency-injection-cat/external/built-context
 }
 ```
 
@@ -205,9 +205,17 @@ module.exports = {
 
 ## CatContext
 
+CatContext it's a place, where you should define your **Beans**
+
 ```typescript
 class CatContext<TBeans, TConfig = null>
 ```
+
+##### Rules
+
+- Name of context should be unique
+
+- Name of context "Global" is preserved for DI container, see **GlobalCatContext**
 
 ### TBeans
 
@@ -247,11 +255,48 @@ class ApplicationContext extends CatContext<IBeans, IConfig> {
 }
 ```
 
+## GlobalCatContext
+
+Sometimes you want to describe common dependencies that will be used all across your application, for these purposes you should use GlobalCatContext.
+
+#### Rules
+
+- You can not get beans from the Global Context using container access
+
+#### Syntax and usage
+
+```typescript
+//GlobalApplicationContext.di.ts
+export class GlobalApplicationContext extends GlobalCatContext {
+
+    @Bean
+    logger(): ILogger {
+        return new Logger();
+    }
+}
+
+//ApplicationContext.di.ts
+export class AppContext extends CatContext<IBeans> {
+
+    @Bean
+    useCase(
+    	//If Bean for ILogger will be defined in current context, bean from current context will be injected
+    	logger: ILogger
+    ): IUseCase {
+        return new UseCase(logger)
+    }
+}
+```
+
 
 
 ## Container
 
 Using container you can control your contexts. You can't access container inside files where declared contexts.
+
+#### Rules
+
+- Name of context in container access calls, should not be "Global", it's reserved for the **GlobalCatContext**
 
 ### TBeans
 
@@ -263,7 +308,7 @@ InitContext creates instance of **context** by key (if specified). Also you can 
 
 ```typescript
 container.initContext<TBeans, TConfig>({
-    key?: any, //Can be any value, you can use it for creating pool of contexts.
+    key?: any, //Can be any value, you can use it for creating pool of contextMap.
     name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
     config?: TConfig, //Config that will be transferred to the context
 });
@@ -471,7 +516,7 @@ export class ApplicationContext extends CatContext<IBeans> {
 
 ## Qualifier
 
-Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type
+Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type. Also you can use qualifier, when injecting **Beans** from **GlobalCatContext**
 
 #### Rules
 
@@ -482,6 +527,7 @@ Qualifier needed, when you have 2 or more **Beans** in the **Context** with same
 #### Syntax
 
 ```typescript
+//When Bean placed in current context
 export class ApplicationContext extends CatContext<IBeans> {
     httpRequester: IRequester = Bean(HttpRequester);
     graphQLRequester: IRequester = Bean(GraphQLRequester);
@@ -492,6 +538,26 @@ export class ApplicationContext extends CatContext<IBeans> {
     ): IUseCase {
         return new UseCase(requester);
     }
+}
+```
+
+```typescript
+//When Bean placed in Global context
+
+//GlobalApplicationContext.di.ts
+export class GlobalApplicationContext extends GlobalCatContext {
+  graphQLRequester: IRequester = Bean(GraphQLRequester);
+  httpRequester: IRequester = Bean(HttpRequester);
+}
+
+//ApplicationContext.di.ts
+export class ApplicationContext extends CatContext<IBeans> {
+  @Bean
+  useCase(
+          @Qualifier('graphQLRequester') requester: IRequester,
+  ): IUseCase {
+    return new UseCase(requester);
+  }
 }
 ```
 

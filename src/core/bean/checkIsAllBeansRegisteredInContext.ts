@@ -5,8 +5,9 @@ import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descripto
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 import { BeanRepository } from './BeanRepository';
 
+//Only for not-global contexts
 export const checkIsAllBeansRegisteredInContext = () => {
-    ContextRepository.repository.forEach(contextDescriptor => {
+    ContextRepository.contextMap.forEach(contextDescriptor => {
         const extendsHeritageClause = contextDescriptor.node.heritageClauses
             ?.find(clause => clause.token === ts.SyntaxKind.ExtendsKeyword);
 
@@ -75,7 +76,7 @@ export const checkIsAllBeansRegisteredInContext = () => {
         const requiredBeanProperties: ts.PropertySignature[] = nodeDescriptor.node.members.map((it) => it as ts.PropertySignature);
 
         const registeredBeanNames = BeanRepository
-            .contextNameToBeanDescriptorsMap.get(contextDescriptor.name)?.map(it => it.classMemberName) ?? [];
+            .contextIdToBeanDescriptorsMap.get(contextDescriptor.id)?.map(it => it.classMemberName) ?? [];
 
         const missingBeans: ts.PropertySignature[] = [];
 

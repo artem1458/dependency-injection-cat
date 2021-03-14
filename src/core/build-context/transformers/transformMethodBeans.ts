@@ -1,8 +1,11 @@
 import ts, { factory } from 'typescript';
 import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
+import { compact } from 'lodash';
+import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
+import { getGlobalContextVariableNameByContextId } from '../utils/getGlobalContextVariableNameByContextId';
 
-export const transformMethodBeans = (): ts.TransformerFactory<ts.SourceFile> => {
+export const transformMethodBeans = (globalContextIdsToAdd: string[]): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
@@ -12,7 +15,7 @@ export const transformMethodBeans = (): ts.TransformerFactory<ts.SourceFile> => 
                         return;
                     }
 
-                    const newBody = getNewBody(beanDescriptor);
+                    const newBody = getNewBody(beanDescriptor, globalContextIdsToAdd);
 
                     return factory.updateMethodDeclaration(
                         node,
@@ -36,14 +39,42 @@ export const transformMethodBeans = (): ts.TransformerFactory<ts.SourceFile> => 
     };
 };
 
-function getNewBody (beanDescriptor: IBeanDescriptorWithId): ts.Block {
+function getNewBody (beanDescriptor: IBeanDescriptorWithId, globalContextIdsToAdd: string[]): ts.Block {
     const node = beanDescriptor.node as ts.MethodDeclaration;
     const nodeBody = node.body ?? factory.createBlock([]);
 
     const dependencies = BeanDependenciesRepository.beanDependenciesRepository
-        .get(beanDescriptor.contextName)?.get(beanDescriptor) ?? [];
+        .get(beanDescriptor.contextDescriptor.name)?.get(beanDescriptor) ?? [];
 
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {
+        if (dependencyDescriptor.qualifiedBean === null) {
+            return;
+        }
+
+        if (isBeanDependencyFromCurrentContext(beanDescriptor, dependencyDescriptor.qualifiedBean)) {
+            return factory.createVariableStatement(
+                undefined,
+                factory.createVariableDeclarationList(
+                    [factory.createVariableDeclaration(
+                        factory.createIdentifier(dependencyDescriptor.parameterName),
+                        undefined,
+                        dependencyDescriptor.node.type,
+                        factory.createCallExpression(
+                            factory.createPropertyAccessExpression(
+                                factory.createThis(),
+                                factory.createIdentifier('getBean')
+                            ),
+                            undefined,
+                            [factory.createStringLiteral(dependencyDescriptor.qualifiedBean?.classMemberName ?? '')]
+                        )
+                    )],
+                    ts.NodeFlags.Const
+                )
+            );
+        }
+
+        globalContextIdsToAdd.push(dependencyDescriptor.qualifiedBean.contextDescriptor.id);
+
         return factory.createVariableStatement(
             undefined,
             factory.createVariableDeclarationList(
@@ -53,12 +84,12 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId): ts.Block {
                     dependencyDescriptor.node.type,
                     factory.createCallExpression(
                         factory.createPropertyAccessExpression(
-                            factory.createThis(),
+                            factory.createIdentifier(getGlobalContextVariableNameByContextId(dependencyDescriptor.qualifiedBean.contextDescriptor.id)),
                             factory.createIdentifier('getBean')
                         ),
                         undefined,
-                        [factory.createStringLiteral(dependencyDescriptor.qualifiedBean?.classMemberName ?? '')]
-                    )
+                        [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]
+                    ),
                 )],
                 ts.NodeFlags.Const
             )
@@ -68,7 +99,7 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId): ts.Block {
     return factory.updateBlock(
         nodeBody,
         [
-            ...dependenciesStatements,
+            ...compact(dependenciesStatements),
             ...nodeBody.statements,
         ]
     );

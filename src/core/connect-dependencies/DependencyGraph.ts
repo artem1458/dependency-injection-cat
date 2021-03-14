@@ -27,11 +27,11 @@ export class DependencyGraph {
                 .map(beanId => BeanRepository.idToBeanDescriptorMap.get(beanId) ?? null)
                 .filter((it): it is IBeanDescriptorWithId => it !== null);
 
-            let addedDescriptorList = resultMap.get(descriptorList[0].contextName) ?? null;
+            let addedDescriptorList = resultMap.get(descriptorList[0].contextDescriptor.name) ?? null;
 
             if (addedDescriptorList === null) {
                 addedDescriptorList = [];
-                resultMap.set(descriptorList[0].contextName, addedDescriptorList);
+                resultMap.set(descriptorList[0].contextDescriptor.name, addedDescriptorList);
             }
 
             addedDescriptorList.push(descriptorList);

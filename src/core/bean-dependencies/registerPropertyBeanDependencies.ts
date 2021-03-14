@@ -56,7 +56,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
                 qualifier: null,
                 type: parameterType.typeId,
                 originalTypeName: parameterType.originalTypeName,
-                contextName: descriptor.contextName,
+                contextName: descriptor.contextDescriptor.name,
                 parameterName: parameter.name.getText(),
                 node: parameter,
                 qualifiedBean: null,

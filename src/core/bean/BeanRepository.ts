@@ -2,12 +2,13 @@ import ts from 'typescript';
 import { TBeanScopeValue } from '../ts-helpers/bean-info/ICompilationBeanInfo';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { v4 as uuid } from 'uuid';
+import { IContextDescriptor } from '../context/ContextRepository';
 
 export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer
 
 export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     classMemberName: string;
-    contextName: TContextName;
+    contextDescriptor: IContextDescriptor;
     type: TBeanType;
     originalTypeName: string;
     scope: TBeanScopeValue;
@@ -20,13 +21,13 @@ export interface IBeanDescriptorWithId<T extends TBeanNode = TBeanNode> extends 
 }
 
 type TContextName = string;
+type TContextId = string;
 type TBeanType = string;
 
-//Repository for return types of bean
 export class BeanRepository {
     static beanDescriptorRepository = new Map<TContextName, Map<TBeanType, IBeanDescriptorWithId[]>>();
     static idToBeanDescriptorMap = new Map<string, IBeanDescriptorWithId>();
-    static contextNameToBeanDescriptorsMap = new Map<TContextName, IBeanDescriptorWithId[]>();
+    static contextIdToBeanDescriptorsMap = new Map<TContextId, IBeanDescriptorWithId[]>();
     static beanNodeToBeanDescriptorMap = new Map<TBeanNode, IBeanDescriptorWithId>()
 
     static registerBean(descriptor: IBeanDescriptor): void {
@@ -34,7 +35,7 @@ export class BeanRepository {
             ...descriptor,
             id: uuid(),
         };
-        const { contextName, type } = descriptor;
+        const { contextDescriptor: { name: contextName }, type } = descriptor;
 
         let contextMap = this.beanDescriptorRepository.get(contextName) ?? null;
 
@@ -54,16 +55,12 @@ export class BeanRepository {
         this.idToBeanDescriptorMap.set(descriptorWithId.id, descriptorWithId);
         this.beanNodeToBeanDescriptorMap.set(descriptorWithId.node, descriptorWithId);
 
-        let contextDescriptors = this.contextNameToBeanDescriptorsMap.get(descriptor.contextName) ?? null;
+        let contextDescriptors = this.contextIdToBeanDescriptorsMap.get(descriptor.contextDescriptor.id) ?? null;
 
         if (contextDescriptors === null) {
             contextDescriptors = [];
-            this.contextNameToBeanDescriptorsMap.set(descriptor.contextName, contextDescriptors);
+            this.contextIdToBeanDescriptorsMap.set(descriptor.contextDescriptor.id, contextDescriptors);
         }
         contextDescriptors.push(descriptorWithId);
-    }
-
-    static getBeanDescriptorsByType(contextName: TContextName, type: TBeanType): IBeanDescriptor[] {
-        return this.beanDescriptorRepository.get(contextName)?.get(type) ?? [];
     }
 }
