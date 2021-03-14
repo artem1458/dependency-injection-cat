@@ -1,16 +1,18 @@
 import ts, { factory } from 'typescript';
 import upath from 'upath';
+import { uniq } from 'lodash';
 import { PRIVATE_TOKEN } from '../constants';
 import { getRelativePathToExternalDirectoryFromSourceFile } from '../utils/getRelativePathToExternalDirectoryFromSourceFile';
 import { getBuiltContextDirectory } from '../utils/getBuiltContextDirectory';
-
+import { getGlobalContextVariableNameByContextId } from '../utils/getGlobalContextVariableNameByContextId';
 export const REAL_CAT_CONTEXT_IMPORT = `REAL_CAT_CONTEXT_IMPORT${PRIVATE_TOKEN}`;
 export const CONTEXT_POOL_IMPORT = `CONTEXT_POOL_IMPORT${PRIVATE_TOKEN}`;
 
-export const addNecessaryImports = (): ts.TransformerFactory<ts.SourceFile> => {
+export const addNecessaryImports = (globalContextIdsToAdd: string[]): ts.TransformerFactory<ts.SourceFile> => {
     return () => sourceFile => {
+        const builtContextDirectory = getBuiltContextDirectory();
         const relativePathToEXTERNALDirectory = getRelativePathToExternalDirectoryFromSourceFile(
-            getBuiltContextDirectory()
+            builtContextDirectory,
         );
         const pathForRealCatContext = upath.join(
             relativePathToEXTERNALDirectory,
@@ -47,14 +49,30 @@ export const addNecessaryImports = (): ts.TransformerFactory<ts.SourceFile> => {
             factory.createStringLiteral(pathForContextPool)
         );
 
+        const globalContextImports = uniq(globalContextIdsToAdd).map(it => (
+            factory.createImportDeclaration(
+                undefined,
+                undefined,
+                factory.createImportClause(
+                    false,
+                    undefined,
+                    factory.createNamedImports([factory.createImportSpecifier(
+                        undefined,
+                        factory.createIdentifier(getGlobalContextVariableNameByContextId(it)),
+                    )])
+                ),
+                factory.createStringLiteral(`./context_${it}`),
+            )
+        ));
+
         return ts.factory.updateSourceFile(
             sourceFile,
             [
                 realCatContextImport,
                 contextPoolImport,
+                ...globalContextImports,
                 ...sourceFile.statements,
             ]
         );
     };
 };
-

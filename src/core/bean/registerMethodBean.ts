@@ -35,7 +35,7 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
 
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
-        contextName: contextDescriptor.name,
+        contextDescriptor,
         type: typeInfo.typeId,
         originalTypeName: typeInfo.originalTypeName,
         scope: beanInfo.scope,

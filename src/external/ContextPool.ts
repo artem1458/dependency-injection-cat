@@ -16,7 +16,7 @@ export class ContextPool {
     constructor(
         private contextName: string,
         private beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
-        private context: TRealCatContext
+        private context: TRealCatContext,
     ) {}
 
     initContext({

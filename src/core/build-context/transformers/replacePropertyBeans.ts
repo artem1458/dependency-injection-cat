@@ -1,9 +1,12 @@
 import ts, { factory } from 'typescript';
-import { BeanRepository, IBeanDescriptor, TBeanNode } from '../../bean/BeanRepository';
-import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
+import { compact } from 'lodash';
+import { BeanRepository, IBeanDescriptor, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
+import { BeanDependenciesRepository, } from '../../bean-dependencies/BeanDependenciesRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../../ts-helpers/types';
+import { getGlobalContextVariableNameByContextId } from '../utils/getGlobalContextVariableNameByContextId';
+import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
 
-export const replacePropertyBeans = (): ts.TransformerFactory<ts.SourceFile> => {
+export const replacePropertyBeans = (globalContextIdsToAdd: string[]): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
@@ -22,7 +25,7 @@ export const replacePropertyBeans = (): ts.TransformerFactory<ts.SourceFile> => 
                         undefined,
                         [],
                         beanDescriptor.typeNode,
-                        getBeanBlock(beanDescriptor),
+                        getBeanBlock(beanDescriptor, globalContextIdsToAdd),
                     );
                 }
 
@@ -34,18 +37,35 @@ export const replacePropertyBeans = (): ts.TransformerFactory<ts.SourceFile> => 
     };
 };
 
-function getBeanBlock(beanDescriptor: IBeanDescriptor): ts.Block {
+function getBeanBlock(beanDescriptor: IBeanDescriptor, globalContextIdsToAdd: string[]): ts.Block {
     const dependencies = BeanDependenciesRepository.beanDependenciesRepository
-        .get(beanDescriptor.contextName)?.get(beanDescriptor) ?? [];
+        .get(beanDescriptor.contextDescriptor.name)?.get(beanDescriptor) ?? [];
 
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {
+        if (dependencyDescriptor.qualifiedBean === null) {
+            return null;
+        }
+
+        if (isBeanDependencyFromCurrentContext(beanDescriptor, dependencyDescriptor.qualifiedBean)) {
+            return factory.createCallExpression(
+                factory.createPropertyAccessExpression(
+                    factory.createThis(),
+                    factory.createIdentifier('getBean')
+                ),
+                undefined,
+                [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]
+            );
+        }
+
+        globalContextIdsToAdd.push(dependencyDescriptor.qualifiedBean.contextDescriptor.id);
+
         return factory.createCallExpression(
             factory.createPropertyAccessExpression(
-                factory.createThis(),
+                factory.createIdentifier(getGlobalContextVariableNameByContextId(dependencyDescriptor.qualifiedBean.contextDescriptor.id)),
                 factory.createIdentifier('getBean')
             ),
             undefined,
-            [factory.createStringLiteral(dependencyDescriptor.qualifiedBean?.classMemberName ?? '')]
+            [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]
         );
     });
 
@@ -57,7 +77,7 @@ function getBeanBlock(beanDescriptor: IBeanDescriptor): ts.Block {
             factory.createReturnStatement(factory.createNewExpression(
                 factory.createIdentifier(className),
                 undefined,
-                dependenciesStatements
+                compact(dependenciesStatements),
             ))
         ],
         true

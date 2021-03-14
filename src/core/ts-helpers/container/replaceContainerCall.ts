@@ -8,6 +8,7 @@ import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContex
 import { getBuiltContextDirectory } from '../../build-context/utils/getBuiltContextDirectory';
 import { validContainerKeys } from './validContainerKeys';
 import { checkBeansInterface } from './checkBeansInterface';
+import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
 
 export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsToAdd: ts.ImportDeclaration[]): ts.Node => {
     if (!validContainerKeys.includes(node.expression.name.getText())) {
@@ -21,6 +22,14 @@ export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsT
     const contextName = getContextNameFromContainerCall(node);
 
     if (contextName === null) {
+        return node;
+    }
+
+    if (contextName === GLOBAL_CONTEXT_NAME) {
+        CompilationContext.reportError({
+            message: 'You can\'t access Global Context',
+            node: node
+        });
         return node;
     }
 

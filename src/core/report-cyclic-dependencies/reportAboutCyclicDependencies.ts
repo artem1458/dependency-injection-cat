@@ -16,7 +16,7 @@ export const reportAboutCyclicDependencies = () => {
             });
 
             CompilationContext.reportErrorWithMultipleNodes({
-                nodes: nodes,
+                nodes,
                 message: `Cyclic dependencies detected in context "${contextName}" for Beans: ${names.join(' <—> ')}`,
             });
         });
