@@ -7,7 +7,6 @@ export default (program: ts.Program): ts.TransformerFactory<ts.SourceFile> => {
 
     return (context => {
         if (message !== null) {
-            console.log('00000000000000000000000000000000000000000000000');
             throw new CompilationError(message);
         }
 
