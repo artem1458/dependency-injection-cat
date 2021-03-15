@@ -10,13 +10,7 @@ import { Logger } from '../lib/logger/Logger';
 
 export class ApplicationContext extends CatContext<IBeans>{
     requester = Bean<IRequester<IModel>>(ModelRequester)
-    logger = Bean<ILogger>(Logger);
+    // logger = Bean<ILogger>(Logger);
 
-    @Bean
-    useCase(
-        @Qualifier('logger2') logger: ILogger,
-            requester: IRequester<IModel>,
-    ): IUseCase {
-        return new UseCase(requester, logger);
-    }
+    useCase: IUseCase = Bean(UseCase);
 }

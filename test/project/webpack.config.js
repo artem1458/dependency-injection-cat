@@ -24,11 +24,11 @@ module.exports = {
                 loader: 'ts-loader',
                 options: {
                     compiler: 'ttypescript',
-                    getCustomTransformers: (program) => ({
-                        before: [diCatTsTransformer(program, {
-                            compiledContextOutputDir: './compiled-context',
-                        })],
-                    }),
+                    // getCustomTransformers: (program) => ({
+                    //     before: [diCatTsTransformer(program, {
+                    //         compiledContextOutputDir: './compiled-context',
+                    //     })],
+                    // }),
                     transpileOnly: false,
                 }
             }
@@ -53,6 +53,6 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin(),
-        new ReportDiErrorsPlugin(),
+        // new ReportDiErrorsPlugin(),
     ]
 };

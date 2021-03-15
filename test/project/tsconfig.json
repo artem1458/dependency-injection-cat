@@ -11,9 +11,11 @@
     "baseUrl": ".",
     "plugins": [
       {
-        "transform": "../../src/transformers/typescript/index.ts",
-        "compiledContextOutputDir": "./compiled-context",
-        "errorMessageType": "debug"
+        "transform": "dependency-injection-cat/transformers/typescript",
+        "compiledContextOutputDir": "./compiled-context"
+      },
+      {
+        "transform": "dependency-injection-cat/plugins/typescript/ReportErrorsTypescriptPlugin"
       }
     ]
   }

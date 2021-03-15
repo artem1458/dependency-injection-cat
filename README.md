@@ -53,7 +53,8 @@ npm install dependency-injection-cat
 
 #### Requirements for TSconfig
 
-```json
+```json5
+//tsconfig.json
 {
   "compilerOptions": {
     "baseUrl": "Base url should be specified!"
@@ -70,37 +71,39 @@ npm install dependency-injection-cat
 const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
 
 module.exports = {
-  ...
-          module: {
-  rules: [
-    {
-      test: /\.(t|j)sx?$/,
-      loader: 'babel-loader',
-      options: {
-        plugins: [
-          [
-            require('dependency-injection-cat/transformers/babel'),
-            {
-              //Here is configuration options, see below
-            }
+  //...
+  module: {
+    rules: [
+      {
+        test: /\.(t|j)sx?$/,
+        loader: 'babel-loader',
+        options: {
+          plugins: [
+            [
+              require('dependency-injection-cat/transformers/babel'),
+              {
+                //Here is configuration options, see below
+              }
+            ]
           ]
-        ]
+        }
       }
-    }
+    ]
+  },
+  plugins: [
+    //Without this plugin, a compilation with DI errors will be successful
+    new ReportDiErrorsPlugin(),
   ]
-},
-plugins: [
-  //Without this plugin, a compilation with DI errors will be successful
-  new ReportDiErrorsPlugin(),
-]
 }
+```
 
+```json5
 //tsconfig.json
 {
   "compilerOptions": {
-  //Should be specified
-  "baseUrl": "your base url"
-}
+    //Should be specified
+    "baseUrl": "your base url"
+  }
 }
 ```
 
@@ -113,36 +116,38 @@ const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/R
 const diCatTransformer = require('dependency-injection-cat/transformers/typescript').default;
 
 module.exports = {
-  ...
-          module: {
-  rules: [
-    {
-      test: /\.(t|j)sx?$/,
-      use: {
-        loader: 'ts-loader',
-        options: {
-          getCustomTransformers: (program) => ({
-            before: [diCatTransformer(program, {
-              //Here is configuration options, see below
-            })],
-          }),
+  //...
+  module: {
+    rules: [
+      {
+        test: /\.(t|j)sx?$/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            getCustomTransformers: (program) => ({
+              before: [diCatTransformer(program, {
+                //Here is configuration options, see below
+              })],
+            }),
+          }
         }
       }
-    }
+    ]
+  },
+  plugins: [
+    //Without this plugin, a compilation with DI errors will be successful
+    new ReportDiErrorsPlugin(),
   ]
-},
-plugins: [
-  //Without this plugin, a compilation with DI errors will be successful
-  new ReportDiErrorsPlugin(),
-]
 }
+```
 
+```json5
 //tsconfig.json
 {
   "compilerOptions": {
-  //Should be specified
-  "baseUrl": "your base url"
-}
+    //Should be specified
+    "baseUrl": "your base url"
+  }
 }
 ```
 
@@ -154,38 +159,63 @@ plugins: [
 const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
 
 module.exports = {
-  ...
-          module: {
-  rules: [
-    {
-      test: /\.(t|j)sx?$/,
-      use: {
-        loader: 'ts-loader',
-        options: {
-          compiler: 'ttypescript'
+  //...
+  module: {
+    rules: [
+      {
+        test: /\.(t|j)sx?$/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            compiler: 'ttypescript'
+          }
         }
       }
-    }
+    ]
+  },
+  plugins: [
+    //Without this plugin, a compilation with DI errors will be successful
+    new ReportDiErrorsPlugin(),
   ]
-},
-plugins: [
-  //Without this plugin, a compilation with DI errors will be successful
-  new ReportDiErrorsPlugin(),
-]
 }
+```
 
+```json5
 //tsconfig.json
 {
   "compilerOptions": {
-  //Should be specified
-  "baseUrl": "your base url",
-          "plugins": [
-    {
-      "transform": "dependency-injection-cat/transformers/typescript",
-      //Here is configuration options, see below
-    }
-  ]
+    //Should be specified
+    "baseUrl": "your base url",
+    "plugins": [
+      {
+        "transform": "dependency-injection-cat/transformers/typescript",
+        //Here is configuration options, see below
+      }
+    ]
+  }
 }
+```
+
+
+
+#### TTypescript
+
+```json5
+//tsconfig.json
+{
+  "compilerOptions": {
+    //Should be specified
+    "baseUrl": "your base url",
+    "plugins": [
+      {
+        "transform": "dependency-injection-cat/transformers/typescript",
+        //Here is configuration options, see below
+      },
+      {
+        "transform": "dependency-injection-cat/plugins/typescript/ReportErrorsTypescriptPlugin"
+      }
+    ]
+  }
 }
 ```
 
@@ -208,7 +238,7 @@ plugins: [
 CatContext it's a place, where you should define your **Beans**
 
 ```typescript
-class CatContext<TBeans, TConfig = null>
+class CatContext<TBeans, TConfig = null> {}
 ```
 
 ##### Rules
