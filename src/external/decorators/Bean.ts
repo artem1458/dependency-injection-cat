@@ -15,7 +15,7 @@ export function Bean(
 ): typeof Bean;
 
 export function Bean<T>(
-    classIml: TClassConstructor<T>,
+    classImpl: TClassConstructor<T>,
     beanConfig?: IBeanConfig,
 ): T;
 

@@ -69,6 +69,7 @@ npm install dependency-injection-cat
 ```typescript
 //webpack.config.js
 const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
+const DiCatBabelTransformer = require('dependency-injection-cat/transformers/babel');
 
 module.exports = {
   //...
@@ -78,9 +79,12 @@ module.exports = {
         test: /\.(t|j)sx?$/,
         loader: 'babel-loader',
         options: {
+          //Should be false, because babel caching files 
+          //and don't call di-cat babel transformer, if your not *.di.* files was changed
+          cacheDirectory: false,
           plugins: [
             [
-              require('dependency-injection-cat/transformers/babel'),
+              DiCatBabelTransformer,
               {
                 //Here is configuration options, see below
               }
