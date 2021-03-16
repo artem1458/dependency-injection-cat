@@ -13,6 +13,15 @@ interface IInitContextPropsWithConfig<TConfig> extends IInitContextProps {
 
 type TBeanName = string
 
+const mockContext: IDIContext<any> = {
+    getBeans(): any {
+        return {};
+    },
+    getBean(beanName: keyof any): any {
+        return null;
+    }
+};
+
 class Container {
     /**
      * TBeans should be a plain interface without extending
@@ -28,7 +37,7 @@ class Container {
             Container.throwInitializationError();
         }
 
-        return {} as IDIContext<TBeans>;
+        return mockContext;
     }
 
     /**
@@ -41,7 +50,7 @@ class Container {
             Container.throwInitializationError();
         }
 
-        return {} as IDIContext<TBeans>;
+        return mockContext;
     }
 
     clearContext(props: IInitContextProps): void {
