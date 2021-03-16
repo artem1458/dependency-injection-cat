@@ -1,6 +1,7 @@
-import { RealCatContext, TRealCatContext } from './RealCatContext';
+import { InternalCatContext } from './InternalCatContext';
 import { NoContextByKey } from '../exceptions/runtime/NoContextByKey';
 import { IBeanConfig } from './decorators/Bean';
+import { TInternalCatContext } from './IInternalCatContext';
 
 interface IContextProps {
     key: any;
@@ -16,7 +17,7 @@ export class ContextPool {
     constructor(
         private contextName: string,
         private beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
-        private context: TRealCatContext,
+        private context: TInternalCatContext,
     ) {}
 
     initContext({
@@ -58,7 +59,7 @@ export class ContextPool {
     }
 }
 
-class AppContext extends RealCatContext {
+class AppContext extends InternalCatContext {
     bean(): void {}
 }
 

@@ -1,6 +1,6 @@
 import ts, { factory } from 'typescript';
 import { IContextDescriptor } from '../../context/ContextRepository';
-import { REAL_CAT_CONTEXT_IMPORT } from './addNecessaryImports';
+import { INTERNAL_CAT_CONTEXT_IMPORT } from './addNecessaryImports';
 
 export const replaceExtendingFromCatContext = (contextDescriptor: IContextDescriptor): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
@@ -12,8 +12,8 @@ export const replaceExtendingFromCatContext = (contextDescriptor: IContextDescri
                         ts.SyntaxKind.ExtendsKeyword,
                         [factory.createExpressionWithTypeArguments(
                             factory.createPropertyAccessExpression(
-                                factory.createIdentifier(REAL_CAT_CONTEXT_IMPORT),
-                                factory.createIdentifier('RealCatContext')
+                                factory.createIdentifier(INTERNAL_CAT_CONTEXT_IMPORT),
+                                factory.createIdentifier('InternalCatContext')
                             ),
                             undefined
                         )]

@@ -1,23 +1,11 @@
 import { NotInitializedConfig } from '../exceptions/runtime/NotInitializedConfig';
 import { IBeanConfig } from './decorators/Bean';
 import { BeanNotFoundInContext } from '../exceptions/runtime/BeanNotFoundInContext';
+import { IInternalCatContext } from './IInternalCatContext';
 
 type TBeanName = string;
 
-export type TRealCatContext = {
-    new(
-        contextName: string,
-        beanConfigurationRecord: Record<TBeanName, IBeanConfig>,
-    ): IRealCatContext
-};
-
-export interface IRealCatContext {
-    config: any;
-    getBean<T>(beanName: TBeanName): T;
-    getBeans(): Record<string, any>;
-}
-
-export abstract class RealCatContext implements IRealCatContext {
+export abstract class InternalCatContext implements IInternalCatContext {
     [beanName: string]: any;
 
     constructor(

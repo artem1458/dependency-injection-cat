@@ -1,5 +1,6 @@
 import { IDIContext } from './IDIContext';
 import { DIContainerNotInitialized } from '../exceptions/runtime/DIContainerNotInitialized';
+import { TestConfiguration } from '../test/testConfiguration';
 
 interface IInitContextProps {
     name: string;
@@ -23,7 +24,11 @@ class Container {
         props: IInitContextPropsWithConfig<TConfig>
     ): IDIContext<TBeans>
     initContext<TBeans>(): IDIContext<TBeans> {
-        Container.throwInitializationError();
+        if (TestConfiguration.failOnNotConfiguredContainer) {
+            Container.throwInitializationError();
+        }
+
+        return {} as IDIContext<TBeans>;
     }
 
     /**
@@ -32,11 +37,17 @@ class Container {
     getContext<TBeans extends Record<TBeanName, any>>(
         props: IInitContextProps
     ): IDIContext<TBeans> {
-        Container.throwInitializationError();
+        if (TestConfiguration.failOnNotConfiguredContainer) {
+            Container.throwInitializationError();
+        }
+
+        return {} as IDIContext<TBeans>;
     }
 
     clearContext(props: IInitContextProps): void {
-        Container.throwInitializationError();
+        if (TestConfiguration.failOnNotConfiguredContainer) {
+            Container.throwInitializationError();
+        }
     }
 
     private static throwInitializationError(): never {
