@@ -6,10 +6,13 @@ import { getTransformerFactory } from '../../core/transformers/getTransformerFac
 import { libraryName } from '../../constants/libraryName';
 import { ProgramRepository } from '../../core/program/ProgramRepository';
 
-logLogo();
-
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);
+
+    if (!options?.disableLogoPrint) {
+        logLogo();
+    }
+
     runCompile();
     const transformerFactory = getTransformerFactory();
     const printer = ts.createPrinter();
