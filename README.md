@@ -232,6 +232,7 @@ module.exports = {
   diConfigPattern ?: string; // Glob pattern, default value. Default: '**/*.di.ts'
   ignorePatterns ?: string[]; // Array of Glob patterns, default value. Default: ['**/node_modules/**']
   compiledContextOutputDir ?: string; // Output directory of transformed contextMap, can be specified for debug purposes. Default: node_modules/dependency-injection-cat/external/built-context
+  disableLogoPrint ?: boolean; // Disable exposing dependency-injections-cat logo into console 
 }
 ```
 
