@@ -1,12 +1,9 @@
 import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
 import { runCompile } from '../../core/runCompile';
-import { logLogo } from '../../core/transformers/logLogo';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { libraryName } from '../../constants/libraryName';
 import { ProgramRepository } from '../../core/program/ProgramRepository';
-
-logLogo();
 
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);

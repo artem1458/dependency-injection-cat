@@ -3,4 +3,5 @@ export interface IDiConfig {
     compiledContextOutputDir?: string;
     ignorePatterns?: Array<string>;
     errorMessageType: 'debug' | 'human';
+    disableLogoPrint?: boolean;
 }
