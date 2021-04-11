@@ -47,12 +47,32 @@ export const buildDependencyGraphAndFillQualifiedBeans = () => {
                     }
 
                     if (beanCandidatesFromCurrentContext.length > 1) {
+                        const beanCandidatesFromCurrentContextQualifiedByParameterName = beanCandidatesFromCurrentContext
+                            .filter(it => it.classMemberName === dependencyDescriptor.parameterName);
+
+                        if (beanCandidatesFromCurrentContextQualifiedByParameterName.length === 1) {
+                            dependencyDescriptor.qualifiedBean = beanCandidatesFromCurrentContextQualifiedByParameterName[0];
+                            DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidatesFromCurrentContextQualifiedByParameterName[0]);
+                            return;
+                        }
+
+                        if (beanCandidatesFromCurrentContextQualifiedByParameterName.length > 1) {
+                            CompilationContext.reportErrorWithMultipleNodes({
+                                nodes: [
+                                    dependencyDescriptor.node,
+                                    ...beanCandidatesFromCurrentContextQualifiedByParameterName.map(it => it.node),
+                                ],
+                                message: `Found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} Bean candidates, with same name, please rename one of beans`,
+                            });
+                            return;
+                        }
+
                         CompilationContext.reportErrorWithMultipleNodes({
                             nodes: [
                                 dependencyDescriptor.node,
                                 ...beanCandidatesFromCurrentContext.map(it => it.node),
                             ],
-                            message: `Found ${beanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier to specify which Bean should be injected`,
+                            message: `Found ${beanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
                         });
                         return;
                     }
@@ -64,12 +84,32 @@ export const buildDependencyGraphAndFillQualifiedBeans = () => {
                     }
 
                     if (beanCandidatesFromGlobalContext.length > 1) {
+                        const beanCandidatesFromGlobalContextQualifiedByParameterName = beanCandidatesFromGlobalContext
+                            .filter(it => it.classMemberName === dependencyDescriptor.parameterName);
+
+                        if (beanCandidatesFromGlobalContextQualifiedByParameterName.length === 1) {
+                            dependencyDescriptor.qualifiedBean = beanCandidatesFromGlobalContextQualifiedByParameterName[0];
+                            DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidatesFromGlobalContextQualifiedByParameterName[0]);
+                            return;
+                        }
+
+                        if (beanCandidatesFromGlobalContextQualifiedByParameterName.length > 1) {
+                            CompilationContext.reportErrorWithMultipleNodes({
+                                nodes: [
+                                    dependencyDescriptor.node,
+                                    ...beanCandidatesFromGlobalContextQualifiedByParameterName.map(it => it.node),
+                                ],
+                                message: `Found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} Bean candidates in Global context, with same name, please rename one of beans`,
+                            });
+                            return;
+                        }
+
                         CompilationContext.reportErrorWithMultipleNodes({
                             nodes: [
                                 dependencyDescriptor.node,
                                 ...beanCandidatesFromGlobalContext.map(it => it.node),
                             ],
-                            message: `Found ${beanCandidatesFromGlobalContext.length} Bean candidates in Global context, please use @Qualifier to specify which Bean should be injected`,
+                            message: `Found ${beanCandidatesFromGlobalContext.length} Bean candidates in Global context, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
                         });
                         return;
                     }

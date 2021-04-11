@@ -1,6 +1,6 @@
 {
   "name": "dependency-injection-cat",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Artem Kornev",
@@ -37,6 +37,7 @@
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.3.0",
     "@typescript-eslint/parser": "^4.3.0",
+    "concurrently": "^6.0.1",
     "dts-bundle-generator": "^5.7.0",
     "eslint": "^7.10.0",
     "ts-loader": "^7.0.5"

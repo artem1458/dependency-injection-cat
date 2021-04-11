@@ -23,7 +23,7 @@ export class UseCase implements IUseCase {
           private repository: IRepository,
   ) {}
 
-  makeBusinessLogic() {...}
+  makeBusinessLogic() {}
 }
 
 //Your application.tsx
@@ -32,7 +32,7 @@ export const UIComponent: React.FC = () => {
   const { useCase } = appContext.getBeans();
 
   return (
-          <button onClick={useCase.makeBusinessLogic}> Click me! </button>
+    <button onClick={useCase.makeBusinessLogic}> Click me! </button>
   )
 }
 ```
@@ -229,10 +229,10 @@ module.exports = {
 
 ```typescript
 {
-  diConfigPattern ?: string; // Glob pattern, default value. Default: '**/*.di.ts'
-  ignorePatterns ?: string[]; // Array of Glob patterns, default value. Default: ['**/node_modules/**']
-  compiledContextOutputDir ?: string; // Output directory of transformed contextMap, can be specified for debug purposes. Default: node_modules/dependency-injection-cat/external/built-context
-  disableLogoPrint ?: boolean; // Disable exposing dependency-injections-cat logo into console 
+  diConfigPattern: string | undefined; // Glob pattern, default value. Default: '**/*.di.ts'
+  ignorePatterns: Array<string> | undefined; // Array of Glob patterns, default value. Default: ['**/node_modules/**']
+  compiledContextOutputDir: string | undefined; // Output directory of transformed contextMap, can be specified for debug purposes. Default: node_modules/dependency-injection-cat/external/built-context
+  disableLogoPrint: boolean | undefined; // Disable exposing dependency-injections-cat logo into console 
 }
 ```
 
@@ -551,15 +551,32 @@ export class ApplicationContext extends CatContext<IBeans> {
 
 ## Qualifier
 
-Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type. Also you can use qualifier, when injecting **Beans** from **GlobalCatContext**
+Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type.
+By default, the qualifier is the name of the parameter in the class constructor, or in the **Method Bean**`
+Also, you can use qualifier, when injecting **Beans** from **GlobalCatContext**
 
 #### Rules
 
-- Qualifiers can be used only in **Method Bean**
+- @Qualifier decorator can be used only in **Method Bean**
 - Argument passed to Qualifier should be a string literal and should not be an empty string
 - Qualifier should be a name of Bean (class property name, or method name) defined in current **Context**
 
 #### Syntax
+
+```typescript
+//Implicit declaration of the qualifier
+export class ApplicationContext extends CatContext<IBeans> {
+    httpRequester: IRequester = Bean(HttpRequester);
+    graphQLRequester: IRequester = Bean(GraphQLRequester);
+    
+    @Bean
+    useCase(
+    	graphQLRequester: IRequester, //Will be injected implementation "GraphQLRequester"
+    ): IUseCase {
+        return new UseCase(graphQLRequester);
+    }
+}
+```
 
 ```typescript
 //When Bean placed in current context
