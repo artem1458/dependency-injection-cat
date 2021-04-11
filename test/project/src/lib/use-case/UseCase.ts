@@ -9,7 +9,7 @@ export type TString = string;
 export class UseCase implements IUseCase {
     constructor(
         private requester: IRequester<IModel>,
-        private logger: ILogger,
+        private asasasas: ILogger,
     ) {}
 
     async makeSomeBusinessLogic(): Promise<void> {
@@ -18,7 +18,7 @@ export class UseCase implements IUseCase {
 
             // this.contextMap.saveData(response);
         } catch (error) {
-            this.logger.logError(error.message);
+            this.asasasas.logError(error.message);
         }
     }
 }
