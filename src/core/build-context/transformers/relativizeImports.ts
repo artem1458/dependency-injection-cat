@@ -15,14 +15,13 @@ export const relativizeImports = (): ts.TransformerFactory<ts.SourceFile> => {
                     moduleSpecifier,
                 );
 
-
                 if (upath.isAbsolute(absolutePathFromResolverWithExtension)) {
-                    const buildedContextDirectory = getBuiltContextDirectory();
+                    const sourceFileDirname = upath.dirname(sourceFile.fileName);
                     const absoluteImportPathWithoutExtension = removeExtensionFromPath(
                         absolutePathFromResolverWithExtension,
                     );
                     const newRelative = upath.relative(
-                        buildedContextDirectory,
+                        sourceFileDirname,
                         absoluteImportPathWithoutExtension,
                     );
 

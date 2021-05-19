@@ -1,6 +1,6 @@
 import { getContextPaths } from './context/getContextPaths';
 import { ProgramRepository } from './program/ProgramRepository';
-import { registerContexts } from './context/registerContexts';
+import { registerGlobalCatContexts } from './context/registerGlobalCatContexts';
 import { registerBeans } from './bean/registerBeans';
 import { registerBeanDependencies } from './bean-dependencies/registerBeanDependencies';
 import { buildDependencyGraphAndFillQualifiedBeans } from './connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
@@ -24,7 +24,7 @@ export const runCompile = () => {
     const contextPaths = getContextPaths();
     ProgramRepository.initProgram(contextPaths);
 
-    registerContexts(contextPaths);
+    registerGlobalCatContexts(contextPaths);
     registerBeans();
     checkIsAllBeansRegisteredInContext();
     registerBeanDependencies();

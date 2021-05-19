@@ -4,10 +4,12 @@ import { runCompile } from '../../core/runCompile';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { libraryName } from '../../constants/libraryName';
 import { ProgramRepository } from '../../core/program/ProgramRepository';
+import { initContexts } from '../../core/initContexts';
 
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);
     runCompile();
+    initContexts();
     const transformerFactory = getTransformerFactory();
     const printer = ts.createPrinter();
 

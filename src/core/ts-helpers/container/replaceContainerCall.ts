@@ -5,7 +5,6 @@ import { CompilationContext } from '../../../compilation-context/CompilationCont
 import { getContextNameFromContainerCall } from './getContextNameFromContainerCall';
 import { ContextRepository } from '../../context/ContextRepository';
 import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContextPool';
-import { getBuiltContextDirectory } from '../../build-context/utils/getBuiltContextDirectory';
 import { validContainerKeys } from './validContainerKeys';
 import { checkBeansInterface } from './checkBeansInterface';
 import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
@@ -45,16 +44,7 @@ export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsT
 
     checkBeansInterface(node, contextDescriptor);
 
-    const relativePathToExternalDirectory = upath.relative(
-        upath.dirname(node.getSourceFile().fileName),
-        getBuiltContextDirectory(),
-    );
-    const importPath = `./${
-        upath.join(
-            relativePathToExternalDirectory,
-            `context_${contextDescriptor.id}`
-        )
-    }`;
+    const importPath = upath.normalize(contextDescriptor.absolutePath);
     const importNamespaceName = `${contextDescriptor.name}${CONTEXT_POOL_POSTFIX}`;
     const importDeclaration = factory.createImportDeclaration(
         undefined,

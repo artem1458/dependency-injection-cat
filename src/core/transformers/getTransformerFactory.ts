@@ -5,27 +5,22 @@ import { replaceContainerCall } from '../ts-helpers/container/replaceContainerCa
 import { removeDIImportsFromStatements } from '../ts-helpers/removeDIImports';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 import minimatch from 'minimatch';
-import { getBuiltContextDirectory } from '../build-context/utils/getBuiltContextDirectory';
+import { diConfig } from '../../external/config';
+import { registerAndTransformContext } from '../build-context/registerAndTransformContext';
 
 export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
-        if (minimatch(sourceFile.fileName, `${getBuiltContextDirectory()}/context_*`)) {
-            //Do not touching built contexts
-            return sourceFile;
+        if (minimatch(sourceFile.fileName, diConfig.diConfigPattern!)) {
+            return registerAndTransformContext(context, sourceFile);
         }
 
         const factoryImportsToAdd: ts.ImportDeclaration[] = [];
         let hasContainerAccess = false;
 
         const visitor: ts.Visitor = (node => {
-            try {
-                if (isContainerAccess(node)) {
-                    hasContainerAccess = true;
-                    return replaceContainerCall(node, factoryImportsToAdd);
-                }
-            } catch (err) {
-                err;
-                sourceFile.text;
+            if (isContainerAccess(node)) {
+                hasContainerAccess = true;
+                return replaceContainerCall(node, factoryImportsToAdd);
             }
 
             return ts.visitEachChild(node, visitor, context);

@@ -1,6 +1,5 @@
 import { IUseCase } from './IUseCase';
 import { IRequester } from '../requester/IRequester';
-import { IRepository } from '../repository/IRepository';
 import { IModel } from '../models/IModel';
 import { ILogger } from '../logger/ILogger';
 
@@ -9,7 +8,7 @@ export type TString = string;
 export class UseCase implements IUseCase {
     constructor(
         private requester: IRequester<IModel>,
-        private asasasas: ILogger,
+        private baseLogger: ILogger,
     ) {}
 
     async makeSomeBusinessLogic(): Promise<void> {
@@ -18,7 +17,7 @@ export class UseCase implements IUseCase {
 
             // this.contextMap.saveData(response);
         } catch (error) {
-            this.asasasas.logError(error.message);
+            this.baseLogger.logError(error.message);
         }
     }
 }

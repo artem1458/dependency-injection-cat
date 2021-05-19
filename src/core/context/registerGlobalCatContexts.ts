@@ -6,9 +6,8 @@ import { ContextRepository } from './ContextRepository';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { isExtendsGlobalCatContextContext } from '../ts-helpers/predicates/isExtendsGlobalCatContext';
-import { GLOBAL_CONTEXT_NAME } from './constants';
 
-export const registerContexts = (contextPaths: Array<string>) => {
+export const registerGlobalCatContexts = (contextPaths: Array<string>) => {
     const sourceFiles = chain(contextPaths)
         .map(file => {
             const sourceFile = ProgramRepository.program.getSourceFile(file);
@@ -40,7 +39,7 @@ export const registerContexts = (contextPaths: Array<string>) => {
             return;
         }
 
-        if (catContextClassDeclarations.length > 1 || globalCatContextClassDeclarations.length > 1) {
+        if (globalCatContextClassDeclarations.length > 1) {
             const excessCatContextClasses = catContextClassDeclarations.slice(1);
             const excessGlobalCatContextClasses = globalCatContextClassDeclarations.slice(1);
 
@@ -55,48 +54,11 @@ export const registerContexts = (contextPaths: Array<string>) => {
             return;
         }
 
-        if (catContextClassDeclarations.length === 1) {
-            registerCatContext(catContextClassDeclarations[0]);
-        }
         if (globalCatContextClassDeclarations.length === 1) {
             registerGlobalCatContext(globalCatContextClassDeclarations[0]);
         }
     });
 };
-
-function registerCatContext(classDeclaration: ts.ClassDeclaration) {
-    if (!isNamedClassDeclaration(classDeclaration)) {
-        CompilationContext.reportError({
-            message: 'Context should be a named class declaration',
-            node: classDeclaration
-        });
-
-        return;
-    }
-
-    const name = classDeclaration.name.getText();
-
-    if (name === GLOBAL_CONTEXT_NAME) {
-        CompilationContext.reportError({
-            message: `"${GLOBAL_CONTEXT_NAME}" name of context is preserved for DI container`,
-            node: classDeclaration
-        });
-        return;
-    }
-
-    if (ContextRepository.hasContext(name)) {
-        CompilationContext.reportError({
-            message: 'Context should have uniq name',
-            node: classDeclaration,
-        });
-        return;
-    }
-
-    ContextRepository.registerContext(
-        name,
-        classDeclaration,
-    );
-}
 
 function registerGlobalCatContext(classDeclaration: ts.ClassDeclaration) {
     if (!isNamedClassDeclaration(classDeclaration)) {

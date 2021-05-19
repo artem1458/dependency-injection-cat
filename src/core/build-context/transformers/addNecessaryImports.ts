@@ -3,16 +3,16 @@ import upath from 'upath';
 import { uniq } from 'lodash';
 import { PRIVATE_TOKEN } from '../constants';
 import { getRelativePathToExternalDirectoryFromSourceFile } from '../utils/getRelativePathToExternalDirectoryFromSourceFile';
-import { getBuiltContextDirectory } from '../utils/getBuiltContextDirectory';
 import { getGlobalContextVariableNameByContextId } from '../utils/getGlobalContextVariableNameByContextId';
+
 export const INTERNAL_CAT_CONTEXT_IMPORT = `INTERNAL_CAT_CONTEXT_IMPORT${PRIVATE_TOKEN}`;
 export const CONTEXT_POOL_IMPORT = `CONTEXT_POOL_IMPORT${PRIVATE_TOKEN}`;
 
 export const addNecessaryImports = (globalContextIdsToAdd: string[]): ts.TransformerFactory<ts.SourceFile> => {
     return () => sourceFile => {
-        const builtContextDirectory = getBuiltContextDirectory();
+        const sourceFileDirname = upath.dirname(sourceFile.fileName);
         const relativePathToEXTERNALDirectory = getRelativePathToExternalDirectoryFromSourceFile(
-            builtContextDirectory,
+            sourceFileDirname,
         );
         const pathForInternalCatContext = upath.join(
             relativePathToEXTERNALDirectory,
