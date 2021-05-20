@@ -14,4 +14,5 @@ export class ApplicationContext extends CatContext<IBeans>{
     consoleLogger = Bean<ILogger>(Logger);
 
     useCase: IUseCase = Bean(UseCase);
+    useCase2: IUseCase = Bean(UseCase);
 }

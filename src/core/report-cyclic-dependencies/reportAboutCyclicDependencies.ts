@@ -1,11 +1,16 @@
 import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import ts from 'typescript';
+import { IContextDescriptor } from '../context/ContextRepository';
 
-export const reportAboutCyclicDependencies = () => {
+export const reportAboutCyclicDependencies = (contextDescriptor: IContextDescriptor) => {
     const cycle = DependencyGraph.getCycle();
 
     cycle.forEach((cycles, contextName) => {
+        if (contextDescriptor.name !== contextName) {
+            return;
+        }
+
         cycles.forEach(cycle => {
             const names: string[] = [];
             const nodes: ts.Node[] = [];

@@ -70,12 +70,12 @@ function getBeanBlock(beanDescriptor: IBeanDescriptor, globalContextIdsToAdd: st
     });
 
     const node = beanDescriptor.node as ClassPropertyDeclarationWithInitializer;
-    const className = node.initializer.arguments[0].getText();
+    const className = node.initializer.arguments[0];
 
     return factory.createBlock(
         [
             factory.createReturnStatement(factory.createNewExpression(
-                factory.createIdentifier(className),
+                className,
                 undefined,
                 compact(dependenciesStatements),
             ))

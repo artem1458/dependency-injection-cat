@@ -5,4 +5,4 @@ const context = container.initContext<IBeans>({
     name: 'ApplicationContext',
 });
 
-console.log(context);
+console.log(context.getBeans());

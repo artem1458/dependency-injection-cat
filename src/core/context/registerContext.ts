@@ -8,25 +8,12 @@ import { ContextRepository } from './ContextRepository';
 export function registerContext(sourceFile: ts.SourceFile) {
     const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
 
-    if (catContextClassDeclarations.length > 0) {
-        CompilationContext.reportErrorWithMultipleNodes({
-            message: 'Only one type of CatContext should be defined in one file.',
-            nodes: [
-                ...catContextClassDeclarations,
-            ],
-        });
-
-        return;
-    }
-
     if (catContextClassDeclarations.length > 1) {
         const excessCatContextClasses = catContextClassDeclarations.slice(1);
 
         CompilationContext.reportErrorWithMultipleNodes({
-            nodes: [
-                ...excessCatContextClasses,
-            ],
             message: 'Only one context should be defined in file.',
+            nodes: excessCatContextClasses,
         });
 
         return;

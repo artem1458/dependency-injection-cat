@@ -1,28 +1,16 @@
-import { ContextRepository } from '../context/ContextRepository';
+import { IContextDescriptor } from '../context/ContextRepository';
 import { isMethodBean } from '../ts-helpers/predicates/isMethodBean';
+import { registerMethodBean } from './registerMethodBean';
 import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
 import { registerPropertyBean } from './registerPropertyBean';
-import { registerMethodBean } from './registerMethodBean';
 
-export const registerBeans = () => {
-    ContextRepository.contextMap.forEach((contextDescriptor, contextName) => {
-        contextDescriptor.node.members.forEach((classElement) => {
-            if (isMethodBean(classElement)) {
-                registerMethodBean(contextDescriptor, classElement);
-            }
-            if (isClassPropertyBean(classElement)) {
-                registerPropertyBean(contextDescriptor, classElement);
-            }
-        });
+export function registerBeans(contextDescriptor: IContextDescriptor) {
+    contextDescriptor.node.members.forEach((classElement) => {
+        if (isMethodBean(classElement)) {
+            registerMethodBean(contextDescriptor, classElement);
+        }
+        if (isClassPropertyBean(classElement)) {
+            registerPropertyBean(contextDescriptor, classElement);
+        }
     });
-    ContextRepository.globalContexts.forEach((contextDescriptor, contextId) => {
-        contextDescriptor.node.members.forEach((classElement) => {
-            if (isMethodBean(classElement)) {
-                registerMethodBean(contextDescriptor, classElement);
-            }
-            if (isClassPropertyBean(classElement)) {
-                registerPropertyBean(contextDescriptor, classElement);
-            }
-        });
-    });
-};
+}

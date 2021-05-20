@@ -3,11 +3,11 @@ import upath from 'upath';
 import { IContainerAccessNode } from './isContainerAccess';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { getContextNameFromContainerCall } from './getContextNameFromContainerCall';
-import { ContextRepository } from '../../context/ContextRepository';
 import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContextPool';
 import { validContainerKeys } from './validContainerKeys';
-import { checkBeansInterface } from './checkBeansInterface';
 import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
+import { ContextNamesRepository } from '../../context/ContextNamesRepository';
+import { registerAllContextNames } from '../../context/registerContextNames';
 
 export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsToAdd: ts.ImportDeclaration[]): ts.Node => {
     if (!validContainerKeys.includes(node.expression.name.getText())) {
@@ -32,20 +32,30 @@ export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsT
         return node;
     }
 
-    const contextDescriptor = ContextRepository.getContextByName(contextName);
+    let contextPath: string | null = ContextNamesRepository.nameToPath.get(contextName) ?? null;
 
-    if (contextDescriptor === null) {
-        CompilationContext.reportError({
-            node,
-            message: `Context with name "${contextName}" not found`,
-        });
-        return node;
+    if (contextPath === null) {
+        registerAllContextNames();
+
+        contextPath = ContextNamesRepository.nameToPath.get(contextName) ?? null;
+
+        if (contextPath === null) {
+            CompilationContext.reportError({
+                node,
+                message: `Context with name "${contextName}" not found`,
+            });
+            return node;
+        }
     }
 
-    checkBeansInterface(node, contextDescriptor);
+    // TODO check interfaces
+    // checkBeansInterface(node, contextDescriptor);
 
-    const importPath = upath.normalize(contextDescriptor.absolutePath);
-    const importNamespaceName = `${contextDescriptor.name}${CONTEXT_POOL_POSTFIX}`;
+    const importPath = `./${upath.relative(
+        upath.dirname(node.getSourceFile().fileName),
+        upath.normalize(contextPath),
+    )}`;
+    const importNamespaceName = `${contextName}${CONTEXT_POOL_POSTFIX}`;
     const importDeclaration = factory.createImportDeclaration(
         undefined,
         undefined,

@@ -1,5 +1,7 @@
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { CompilationError } from '../../compilation-context/CompilationError';
+import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
+import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
 
 export default class {
     apply(compiler: any) {
@@ -7,9 +9,12 @@ export default class {
             const message = CompilationContext.getErrorMessage();
 
             if (message === null) {
+                SourceFilesCache.clearCache();
                 return;
             }
 
+            PathResolverCache.clearCache();
+            SourceFilesCache.clearCache();
             throw new CompilationError(message);
         });
     }

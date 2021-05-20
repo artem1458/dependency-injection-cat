@@ -9,6 +9,7 @@ export class UseCase implements IUseCase {
     constructor(
         private requester: IRequester<IModel>,
         private baseLogger: ILogger,
+        private consoleLogger: ILogger,
     ) {}
 
     async makeSomeBusinessLogic(): Promise<void> {

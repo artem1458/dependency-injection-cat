@@ -37,6 +37,7 @@ module.exports = {
             //     loader: 'babel-loader',
             //     options: {
             //         plugins: [
+            //             '@babel/plugin-transform-runtime',
             //             [
             //                 require('dependency-injection-cat/transformers/babel'),
             //                 {
@@ -44,7 +45,10 @@ module.exports = {
             //                 }
             //             ]
             //         ],
-            //         presets: ['@babel/preset-env', '@babel/preset-typescript']
+            //         presets: [
+            //             '@babel/preset-env',
+            //             '@babel/preset-typescript',
+            //         ]
             //     }
             // }
         ],

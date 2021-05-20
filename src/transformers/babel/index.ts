@@ -42,10 +42,7 @@ export default function(api: any, options?: IDiConfig) {
                     [transformerFactory],
                 );
                 const resultText = printer.printFile(result.transformed[0]);
-
-                path.node.body = api.parse(resultText, {
-                    plugins: meta.file.opts.plugins
-                }).program.body;
+                path.replaceWith(api.parse(resultText, meta.file.opts).program);
             }
         }
     };
