@@ -28,6 +28,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
 
     const nodeSourceFile = SourceFilesCache.getSourceFileByPath(nodeSourceDescriptor.path);
     const classDeclaration = findClassDeclarationInSourceFileByName(nodeSourceFile, nodeSourceDescriptor.name);
+    descriptor.beanSourceLocation = nodeSourceDescriptor.path;
 
     if (classDeclaration === null) {
         CompilationContext.reportError({

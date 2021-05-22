@@ -47,16 +47,6 @@ export class CompilationContext {
         throw new CompilationError(message);
     }
 
-    static throw(): void {
-        const message = this.getErrorMessage();
-
-        if (message === null) {
-            return;
-        }
-
-        throw new CompilationError(message);
-    }
-
     static getErrorMessage(): string | null {
         switch (diConfig.errorMessageType) {
         case 'human':

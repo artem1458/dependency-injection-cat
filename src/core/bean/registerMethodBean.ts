@@ -41,6 +41,8 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         scope: beanInfo.scope,
         node: classElement,
         typeNode: classElement.type!,
+        beanKind: 'method',
+        beanSourceLocation: null
     });
 };
 

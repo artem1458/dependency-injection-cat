@@ -2,7 +2,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
+const DICatWebpackPlugin = require('../../src/plugins/webpack').default;
 
 module.exports = {
     entry: './src/index.ts',
@@ -56,6 +56,6 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin(),
-        new ReportDiErrorsPlugin(),
+        new DICatWebpackPlugin(),
     ]
 };

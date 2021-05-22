@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { IContextDescriptor } from '../context/ContextRepository';
 
 export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer
+type TBeanKind = 'method' | 'property';
 
 export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     classMemberName: string;
@@ -14,6 +15,8 @@ export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     scope: TBeanScopeValue;
     node: T;
     typeNode: ts.TypeNode;
+    beanKind: TBeanKind;
+    beanSourceLocation: string | null;
 }
 
 export interface IBeanDescriptorWithId<T extends TBeanNode = TBeanNode> extends IBeanDescriptor<T> {
@@ -26,9 +29,9 @@ type TBeanType = string;
 
 export class BeanRepository {
     static beanDescriptorRepository = new Map<TContextName, Map<TBeanType, IBeanDescriptorWithId[]>>();
-    static idToBeanDescriptorMap = new Map<string, IBeanDescriptorWithId>();
+    static beanIdToBeanDescriptorMap = new Map<string, IBeanDescriptorWithId>();
     static contextIdToBeanDescriptorsMap = new Map<TContextId, IBeanDescriptorWithId[]>();
-    static beanNodeToBeanDescriptorMap = new Map<TBeanNode, IBeanDescriptorWithId>()
+    static beanNodeToBeanDescriptorMap = new Map<TBeanNode, IBeanDescriptorWithId>();
 
     static registerBean(descriptor: IBeanDescriptor): void {
         const descriptorWithId: IBeanDescriptorWithId = {
@@ -52,7 +55,7 @@ export class BeanRepository {
         }
 
         beanDescriptorList.push(descriptorWithId);
-        this.idToBeanDescriptorMap.set(descriptorWithId.id, descriptorWithId);
+        this.beanIdToBeanDescriptorMap.set(descriptorWithId.id, descriptorWithId);
         this.beanNodeToBeanDescriptorMap.set(descriptorWithId.node, descriptorWithId);
 
         let contextDescriptors = this.contextIdToBeanDescriptorsMap.get(descriptor.contextDescriptor.id) ?? null;
@@ -62,5 +65,18 @@ export class BeanRepository {
             this.contextIdToBeanDescriptorsMap.set(descriptor.contextDescriptor.id, contextDescriptors);
         }
         contextDescriptors.push(descriptorWithId);
+    }
+
+    static clearBeanInfoByContextDescriptor(contextDescriptor: IContextDescriptor): void {
+        const beanDescriptorsInContext = this.beanDescriptorRepository.get(contextDescriptor.name) ?? new Map<TBeanType, IBeanDescriptorWithId[]>();
+
+        this.beanDescriptorRepository.delete(contextDescriptor.name);
+        this.contextIdToBeanDescriptorsMap.delete(contextDescriptor.id);
+        beanDescriptorsInContext.forEach((beanDescriptors) => {
+            beanDescriptors.forEach(beanDescriptor => {
+                this.beanIdToBeanDescriptorMap.delete(beanDescriptor.id);
+                this.beanNodeToBeanDescriptorMap.delete(beanDescriptor.node);
+            });
+        });
     }
 }

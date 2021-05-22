@@ -24,7 +24,7 @@ export class DependencyGraph {
 
         cycleIds.forEach(list => {
             const descriptorList = list
-                .map(beanId => BeanRepository.idToBeanDescriptorMap.get(beanId) ?? null)
+                .map(beanId => BeanRepository.beanIdToBeanDescriptorMap.get(beanId) ?? null)
                 .filter((it): it is IBeanDescriptorWithId => it !== null);
 
             let addedDescriptorList = resultMap.get(descriptorList[0].contextDescriptor.name) ?? null;

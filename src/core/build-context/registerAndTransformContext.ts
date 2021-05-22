@@ -22,7 +22,7 @@ export function registerAndTransformContext(
     const contextDescriptor = ContextRepository.contextPathToContextDescriptor.get(sourceFile.fileName) ?? null;
 
     if (!contextDescriptor) {
-        throw new Error('Context descriptor is not registered');
+        throw new Error('Context is not registered');
     }
     registerBeans(contextDescriptor);
     checkIsAllBeansRegisteredInContext(contextDescriptor);

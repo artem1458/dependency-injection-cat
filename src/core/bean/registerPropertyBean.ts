@@ -34,6 +34,9 @@ export const registerPropertyBean = (contextDescriptor: IContextDescriptor, clas
         scope: beanInfo.scope,
         node: classElement,
         typeNode: typeInfo.typeNode,
+        beanKind: 'property',
+        //Will be assigned when resolving dependencies
+        beanSourceLocation: null,
     });
 };
 

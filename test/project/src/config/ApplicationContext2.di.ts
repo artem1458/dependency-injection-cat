@@ -8,7 +8,7 @@ import { ModelRequester } from '../lib/requester/ModelRequester';
 import { ILogger } from '../lib/logger/ILogger';
 import { Logger } from '../lib/logger/Logger';
 
-export class ApplicationContext extends CatContext<IBeans>{
+export class ApplicationContext2 extends CatContext<IBeans>{
     requester = Bean<IRequester<IModel>>(ModelRequester);
     consoleLogger = Bean<ILogger>(Logger);
 

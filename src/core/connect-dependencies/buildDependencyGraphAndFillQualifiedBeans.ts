@@ -17,7 +17,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
         beanDescriptors.forEach(beanDescriptor => {
             const dependencies = beanDependenciesMap.get(beanDescriptor) ?? null;
 
-            if (dependencies === null || dependencies.length === 0) {
+            if (dependencies === null) {
                 return;
             }
 

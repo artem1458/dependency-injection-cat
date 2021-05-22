@@ -1,6 +1,6 @@
 import ts, { factory } from 'typescript';
 import { compact } from 'lodash';
-import { BeanRepository, IBeanDescriptor, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
+import { BeanRepository, IBeanDescriptor, TBeanNode } from '../../bean/BeanRepository';
 import { BeanDependenciesRepository, } from '../../bean-dependencies/BeanDependenciesRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../../ts-helpers/types';
 import { getGlobalContextVariableNameByContextId } from '../utils/getGlobalContextVariableNameByContextId';

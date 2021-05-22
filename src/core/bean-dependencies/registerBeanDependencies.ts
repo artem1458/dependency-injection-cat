@@ -6,8 +6,10 @@ import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBea
 import { registerPropertyBeanDependencies } from './registerPropertyBeanDependencies';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { IContextDescriptor } from '../context/ContextRepository';
+import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 
 export const registerBeanDependencies = (contextDescriptor: IContextDescriptor) => {
+    BeanDependenciesRepository.clearBeanDependenciesByContextDescriptor(contextDescriptor);
     const beanDescriptorList = BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
 
     beanDescriptorList.forEach(descriptor => {

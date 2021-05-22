@@ -1,5 +1,6 @@
 import ts from 'typescript';
 import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
+import { IContextDescriptor } from '../context/ContextRepository';
 
 export interface IBeanDependencyDescriptor {
     parameterName: string;
@@ -17,7 +18,6 @@ type TBeanDependencyType = string;
 
 export class BeanDependenciesRepository {
     static beanDependenciesRepository = new Map<TContextName, Map<IBeanDescriptor, IBeanDependencyDescriptor[]>>();
-    static classPropertyToDependencyDescriptorMap = new Map<ts.ParameterDeclaration, IBeanDependencyDescriptor>();
 
     static registerBeanDependency(beanDescriptor: IBeanDescriptor, dependencyDescriptor: IBeanDependencyDescriptor) {
         let dependenciesMap = this.beanDependenciesRepository.get(dependencyDescriptor.contextName) ?? null;
@@ -35,10 +35,13 @@ export class BeanDependenciesRepository {
         }
 
         beanDependencyDescriptors.push(dependencyDescriptor);
-        this.classPropertyToDependencyDescriptorMap.set(dependencyDescriptor.node, dependencyDescriptor);
     }
 
     static getBeanDescriptorMapByContextName(contextName: TContextName): Map<IBeanDescriptor, IBeanDependencyDescriptor[]> | null {
         return this.beanDependenciesRepository.get(contextName) ?? null;
+    }
+
+    static clearBeanDependenciesByContextDescriptor(contextDescriptor: IContextDescriptor) {
+        this.beanDependenciesRepository.delete(contextDescriptor.name);
     }
 }
