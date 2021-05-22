@@ -16,6 +16,7 @@ import { isPathRelative } from '../../utils/isPathRelative';
 
 //TODO Add support for default imports/exports
 export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string, exportNodesStack: ts.ExportDeclaration[] = []): INodeSourceDescriptor | null {
+    CompilationContext.clearErrorsByFilePath(sourceFile.fileName);
     const splittedNameToFind = nameToFind.split('.');
 
     //Trying to Find in imports-----------------------------------------------------------------------------------------
@@ -158,7 +159,8 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         if (!upath.isAbsolute(resolvedPath)) {
             CompilationContext.reportError({
                 node: externalNamespaceExport,
-                message: 'DI container does not support export * as Something from "node-module"'
+                message: 'DI container does not support export * as Something from "node-module"',
+                filePath: sourceFile.fileName,
             });
 
             return null;
@@ -194,6 +196,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             CompilationContext.reportError({
                 node: externalExportSpecifier,
                 message: 'DI container does not support export * as Something from "node-module"',
+                filePath: sourceFile.fileName,
             });
 
             return null;
@@ -219,6 +222,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
             CompilationContext.reportError({
                 message: 'DI container does not support export * from "node-module"',
                 node: it,
+                filePath: sourceFile.fileName,
             });
 
             return null;

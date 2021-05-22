@@ -10,10 +10,13 @@ import { ContextNamesRepository } from '../../context/ContextNamesRepository';
 import { registerAllContextNames } from '../../context/registerContextNames';
 
 export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsToAdd: ts.ImportDeclaration[]): ts.Node => {
+    CompilationContext.clearErrorsByFilePath(node.getSourceFile().fileName);
+
     if (!validContainerKeys.includes(node.expression.name.getText())) {
         CompilationContext.reportError({
             node: node,
             message: `Container has only following methods: ${validContainerKeys.join(', ')}`,
+            filePath: node.getSourceFile().fileName,
         });
         return node;
     }
@@ -27,7 +30,8 @@ export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsT
     if (contextName === GLOBAL_CONTEXT_NAME) {
         CompilationContext.reportError({
             message: 'You can\'t access Global Context',
-            node: node
+            node: node,
+            filePath: node.getSourceFile().fileName,
         });
         return node;
     }
@@ -43,6 +47,7 @@ export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsT
             CompilationContext.reportError({
                 node,
                 message: `Context with name "${contextName}" not found`,
+                filePath: node.getSourceFile().fileName,
             });
             return node;
         }

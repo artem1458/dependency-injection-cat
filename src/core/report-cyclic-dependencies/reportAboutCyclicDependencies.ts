@@ -23,6 +23,7 @@ export const reportAboutCyclicDependencies = (contextDescriptor: IContextDescrip
             CompilationContext.reportErrorWithMultipleNodes({
                 nodes,
                 message: `Cyclic dependencies detected in context "${contextName}" for Beans: ${names.join(' <—> ')}`,
+                filePath: contextDescriptor.absolutePath,
             });
         });
     });

@@ -7,12 +7,7 @@ export type TString = string;
 
 export class UseCase implements IUseCase {
     constructor(
-        private requester: IRequester<IModel>,
         private baseLogger: ILogger,
-        private baseLogger2: ILogger,
-        private baseLogger3: ILogger,
-        private baseLogger4: ILogger,
-        private consoleLogger: ILogger,
     ) {}
 
     async makeSomeBusinessLogic(): Promise<void> {

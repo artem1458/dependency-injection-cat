@@ -13,6 +13,7 @@ export const checkBeansInterface = (node: IContainerAccessNode, contextDescripto
         CompilationContext.reportError({
             node,
             message: 'Container access should have a required TBeans type argument',
+            filePath: node.getSourceFile().fileName,
         });
         return;
     }
@@ -23,6 +24,7 @@ export const checkBeansInterface = (node: IContainerAccessNode, contextDescripto
         CompilationContext.reportError({
             node: beansType,
             message: 'TBeans should be a plain interface reference',
+            filePath: node.getSourceFile().fileName,
         });
         return;
     }
@@ -36,6 +38,7 @@ export const checkBeansInterface = (node: IContainerAccessNode, contextDescripto
         CompilationContext.reportError({
             node: beansType.typeName,
             message: 'Can\'t qualify TBeans declaration',
+            filePath: node.getSourceFile().fileName,
         });
         return;
     }
@@ -54,6 +57,7 @@ export const checkBeansInterface = (node: IContainerAccessNode, contextDescripto
                 nodeDescriptor.node,
             ],
             message: `TBeans interface should be the same as on ${contextDescriptor.name}\nExpected\nFound`,
+            filePath: node.getSourceFile().fileName,
         });
     }
 };

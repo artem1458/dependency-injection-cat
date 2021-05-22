@@ -13,17 +13,20 @@ import { checkIsAllBeansRegisteredInContext } from '../bean/checkIsAllBeansRegis
 import { registerBeanDependencies } from '../bean-dependencies/registerBeanDependencies';
 import { buildDependencyGraphAndFillQualifiedBeans } from '../connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
 import { reportAboutCyclicDependencies } from '../report-cyclic-dependencies/reportAboutCyclicDependencies';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export function registerAndTransformContext(
     context: ts.TransformationContext,
     sourceFile: ts.SourceFile
 ): ts.SourceFile {
+    CompilationContext.clearErrorsByFilePath(sourceFile.fileName);
     registerContext(sourceFile);
     const contextDescriptor = ContextRepository.contextPathToContextDescriptor.get(sourceFile.fileName) ?? null;
 
     if (!contextDescriptor) {
         throw new Error('Context is not registered');
     }
+
     registerBeans(contextDescriptor);
     checkIsAllBeansRegisteredInContext(contextDescriptor);
     registerBeanDependencies(contextDescriptor);

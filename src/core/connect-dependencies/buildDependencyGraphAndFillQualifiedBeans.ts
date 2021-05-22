@@ -37,6 +37,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                     CompilationContext.reportError({
                         node: dependencyDescriptor.node,
                         message: 'Bean for dependency is not registered',
+                        filePath: beanDescriptor.contextDescriptor.absolutePath,
                     });
                     return;
                 }
@@ -64,6 +65,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                                 ...beanCandidatesFromCurrentContextQualifiedByParameterName.map(it => it.node),
                             ],
                             message: `Found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} Bean candidates, with same name, please rename one of beans`,
+                            filePath: beanDescriptor.contextDescriptor.absolutePath,
                         });
                         return;
                     }
@@ -74,6 +76,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                             ...beanCandidatesFromCurrentContext.map(it => it.node),
                         ],
                         message: `Found ${beanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
+                        filePath: beanDescriptor.contextDescriptor.absolutePath,
                     });
                     return;
                 }
@@ -101,6 +104,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                                 ...beanCandidatesFromGlobalContextQualifiedByParameterName.map(it => it.node),
                             ],
                             message: `Found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} Bean candidates in Global context, with same name, please rename one of beans`,
+                            filePath: beanDescriptor.contextDescriptor.absolutePath,
                         });
                         return;
                     }
@@ -111,6 +115,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                             ...beanCandidatesFromGlobalContext.map(it => it.node),
                         ],
                         message: `Found ${beanCandidatesFromGlobalContext.length} Bean candidates in Global context, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
+                        filePath: beanDescriptor.contextDescriptor.absolutePath,
                     });
                     return;
                 }

@@ -20,6 +20,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
         CompilationContext.reportError({
             node: extendsHeritageClause,
             message: 'You should pass TBeans interface reference to the context inheritance',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -29,6 +30,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
         CompilationContext.reportError({
             node: extendsHeritageClause,
             message: 'TBeans should be a plain interface reference',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -42,6 +44,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
         CompilationContext.reportError({
             node: type.typeName,
             message: 'Can\'t qualify TBeans declaration',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -50,6 +53,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
         CompilationContext.reportError({
             node: type.typeName,
             message: 'TBeans should be a plain interface declaration (without extends keyword)',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -58,6 +62,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
         CompilationContext.reportError({
             node: type.typeName,
             message: 'TBeans should be a plain interface declaration (without extends keyword)',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -66,6 +71,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
         CompilationContext.reportError({
             node: type.typeName,
             message: 'TBeans should be a plain interface declaration without indexed signatures',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -92,6 +98,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
         CompilationContext.reportErrorWithMultipleNodes({
             nodes: [type, ...missingBeans],
             message: `Some beans is not registered in Context "${contextDescriptor.name}": [ ${missingBeansText} ]`,
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }

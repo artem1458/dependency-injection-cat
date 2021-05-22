@@ -9,7 +9,6 @@ import { ILogger } from '../lib/logger/ILogger';
 import { Logger } from '../lib/logger/Logger';
 
 export class ApplicationContext2 extends CatContext<IBeans>{
-    requester = Bean<IRequester<IModel>>(ModelRequester);
     consoleLogger = Bean<ILogger>(Logger);
 
     useCase: IUseCase = Bean(UseCase);

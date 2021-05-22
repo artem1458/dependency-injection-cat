@@ -14,6 +14,7 @@ export function registerContext(sourceFile: ts.SourceFile) {
         CompilationContext.reportErrorWithMultipleNodes({
             message: 'Only one context should be defined in file.',
             nodes: excessCatContextClasses,
+            filePath: sourceFile.fileName,
         });
 
         return;
@@ -28,7 +29,8 @@ function registerCatContext(classDeclaration: ts.ClassDeclaration) {
     if (!isNamedClassDeclaration(classDeclaration)) {
         CompilationContext.reportError({
             message: 'Context should be a named class declaration',
-            node: classDeclaration
+            node: classDeclaration,
+            filePath: classDeclaration.getSourceFile().fileName,
         });
 
         return;
@@ -39,7 +41,8 @@ function registerCatContext(classDeclaration: ts.ClassDeclaration) {
     if (name === GLOBAL_CONTEXT_NAME) {
         CompilationContext.reportError({
             message: `"${GLOBAL_CONTEXT_NAME}" name of context is preserved for DI container`,
-            node: classDeclaration
+            node: classDeclaration,
+            filePath: classDeclaration.getSourceFile().fileName,
         });
         return;
     }
@@ -53,6 +56,7 @@ function registerCatContext(classDeclaration: ts.ClassDeclaration) {
                 classDeclaration,
                 oldContext.node,
             ],
+            filePath: classDeclaration.getSourceFile().fileName,
         });
         return;
     }

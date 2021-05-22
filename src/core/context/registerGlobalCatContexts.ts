@@ -24,6 +24,8 @@ export const registerGlobalCatContexts = (contextPaths: Array<string>) => {
         .value();
 
     sourceFiles.forEach(sourceFile => {
+        CompilationContext.clearErrorsByFilePath(sourceFile.fileName);
+
         const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
         const globalCatContextClassDeclarations = sourceFile.statements.filter(isExtendsGlobalCatContextContext);
 
@@ -34,6 +36,7 @@ export const registerGlobalCatContexts = (contextPaths: Array<string>) => {
                     ...catContextClassDeclarations,
                     ...globalCatContextClassDeclarations,
                 ],
+                filePath: sourceFile.fileName,
             });
 
             return;
@@ -49,6 +52,7 @@ export const registerGlobalCatContexts = (contextPaths: Array<string>) => {
                     ...excessGlobalCatContextClasses,
                 ],
                 message: 'Only one context should be defined in file.',
+                filePath: sourceFile.fileName,
             });
 
             return;
@@ -64,7 +68,8 @@ function registerGlobalCatContext(classDeclaration: ts.ClassDeclaration) {
     if (!isNamedClassDeclaration(classDeclaration)) {
         CompilationContext.reportError({
             message: 'Global Context should be a named class declaration',
-            node: classDeclaration
+            node: classDeclaration,
+            filePath: classDeclaration.getSourceFile().fileName,
         });
 
         return;

@@ -57,6 +57,13 @@ export class CompilationContext {
         }
     }
 
+    static clearErrorsByFilePath(filePath: string): void {
+        this.compilationContext.errors =
+            this.compilationContext.errors.filter(it => it.filePath !== filePath);
+        this.compilationContext.errorsWithMultipleNodes =
+            this.compilationContext.errorsWithMultipleNodes.filter(it => it.filePath !== filePath);
+    }
+
     private static getErrorMessagesForDebug(): string | null {
         if (this.areErrorsEmpty()) {
             return null;
@@ -92,12 +99,6 @@ export class CompilationContext {
         this.compilationContext.errorsWithMultipleNodes.forEach(error => {
             errorMessages.push(this.formatCompilationContextDataWithMultipleNodes(error));
         });
-
-        this.compilationContext = {
-            errorsWithMultipleNodes: [],
-            textErrors: [],
-            errors: []
-        };
 
         return chalk.red(errorMessages.join('\n'));
     }

@@ -12,6 +12,7 @@ export function registerAllContextNames() {
     const contextPaths = getContextPaths();
 
     contextPaths.forEach(contextPath => {
+        CompilationContext.clearErrorsByFilePath(contextPath);
         const sourceFile = ts.createSourceFile(
             '',
             fs.readFileSync(contextPath, 'utf-8'),
@@ -27,6 +28,7 @@ export function registerAllContextNames() {
             CompilationContext.reportErrorWithMultipleNodes({
                 message: 'Only one context should be defined in file.',
                 nodes: excessCatContextClasses,
+                filePath: contextPath,
             });
 
             return;
@@ -37,7 +39,8 @@ export function registerAllContextNames() {
         if (!isNamedClassDeclaration(classDeclaration)) {
             CompilationContext.reportError({
                 message: 'Context should be a named class declaration',
-                node: classDeclaration
+                node: classDeclaration,
+                filePath: contextPath,
             });
 
             return;
