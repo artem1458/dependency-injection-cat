@@ -1,14 +1,13 @@
 import ts, { factory } from 'typescript';
 import upath from 'upath';
-import { uniq } from 'lodash';
 import { PRIVATE_TOKEN } from '../constants';
 import { getRelativePathToExternalDirectoryFromSourceFile } from '../utils/getRelativePathToExternalDirectoryFromSourceFile';
-import { getGlobalContextVariableNameByContextId } from '../utils/getGlobalContextVariableNameByContextId';
+import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 
 export const INTERNAL_CAT_CONTEXT_IMPORT = `INTERNAL_CAT_CONTEXT_IMPORT${PRIVATE_TOKEN}`;
 export const CONTEXT_POOL_IMPORT = `CONTEXT_POOL_IMPORT${PRIVATE_TOKEN}`;
 
-export const addNecessaryImports = (globalContextIdsToAdd: string[]): ts.TransformerFactory<ts.SourceFile> => {
+export const addNecessaryImports = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
     return () => sourceFile => {
         const sourceFileDirname = upath.dirname(sourceFile.fileName);
         const relativePathToEXTERNALDirectory = getRelativePathToExternalDirectoryFromSourceFile(
@@ -49,21 +48,25 @@ export const addNecessaryImports = (globalContextIdsToAdd: string[]): ts.Transfo
             factory.createStringLiteral(pathForContextPool)
         );
 
-        const globalContextImports = uniq(globalContextIdsToAdd).map(it => (
-            factory.createImportDeclaration(
-                undefined,
-                undefined,
-                factory.createImportClause(
-                    false,
+        const globalContextImports = contextDescriptorToIdentifierList.map(([contextDescriptor, identifier]) => {
+            const relativePathToGlobalContext = `./${upath.relative(
+                sourceFileDirname,
+                contextDescriptor.absolutePath,
+            )}`;
+
+            return (
+                factory.createImportDeclaration(
                     undefined,
-                    factory.createNamedImports([factory.createImportSpecifier(
+                    undefined,
+                    factory.createImportClause(
+                        false,
                         undefined,
-                        factory.createIdentifier(getGlobalContextVariableNameByContextId(it)),
-                    )])
-                ),
-                factory.createStringLiteral(`./context_${it}`),
-            )
-        ));
+                        factory.createNamespaceImport(identifier)
+                    ),
+                    factory.createStringLiteral(relativePathToGlobalContext)
+                )
+            );
+        });
 
         return ts.factory.updateSourceFile(
             sourceFile,

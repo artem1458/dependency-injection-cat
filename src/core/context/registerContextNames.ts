@@ -22,6 +22,10 @@ export function registerAllContextNames() {
 
         const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
 
+        if (catContextClassDeclarations.length === 0) {
+            return;
+        }
+
         if (catContextClassDeclarations.length > 1) {
             const excessCatContextClasses = catContextClassDeclarations.slice(1);
 

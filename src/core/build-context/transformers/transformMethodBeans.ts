@@ -3,9 +3,12 @@ import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/Bea
 import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
 import { compact } from 'lodash';
 import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
-import { getGlobalContextVariableNameByContextId } from '../utils/getGlobalContextVariableNameByContextId';
+import {
+    getGlobalContextIdentifierFromArrayOrCreateNewAndPush,
+    TContextDescriptorToIdentifier
+} from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 
-export const transformMethodBeans = (globalContextIdsToAdd: string[]): ts.TransformerFactory<ts.SourceFile> => {
+export const transformMethodBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
@@ -15,7 +18,7 @@ export const transformMethodBeans = (globalContextIdsToAdd: string[]): ts.Transf
                         return;
                     }
 
-                    const newBody = getNewBody(beanDescriptor, globalContextIdsToAdd);
+                    const newBody = getNewBody(beanDescriptor, contextDescriptorToIdentifierList);
 
                     return factory.updateMethodDeclaration(
                         node,
@@ -39,7 +42,7 @@ export const transformMethodBeans = (globalContextIdsToAdd: string[]): ts.Transf
     };
 };
 
-function getNewBody (beanDescriptor: IBeanDescriptorWithId, globalContextIdsToAdd: string[]): ts.Block {
+function getNewBody (beanDescriptor: IBeanDescriptorWithId, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
     const node = beanDescriptor.node as ts.MethodDeclaration;
     const nodeBody = node.body ?? factory.createBlock([]);
 
@@ -73,7 +76,10 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId, globalContextIdsToAd
             );
         }
 
-        globalContextIdsToAdd.push(dependencyDescriptor.qualifiedBean.contextDescriptor.id);
+        const globalContextIdentifier = getGlobalContextIdentifierFromArrayOrCreateNewAndPush(
+            dependencyDescriptor.qualifiedBean.contextDescriptor,
+            contextDescriptorToIdentifierList,
+        );
 
         return factory.createVariableStatement(
             undefined,
@@ -84,7 +90,10 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId, globalContextIdsToAd
                     dependencyDescriptor.node.type,
                     factory.createCallExpression(
                         factory.createPropertyAccessExpression(
-                            factory.createIdentifier(getGlobalContextVariableNameByContextId(dependencyDescriptor.qualifiedBean.contextDescriptor.id)),
+                            factory.createPropertyAccessExpression(
+                                globalContextIdentifier,
+                                factory.createIdentifier(globalContextIdentifier.text),
+                            ),
                             factory.createIdentifier('getBean')
                         ),
                         undefined,

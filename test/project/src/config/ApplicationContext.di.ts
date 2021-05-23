@@ -5,11 +5,8 @@ import { IUseCase } from '../lib/use-case/IUseCase';
 import { IRequester } from '../lib/requester/IRequester';
 import { IModel } from '../lib/models/IModel';
 import { ModelRequester } from '../lib/requester/ModelRequester';
-import { ILogger } from '../lib/logger/ILogger';
-import { Logger } from '../lib/logger/Logger';
 
-export class ApplicationContext extends CatContext<IBeans>{
-    consoleLogger = Bean<ILogger>(Logger);
-
+export class ApplicationContext extends CatContext<IBeans> {
+    requester: IRequester<IModel> = Bean(ModelRequester);
     useCase: IUseCase = Bean(UseCase);
 }
