@@ -25,6 +25,7 @@
     "build-all-start": "sh scripts/buildAllStart.sh"
   },
   "devDependencies": {
+    "@babel/runtime": "^7.14.0",
     "@types/find-up": "^4.0.0",
     "@types/glob": "^7.1.2",
     "@types/glob-to-regexp": "^0.4.0",

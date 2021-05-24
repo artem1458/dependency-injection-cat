@@ -19,10 +19,10 @@ export const relativizeImports = (): ts.TransformerFactory<ts.SourceFile> => {
                     const absoluteImportPathWithoutExtension = removeExtensionFromPath(
                         absolutePathFromResolverWithExtension,
                     );
-                    const newRelative = upath.relative(
+                    const newRelative = `./${upath.relative(
                         sourceFileDirname,
                         absoluteImportPathWithoutExtension,
-                    );
+                    )}`;
 
                     return factory.updateImportDeclaration(
                         node,

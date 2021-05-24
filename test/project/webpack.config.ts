@@ -38,12 +38,13 @@ module.exports = {
                 options: {
                     plugins: [
                         '@babel/plugin-transform-runtime',
+                        '@babel/plugin-proposal-class-properties',
                         [
                             '@babel/plugin-proposal-decorators',
                             { 'legacy': true }
                         ],
                         [
-                            require('dependency-injection-cat/transformers/babel'),
+                            require('../../src/transformers/babel'),
                         ]
                     ],
                     presets: [

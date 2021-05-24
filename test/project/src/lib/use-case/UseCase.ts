@@ -8,6 +8,8 @@ export type TString = string;
 export class UseCase implements IUseCase {
     constructor(
         private someLogger: ILogger,
+        private someLogger2: ILogger,
+        private someLogger3: ILogger,
     ) {}
 
     async makeSomeBusinessLogic(): Promise<void> {
