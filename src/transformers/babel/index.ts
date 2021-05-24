@@ -1,12 +1,12 @@
-import uuid from 'uuid';
 import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { libraryName } from '../../constants/libraryName';
 import { ProgramRepository } from '../../core/program/ProgramRepository';
 import { initContexts } from '../../core/initContexts';
+import { uniqId } from '../../core/utils/uniqId';
 
-const IGNORE_TRANSFORM_PROPERTY_KEY = uuid.v4();
+const IGNORE_TRANSFORM_PROPERTY_KEY = uniqId();
 
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);

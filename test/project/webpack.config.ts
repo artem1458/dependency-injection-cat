@@ -2,7 +2,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const DICatWebpackPlugin = require('../../src/plugins/webpack').default;
+const DICatWebpackPlugin = require('../../src/plugins/webpack/ReportDiErrors').default;
 
 module.exports = {
     entry: './src/index.ts',
@@ -18,41 +18,40 @@ module.exports = {
     },
     module: {
         rules: [
-            // {
-            //     test: /\.ts$/,
-            //     loader: 'ts-loader',
-            //     options: {
-            //         compiler: 'ttypescript',
-            //         // getCustomTransformers: (program) => ({
-            //         //     before: [diCatTsTransformer(program, {
-            //         //         compiledContextOutputDir: './compiled-context',
-            //         //     })],
-            //         // }),
-            //         transpileOnly: true,
-            //     }
-            // }
             {
-                test: /\.(t|j)s$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'babel-loader',
+                test: /\.ts$/,
+                loader: 'ts-loader',
                 options: {
-                    plugins: [
-                        '@babel/plugin-transform-runtime',
-                        '@babel/plugin-proposal-class-properties',
-                        [
-                            '@babel/plugin-proposal-decorators',
-                            { 'legacy': true }
-                        ],
-                        [
-                            require('../../src/transformers/babel'),
-                        ]
-                    ],
-                    presets: [
-                        '@babel/preset-env',
-                        '@babel/preset-typescript',
-                    ]
+                    compiler: 'ttypescript',
+                    // getCustomTransformers: (program) => ({
+                    //     before: [diCatTsTransformer(program, {
+                    //     })],
+                    // }),
+                    transpileOnly: true,
                 }
             }
+            // {
+            //     test: /\.(t|j)s$/,
+            //     exclude: /(node_modules|bower_components)/,
+            //     loader: 'babel-loader',
+            //     options: {
+            //         plugins: [
+            //             '@babel/plugin-transform-runtime',
+            //             '@babel/plugin-proposal-class-properties',
+            //             [
+            //                 '@babel/plugin-proposal-decorators',
+            //                 { 'legacy': true }
+            //             ],
+            //             [
+            //                 require('../../src/transformers/babel'),
+            //             ]
+            //         ],
+            //         presets: [
+            //             '@babel/preset-env',
+            //             '@babel/preset-typescript',
+            //         ]
+            //     }
+            // }
         ],
     },
     plugins: [

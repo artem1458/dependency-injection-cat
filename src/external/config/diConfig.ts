@@ -3,7 +3,6 @@ import { WrongConfigurationException } from '../../exceptions/compilation/WrongC
 
 class DiConfig implements IDiConfig {
     diConfigPattern = '**/*.di.ts';
-    compiledContextOutputDir?: string;
     ignorePatterns = ['**/node_modules/**'];
 
     _errorMessageType: 'debug' | 'human' = 'human';

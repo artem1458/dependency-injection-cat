@@ -20,7 +20,7 @@ export class ApplicationContext extends CatContext<IBeans> {
 //UseCase.ts
 export class UseCase implements IUseCase {
   constructor(
-          private repository: IRepository,
+    private repository: IRepository,
   ) {}
 
   makeBusinessLogic() {}
@@ -28,8 +28,8 @@ export class UseCase implements IUseCase {
 
 //Your application.tsx
 export const UIComponent: React.FC = () => {
-  const appContext = container.getContext<IBeans>({ name: 'ApplicationContext' });
-  const { useCase } = appContext.getBeans();
+  const appContext = container.getContext<IBeans>({name: 'ApplicationContext'});
+  const {useCase} = appContext.getBeans();
 
   return (
     <button onClick={useCase.makeBusinessLogic}> Click me! </button>
@@ -68,7 +68,7 @@ npm install dependency-injection-cat
 
 ```typescript
 //webpack.config.js
-const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
+const DiCatWebpackPlugin = require('dependency-injection-cat/plugins/webpack').default;
 const DiCatBabelTransformer = require('dependency-injection-cat/transformers/babel');
 
 module.exports = {
@@ -96,7 +96,7 @@ module.exports = {
   },
   plugins: [
     //Without this plugin, a compilation with DI errors will be successful
-    new ReportDiErrorsPlugin(),
+    new DiCatWebpackPlugin(),
   ]
 }
 ```
@@ -116,7 +116,7 @@ module.exports = {
 
 ```typescript
 //webpack.config.js
-const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
+const DiCatWebpackPlugin = require('dependency-injection-cat/plugins/webpack').default;
 const diCatTransformer = require('dependency-injection-cat/transformers/typescript').default;
 
 module.exports = {
@@ -140,7 +140,7 @@ module.exports = {
   },
   plugins: [
     //Without this plugin, a compilation with DI errors will be successful
-    new ReportDiErrorsPlugin(),
+    new DiCatWebpackPlugin(),
   ]
 }
 ```
@@ -160,7 +160,7 @@ module.exports = {
 
 ```typescript
 //webpack.config.js
-const ReportDiErrorsPlugin = require('dependency-injection-cat/plugins/webpack/ReportDiErrors').default;
+const DiCatWebpackPlugin = require('dependency-injection-cat/plugins/webpack').default;
 
 module.exports = {
   //...
@@ -179,7 +179,7 @@ module.exports = {
   },
   plugins: [
     //Without this plugin, a compilation with DI errors will be successful
-    new ReportDiErrorsPlugin(),
+    new DiCatWebpackPlugin(),
   ]
 }
 ```
@@ -231,12 +231,15 @@ module.exports = {
 {
   diConfigPattern: string | undefined; // Glob pattern, default value. Default: '**/*.di.ts'
   ignorePatterns: Array<string> | undefined; // Array of Glob patterns, default value. Default: ['**/node_modules/**']
-  compiledContextOutputDir: string | undefined; // Output directory of transformed contextMap, can be specified for debug purposes. Default: node_modules/dependency-injection-cat/external/built-context
   disableLogoPrint: boolean | undefined; // Disable exposing dependency-injections-cat logo into console 
 }
 ```
 
 
+
+## Hot Reload
+
+Currently correct hot reload supported only with DI-Cat Webpack plugin, and for non-global CatContexts.
 
 ## CatContext
 
@@ -277,16 +280,16 @@ If you need to pass additional parameters to your classes, for example ID, or so
 
 ```typescript
 export interface IConfig {
-    id: string;
+  id: string;
 }
 
 class ApplicationContext extends CatContext<IBeans, IConfig> {
-    @Bean
-    useCase(): IUseCase {
-        const { id } = this.config;
-        
-        return new UseCase(id);
-    }
+  @Bean
+  useCase(): IUseCase {
+    const {id} = this.config;
+
+    return new UseCase(id);
+  }
 }
 ```
 
@@ -304,22 +307,22 @@ Sometimes you want to describe common dependencies that will be used all across 
 //GlobalApplicationContext.di.ts
 export class GlobalApplicationContext extends GlobalCatContext {
 
-    @Bean
-    logger(): ILogger {
-        return new Logger();
-    }
+  @Bean
+  logger(): ILogger {
+    return new Logger();
+  }
 }
 
 //ApplicationContext.di.ts
 export class AppContext extends CatContext<IBeans> {
 
-    @Bean
-    useCase(
-    	//If Bean for ILogger will be defined in current context, bean from current context will be injected
-    	logger: ILogger
-    ): IUseCase {
-        return new UseCase(logger)
-    }
+  @Bean
+  useCase(
+    //If Bean for ILogger will be defined in current context, bean from current context will be injected
+    logger: ILogger
+  ): IUseCase {
+    return new UseCase(logger)
+  }
 }
 ```
 
@@ -343,9 +346,9 @@ InitContext creates instance of **context** by key (if specified). Also you can 
 
 ```typescript
 container.initContext<TBeans, TConfig>({
-    key?: any, //Can be any value, you can use it for creating pool of contextMap.
-    name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
-    config?: TConfig, //Config that will be transferred to the context
+  key?: any, //Can be any value, you can use it for creating pool of contextMap.
+  name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
+  config?: TConfig, //Config that will be transferred to the context
 });
 ```
 
@@ -366,9 +369,9 @@ import { IBeans } from './IBeans';
 import { IConfig } from './IConfig';
 
 const applicationContextBySomeKey = container.initContext<IBeans, IConfig>({
-    name: 'ApplicationContext',
-	key: 'userId',
-    config: { userId: 'userId' },
+  name: 'ApplicationContext',
+  key: 'userId',
+  config: { userId: 'userId' },
 });
 ```
 
@@ -378,8 +381,8 @@ getContext returns instance of **context** by key (if specified). Can be used on
 
 ```typescript
 container.getContext<TBeans>({
-    key?: any,
-    name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
+  key?: any,
+  name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
 });
 ```
 
@@ -397,8 +400,8 @@ const context = container.getContext<TBeans>({ name: 'ApplicationContext' });
 import { container } from 'dependency-injection-cat';
 
 const context = container.getContext<TBeans>({
-	name: 'ApplicationContext',
-    key: 'userId',
+  name: 'ApplicationContext',
+  key: 'userId',
 });
 ```
 
@@ -408,8 +411,8 @@ clearContext should be used to clear instances of **Beans**. Can be used, for ex
 
 ```typescript
 container.clearContext({
-    name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
-    key?: any,
+  name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
+  key?: any,
 })
 ```
 
@@ -427,8 +430,8 @@ container.clearContext({ name: 'ApplicationContext' });
 import { container } from 'dependency-injection-cat';
 
 container.clearContext({
-	name: 'ApplicationContext',
-	key: 'userId',
+  name: 'ApplicationContext',
+  key: 'userId',
 });
 ```
 
@@ -441,8 +444,8 @@ Beans can have dependencies, and they also should be defined as a beans or passe
 
 ```typescript
 interface IBeanConfiguration {
-    scope?: 'prototype' | 'singleton';
-    /* Should be a string literal. Default value is 'singleton'. When singleton, will be created only 1 instance of the Bean, when 'prototype', for each getting of Bean will be created a new instance */
+  scope?: 'prototype' | 'singleton';
+  /* Should be a string literal. Default value is 'singleton'. When singleton, will be created only 1 instance of the Bean, when 'prototype', for each getting of Bean will be created a new instance */
 }
 ```
 
@@ -464,23 +467,23 @@ Property Beans resolving class dependencies automatically from the constructor o
 
 ```typescript
 export class ApplicationContext extends CatContext<IBeans> {
-    //First argument passed in Bean should be a class, di-container will try to resolve class dependencies
-    useCase = Bean(UseCaseClass);
-    
-    //To specify type of Bean you can use Generic parameter, or set type of property
-    useCase = Bean<IUseCase>(UseCase);
-    useCase: IUseCase = Bean(UseCase);
-    useCase: IUseCase = Bean<IUseCase>(UseCase);
-    
-    //If type is not specified, class will be used as a type
-    useCase = Bean(UseCaseClass)
-    //Equivalent to
-    useCase = Bean<UseCaseClass>(UseCaseClass)
-    useCase: UseCaseClass = Bean(UseCaseClass)
-    useCase: UseCaseClass = Bean<UseCaseClass>(UseCaseClass)
-    
-    //Bean configuration should be passed as a second argument. Should be an object literal.
-    useCase: IUseCase = Bean(UseCase, { scope: 'prototype' });
+  //First argument passed in Bean should be a class, di-container will try to resolve class dependencies
+  useCase = Bean(UseCaseClass);
+
+  //To specify type of Bean you can use Generic parameter, or set type of property
+  useCase = Bean<IUseCase>(UseCase);
+  useCase: IUseCase = Bean(UseCase);
+  useCase: IUseCase = Bean<IUseCase>(UseCase);
+
+  //If type is not specified, class will be used as a type
+  useCase = Bean(UseCaseClass)
+  //Equivalent to
+  useCase = Bean<UseCaseClass>(UseCaseClass)
+  useCase: UseCaseClass = Bean(UseCaseClass)
+  useCase: UseCaseClass = Bean<UseCaseClass>(UseCaseClass)
+
+  //Bean configuration should be passed as a second argument. Should be an object literal.
+  useCase: IUseCase = Bean(UseCase, {scope: 'prototype'});
 }
 ```
 
@@ -489,17 +492,18 @@ export class ApplicationContext extends CatContext<IBeans> {
 ```typescript
 //UseCaseDependency
 export class UseCaseDependency implements IUseCaseDependency {
-   //...businessLogic
+  //...businessLogic
 }
 
 //UseCase.ts
 export class UseCase implements IUseCase {
-    constructor(
-    	//Any name can be used
-    	private useCaseDependency: IUseCaseDependency,
-    ) {}
-    
-    //...businessLogic
+  constructor(
+    //Any name can be used
+    private useCaseDependency: IUseCaseDependency,
+  ) {
+  }
+
+  //...businessLogic
 }
 
 
@@ -507,9 +511,9 @@ export class UseCase implements IUseCase {
 import { CatContext, Bean } from 'dependency-injection-cat';
 
 export class ApplicationContext extends CatContext<IBeans> {
-    useCaseDependency = Bean<IUseCaseDependency>(UseCaseDependency);
+  useCaseDependency = Bean<IUseCaseDependency>(UseCaseDependency);
 
-    useCase = Bean<IUseCase>(UseCase);
+  useCase = Bean<IUseCase>(UseCase);
 }
 ```
 
@@ -525,27 +529,27 @@ Method Beans are more flexible, for example it allows you to pass configuration 
 
 ```typescript
 export class ApplicationContext extends CatContext<IBeans> {
-   	//Bean don't have any dependencies
-    @Bean
-    useCase(): IUseCase {
-        return new UseCase();
-    }
-    
-    //Bean have dependencies
-    dependency: IUseCaseDependency = Bean(UseCaseDependency);
-    
-    @Bean
-    useCase(
-    	useCaseDependency: IUseCaseDependency,
-    ): IUseCase {
-        return new UseCase(useCaseDependency);
-    }
-    
-    //Configure Bean
-    @Bean({ scope: 'prototype' })
-    useCase(): IUseCase {
-        return new UseCase();
-    }
+  //Bean don't have any dependencies
+  @Bean
+  useCase(): IUseCase {
+    return new UseCase();
+  }
+
+  //Bean have dependencies
+  dependency: IUseCaseDependency = Bean(UseCaseDependency);
+
+  @Bean
+  useCase(
+    useCaseDependency: IUseCaseDependency,
+  ): IUseCase {
+    return new UseCase(useCaseDependency);
+  }
+
+  //Configure Bean
+  @Bean({ scope: 'prototype' })
+  useCase(): IUseCase {
+    return new UseCase();
+  }
 }
 ```
 
@@ -566,30 +570,30 @@ Also, you can use qualifier, when injecting **Beans** from **GlobalCatContext**
 ```typescript
 //Implicit declaration of the qualifier
 export class ApplicationContext extends CatContext<IBeans> {
-    httpRequester: IRequester = Bean(HttpRequester);
-    graphQLRequester: IRequester = Bean(GraphQLRequester);
-    
-    @Bean
-    useCase(
-    	graphQLRequester: IRequester, //Will be injected implementation "GraphQLRequester"
-    ): IUseCase {
-        return new UseCase(graphQLRequester);
-    }
+  httpRequester: IRequester = Bean(HttpRequester);
+  graphQLRequester: IRequester = Bean(GraphQLRequester);
+
+  @Bean
+  useCase(
+    graphQLRequester: IRequester, //Will be injected implementation "GraphQLRequester"
+  ): IUseCase {
+    return new UseCase(graphQLRequester);
+  }
 }
 ```
 
 ```typescript
 //When Bean placed in current context
 export class ApplicationContext extends CatContext<IBeans> {
-    httpRequester: IRequester = Bean(HttpRequester);
-    graphQLRequester: IRequester = Bean(GraphQLRequester);
-    
-    @Bean
-    useCase(
-    	@Qualifier('graphQLRequester') requester: IRequester,
-    ): IUseCase {
-        return new UseCase(requester);
-    }
+  httpRequester: IRequester = Bean(HttpRequester);
+  graphQLRequester: IRequester = Bean(GraphQLRequester);
+
+  @Bean
+  useCase(
+    @Qualifier('graphQLRequester') requester: IRequester,
+  ): IUseCase {
+    return new UseCase(requester);
+  }
 }
 ```
 
@@ -606,7 +610,7 @@ export class GlobalApplicationContext extends GlobalCatContext {
 export class ApplicationContext extends CatContext<IBeans> {
   @Bean
   useCase(
-          @Qualifier('graphQLRequester') requester: IRequester,
+    @Qualifier('graphQLRequester') requester: IRequester,
   ): IUseCase {
     return new UseCase(requester);
   }

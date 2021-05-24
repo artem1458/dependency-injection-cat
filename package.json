@@ -1,6 +1,6 @@
 {
   "name": "dependency-injection-cat",
-  "version": "0.1.12",
+  "version": "0.2.0",
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Artem Kornev",
