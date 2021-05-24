@@ -5,6 +5,8 @@ import { libraryName } from '../../constants/libraryName';
 import { ProgramRepository } from '../../core/program/ProgramRepository';
 import { initContexts } from '../../core/initContexts';
 
+const IGNORE_TRANSFORM_PROPERTY_KEY = 'IGNORE_TRANSFORM_PROPERTY_KEY';
+
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);
     initContexts();
@@ -14,6 +16,10 @@ export default function(api: any, options?: IDiConfig) {
     return {
         visitor: {
             Program(path: any, meta: any) {
+                if (path.node[IGNORE_TRANSFORM_PROPERTY_KEY]) {
+                    return;
+                }
+
                 const imports: any[] = path.node.body.filter((it: any) => it.type === 'ImportDeclaration');
                 const hasLibraryImport = imports.some(it => {
                     const moduleSpecifier = it?.source?.value;
@@ -32,7 +38,7 @@ export default function(api: any, options?: IDiConfig) {
                 const tsSourceFile = ts.createSourceFile(
                     filePath,
                     fileText,
-                    ProgramRepository.program.getCompilerOptions().target ?? ts.ScriptTarget.ES2015,
+                    ProgramRepository.program.getCompilerOptions().target ?? ts.ScriptTarget.ESNext,
                     true,
                 );
                 const result = ts.transform<ts.SourceFile>(
@@ -40,7 +46,10 @@ export default function(api: any, options?: IDiConfig) {
                     [transformerFactory],
                 );
                 const resultText = printer.printFile(result.transformed[0]);
-                path.replaceWith(api.parse(resultText, meta.file.opts).program);
+                const parsed = api.parse(resultText, meta.file.opts).program;
+                parsed[IGNORE_TRANSFORM_PROPERTY_KEY] = true;
+
+                path.replaceWith(parsed);
             }
         }
     };

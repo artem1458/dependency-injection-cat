@@ -27,7 +27,7 @@ export default class {
 
                 if(globalContextPaths.length > 0) {
                     compilation.warnings
-                        .push(new WebpackError('You have Defined Global Cat Context,  Currently, DI Cat does not support hot reloading of them'));
+                        .push(new WebpackError('You have Defined Global Cat Context, Currently, DI Cat does not support hot reloading of them'));
                 }
             });
 

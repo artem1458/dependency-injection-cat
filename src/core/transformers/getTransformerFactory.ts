@@ -11,7 +11,11 @@ import { registerAndTransformContext } from '../build-context/registerAndTransfo
 export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
         if (minimatch(sourceFile.fileName, diConfig.diConfigPattern!)) {
-            return registerAndTransformContext(context, sourceFile);
+            // console.time(`Context transformed: ${sourceFile.fileName}`);
+            const transformedContext = registerAndTransformContext(context, sourceFile);
+            // console.timeEnd(`Context transformed: ${sourceFile.fileName}`);
+
+            return transformedContext;
         }
 
         const factoryImportsToAdd: ts.ImportDeclaration[] = [];

@@ -1,6 +1,4 @@
-import ts, { ScriptTarget } from 'typescript';
-import fs from 'fs';
-import { ProgramRepository } from '../program/ProgramRepository';
+import ts from 'typescript';
 import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCatContextContext';
 import { ContextRepository } from './ContextRepository';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
@@ -49,7 +47,7 @@ export const registerGlobalCatContext = (sourceFile: ts.SourceFile) => {
             CompilationContext.reportError({
                 message: 'Global Context should be a named class declaration',
                 node: classDeclaration,
-                filePath: classDeclaration.getSourceFile().fileName,
+                filePath: sourceFile.fileName,
             });
 
             return;
