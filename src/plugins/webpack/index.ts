@@ -18,7 +18,8 @@ export default class {
 
             PathResolverCache.clearCache();
             SourceFilesCache.clearCache();
-            compilation.errors.push(new WebpackError(message));
+
+            compilation.errors.push(buildWebpackError(message));
         });
 
         compiler.hooks.compilation.tap('DI-Cat recompile context on dependencies change', (compilation) => {
@@ -27,7 +28,7 @@ export default class {
 
                 if(globalContextPaths.length > 0) {
                     compilation.warnings
-                        .push(new WebpackError('You have Defined Global Cat Context, Currently, DI Cat does not support hot reloading of them'));
+                        .push(buildWebpackError('You have Defined Global Cat Context, Currently, DI Cat does not support hot reloading of them'));
                 }
             });
 
@@ -57,4 +58,8 @@ export default class {
             });
         });
     }
+}
+
+function buildWebpackError(message: string): WebpackError {
+    return WebpackError ? new WebpackError(message) : new Error(message) as any;
 }

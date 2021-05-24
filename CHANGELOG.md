@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Fix WebpackError for webpack < 5
+
 ## 0.2.0
 
 - Added hot reloading support (only for non-global contexts, and only with webpack)
