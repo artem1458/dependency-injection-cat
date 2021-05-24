@@ -68,15 +68,23 @@ export class BeanRepository {
     }
 
     static clearBeanInfoByContextDescriptor(contextDescriptor: IContextDescriptor): void {
-        const beanDescriptorsInContext = this.beanDescriptorRepository.get(contextDescriptor.name) ?? new Map<TBeanType, IBeanDescriptorWithId[]>();
+        const beanDescriptorsInContext = Array.from(this.beanIdToBeanDescriptorMap.values()).filter(it =>
+            it.contextDescriptor.absolutePath === contextDescriptor.absolutePath,
+        );
 
-        this.beanDescriptorRepository.delete(contextDescriptor.name);
+        const contextBeansMap = this.beanDescriptorRepository.get(contextDescriptor.name) ?? new Map<TBeanType, IBeanDescriptorWithId[]>();
+
+        for (const [beanType, beanDescriptors] of contextBeansMap) {
+            const filteredBeanDescriptors = beanDescriptors
+                .filter(it => it.contextDescriptor.absolutePath !== contextDescriptor.absolutePath);
+
+            contextBeansMap.set(beanType, filteredBeanDescriptors);
+        }
+
         this.contextIdToBeanDescriptorsMap.delete(contextDescriptor.id);
-        beanDescriptorsInContext.forEach((beanDescriptors) => {
-            beanDescriptors.forEach(beanDescriptor => {
-                this.beanIdToBeanDescriptorMap.delete(beanDescriptor.id);
-                this.beanNodeToBeanDescriptorMap.delete(beanDescriptor.node);
-            });
+        beanDescriptorsInContext.forEach((beanDescriptor) => {
+            this.beanIdToBeanDescriptorMap.delete(beanDescriptor.id);
+            this.beanNodeToBeanDescriptorMap.delete(beanDescriptor.node);
         });
     }
 }

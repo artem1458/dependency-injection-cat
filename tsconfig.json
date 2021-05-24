@@ -9,6 +9,7 @@
     "baseUrl": "./src",
     "rootDir": "./src",
     "esModuleInterop": true,
+    "downlevelIteration": true,
     "skipLibCheck": true,
     "allowJs": true,
     "checkJs": false,
