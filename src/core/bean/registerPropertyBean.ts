@@ -14,12 +14,13 @@ export const registerPropertyBean = (contextDescriptor: IContextDescriptor, clas
     if (classElement.name.getText() === 'getBean') {
         CompilationContext.reportError({
             node: classElement,
-            message: '"getBean" property is reserved for the di-container, please use another name instead'
+            message: '"getBean" property is reserved for the di-container, please use another name instead',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
 
-    const typeInfo = getBeanTypeInfoFromClassProperty(classElement);
+    const typeInfo = getBeanTypeInfoFromClassProperty(contextDescriptor, classElement);
     const beanInfo = getPropertyBeanInfo(classElement);
 
     if (typeInfo === null) {
@@ -34,10 +35,13 @@ export const registerPropertyBean = (contextDescriptor: IContextDescriptor, clas
         scope: beanInfo.scope,
         node: classElement,
         typeNode: typeInfo.typeNode,
+        beanKind: 'property',
+        //Will be assigned when resolving dependencies
+        beanSourceLocation: null,
     });
 };
 
-function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclarationWithInitializer): IQualifiedTypeWithTypeNode | null {
+function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): IQualifiedTypeWithTypeNode | null {
     const propertyType = classElement.type ?? null;
     const beanGenericType = (classElement.initializer.typeArguments ?? [])[0] ?? null;
 
@@ -59,6 +63,7 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
             CompilationContext.reportError({
                 node: beanGenericType,
                 message: 'Bean generic type and property type should be equal',
+                filePath: contextDescriptor.absolutePath,
             });
         }
 
@@ -104,7 +109,8 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
     if (!ts.isIdentifier(firstArgument)) {
         CompilationContext.reportError({
             node: firstArgument,
-            message: 'First argument in Property-Bean should be a class reference',
+            message: 'First argument in property bean should be a class reference',
+            filePath: contextDescriptor.absolutePath,
         });
 
         return null;
@@ -118,7 +124,8 @@ function getBeanTypeInfoFromClassProperty(classElement: ClassPropertyDeclaration
     if (nodeSourceDescriptor === null) {
         CompilationContext.reportError({
             node: firstArgument,
-            message: 'Can\'t qualify type of Bean, please specify type explicitly'
+            message: 'Can\'t qualify type of Bean, please specify type explicitly',
+            filePath: contextDescriptor.absolutePath,
         });
 
         return null;

@@ -1,8 +1,8 @@
 import { NamedClassDeclaration } from '../ts-helpers/types';
-import { uniqId } from '../utils/uniqId';
 import { INodeSourceDescriptor } from '../ts-helpers/node-source-descriptor';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 import { GLOBAL_CONTEXT_NAME } from './constants';
+import md5 from 'md5';
 
 type TContextName = string;
 type TContextId = string;
@@ -20,13 +20,14 @@ export class ContextRepository {
     static contextMap = new Map<TContextName, IContextDescriptor>();
     static globalContexts = new Map<TContextId, IContextDescriptor>();
     static contextNameToTBeanNodeSourceDescriptor = new Map<TContextName, INodeSourceDescriptor>();
+    static contextPathToContextDescriptor = new Map<string, IContextDescriptor>()
 
     static registerContext(
         name: string,
         classDeclaration: NamedClassDeclaration,
     ): IContextDescriptor {
-        const id = uniqId();
         const sourceFile = classDeclaration.getSourceFile();
+        const id = md5(sourceFile.fileName);
 
         const descriptor: IContextDescriptor = {
             id,
@@ -38,6 +39,7 @@ export class ContextRepository {
         };
 
         this.contextMap.set(name, descriptor);
+        this.contextPathToContextDescriptor.set(sourceFile.fileName, descriptor);
 
         return descriptor;
     }
@@ -45,8 +47,8 @@ export class ContextRepository {
     static registerGlobalContext(
         classDeclaration: NamedClassDeclaration,
     ): IContextDescriptor {
-        const id = uniqId();
         const sourceFile = classDeclaration.getSourceFile();
+        const id = md5(sourceFile.fileName);
 
         const descriptor: IContextDescriptor = {
             id,
@@ -58,6 +60,7 @@ export class ContextRepository {
         };
 
         this.globalContexts.set(id, descriptor);
+        this.contextPathToContextDescriptor.set(sourceFile.fileName, descriptor);
 
         return descriptor;
     }

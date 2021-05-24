@@ -22,17 +22,20 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
         CompilationContext.reportError({
             node: classReference,
             message: 'Can\'t qualify property Bean dependencies, please try to use method Bean',
+            filePath: descriptor.contextDescriptor.absolutePath,
         });
         return;
     }
 
     const nodeSourceFile = SourceFilesCache.getSourceFileByPath(nodeSourceDescriptor.path);
     const classDeclaration = findClassDeclarationInSourceFileByName(nodeSourceFile, nodeSourceDescriptor.name);
+    descriptor.beanSourceLocation = nodeSourceDescriptor.path;
 
     if (classDeclaration === null) {
         CompilationContext.reportError({
             node: classReference,
             message: 'Can\'t qualify property Bean dependencies, please try to use method bean',
+            filePath: descriptor.contextDescriptor.absolutePath,
         });
         return;
     }
@@ -74,6 +77,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
 
     CompilationContext.reportError({
         node: classReference,
-        message: `Class "${classReference.getText()}" have some unqualified dependencies, please try to use "method Bean" instead:\n${unQualifiedParametersText}`
+        message: `Class "${classReference.getText()}" have some unqualified dependencies, please try to use "method Bean" instead:\n${unQualifiedParametersText}`,
+        filePath: descriptor.contextDescriptor.absolutePath,
     });
 };

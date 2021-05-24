@@ -1,16 +1,7 @@
-import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { CompilationError } from '../../compilation-context/CompilationError';
+import chalk from 'chalk';
 
-export default class {
-    apply(compiler: any) {
-        compiler.hooks.afterCompile.tap('Report DI Errors', (compilation: any) => {
-            const message = CompilationContext.getErrorMessage();
+console.error(chalk.red('Warning: ReportDiErrorsPlugin is now deprecated new plugin will be used instead, please change plugin path from dependency-injection-cat/plugins/webpack/ReportDiErrors to dependency-injection-cat/plugins/webpack '));
 
-            if (message === null) {
-                return;
-            }
+import DICatWebpackPlugin from './';
 
-            throw new CompilationError(message);
-        });
-    }
-}
+export default DICatWebpackPlugin;

@@ -5,18 +5,19 @@ import { registerMethodBeanDependencies } from './registerMethodBeanDependencies
 import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
 import { registerPropertyBeanDependencies } from './registerPropertyBeanDependencies';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
+import { IContextDescriptor } from '../context/ContextRepository';
+import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 
-export const registerBeanDependencies = () => {
-    BeanRepository.beanDescriptorRepository.forEach((beanTypeMap) => {
-        beanTypeMap.forEach((beanDescriptorList) => {
-            beanDescriptorList.forEach(descriptor => {
-                if (isMethodBean(descriptor.node)) {
-                    registerMethodBeanDependencies(descriptor as IBeanDescriptor<ts.MethodDeclaration>);
-                }
-                if (isClassPropertyBean(descriptor.node)) {
-                    registerPropertyBeanDependencies(descriptor as IBeanDescriptor<ClassPropertyDeclarationWithInitializer>);
-                }
-            });
-        });
+export const registerBeanDependencies = (contextDescriptor: IContextDescriptor) => {
+    BeanDependenciesRepository.clearBeanDependenciesByContextDescriptor(contextDescriptor);
+    const beanDescriptorList = BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
+
+    beanDescriptorList.forEach(descriptor => {
+        if (isMethodBean(descriptor.node)) {
+            registerMethodBeanDependencies(descriptor as IBeanDescriptor<ts.MethodDeclaration>);
+        }
+        if (isClassPropertyBean(descriptor.node)) {
+            registerPropertyBeanDependencies(descriptor as IBeanDescriptor<ClassPropertyDeclarationWithInitializer>);
+        }
     });
 };

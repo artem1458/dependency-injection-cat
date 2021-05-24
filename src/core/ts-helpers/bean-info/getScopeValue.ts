@@ -17,7 +17,8 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
         if (!ts.isStringLiteral(scopeNode.initializer)) {
             CompilationContext.reportError({
                 message: 'Bean scope should be a string literal',
-                node: scopeNode
+                node: scopeNode,
+                filePath: expression.getSourceFile().fileName,
             });
             return 'singleton';
         }
@@ -28,7 +29,8 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
     if (!scopes.includes(scopeValue as TBeanScopeValue)) {
         CompilationContext.reportError({
             message: 'Scope in Bean should be a "prototype" or "singleton"',
-            node: scopeNode
+            node: scopeNode,
+            filePath: expression.getSourceFile().fileName,
         });
         return 'singleton';
     }

@@ -3,18 +3,20 @@ import upath from 'upath';
 import { IContainerAccessNode } from './isContainerAccess';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { getContextNameFromContainerCall } from './getContextNameFromContainerCall';
-import { ContextRepository } from '../../context/ContextRepository';
 import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContextPool';
-import { getBuiltContextDirectory } from '../../build-context/utils/getBuiltContextDirectory';
 import { validContainerKeys } from './validContainerKeys';
-import { checkBeansInterface } from './checkBeansInterface';
 import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
+import { ContextNamesRepository } from '../../context/ContextNamesRepository';
+import { registerAllContextNames } from '../../context/registerContextNames';
 
 export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsToAdd: ts.ImportDeclaration[]): ts.Node => {
+    CompilationContext.clearErrorsByFilePath(node.getSourceFile().fileName);
+
     if (!validContainerKeys.includes(node.expression.name.getText())) {
         CompilationContext.reportError({
             node: node,
             message: `Container has only following methods: ${validContainerKeys.join(', ')}`,
+            filePath: node.getSourceFile().fileName,
         });
         return node;
     }
@@ -28,34 +30,37 @@ export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsT
     if (contextName === GLOBAL_CONTEXT_NAME) {
         CompilationContext.reportError({
             message: 'You can\'t access Global Context',
-            node: node
+            node: node,
+            filePath: node.getSourceFile().fileName,
         });
         return node;
     }
 
-    const contextDescriptor = ContextRepository.getContextByName(contextName);
+    let contextPath: string | null = ContextNamesRepository.nameToPath.get(contextName) ?? null;
 
-    if (contextDescriptor === null) {
-        CompilationContext.reportError({
-            node,
-            message: `Context with name "${contextName}" not found`,
-        });
-        return node;
+    if (contextPath === null) {
+        registerAllContextNames();
+
+        contextPath = ContextNamesRepository.nameToPath.get(contextName) ?? null;
+
+        if (contextPath === null) {
+            CompilationContext.reportError({
+                node,
+                message: `Context with name "${contextName}" not found`,
+                filePath: node.getSourceFile().fileName,
+            });
+            return node;
+        }
     }
 
-    checkBeansInterface(node, contextDescriptor);
+    // TODO check interfaces
+    // checkBeansInterface(node, contextDescriptor);
 
-    const relativePathToExternalDirectory = upath.relative(
+    const importPath = `./${upath.relative(
         upath.dirname(node.getSourceFile().fileName),
-        getBuiltContextDirectory(),
-    );
-    const importPath = `./${
-        upath.join(
-            relativePathToExternalDirectory,
-            `context_${contextDescriptor.id}`
-        )
-    }`;
-    const importNamespaceName = `${contextDescriptor.name}${CONTEXT_POOL_POSTFIX}`;
+        upath.normalize(contextPath),
+    )}`;
+    const importNamespaceName = `${contextName}${CONTEXT_POOL_POSTFIX}`;
     const importDeclaration = factory.createImportDeclaration(
         undefined,
         undefined,

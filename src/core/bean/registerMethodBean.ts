@@ -10,7 +10,8 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
     if (classElement.name.getText() === 'getBean') {
         CompilationContext.reportError({
             node: classElement,
-            message: '"getBean" method is reserved for the di-container, please use another name instead'
+            message: '"getBean" method is reserved for the di-container, please use another name instead',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -18,17 +19,19 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         CompilationContext.reportError({
             node: classElement,
             message: 'Method Bean should have a body',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
 
-    const typeInfo = getBeanTypeInfoFromMethod(classElement);
+    const typeInfo = getBeanTypeInfoFromMethod(contextDescriptor, classElement);
     const beanInfo = getMethodBeanInfo(classElement);
 
     if (typeInfo === null) {
         CompilationContext.reportError({
             node: classElement,
             message: 'Can\'t qualify type of Bean',
+            filePath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -41,10 +44,12 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         scope: beanInfo.scope,
         node: classElement,
         typeNode: classElement.type!,
+        beanKind: 'method',
+        beanSourceLocation: null
     });
 };
 
-function getBeanTypeInfoFromMethod(classElement: ts.MethodDeclaration): IQualifiedTypeWithTypeNode | null {
+function getBeanTypeInfoFromMethod(contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): IQualifiedTypeWithTypeNode | null {
     const methodReturnType = classElement.type ?? null;
 
     if (methodReturnType !== null) {
@@ -60,6 +65,7 @@ function getBeanTypeInfoFromMethod(classElement: ts.MethodDeclaration): IQualifi
         CompilationContext.reportError({
             node: classElement,
             message: 'Can\'t qualify type of Bean, please specify type explicitly',
+            filePath: contextDescriptor.absolutePath,
         });
 
         return null;

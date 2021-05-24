@@ -36,7 +36,7 @@ function createContextNamePool(contextDescriptor: IContextDescriptor): ts.Statem
                     [
                         factory.createStringLiteral(contextDescriptor.name),
                         factory.createIdentifier(beanConfigDeclarationName),
-                        factory.createIdentifier(contextDescriptor.name),
+                        factory.createIdentifier(contextDescriptor.node.name.getText()),
                     ]
                 )
             )],

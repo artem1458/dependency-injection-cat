@@ -1,11 +1,11 @@
 import { IContextDescriptor } from '../context/ContextRepository';
 import { isMethodBean } from '../ts-helpers/predicates/isMethodBean';
-import { registerMethodBean } from './registerMethodBean';
 import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
 import { registerPropertyBean } from './registerPropertyBean';
+import { registerMethodBean } from './registerMethodBean';
 import { BeanRepository } from './BeanRepository';
 
-export function registerBeans(contextDescriptor: IContextDescriptor) {
+export const registerGlobalBeans = (contextDescriptor: IContextDescriptor) => {
     BeanRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
 
     contextDescriptor.node.members.forEach((classElement) => {
@@ -16,4 +16,4 @@ export function registerBeans(contextDescriptor: IContextDescriptor) {
             registerPropertyBean(contextDescriptor, classElement);
         }
     });
-}
+};

@@ -1,6 +1,5 @@
 import ts, { factory } from 'typescript';
 import upath from 'upath';
-import { getBuiltContextDirectory } from '../utils/getBuiltContextDirectory';
 import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
 import { PathResolverCache } from '../../ts-helpers/path-resolver/PathResolverCache';
 
@@ -15,16 +14,15 @@ export const relativizeImports = (): ts.TransformerFactory<ts.SourceFile> => {
                     moduleSpecifier,
                 );
 
-
                 if (upath.isAbsolute(absolutePathFromResolverWithExtension)) {
-                    const buildedContextDirectory = getBuiltContextDirectory();
+                    const sourceFileDirname = upath.dirname(sourceFile.fileName);
                     const absoluteImportPathWithoutExtension = removeExtensionFromPath(
                         absolutePathFromResolverWithExtension,
                     );
-                    const newRelative = upath.relative(
-                        buildedContextDirectory,
+                    const newRelative = `./${upath.relative(
+                        sourceFileDirname,
                         absoluteImportPathWithoutExtension,
-                    );
+                    )}`;
 
                     return factory.updateImportDeclaration(
                         node,

@@ -56,6 +56,7 @@ function getTypesNameDeep(node: ts.Node, prevType = '', deepness = 0): string | 
         CompilationContext.reportError({
             node: node,
             message: 'Primitive types is not allowed as a Bean type',
+            filePath: node.getSourceFile().fileName,
         });
 
         return null;

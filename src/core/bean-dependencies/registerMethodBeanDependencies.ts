@@ -9,13 +9,14 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
     const parameters = descriptor.node.parameters;
 
     parameters.forEach(parameter => {
-        const qualifier = getQualifierValue(parameter);
+        const qualifier = getQualifierValue(parameter, descriptor);
         const type = getParameterType(parameter);
 
         if (type === null) {
             CompilationContext.reportError({
                 node: parameter,
                 message: 'Can\'t qualify type of Bean parameter',
+                filePath: descriptor.contextDescriptor.absolutePath,
             });
             return;
         }
@@ -35,7 +36,7 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
     });
 };
 
-function getQualifierValue(parameter: ts.ParameterDeclaration): string | null {
+function getQualifierValue(parameter: ts.ParameterDeclaration, beanDescriptor: IBeanDescriptor): string | null {
     const qualifierDecorators = parameter.decorators?.filter(isParameterQualifierDecorator) ?? [];
 
     if (qualifierDecorators.length === 0) {
@@ -45,7 +46,8 @@ function getQualifierValue(parameter: ts.ParameterDeclaration): string | null {
     if (qualifierDecorators.length > 1) {
         CompilationContext.reportError({
             node: parameter,
-            message: 'Parameter Qualifier should not have more than 1 @Qualifier decorator'
+            message: 'Parameter Qualifier should not have more than 1 @Qualifier decorator',
+            filePath: beanDescriptor.contextDescriptor.absolutePath,
         });
 
         return null;
@@ -57,6 +59,7 @@ function getQualifierValue(parameter: ts.ParameterDeclaration): string | null {
         CompilationContext.reportError({
             node: qualifierDecorators[0],
             message: 'You should call @Qualifier with string, when decorating parameter',
+            filePath: beanDescriptor.contextDescriptor.absolutePath,
         });
         return null;
     }
@@ -68,6 +71,7 @@ function getQualifierValue(parameter: ts.ParameterDeclaration): string | null {
             CompilationContext.reportError({
                 node: decoratorExpression,
                 message: '@Qualifier should have only 1 argument',
+                filePath: beanDescriptor.contextDescriptor.absolutePath,
             });
             return null;
         }
@@ -76,6 +80,7 @@ function getQualifierValue(parameter: ts.ParameterDeclaration): string | null {
             CompilationContext.reportError({
                 node: decoratorExpression,
                 message: '@Qualifier should have only 1 argument',
+                filePath: beanDescriptor.contextDescriptor.absolutePath,
             });
             return null;
         }
@@ -86,6 +91,7 @@ function getQualifierValue(parameter: ts.ParameterDeclaration): string | null {
             CompilationContext.reportError({
                 node: decoratorExpression,
                 message: 'Qualifier should be a string literal',
+                filePath: beanDescriptor.contextDescriptor.absolutePath,
             });
             return null;
         }
