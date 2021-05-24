@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
@@ -5,7 +6,7 @@ import { libraryName } from '../../constants/libraryName';
 import { ProgramRepository } from '../../core/program/ProgramRepository';
 import { initContexts } from '../../core/initContexts';
 
-const IGNORE_TRANSFORM_PROPERTY_KEY = 'IGNORE_TRANSFORM_PROPERTY_KEY';
+const IGNORE_TRANSFORM_PROPERTY_KEY = uuid.v4();
 
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);
