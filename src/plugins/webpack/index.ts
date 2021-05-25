@@ -32,12 +32,41 @@ export default class {
                 }
             });
 
-            compilation.hooks.buildModule.tap('DI-Cat recompile context on dependencies change build listener', (module) => {
-                if (!(module as NormalModule).resource) {
+            compilation.hooks.buildModule.tap('DI-Cat recompile on TBeansChanges', (module) => {
+                const currentBuiltModule = module as NormalModule;
+
+                if (!currentBuiltModule.resource) {
                     return;
                 }
 
+                const tbeanDescriptor = Array.from(ContextRepository.contextNameToTBeanNodeSourceDescriptor.values())
+                    .find(it => it.nodeSourceDescriptor.path === currentBuiltModule.resource);
+
+                if (!tbeanDescriptor) {
+                    return;
+                }
+
+                const contextWebpackModule = Array.from(compilation.modules).find(it =>
+                    tbeanDescriptor.contextDescriptor.absolutePath === (it as NormalModule).resource,
+                );
+
+                if (!contextWebpackModule) {
+                    return;
+                }
+
+                compilation.rebuildModule(contextWebpackModule, (error, result) => {
+                    if (error) {
+                        compilation.errors.push(error);
+                    }
+                });
+            });
+
+            compilation.hooks.buildModule.tap('DI-Cat recompile context on dependencies change build listener', (module) => {
                 const currentBuiltModule = module as NormalModule;
+
+                if (!currentBuiltModule.resource) {
+                    return;
+                }
 
                 const beanDescriptors = Array.from(BeanRepository.beanIdToBeanDescriptorMap.values());
                 const currentPropertyBeansPaths = beanDescriptors.filter(descriptor =>

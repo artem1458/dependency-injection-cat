@@ -16,10 +16,15 @@ export interface IContextDescriptor {
     node: NamedClassDeclaration;
 }
 
+export interface TBeanTypeDescriptor {
+    nodeSourceDescriptor: INodeSourceDescriptor;
+    contextDescriptor: IContextDescriptor;
+}
+
 export class ContextRepository {
     static contextMap = new Map<TContextName, IContextDescriptor>();
     static globalContexts = new Map<TContextId, IContextDescriptor>();
-    static contextNameToTBeanNodeSourceDescriptor = new Map<TContextName, INodeSourceDescriptor>();
+    static contextNameToTBeanNodeSourceDescriptor = new Map<TContextName, TBeanTypeDescriptor>();
     static contextPathToContextDescriptor = new Map<string, IContextDescriptor>()
 
     static registerContext(
@@ -73,7 +78,10 @@ export class ContextRepository {
         return this.contextMap.has(name);
     }
 
-    static registerBeanType(contextName: TContextName, beanType: INodeSourceDescriptor) {
-        this.contextNameToTBeanNodeSourceDescriptor.set(contextName, beanType);
+    static registerTBeanType(contextDescriptor: IContextDescriptor, nodeSourceDescriptor: INodeSourceDescriptor) {
+        this.contextNameToTBeanNodeSourceDescriptor.set(
+            contextDescriptor.name,
+            {contextDescriptor, nodeSourceDescriptor}
+        );
     }
 }

@@ -18,40 +18,40 @@ module.exports = {
     },
     module: {
         rules: [
-            {
-                test: /\.ts$/,
-                loader: 'ts-loader',
-                options: {
-                    compiler: 'ttypescript',
-                    // getCustomTransformers: (program) => ({
-                    //     before: [diCatTsTransformer(program, {
-                    //     })],
-                    // }),
-                    transpileOnly: true,
-                }
-            }
             // {
-            //     test: /\.(t|j)s$/,
-            //     exclude: /(node_modules|bower_components)/,
-            //     loader: 'babel-loader',
+            //     test: /\.ts$/,
+            //     loader: 'ts-loader',
             //     options: {
-            //         plugins: [
-            //             '@babel/plugin-transform-runtime',
-            //             '@babel/plugin-proposal-class-properties',
-            //             [
-            //                 '@babel/plugin-proposal-decorators',
-            //                 { 'legacy': true }
-            //             ],
-            //             [
-            //                 require('../../src/transformers/babel'),
-            //             ]
-            //         ],
-            //         presets: [
-            //             '@babel/preset-env',
-            //             '@babel/preset-typescript',
-            //         ]
+            //         compiler: 'ttypescript',
+            //         // getCustomTransformers: (program) => ({
+            //         //     before: [diCatTsTransformer(program, {
+            //         //     })],
+            //         // }),
+            //         transpileOnly: true,
             //     }
             // }
+            {
+                test: /\.(t|j)s$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel-loader',
+                options: {
+                    plugins: [
+                        '@babel/plugin-transform-runtime',
+                        '@babel/plugin-proposal-class-properties',
+                        [
+                            '@babel/plugin-proposal-decorators',
+                            { 'legacy': true }
+                        ],
+                        [
+                            require('../../src/transformers/babel'),
+                        ]
+                    ],
+                    presets: [
+                        '@babel/preset-env',
+                        '@babel/preset-typescript',
+                    ]
+                }
+            }
         ],
     },
     plugins: [
