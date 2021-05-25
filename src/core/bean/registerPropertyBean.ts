@@ -16,6 +16,7 @@ export const registerPropertyBean = (contextDescriptor: IContextDescriptor, clas
             node: classElement,
             message: '"getBean" property is reserved for the di-container, please use another name instead',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -64,6 +65,7 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
                 node: beanGenericType,
                 message: 'Bean generic type and property type should be equal',
                 filePath: contextDescriptor.absolutePath,
+                relatedContextPath: contextDescriptor.absolutePath,
             });
         }
 
@@ -111,6 +113,7 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
             node: firstArgument,
             message: 'First argument in property bean should be a class reference',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
 
         return null;
@@ -126,6 +129,7 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
             node: firstArgument,
             message: 'Can\'t qualify type of Bean, please specify type explicitly',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
 
         return null;

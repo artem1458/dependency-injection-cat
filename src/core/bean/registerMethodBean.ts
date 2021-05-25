@@ -12,6 +12,7 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
             node: classElement,
             message: '"getBean" method is reserved for the di-container, please use another name instead',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -20,6 +21,7 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
             node: classElement,
             message: 'Method Bean should have a body',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -32,6 +34,7 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
             node: classElement,
             message: 'Can\'t qualify type of Bean',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -66,6 +69,7 @@ function getBeanTypeInfoFromMethod(contextDescriptor: IContextDescriptor, classE
             node: classElement,
             message: 'Can\'t qualify type of Bean, please specify type explicitly',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
 
         return null;

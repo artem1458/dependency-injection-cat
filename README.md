@@ -239,7 +239,11 @@ module.exports = {
 
 ## Hot Reload
 
-Currently correct hot reload supported only with DI-Cat Webpack plugin, and for non-global CatContexts.
+Currently, correct hot reload supported only with DI-Cat Webpack plugin, and for non-global CatContexts.
+
+#### Known issues:
+
+- When using webpack+babel - webpack or babel don't trigger rebuild of files where defined only types/interfaces, ...etc. Because of this issue, when adding new values to the TBean interface, context will not recompile, and missing required beans will not be reported. To solve this issue, just make some changes in file where CatContext are placed, it will trigger recompilation.
 
 ## CatContext
 
