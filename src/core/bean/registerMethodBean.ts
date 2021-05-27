@@ -5,12 +5,15 @@ import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { getMethodBeanInfo } from '../ts-helpers/bean-info/getMethodBeanInfo';
 import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
+import { restrictedBeanNames } from './constants';
 
 export const registerMethodBean = (contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void => {
-    if (classElement.name.getText() === 'getBean') {
+    const classElementName = classElement.name.getText();
+
+    if (restrictedBeanNames.includes(classElementName)) {
         CompilationContext.reportError({
             node: classElement,
-            message: '"getBean" method is reserved for the di-container, please use another name instead',
+            message: `${classElementName} method is reserved for the di-container, please use another name instead`,
             filePath: contextDescriptor.absolutePath,
             relatedContextPath: contextDescriptor.absolutePath,
         });
@@ -48,7 +51,8 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         node: classElement,
         typeNode: classElement.type!,
         beanKind: 'method',
-        beanSourceLocation: null
+        beanSourceLocation: null,
+        isPublic: false,
     });
 };
 

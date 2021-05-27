@@ -1,4 +1,3 @@
-import { InternalCatContext } from './InternalCatContext';
 import { NoContextByKey } from '../exceptions/runtime/NoContextByKey';
 import { IBeanConfig } from './decorators/Bean';
 import { TInternalCatContext } from './IInternalCatContext';
@@ -58,9 +57,3 @@ export class ContextPool {
         return key === this.DEFAULT_CONTEXT_KEY;
     }
 }
-
-class AppContext extends InternalCatContext {
-    bean(): void {}
-}
-
-new ContextPool('', {}, AppContext);

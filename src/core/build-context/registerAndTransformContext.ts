@@ -9,7 +9,7 @@ import { addNecessaryImports } from './transformers/addNecessaryImports';
 import { ContextRepository } from '../context/ContextRepository';
 import { registerContext } from '../context/registerContext';
 import { registerBeans } from '../bean/registerBeans';
-import { checkIsAllBeansRegisteredInContext } from '../bean/checkIsAllBeansRegisteredInContext';
+import { checkIsAllBeansRegisteredInContextAndFillBeanRequierness } from '../bean/checkIsAllBeansRegisteredInContextAndFillBeanRequierness';
 import { registerBeanDependencies } from '../bean-dependencies/registerBeanDependencies';
 import { buildDependencyGraphAndFillQualifiedBeans } from '../connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
 import { reportAboutCyclicDependencies } from '../report-cyclic-dependencies/reportAboutCyclicDependencies';
@@ -57,7 +57,7 @@ export function registerAndTransformContext(
             transformers,
         ).transformed[0];
 
-        const fileText = ts.createPrinter().printFile(file);
+        // const fileText = ts.createPrinter().printFile(file);
 
         return file;
     }
@@ -70,7 +70,7 @@ export function registerAndTransformContext(
     }
 
     registerBeans(contextDescriptor);
-    checkIsAllBeansRegisteredInContext(contextDescriptor);
+    checkIsAllBeansRegisteredInContextAndFillBeanRequierness(contextDescriptor);
     registerBeanDependencies(contextDescriptor);
     buildDependencyGraphAndFillQualifiedBeans(contextDescriptor);
     reportAboutCyclicDependencies(contextDescriptor);
@@ -94,7 +94,9 @@ export function registerAndTransformContext(
 
     const printer = ts.createPrinter();
 
-    const text = printer.printFile(file);
+    // const text = printer.printFile(file);
+    //
+    // console.log(text);
 
     return file;
 }

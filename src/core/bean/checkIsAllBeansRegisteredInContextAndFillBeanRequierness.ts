@@ -6,7 +6,7 @@ import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 import { BeanRepository } from './BeanRepository';
 
 //Only for not-global contexts
-export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDescriptor) => {
+export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (contextDescriptor: IContextDescriptor) => {
     const extendsHeritageClause = contextDescriptor.node.heritageClauses
         ?.find(clause => clause.token === ts.SyntaxKind.ExtendsKeyword);
 
@@ -86,15 +86,19 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
 
     const requiredBeanProperties: ts.PropertySignature[] = nodeDescriptor.node.members.map((it) => it as ts.PropertySignature);
 
-    const registeredBeanNames = BeanRepository
-        .contextIdToBeanDescriptorsMap.get(contextDescriptor.id)?.map(it => it.classMemberName) ?? [];
+    const contextBeans = BeanRepository
+        .contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
 
     const missingBeans: ts.PropertySignature[] = [];
 
     requiredBeanProperties.forEach(requiredBeanProperty => {
         const requiredBeanName = removeQuotesFromString(requiredBeanProperty.name.getText());
 
-        if (!registeredBeanNames.includes(requiredBeanName)) {
+        const requiredBeanDescriptor = contextBeans.find(it => it.classMemberName === requiredBeanName);
+
+        if (requiredBeanDescriptor) {
+            requiredBeanDescriptor.isPublic = true;
+        } else {
             missingBeans.push(requiredBeanProperty);
         }
     });

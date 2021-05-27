@@ -17,6 +17,7 @@ export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     typeNode: ts.TypeNode;
     beanKind: TBeanKind;
     beanSourceLocation: string | null;
+    isPublic: boolean;
 }
 
 export interface IBeanDescriptorWithId<T extends TBeanNode = TBeanNode> extends IBeanDescriptor<T> {

@@ -45,10 +45,16 @@ export const createBeanConfigDeclaration = (contextDescriptor: IContextDescripto
             ),
             factory.createToken(ts.SyntaxKind.EqualsToken),
             factory.createObjectLiteralExpression(
-                [factory.createPropertyAssignment(
-                    factory.createIdentifier('scope'),
-                    factory.createStringLiteral(it.scope)
-                )],
+                [
+                    factory.createPropertyAssignment(
+                        factory.createIdentifier('scope'),
+                        factory.createStringLiteral(it.scope)
+                    ),
+                    factory.createPropertyAssignment(
+                        factory.createIdentifier('isPublic'),
+                        it.isPublic ? factory.createTrue() : factory.createFalse(),
+                    ),
+                ],
                 false
             )
         ))
