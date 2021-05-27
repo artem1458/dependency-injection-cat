@@ -50,18 +50,16 @@ export default class {
                     tbeanDescriptor.contextDescriptor.absolutePath === (it as NormalModule).resource,
                 );
 
-                if (!contextWebpackModule) {
-                    return;
+                if (contextWebpackModule?.buildMeta) {
+                    compilation.rebuildModule(contextWebpackModule, (error, result) => {
+                        if (error) {
+                            compilation.errors.push(error);
+                        }
+                    });
                 }
-
-                compilation.rebuildModule(contextWebpackModule, (error, result) => {
-                    if (error) {
-                        compilation.errors.push(error);
-                    }
-                });
             });
 
-            compilation.hooks.buildModule.tap('DI-Cat recompile context on dependencies change build listener', (module) => {
+            compilation.hooks.buildModule.tap('DI-Cat recompile context on dependencies change ', (module) => {
                 const currentBuiltModule = module as NormalModule;
 
                 if (!currentBuiltModule.resource) {
