@@ -1,10 +1,8 @@
 import ts from 'typescript';
-import { relativizeImports } from './transformers/relativizeImports';
 import { addContextPool } from './transformers/addContextPool';
 import { replaceExtendingFromCatContext } from './transformers/replaceExtendingFromCatContext';
 import { replacePropertyBeans } from './transformers/replacePropertyBeans';
 import { transformMethodBeans } from './transformers/transformMethodBeans';
-import { removeDIImports } from '../ts-helpers/removeDIImports';
 import { addNecessaryImports } from './transformers/addNecessaryImports';
 import { ContextRepository } from '../context/ContextRepository';
 import { registerContext } from '../context/registerContext';
@@ -43,12 +41,11 @@ export function registerAndTransformContext(
         const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
         const transformers: ts.TransformerFactory<any>[] = [
-            relativizeImports(),
+            // relativizeImports(),
             addGlobalContextInstance(newGlobalContextDescriptor),
             replaceExtendingFromCatContext(newGlobalContextDescriptor),
             replacePropertyBeans(contextDescriptorToIdentifierList),
             transformMethodBeans(contextDescriptorToIdentifierList),
-            removeDIImports(),
             addNecessaryImports(contextDescriptorToIdentifierList),
         ];
 
@@ -78,12 +75,11 @@ export function registerAndTransformContext(
     const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
     const transformers: ts.TransformerFactory<any>[] = [
-        relativizeImports(),
+        // relativizeImports(),
         addContextPool(contextDescriptor),
         replaceExtendingFromCatContext(contextDescriptor),
         replacePropertyBeans(contextDescriptorToIdentifierList),
         transformMethodBeans(contextDescriptorToIdentifierList),
-        removeDIImports(),
         addNecessaryImports(contextDescriptorToIdentifierList),
     ];
 

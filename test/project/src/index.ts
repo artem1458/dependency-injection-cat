@@ -1,7 +1,7 @@
 import { container } from 'dependency-injection-cat';
 import { IBeans } from './IBeans';
 
-const context = container.initContext<IBeans>({
+const context = container.getOrInitContext<IBeans>({
     name: 'ApplicationContext',
 });
 

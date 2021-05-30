@@ -41,6 +41,24 @@ export class ContextPool {
         return context;
     }
 
+    getOrInitContext({
+        key = this.DEFAULT_CONTEXT_KEY,
+        config,
+    }: IContextProps): any {
+        const oldContext = this.pool.get(key);
+
+        if (oldContext) {
+            return oldContext;
+        }
+
+        const newContext = new this.context(this.contextName, this.beanConfigurationRecord);
+        newContext.config = config;
+
+        this.pool.set(key, newContext);
+
+        return newContext;
+    }
+
     clearContext({ key = this.DEFAULT_CONTEXT_KEY }: IContextProps): void {
         if (!this.pool.has(key)) {
             if (this.isDefaultKey(key)) {

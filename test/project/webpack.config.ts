@@ -7,6 +7,9 @@ const DICatWebpackPlugin = require('../../src/plugins/webpack/ReportDiErrors').d
 module.exports = {
     entry: './src/index.ts',
     mode: 'development',
+    optimization: {
+        concatenateModules: true
+    },
     devtool: 'source-map',
     resolve: {
         extensions: ['.js', '.ts'],

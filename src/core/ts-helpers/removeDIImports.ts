@@ -1,7 +1,7 @@
 import ts, { factory } from 'typescript';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 import { libraryName } from '../../constants/libraryName';
-
+//TODO remove all file
 export const removeDIImports = (): ts.TransformerFactory<ts.SourceFile> => {
     return () => {
         return sourceFile => {

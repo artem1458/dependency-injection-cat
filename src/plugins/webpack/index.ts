@@ -1,7 +1,7 @@
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
 import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
-import { Compilation, Compiler, WebpackError, NormalModule } from 'webpack';
+import { Compilation, Compiler, NormalModule } from 'webpack';
 import { BeanRepository } from '../../core/bean/BeanRepository';
 import { ContextRepository } from '../../core/context/ContextRepository';
 
@@ -76,17 +76,19 @@ export default class {
                 );
 
                 contextWebpackModules.forEach(module => {
-                    compilation.rebuildModule(module, (error, result) => {
-                        if (error) {
-                            compilation.errors.push(error);
-                        }
-                    });
+                    if (module?.buildMeta) {
+                        compilation.rebuildModule(module, (error, result) => {
+                            if (error) {
+                                compilation.errors.push(error);
+                            }
+                        });
+                    }
                 });
             });
         });
     }
 }
 
-function buildWebpackError(message: string): WebpackError {
-    return WebpackError ? new WebpackError(message) : new Error(message) as any;
+function buildWebpackError(message: string): any {
+    return new Error(message) as any;
 }
