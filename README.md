@@ -1,7 +1,6 @@
 # Dependency Injection Cat
 
-DI Cat is a truly clean DI-container, which allows you not to pollute your business logic with decorators from DI/IOC
-libraries!
+DI Cat is a truly clean DI-container, which allows you not to pollute your business logic with decorators from DI/IOC libraries!
 
 -----
 
@@ -22,11 +21,9 @@ export class ApplicationContext extends CatContext<IBeans> {
 export class UseCase implements IUseCase {
   constructor(
     private repository: IRepository,
-  ) {
-  }
+  ) {}
 
-  makeBusinessLogic() {
-  }
+  makeBusinessLogic() {}
 }
 
 //Your application.tsx
@@ -238,7 +235,7 @@ Currently, correct hot reload supported only with DI-Cat Webpack plugin, and for
 
 - When using webpack+babel - webpack or babel don't trigger rebuild of files where defined only types/interfaces,
   ...etc. Because of this issue, when adding new values to the TBean interface, context will not recompile, and missing
-  required beans will not be reported. To solve this issue, just make some changes in file where CatContext are placed,
+  required beans will not be reported. To solve this issue, just make some changes in file where CatContext are defined,
   it will trigger recompilation.
 
 ## CatContext
@@ -246,8 +243,7 @@ Currently, correct hot reload supported only with DI-Cat Webpack plugin, and for
 CatContext it's a place, where you should define your **Beans**
 
 ```typescript
-class CatContext<TBeans, TConfig = null> {
-}
+class CatContext<TBeans, TConfig = null> {}
 ```
 
 ##### Rules
@@ -476,8 +472,7 @@ container.clearContext({
 
 ## Bean
 
-A Bean is an object that is instantiated, assembled, and managed by IOC container (**Definition from Spring Framework
-documentation**)
+A Bean is an object that is instantiated, assembled, and managed by IOC container (**Definition from Spring Framework documentation**)
 Beans can have dependencies, and they also should be defined as a beans or passed manually.
 
 ### Bean configuration
