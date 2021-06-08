@@ -44,7 +44,7 @@ export const checkBeansInterface = (node: IContainerAccessNode, contextDescripto
     }
 
     const contextBeansInterfaceNodeSourceDescriptor = ContextRepository.contextNameToTBeanNodeSourceDescriptor
-        .get(contextDescriptor.name) ?? null;
+        .get(contextDescriptor.name)?.nodeSourceDescriptor ?? null;
 
     if (contextBeansInterfaceNodeSourceDescriptor === null || contextBeansInterfaceNodeSourceDescriptor.node === null) {
         return;

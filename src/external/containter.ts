@@ -43,6 +43,23 @@ class Container {
     /**
      * TBeans should be a plain interface without extending
      */
+    getOrInitContext<TBeans>(
+        props: IInitContextProps
+    ): IDIContext<TBeans>
+    getOrInitContext<TBeans, TConfig>(
+        props: IInitContextPropsWithConfig<TConfig>
+    ): IDIContext<TBeans>
+    getOrInitContext<TBeans>(): IDIContext<TBeans> {
+        if (TestConfiguration.failOnNotConfiguredContainer) {
+            Container.throwInitializationError();
+        }
+
+        return mockContext;
+    }
+
+    /**
+     * TBeans should be a plain interface without extending
+     */
     getContext<TBeans extends Record<TBeanName, any>>(
         props: IInitContextProps
     ): IDIContext<TBeans> {

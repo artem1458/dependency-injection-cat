@@ -1,4 +1,3 @@
-import { InternalCatContext } from './InternalCatContext';
 import { NoContextByKey } from '../exceptions/runtime/NoContextByKey';
 import { IBeanConfig } from './decorators/Bean';
 import { TInternalCatContext } from './IInternalCatContext';
@@ -42,6 +41,24 @@ export class ContextPool {
         return context;
     }
 
+    getOrInitContext({
+        key = this.DEFAULT_CONTEXT_KEY,
+        config,
+    }: IContextProps): any {
+        const oldContext = this.pool.get(key);
+
+        if (oldContext) {
+            return oldContext;
+        }
+
+        const newContext = new this.context(this.contextName, this.beanConfigurationRecord);
+        newContext.config = config;
+
+        this.pool.set(key, newContext);
+
+        return newContext;
+    }
+
     clearContext({ key = this.DEFAULT_CONTEXT_KEY }: IContextProps): void {
         if (!this.pool.has(key)) {
             if (this.isDefaultKey(key)) {
@@ -58,9 +75,3 @@ export class ContextPool {
         return key === this.DEFAULT_CONTEXT_KEY;
     }
 }
-
-class AppContext extends InternalCatContext {
-    bean(): void {}
-}
-
-new ContextPool('', {}, AppContext);

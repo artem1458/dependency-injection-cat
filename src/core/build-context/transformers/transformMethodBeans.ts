@@ -65,7 +65,7 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId, contextDescriptorToI
                         factory.createCallExpression(
                             factory.createPropertyAccessExpression(
                                 factory.createThis(),
-                                factory.createIdentifier('getBean')
+                                factory.createIdentifier('getPrivateBean')
                             ),
                             undefined,
                             [factory.createStringLiteral(dependencyDescriptor.qualifiedBean?.classMemberName ?? '')]
@@ -94,7 +94,7 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId, contextDescriptorToI
                                 globalContextIdentifier,
                                 factory.createIdentifier(globalContextIdentifier.text),
                             ),
-                            factory.createIdentifier('getBean')
+                            factory.createIdentifier('getPrivateBean')
                         ),
                         undefined,
                         [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]

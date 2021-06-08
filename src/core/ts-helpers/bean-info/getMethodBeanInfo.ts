@@ -12,6 +12,7 @@ export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICom
             node: methodDeclaration,
             message: 'Bean should have @Bean decorator',
             filePath: methodDeclaration.getSourceFile().fileName,
+            relatedContextPath: methodDeclaration.getSourceFile().fileName,
         });
 
         return {
@@ -35,6 +36,7 @@ export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICom
                 message: 'Bean configuration should be an object literal',
                 node: bean,
                 filePath: methodDeclaration.getSourceFile().fileName,
+                relatedContextPath: methodDeclaration.getSourceFile().fileName,
             });
 
             return {

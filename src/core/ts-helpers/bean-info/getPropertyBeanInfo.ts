@@ -12,6 +12,7 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
             node: beanCall.expression,
             message: 'You should pass at least 1 argument to the Bean call',
             filePath: propertyDeclaration.getSourceFile().fileName,
+            relatedContextPath: propertyDeclaration.getSourceFile().fileName,
         });
         return {
             scope: 'singleton',
@@ -31,6 +32,7 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
             node: secondArg,
             message: 'Argument in Bean should be object literal',
             filePath: propertyDeclaration.getSourceFile().fileName,
+            relatedContextPath: propertyDeclaration.getSourceFile().fileName,
         });
 
         return {

@@ -62,8 +62,6 @@ npm install dependency-injection-cat
 }
 ```
 
-
-
 #### Webpack + Babel
 
 ```typescript
@@ -111,7 +109,6 @@ module.exports = {
 }
 ```
 
-
 #### Webpack + TS-Loader
 
 ```typescript
@@ -154,7 +151,6 @@ module.exports = {
   }
 }
 ```
-
 
 #### Webpack + TS-Loader + ttypescript
 
@@ -200,8 +196,6 @@ module.exports = {
 }
 ```
 
-
-
 #### TTypescript
 
 ```json5
@@ -223,8 +217,6 @@ module.exports = {
 }
 ```
 
-
-
 ## Configuration options
 
 ```typescript
@@ -235,11 +227,16 @@ module.exports = {
 }
 ```
 
-
-
 ## Hot Reload
 
-Currently correct hot reload supported only with DI-Cat Webpack plugin, and for non-global CatContexts.
+Currently, correct hot reload supported only with DI-Cat Webpack plugin, and for non-global CatContexts.
+
+#### Known issues:
+
+- When using webpack+babel - webpack or babel don't trigger rebuild of files where defined only types/interfaces,
+  ...etc. Because of this issue, when adding new values to the TBean interface, context will not recompile, and missing
+  required beans will not be reported. To solve this issue, just make some changes in file where CatContext are defined,
+  it will trigger recompilation.
 
 ## CatContext
 
@@ -276,7 +273,8 @@ TBeans is an interface, of Beans that will be given out of context. Should be th
 
 ### TConfig
 
-If you need to pass additional parameters to your classes, for example ID, or something else, you should specify a type for TConfig (default is null)
+If you need to pass additional parameters to your classes, for example ID, or something else, you should specify a type
+for TConfig (default is null)
 
 ```typescript
 export interface IConfig {
@@ -295,7 +293,8 @@ class ApplicationContext extends CatContext<IBeans, IConfig> {
 
 ## GlobalCatContext
 
-Sometimes you want to describe common dependencies that will be used all across your application, for these purposes you should use GlobalCatContext.
+Sometimes you want to describe common dependencies that will be used all across your application, for these purposes you
+should use GlobalCatContext.
 
 #### Rules
 
@@ -326,8 +325,6 @@ export class AppContext extends CatContext<IBeans> {
 }
 ```
 
-
-
 ## Container
 
 Using container you can control your contexts. You can't access container inside files where declared contexts.
@@ -342,13 +339,14 @@ TBeans is an interface, of Beans that will be given out of context. Should be th
 
 ### initContext
 
-InitContext creates instance of **context** by key (if specified). Also you can pass config to your context using initContext.
+InitContext creates instance of **context** by key (if specified). Also you can pass config to your context using
+initContext.
 
 ```typescript
 container.initContext<TBeans, TConfig>({
-  key?: any, //Can be any value, you can use it for creating pool of contextMap.
+  key? : any, //Can be any value, you can use it for creating pool of contextMap.
   name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
-  config?: TConfig, //Config that will be transferred to the context
+  config? : TConfig, //Config that will be transferred to the context
 });
 ```
 
@@ -359,7 +357,7 @@ container.initContext<TBeans, TConfig>({
 import { container } from 'dependency-injection-cat';
 import { IBeans } from './IBeans';
 
-const applicationContext = container.initContext<IBeans>({ name: 'ApplicationContext' });
+const applicationContext = container.initContext<IBeans>({name: 'ApplicationContext'});
 ```
 
 ```typescript
@@ -371,17 +369,18 @@ import { IConfig } from './IConfig';
 const applicationContextBySomeKey = container.initContext<IBeans, IConfig>({
   name: 'ApplicationContext',
   key: 'userId',
-  config: { userId: 'userId' },
+  config: {userId: 'userId'},
 });
 ```
 
 ### getContext
 
-getContext returns instance of **context** by key (if specified). Can be used only after initialization of context, or error will be thrown.
+getContext returns instance of **context** by key (if specified). Can be used only after initialization of context, or
+error will be thrown.
 
 ```typescript
 container.getContext<TBeans>({
-  key?: any,
+  key? : any,
   name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
 });
 ```
@@ -392,7 +391,7 @@ container.getContext<TBeans>({
 //GetContext without keys
 import { container } from 'dependency-injection-cat';
 
-const context = container.getContext<TBeans>({ name: 'ApplicationContext' });
+const context = container.getContext<TBeans>({name: 'ApplicationContext'});
 ```
 
 ```typescript
@@ -405,6 +404,42 @@ const context = container.getContext<TBeans>({
 });
 ```
 
+### getOrInitContext
+
+GetOrInitContext return instance of **context** by key (if it was previously initialized), if wasn't - will be
+created and returned a new instance of context.
+
+```typescript
+container.getOrInitContext<TBeans, TConfig>({
+  key? : any, //Can be any value, you can use it for creating pool of contextMap.
+  name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
+  config? : TConfig, //Config that will be transferred to the context
+});
+```
+
+#### getOrInitContext usage
+
+```typescript
+//Accessing or initialization context without config and keys
+import { container } from 'dependency-injection-cat';
+import { IBeans } from './IBeans';
+
+const applicationContext = container.getOrInitContext<IBeans>({name: 'ApplicationContext'});
+```
+
+```typescript
+//Accessing or initialization context with config and keys
+import { container } from 'dependency-injection-cat';
+import { IBeans } from './IBeans';
+import { IConfig } from './IConfig';
+
+const applicationContextBySomeKey = container.getOrInitContext<IBeans, IConfig>({
+  name: 'ApplicationContext',
+  key: 'userId',
+  config: {userId: 'userId'},
+});
+```
+
 ### clearContext
 
 clearContext should be used to clear instances of **Beans**. Can be used, for example when un-mounting components.
@@ -412,7 +447,7 @@ clearContext should be used to clear instances of **Beans**. Can be used, for ex
 ```typescript
 container.clearContext({
   name: string, //It's the name of the class in which you specified the Beans. Should be a string literal.
-  key?: any,
+  key? : any,
 })
 ```
 
@@ -422,7 +457,7 @@ container.clearContext({
 //ClearContext without keys
 import { container } from 'dependency-injection-cat';
 
-container.clearContext({ name: 'ApplicationContext' });
+container.clearContext({name: 'ApplicationContext'});
 ```
 
 ```typescript
@@ -461,7 +496,8 @@ Property Beans resolving class dependencies automatically from the constructor o
 #### Rules
 
 - Each class constructor parameter should be defined as a **Bean** in the **Context**
-- Each class constructor parameter should have a type, type should not be primitive. To pass primitive values to the constructor, check out **Method Beans**
+- Each class constructor parameter should have a type, type should not be primitive. To pass primitive values to the
+  constructor, check out **Method Beans**
 
 #### Syntax
 
@@ -523,7 +559,8 @@ Method Beans are more flexible, for example it allows you to pass configuration 
 
 #### Rules
 
-- Method Bean should always have return type, and it should not be primitive (string, number...). To register Bean with primitive type you should use type alias.
+- Method Bean should always have return type, and it should not be primitive (string, number...). To register Bean with
+  primitive type you should use type alias.
 
 #### Syntax and Usage
 
@@ -546,7 +583,7 @@ export class ApplicationContext extends CatContext<IBeans> {
   }
 
   //Configure Bean
-  @Bean({ scope: 'prototype' })
+  @Bean({scope: 'prototype'})
   useCase(): IUseCase {
     return new UseCase();
   }
@@ -555,8 +592,8 @@ export class ApplicationContext extends CatContext<IBeans> {
 
 ## Qualifier
 
-Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type.
-By default, the qualifier is the name of the parameter in the class constructor, or in the **Method Bean**`
+Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type. By default, the qualifier is the
+name of the parameter in the class constructor, or in the **Method Bean**`
 Also, you can use qualifier, when injecting **Beans** from **GlobalCatContext**
 
 #### Rules

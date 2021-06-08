@@ -8,6 +8,7 @@ import { validContainerKeys } from './validContainerKeys';
 import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
 import { ContextNamesRepository } from '../../context/ContextNamesRepository';
 import { registerAllContextNames } from '../../context/registerContextNames';
+import { removeExtensionFromPath } from '../../utils/removeExtensionFromPath';
 
 export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsToAdd: ts.ImportDeclaration[]): ts.Node => {
     CompilationContext.clearErrorsByFilePath(node.getSourceFile().fileName);
@@ -56,9 +57,11 @@ export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsT
     // TODO check interfaces
     // checkBeansInterface(node, contextDescriptor);
 
+    const contextPathWithoutExt = removeExtensionFromPath(upath.normalize(contextPath));
+
     const importPath = `./${upath.relative(
         upath.dirname(node.getSourceFile().fileName),
-        upath.normalize(contextPath),
+        contextPathWithoutExt,
     )}`;
     const importNamespaceName = `${contextName}${CONTEXT_POOL_POSTFIX}`;
     const importDeclaration = factory.createImportDeclaration(

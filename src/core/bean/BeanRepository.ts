@@ -1,8 +1,8 @@
 import ts from 'typescript';
 import { TBeanScopeValue } from '../ts-helpers/bean-info/ICompilationBeanInfo';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
-import { v4 as uuid } from 'uuid';
 import { IContextDescriptor } from '../context/ContextRepository';
+import { uniqId } from '../utils/uniqId';
 
 export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer
 type TBeanKind = 'method' | 'property';
@@ -17,6 +17,7 @@ export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     typeNode: ts.TypeNode;
     beanKind: TBeanKind;
     beanSourceLocation: string | null;
+    isPublic: boolean;
 }
 
 export interface IBeanDescriptorWithId<T extends TBeanNode = TBeanNode> extends IBeanDescriptor<T> {
@@ -36,7 +37,7 @@ export class BeanRepository {
     static registerBean(descriptor: IBeanDescriptor): void {
         const descriptorWithId: IBeanDescriptorWithId = {
             ...descriptor,
-            id: uuid(),
+            id: uniqId(),
         };
         const { contextDescriptor: { name: contextName }, type } = descriptor;
 

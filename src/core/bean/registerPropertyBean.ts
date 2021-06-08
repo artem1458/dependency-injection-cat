@@ -9,13 +9,18 @@ import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { END_PATH_TOKEN, START_PATH_TOKEN } from '../ts-helpers/type-qualifier/parseTokens';
+import { restrictedBeanNames } from './constants';
+
 
 export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
-    if (classElement.name.getText() === 'getBean') {
+    const classElementName = classElement.name.getText();
+
+    if (restrictedBeanNames.includes(classElementName)) {
         CompilationContext.reportError({
             node: classElement,
-            message: '"getBean" property is reserved for the di-container, please use another name instead',
+            message: `"${classElementName}" property is reserved for the di-container, please use another name instead`,
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -38,6 +43,7 @@ export const registerPropertyBean = (contextDescriptor: IContextDescriptor, clas
         beanKind: 'property',
         //Will be assigned when resolving dependencies
         beanSourceLocation: null,
+        isPublic: false,
     });
 };
 
@@ -64,6 +70,7 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
                 node: beanGenericType,
                 message: 'Bean generic type and property type should be equal',
                 filePath: contextDescriptor.absolutePath,
+                relatedContextPath: contextDescriptor.absolutePath,
             });
         }
 
@@ -111,6 +118,7 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
             node: firstArgument,
             message: 'First argument in property bean should be a class reference',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
 
         return null;
@@ -126,6 +134,7 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
             node: firstArgument,
             message: 'Can\'t qualify type of Bean, please specify type explicitly',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
 
         return null;

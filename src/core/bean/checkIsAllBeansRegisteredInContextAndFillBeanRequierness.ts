@@ -6,7 +6,7 @@ import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 import { BeanRepository } from './BeanRepository';
 
 //Only for not-global contexts
-export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDescriptor) => {
+export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (contextDescriptor: IContextDescriptor) => {
     const extendsHeritageClause = contextDescriptor.node.heritageClauses
         ?.find(clause => clause.token === ts.SyntaxKind.ExtendsKeyword);
 
@@ -21,6 +21,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
             node: extendsHeritageClause,
             message: 'You should pass TBeans interface reference to the context inheritance',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -31,6 +32,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
             node: extendsHeritageClause,
             message: 'TBeans should be a plain interface reference',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -45,6 +47,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
             node: type.typeName,
             message: 'Can\'t qualify TBeans declaration',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -54,6 +57,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
             node: type.typeName,
             message: 'TBeans should be a plain interface declaration (without extends keyword)',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -63,6 +67,7 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
             node: type.typeName,
             message: 'TBeans should be a plain interface declaration (without extends keyword)',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
@@ -72,23 +77,28 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
             node: type.typeName,
             message: 'TBeans should be a plain interface declaration without indexed signatures',
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
 
-    ContextRepository.registerBeanType(contextDescriptor.name, nodeDescriptor);
+    ContextRepository.registerTBeanType(contextDescriptor, nodeDescriptor);
 
     const requiredBeanProperties: ts.PropertySignature[] = nodeDescriptor.node.members.map((it) => it as ts.PropertySignature);
 
-    const registeredBeanNames = BeanRepository
-        .contextIdToBeanDescriptorsMap.get(contextDescriptor.id)?.map(it => it.classMemberName) ?? [];
+    const contextBeans = BeanRepository
+        .contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
 
     const missingBeans: ts.PropertySignature[] = [];
 
     requiredBeanProperties.forEach(requiredBeanProperty => {
         const requiredBeanName = removeQuotesFromString(requiredBeanProperty.name.getText());
 
-        if (!registeredBeanNames.includes(requiredBeanName)) {
+        const requiredBeanDescriptor = contextBeans.find(it => it.classMemberName === requiredBeanName);
+
+        if (requiredBeanDescriptor) {
+            requiredBeanDescriptor.isPublic = true;
+        } else {
             missingBeans.push(requiredBeanProperty);
         }
     });
@@ -97,8 +107,9 @@ export const checkIsAllBeansRegisteredInContext = (contextDescriptor: IContextDe
         const missingBeansText = missingBeans.map(it => removeQuotesFromString(it.name.getText())).join(', ');
         CompilationContext.reportErrorWithMultipleNodes({
             nodes: [type, ...missingBeans],
-            message: `Some beans is not registered in Context "${contextDescriptor.name}": [ ${missingBeansText} ]`,
+            message: `Some beans are not registered in Context "${contextDescriptor.name}": [ ${missingBeansText} ]`,
             filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }

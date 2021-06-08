@@ -19,6 +19,7 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
                 message: 'Bean scope should be a string literal',
                 node: scopeNode,
                 filePath: expression.getSourceFile().fileName,
+                relatedContextPath: expression.getSourceFile().fileName,
             });
             return 'singleton';
         }
@@ -31,6 +32,7 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
             message: 'Scope in Bean should be a "prototype" or "singleton"',
             node: scopeNode,
             filePath: expression.getSourceFile().fileName,
+            relatedContextPath: expression.getSourceFile().fileName,
         });
         return 'singleton';
     }

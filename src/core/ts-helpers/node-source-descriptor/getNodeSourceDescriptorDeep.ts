@@ -16,7 +16,6 @@ import { isPathRelative } from '../../utils/isPathRelative';
 
 //TODO Add support for default imports/exports
 export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFind: string, exportNodesStack: ts.ExportDeclaration[] = []): INodeSourceDescriptor | null {
-    CompilationContext.clearErrorsByFilePath(sourceFile.fileName);
     const splittedNameToFind = nameToFind.split('.');
 
     //Trying to Find in imports-----------------------------------------------------------------------------------------

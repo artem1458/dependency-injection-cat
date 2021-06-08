@@ -3,6 +3,7 @@ import { IBeans } from '../IBeans';
 import { IUseCase } from '../lib/use-case/IUseCase';
 import { UseCase } from '../lib/use-case/UseCase';
 
-export class ApplicationContext extends CatContext<IBeans> {
-    useCase: IUseCase = Bean(UseCase)
+class ApplicationContext extends CatContext<IBeans> {
+    useCase: IUseCase = Bean(UseCase);
+    useCase3: IUseCase = Bean(UseCase);
 }

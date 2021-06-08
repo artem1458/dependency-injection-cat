@@ -23,6 +23,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
             node: classReference,
             message: 'Can\'t qualify property Bean dependencies, please try to use method Bean',
             filePath: descriptor.contextDescriptor.absolutePath,
+            relatedContextPath: descriptor.contextDescriptor.absolutePath,
         });
         return;
     }
@@ -36,6 +37,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
             node: classReference,
             message: 'Can\'t qualify property Bean dependencies, please try to use method bean',
             filePath: descriptor.contextDescriptor.absolutePath,
+            relatedContextPath: descriptor.contextDescriptor.absolutePath,
         });
         return;
     }
@@ -79,5 +81,6 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
         node: classReference,
         message: `Class "${classReference.getText()}" have some unqualified dependencies, please try to use "method Bean" instead:\n${unQualifiedParametersText}`,
         filePath: descriptor.contextDescriptor.absolutePath,
+        relatedContextPath: descriptor.contextDescriptor.absolutePath,
     });
 };

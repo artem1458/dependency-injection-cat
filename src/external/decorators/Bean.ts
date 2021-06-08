@@ -2,6 +2,7 @@ export type TClassConstructor<T> = new (...args: any[]) => T;
 export type TBeanScope = 'prototype' | 'singleton';
 export interface IBeanConfig {
     scope?: TBeanScope;
+    isPublic: boolean;
 }
 
 export function Bean<T>(

@@ -3,6 +3,7 @@ import upath from 'upath';
 import { PRIVATE_TOKEN } from '../constants';
 import { getRelativePathToExternalDirectoryFromSourceFile } from '../utils/getRelativePathToExternalDirectoryFromSourceFile';
 import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { removeExtensionFromPath } from '../../utils/removeExtensionFromPath';
 
 export const INTERNAL_CAT_CONTEXT_IMPORT = `INTERNAL_CAT_CONTEXT_IMPORT${PRIVATE_TOKEN}`;
 export const CONTEXT_POOL_IMPORT = `CONTEXT_POOL_IMPORT${PRIVATE_TOKEN}`;
@@ -51,7 +52,7 @@ export const addNecessaryImports = (contextDescriptorToIdentifierList: TContextD
         const globalContextImports = contextDescriptorToIdentifierList.map(([contextDescriptor, identifier]) => {
             const relativePathToGlobalContext = `./${upath.relative(
                 sourceFileDirname,
-                contextDescriptor.absolutePath,
+                removeExtensionFromPath(contextDescriptor.absolutePath),
             )}`;
 
             return (

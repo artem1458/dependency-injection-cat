@@ -24,6 +24,7 @@ export const reportAboutCyclicDependencies = (contextDescriptor: IContextDescrip
                 nodes,
                 message: `Cyclic dependencies detected in context "${contextName}" for Beans: ${names.join(' <—> ')}`,
                 filePath: contextDescriptor.absolutePath,
+                relatedContextPath: contextDescriptor.absolutePath,
             });
         });
     });

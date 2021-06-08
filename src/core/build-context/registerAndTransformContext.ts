@@ -1,15 +1,13 @@
 import ts from 'typescript';
-import { relativizeImports } from './transformers/relativizeImports';
 import { addContextPool } from './transformers/addContextPool';
 import { replaceExtendingFromCatContext } from './transformers/replaceExtendingFromCatContext';
 import { replacePropertyBeans } from './transformers/replacePropertyBeans';
 import { transformMethodBeans } from './transformers/transformMethodBeans';
-import { removeDIImports } from '../ts-helpers/removeDIImports';
 import { addNecessaryImports } from './transformers/addNecessaryImports';
 import { ContextRepository } from '../context/ContextRepository';
 import { registerContext } from '../context/registerContext';
 import { registerBeans } from '../bean/registerBeans';
-import { checkIsAllBeansRegisteredInContext } from '../bean/checkIsAllBeansRegisteredInContext';
+import { checkIsAllBeansRegisteredInContextAndFillBeanRequierness } from '../bean/checkIsAllBeansRegisteredInContextAndFillBeanRequierness';
 import { registerBeanDependencies } from '../bean-dependencies/registerBeanDependencies';
 import { buildDependencyGraphAndFillQualifiedBeans } from '../connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
 import { reportAboutCyclicDependencies } from '../report-cyclic-dependencies/reportAboutCyclicDependencies';
@@ -43,12 +41,10 @@ export function registerAndTransformContext(
         const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
         const transformers: ts.TransformerFactory<any>[] = [
-            relativizeImports(),
             addGlobalContextInstance(newGlobalContextDescriptor),
             replaceExtendingFromCatContext(newGlobalContextDescriptor),
             replacePropertyBeans(contextDescriptorToIdentifierList),
             transformMethodBeans(contextDescriptorToIdentifierList),
-            removeDIImports(),
             addNecessaryImports(contextDescriptorToIdentifierList),
         ];
 
@@ -70,7 +66,7 @@ export function registerAndTransformContext(
     }
 
     registerBeans(contextDescriptor);
-    checkIsAllBeansRegisteredInContext(contextDescriptor);
+    checkIsAllBeansRegisteredInContextAndFillBeanRequierness(contextDescriptor);
     registerBeanDependencies(contextDescriptor);
     buildDependencyGraphAndFillQualifiedBeans(contextDescriptor);
     reportAboutCyclicDependencies(contextDescriptor);
@@ -78,12 +74,10 @@ export function registerAndTransformContext(
     const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
     const transformers: ts.TransformerFactory<any>[] = [
-        relativizeImports(),
         addContextPool(contextDescriptor),
         replaceExtendingFromCatContext(contextDescriptor),
         replacePropertyBeans(contextDescriptorToIdentifierList),
         transformMethodBeans(contextDescriptorToIdentifierList),
-        removeDIImports(),
         addNecessaryImports(contextDescriptorToIdentifierList),
     ];
 
@@ -92,9 +86,7 @@ export function registerAndTransformContext(
         transformers,
     ).transformed[0];
 
-    const printer = ts.createPrinter();
-
-    const text = printer.printFile(file);
+    // const fileText = ts.createPrinter().printFile(file);
 
     return file;
 }

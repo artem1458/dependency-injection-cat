@@ -53,7 +53,7 @@ function getBeanBlock(beanDescriptor: IBeanDescriptor, contextDescriptorToIdenti
             return factory.createCallExpression(
                 factory.createPropertyAccessExpression(
                     factory.createThis(),
-                    factory.createIdentifier('getBean')
+                    factory.createIdentifier('getPrivateBean')
                 ),
                 undefined,
                 [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]
@@ -71,7 +71,7 @@ function getBeanBlock(beanDescriptor: IBeanDescriptor, contextDescriptorToIdenti
                     globalContextIdentifier,
                     factory.createIdentifier(globalContextIdentifier.text),
                 ),
-                factory.createIdentifier('getBean')
+                factory.createIdentifier('getPrivateBean')
             ),
             undefined,
             [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]

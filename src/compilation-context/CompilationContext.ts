@@ -1,8 +1,10 @@
 import chalk from 'chalk';
+import { flattenDeep } from 'lodash';
 import { ICompilationContextError, ICompilationContextErrorWithMultipleNodes } from './ICompilationContextError';
 import { getPositionOfNode } from '../core/utils/getPositionOfNode';
 import { CompilationError } from './CompilationError';
 import { diConfig } from '../external/config';
+import { ContextRepository } from '../core/context/ContextRepository';
 
 interface ICompilationContext {
     errors: ICompilationContextError[];
@@ -86,9 +88,9 @@ export class CompilationContext {
             return null;
         }
 
-        const errorMessages: string[] = [
-            '\n/-/-/-/-/-/-/-/-/-/-/-/-/ DI-CAT /-/-/-/-/-/-/-/-/-/-/-/-/-/-/\n'
-        ];
+        const diCatHeader = 'DI-CAT';
+
+        const errorMessages: string[] = [];
 
         this.compilationContext.textErrors.forEach(error => errorMessages.push(error));
 
@@ -99,6 +101,14 @@ export class CompilationContext {
         this.compilationContext.errorsWithMultipleNodes.forEach(error => {
             errorMessages.push(this.formatCompilationContextDataWithMultipleNodes(error));
         });
+
+        const flatMessages = flattenDeep(errorMessages.map(it => it.split('\n')));
+        const maxMessageLength = flatMessages
+            .reduce((a, b) => (a.length > b.length ? a : b)).length;
+        const neededPrefixLength = (maxMessageLength - diCatHeader.length - 2) / 4;
+        const prefix = '/-'.repeat(neededPrefixLength);
+
+        errorMessages.unshift(`\n${prefix} ${diCatHeader} ${prefix}\n`);
 
         return chalk.red(errorMessages.join('\n'));
     }
@@ -127,22 +137,43 @@ export class CompilationContext {
         };
     }
 
-    private static formatCompilationContextData({message, node}: ICompilationContextError): string {
+    private static formatCompilationContextData({message, node, relatedContextPath}: ICompilationContextError): string {
         const nodePosition = getPositionOfNode(node);
         const path = node.getSourceFile().fileName;
+
+        if (relatedContextPath) {
+            const relatedContextDescriptor = ContextRepository.contextPathToContextDescriptor.get(relatedContextPath);
+
+            if (relatedContextDescriptor) {
+                const relatedContextNodePosition = getPositionOfNode(relatedContextDescriptor.node);
+
+                return `${message}\nInvolved context: (${relatedContextDescriptor.absolutePath}:${relatedContextNodePosition[0]}:${relatedContextNodePosition[1]})\nAt: (${path}:${nodePosition[0]}:${nodePosition[1]})\n`;
+            }
+        }
 
         return `${message}\nAt: (${path}:${nodePosition[0]}:${nodePosition[1]})\n`;
     }
 
     private static formatCompilationContextDataWithMultipleNodes({
         message,
-        nodes
+        nodes,
+        relatedContextPath,
     }: ICompilationContextErrorWithMultipleNodes): string {
         const nodePositions = nodes.map(node => getPositionOfNode(node));
         const paths = nodes.map(it => it.getSourceFile().fileName);
         const nodesMessage = paths.map((_, index) =>
-            `At: (${paths[index]}:${nodePositions[index][0]}:${nodePositions[index][1]})`
+            `${paths[index]}:${nodePositions[index][0]}:${nodePositions[index][1]}`
         ).join('\n');
+
+        if (relatedContextPath) {
+            const relatedContextDescriptor = ContextRepository.contextPathToContextDescriptor.get(relatedContextPath);
+
+            if (relatedContextDescriptor) {
+                const relatedContextNodePosition = getPositionOfNode(relatedContextDescriptor.node);
+
+                return `${message}\nInvolved context: (${relatedContextDescriptor.absolutePath}:${relatedContextNodePosition[0]}:${relatedContextNodePosition[1]})\n${nodesMessage}\n`;
+            }
+        }
 
         return `${message}\n${nodesMessage}\n`;
     }
