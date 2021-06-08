@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { flattenDeep} from 'lodash';
+import { flattenDeep } from 'lodash';
 import { ICompilationContextError, ICompilationContextErrorWithMultipleNodes } from './ICompilationContextError';
 import { getPositionOfNode } from '../core/utils/getPositionOfNode';
 import { CompilationError } from './CompilationError';

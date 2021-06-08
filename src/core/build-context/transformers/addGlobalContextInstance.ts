@@ -1,7 +1,7 @@
 import ts, { factory } from 'typescript';
 import { IContextDescriptor } from '../../context/ContextRepository';
-import { beanConfigDeclarationName, createBeanConfigDeclaration } from './createBeanConfigDeclaration';
 import { getGlobalContextVariableNameByContextId } from '../utils/getGlobalContextVariableNameByContextId';
+import { getBeanConfigObjectLiteral } from './getBeanConfigObjectLiteral';
 
 export const addGlobalContextInstance = (contextDescriptor: IContextDescriptor): ts.TransformerFactory<ts.SourceFile> => {
     return () => sourceFile => {
@@ -9,7 +9,6 @@ export const addGlobalContextInstance = (contextDescriptor: IContextDescriptor):
             sourceFile,
             [
                 ...sourceFile.statements,
-                ...createBeanConfigDeclaration(contextDescriptor),
                 buildGlobalContextInstance(contextDescriptor),
             ]
         );
@@ -25,11 +24,26 @@ function buildGlobalContextInstance(contextDescriptor: IContextDescriptor): ts.S
                 undefined,
                 undefined,
                 factory.createNewExpression(
-                    factory.createIdentifier(contextDescriptor.className),
+                    contextDescriptor.node.name,
                     undefined,
                     [
-                        factory.createStringLiteral(`Global Context: ${contextDescriptor.className}`),
-                        factory.createIdentifier(beanConfigDeclarationName)
+                        factory.createTemplateExpression(
+                            factory.createTemplateHead(
+                                'Global Context ',
+                                'Global Context '
+                            ),
+                            [factory.createTemplateSpan(
+                                factory.createPropertyAccessExpression(
+                                    contextDescriptor.node.name,
+                                    factory.createIdentifier('name')
+                                ),
+                                factory.createTemplateTail(
+                                    '',
+                                    ''
+                                )
+                            )]
+                        ),
+                        getBeanConfigObjectLiteral(contextDescriptor),
                     ]
                 )
             )],

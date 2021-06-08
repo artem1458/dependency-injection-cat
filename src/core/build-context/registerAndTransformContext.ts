@@ -41,7 +41,6 @@ export function registerAndTransformContext(
         const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
         const transformers: ts.TransformerFactory<any>[] = [
-            // relativizeImports(),
             addGlobalContextInstance(newGlobalContextDescriptor),
             replaceExtendingFromCatContext(newGlobalContextDescriptor),
             replacePropertyBeans(contextDescriptorToIdentifierList),
@@ -54,7 +53,7 @@ export function registerAndTransformContext(
             transformers,
         ).transformed[0];
 
-        // const fileText = ts.createPrinter().printFile(file);
+        const fileText = ts.createPrinter().printFile(file);
 
         return file;
     }
@@ -75,7 +74,6 @@ export function registerAndTransformContext(
     const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
     const transformers: ts.TransformerFactory<any>[] = [
-        // relativizeImports(),
         addContextPool(contextDescriptor),
         replaceExtendingFromCatContext(contextDescriptor),
         replacePropertyBeans(contextDescriptorToIdentifierList),
@@ -88,11 +86,7 @@ export function registerAndTransformContext(
         transformers,
     ).transformed[0];
 
-    const printer = ts.createPrinter();
-
-    // const text = printer.printFile(file);
-    //
-    // console.log(text);
+    // const fileText = ts.createPrinter().printFile(file);
 
     return file;
 }

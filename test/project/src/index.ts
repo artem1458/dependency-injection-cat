@@ -6,3 +6,7 @@ const context = container.getOrInitContext<IBeans>({
 });
 
 console.log(context.getBeans());
+
+import { xz } from './IBeans';
+
+console.log(xz + 123);

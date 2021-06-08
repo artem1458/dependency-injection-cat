@@ -1,8 +1,7 @@
-import { forEach } from 'lodash';
-import { NotInitializedConfig } from '../exceptions/runtime/NotInitializedConfig';
 import { IBeanConfig } from './decorators/Bean';
-import { BeanNotFoundInContext } from '../exceptions/runtime/BeanNotFoundInContext';
 import { IInternalCatContext } from './IInternalCatContext';
+import { NotInitializedConfig } from '../exceptions/runtime/NotInitializedConfig';
+import { BeanNotFoundInContext } from '../exceptions/runtime/BeanNotFoundInContext';
 
 type TBeanName = string;
 
@@ -69,9 +68,13 @@ export abstract class InternalCatContext implements IInternalCatContext {
 
     getBeans(): Record<string, any> {
         const publicBeansConfigurations: Record<string, IBeanConfig> = {};
-        forEach(this.beanConfigurationRecord, (value, key) => {
-            if (value.isPublic){
-                publicBeansConfigurations[key] = value;
+        const beanConfigurationKeys = Object.keys(this.beanConfigurationRecord);
+
+        beanConfigurationKeys.forEach(key => {
+            const beanConfigRecord = this.beanConfigurationRecord[key];
+
+            if (beanConfigRecord.isPublic) {
+                publicBeansConfigurations[key] = beanConfigRecord;
             }
         });
 

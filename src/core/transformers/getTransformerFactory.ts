@@ -7,7 +7,7 @@ import minimatch from 'minimatch';
 import { diConfig } from '../../external/config';
 import { registerAndTransformContext } from '../build-context/registerAndTransformContext';
 
-const transformTest: Record<string, number> = {};
+export const transformTest: Record<string, number> = {};
 
 export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {

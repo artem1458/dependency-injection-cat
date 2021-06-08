@@ -2,9 +2,9 @@ import ts, { factory } from 'typescript';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { PRIVATE_TOKEN } from '../constants';
 import { CONTEXT_POOL_IMPORT } from './addNecessaryImports';
-import { beanConfigDeclarationName, createBeanConfigDeclaration } from './createBeanConfigDeclaration';
+import { getBeanConfigObjectLiteral } from './getBeanConfigObjectLiteral';
 
-export const CONTEXT_POOL_POSTFIX = `_POOL_${PRIVATE_TOKEN}`;
+export const CONTEXT_POOL_POSTFIX = `_POOL${PRIVATE_TOKEN}`;
 
 export const addContextPool = (contextDescriptor: IContextDescriptor): ts.TransformerFactory<ts.SourceFile> => {
     return () => sourceFile => {
@@ -12,7 +12,6 @@ export const addContextPool = (contextDescriptor: IContextDescriptor): ts.Transf
             sourceFile,
             [
                 ...sourceFile.statements,
-                ...createBeanConfigDeclaration(contextDescriptor),
                 createContextNamePool(contextDescriptor),
             ]
         );
@@ -34,9 +33,12 @@ function createContextNamePool(contextDescriptor: IContextDescriptor): ts.Statem
                     ),
                     undefined,
                     [
-                        factory.createStringLiteral(contextDescriptor.name),
-                        factory.createIdentifier(beanConfigDeclarationName),
-                        factory.createIdentifier(contextDescriptor.node.name.getText()),
+                        factory.createPropertyAccessExpression(
+                            contextDescriptor.node.name,
+                            factory.createIdentifier('name')
+                        ),
+                        getBeanConfigObjectLiteral(contextDescriptor),
+                        contextDescriptor.node.name,
                     ]
                 )
             )],

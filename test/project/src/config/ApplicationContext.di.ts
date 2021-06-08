@@ -4,5 +4,6 @@ import { IUseCase } from '../lib/use-case/IUseCase';
 import { UseCase } from '../lib/use-case/UseCase';
 
 class ApplicationContext extends CatContext<IBeans> {
-    useCase: IUseCase = Bean(UseCase)
+    useCase: IUseCase = Bean(UseCase);
+    useCase3: IUseCase = Bean(UseCase);
 }

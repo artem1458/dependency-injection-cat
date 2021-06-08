@@ -410,7 +410,7 @@ const context = container.getContext<TBeans>({
 
 ### getOrInitContext
 
-GetOrInitContext returning instance of **context** by key (if it was previously initialized), if wasn't - will be
+GetOrInitContext return instance of **context** by key (if it was previously initialized), if wasn't - will be
 created and returned a new instance of context.
 
 ```typescript
