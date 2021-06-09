@@ -39,7 +39,11 @@ export default class {
         });
 
         compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation) => {
-            const changedFiles = new Set(Array.from(compiler.modifiedFiles ?? []));
+            const webpack4ChangedFiles = Object.keys((compiler as any).watchFileSystem?.watcher?.mtimes ?? {});
+
+            const changedFiles = webpack4ChangedFiles.length > 0
+                ? new Set(webpack4ChangedFiles)
+                : new Set(Array.from(compiler.modifiedFiles ?? []));
             const tbeanContextPaths = Array.from(ContextRepository.contextNameToTBeanNodeSourceDescriptor.values())
                 .filter(it => changedFiles.has(it.nodeSourceDescriptor.path))
                 .map(it => it.contextDescriptor.absolutePath);

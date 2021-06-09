@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+- [Hot Reload] [Fix] Fix hot reloading for webpack 4
+
 ## 0.2.2
 
 - [Hot Reload] [Fix] [Issue#12](https://github.com/artem1458/dependency-injection-cat/issues/12) Context now rebuilds on TBeans interface changing. If it's file only with type declarations context will not rebuild when using babel-loader
