@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.4
+
+- [Improvement] Added typings for webpack plugin
+
 ## 0.2.3
 
 - [Hot Reload] [Fix] Fix hot reloading for webpack 4
