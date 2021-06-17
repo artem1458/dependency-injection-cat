@@ -30,7 +30,7 @@ const reportDIErrorsHook = (compilation: Compilation) => {
 
 const PLUGIN_NAME = 'DI-Cat Webpack Plugin';
 
-export default class {
+export default class DICatWebpackPlugin {
     apply(compiler: Compiler) {
         compiler.hooks.afterEmit.tap(PLUGIN_NAME, reportDIErrorsHook);
 
