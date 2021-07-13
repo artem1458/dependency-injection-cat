@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5
+
+- [Fix] Fixed ReportErrorsTypescriptPlugin
+
 ## 0.2.4
 
 - [Improvement] Added typings for webpack plugin
