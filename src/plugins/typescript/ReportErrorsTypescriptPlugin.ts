@@ -4,12 +4,13 @@ import { CompilationError } from '../../compilation-context/CompilationError';
 
 export default (): ts.TransformerFactory<ts.SourceFile> => {
     return (context => {
-        const message = CompilationContext.getErrorMessage();
+        return node => {
+            const message = CompilationContext.getErrorMessage();
+            if (message !== null) {
+                throw new CompilationError(message);
+            }
 
-        if (message !== null) {
-            throw new CompilationError(message);
-        }
-
-        return node => node;
+            return node;
+        };
     });
 };
