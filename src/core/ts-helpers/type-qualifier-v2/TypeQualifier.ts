@@ -5,7 +5,5 @@ interface IQualifiedType {
 }
 
 export function TypeQualifier(node: ts.Node, deepness = 0): IQualifiedType | null {
-    switch (node.kind) {
-
-    }
+    return null;
 }

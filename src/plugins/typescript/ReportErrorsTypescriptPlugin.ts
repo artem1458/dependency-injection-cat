@@ -2,10 +2,10 @@ import ts from 'typescript';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { CompilationError } from '../../compilation-context/CompilationError';
 
-export default (program: ts.Program): ts.TransformerFactory<ts.SourceFile> => {
-    const message = CompilationContext.getErrorMessage();
-
+export default (): ts.TransformerFactory<ts.SourceFile> => {
     return (context => {
+        const message = CompilationContext.getErrorMessage();
+
         if (message !== null) {
             throw new CompilationError(message);
         }

@@ -12,8 +12,10 @@
     "baseUrl": ".",
     "plugins": [
       {
-        "transform": "../../src/transformers/typescript/index.ts",
-        "compiledContextOutputDir": "./compiled-context"
+        "transform": "../../build/transformers/typescript"
+      },
+      {
+        "transform": "../../build/plugins/typescript/ReportErrorsTypescriptPlugin"
       }
     ]
   }
