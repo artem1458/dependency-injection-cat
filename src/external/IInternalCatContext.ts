@@ -1,6 +1,6 @@
 export interface IFullBeanConfig {
     scope?: 'prototype' | 'singleton';
-    isPublic: boolean;
+    isPublic?: boolean;
 }
 
 export interface IInternalCatContext {
