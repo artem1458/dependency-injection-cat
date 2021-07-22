@@ -1,0 +1,22 @@
+# Roadmap
+
+- Add container tests for all type of transformers (webpack + babel, webpack + typescript, ttypescript)
+- Improve documentation
+- Add example projects (FE/BE)
+- Write few topics on Medium
+- Apply "Semantic release" model
+- Add CI/CD based on GitHub Actions
+- Features/Code improvements
+  - Lazy beans (needed?)
+  - Context inheritance (needed?)
+  - JetBrains platform plugin for DI-Cat support:
+    - Errors highlighting
+    - Navigation between Beans
+    - ...
+  - Inject beans to classes from node_modules (only if it has .d.ts declaration file)
+  - Refactor "TypeQualifier"
+  - Bean injection, when one Bean implements multiple types/interfaces e.g. `crudRepository: IReadRepository | IWriteRepository = Bean(CRUDRepository);`
+  - Bean list injection e.g. `@Bean drawer(figures: IFigure[]): IDrawer => new Drawer(figures)`
+  - Add "Expressions" and "Arrow Functions" Beans. Examples:
+    -  "Expression" Bean: `@Bean requester: IRequester = instanceOfRequester;`
+    - "Arrow Function" Bean: `@Bean requester(): IRequester => new Requester();`
