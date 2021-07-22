@@ -32,4 +32,4 @@ jobs:
         run: cd tests && yarn
 
       - name: ttypescript tests
-        run: yarn run test:ttypescript
+        run: cd tests && yarn run test:ttypescript
