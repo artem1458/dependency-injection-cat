@@ -33,3 +33,6 @@ jobs:
 
       - name: ttypescript tests
         run: cd tests && yarn run test:ttypescript
+
+      - name: webpack + ttypescript tests
+        run: cd tests && yarn run test:webpack-ttypescript
