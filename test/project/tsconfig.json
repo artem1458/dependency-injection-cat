@@ -12,10 +12,7 @@
     "baseUrl": ".",
     "plugins": [
       {
-        "transform": "../../build/transformers/typescript"
-      },
-      {
-        "transform": "../../build/plugins/typescript/ReportErrorsTypescriptPlugin"
+        "transform": "dependency-injection-cat/transformers/typescript"
       }
     ]
   }

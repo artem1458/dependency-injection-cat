@@ -1,7 +1,7 @@
 import ts, { factory } from 'typescript';
 import upath from 'upath';
 import { PRIVATE_TOKEN } from '../constants';
-import { getRelativePathToExternalDirectoryFromSourceFile } from '../utils/getRelativePathToExternalDirectoryFromSourceFile';
+import { getImportPathToExternalDirectory } from '../utils/getImportPathToExternalDirectory';
 import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { removeExtensionFromPath } from '../../utils/removeExtensionFromPath';
 
@@ -11,15 +11,12 @@ export const CONTEXT_POOL_IMPORT = `CONTEXT_POOL_IMPORT${PRIVATE_TOKEN}`;
 export const addNecessaryImports = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
     return () => sourceFile => {
         const sourceFileDirname = upath.dirname(sourceFile.fileName);
-        const relativePathToEXTERNALDirectory = getRelativePathToExternalDirectoryFromSourceFile(
-            sourceFileDirname,
-        );
         const pathForInternalCatContext = upath.join(
-            relativePathToEXTERNALDirectory,
+            getImportPathToExternalDirectory(),
             'InternalCatContext',
         );
         const pathForContextPool = upath.join(
-            relativePathToEXTERNALDirectory,
+            getImportPathToExternalDirectory(),
             'ContextPool',
         );
 
