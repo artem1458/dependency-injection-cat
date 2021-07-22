@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.7
+
+- [Fix] Replace relative path to InternalCatContext and ContextPool
+
 ## 0.2.5 - 0.2.6
 
 - [Fix] Fixed ReportErrorsTypescriptPlugin

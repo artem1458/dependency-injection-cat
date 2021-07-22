@@ -12,8 +12,7 @@
     "baseUrl": ".",
     "plugins": [
       {
-        "transform": "../../src/transformers/typescript/index.ts",
-        "compiledContextOutputDir": "./compiled-context"
+        "transform": "dependency-injection-cat/transformers/typescript"
       }
     ]
   }
