@@ -7,6 +7,7 @@
 - Apply "Semantic release" model
 - Add CI/CD based on GitHub Actions
 - Features/Code improvements
+  - "PostConstruct" inside contexts
   - Lazy beans (needed?)
   - Context inheritance (needed?)
   - JetBrains platform plugin for DI-Cat support:
