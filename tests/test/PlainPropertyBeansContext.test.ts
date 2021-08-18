@@ -5,11 +5,11 @@ import assert from 'assert';
 import { TestClass1Dependency } from '../src/classes/1dependencies/TestClass1Dependency';
 import { TestClass0Dependencies } from '../src/classes/1dependencies/TestClass0Dependencies';
 
-describe('ArrowFunctionContext tests', () => {
+describe('PlainPropertyBeansContext tests', () => {
     it('should build testClass1Dependency', () => {
         //Given
         const context = container.initContext<IBeans>({
-            name: 'ArrowFunctionContext'
+            name: 'PlainPropertyBeansContext'
         });
 
         //When

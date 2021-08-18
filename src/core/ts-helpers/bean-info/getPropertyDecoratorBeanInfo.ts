@@ -5,7 +5,7 @@ import { isBeanDecorator } from '../predicates/isBeanDecorator';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
 import { ClassPropertyArrowFunction } from '../types';
 
-export const getPropertyDecoratorBeanInfo = (node: ts.MethodDeclaration | ClassPropertyArrowFunction): ICompilationBeanInfo => {
+export const getPropertyDecoratorBeanInfo = (node: ts.MethodDeclaration | ClassPropertyArrowFunction | ts.PropertyDeclaration): ICompilationBeanInfo => {
     const bean = node.decorators?.find(isBeanDecorator) ?? null;
 
     if (bean === null) {

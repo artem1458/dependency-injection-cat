@@ -6,6 +6,8 @@ import { registerPropertyBean } from './registerPropertyBean';
 import { BeanRepository } from './BeanRepository';
 import { isArrowFunctionBean } from '../ts-helpers/predicates/isArrowFunctionBean';
 import { registerArrowFunctionBean } from './registerArrowFunctionBean';
+import { isPlainPropertyBean } from '../ts-helpers/predicates/isPlainPropertyBean';
+import { registerPlainPropertyBean } from './registerPlainPropertyBean';
 
 export function registerBeans(contextDescriptor: IContextDescriptor) {
     BeanRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
@@ -19,6 +21,9 @@ export function registerBeans(contextDescriptor: IContextDescriptor) {
         }
         if (isArrowFunctionBean(classElement)) {
             registerArrowFunctionBean(contextDescriptor, classElement);
+        }
+        if (isPlainPropertyBean(classElement)) {
+            registerPlainPropertyBean(contextDescriptor, classElement);
         }
     });
 }

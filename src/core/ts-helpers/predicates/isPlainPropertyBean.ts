@@ -1,9 +1,9 @@
 import * as ts from 'typescript';
-import { ClassPropertyArrowFunction } from '../types';
+import { PropertyDeclaration } from 'typescript';
 import { isBeanDecorator } from './isBeanDecorator';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
-export const isArrowFunctionBean = (node: ts.Node): node is ClassPropertyArrowFunction => {
+export const isPlainPropertyBean = (node: ts.Node): node is PropertyDeclaration => {
     if (!ts.isPropertyDeclaration(node)) {
         return false;
     }
@@ -22,5 +22,5 @@ export const isArrowFunctionBean = (node: ts.Node): node is ClassPropertyArrowFu
         return false;
     }
 
-    return ts.isArrowFunction(node.initializer);
+    return !ts.isArrowFunction(node.initializer);
 };

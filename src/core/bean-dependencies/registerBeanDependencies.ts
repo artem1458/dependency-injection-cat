@@ -23,6 +23,7 @@ export const registerBeanDependencies = (contextDescriptor: IContextDescriptor) 
 
         case 'arrowFunction':
             registerArrowFunctionBeanDependencies(descriptor as IBeanDescriptor<ClassPropertyArrowFunction>);
+            break;
         }
     });
 };

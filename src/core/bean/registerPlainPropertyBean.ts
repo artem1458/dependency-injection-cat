@@ -6,9 +6,8 @@ import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropert
 import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { restrictedBeanNames } from './constants';
-import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 
-export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyArrowFunction): void => {
+export const registerPlainPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): void => {
     const classElementName = classElement.name.getText();
 
     if (restrictedBeanNames.includes(classElementName)) {
@@ -21,7 +20,7 @@ export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor,
         return;
     }
 
-    const typeInfo = getBeanTypeInfoFromArrowFunction(contextDescriptor, classElement);
+    const typeInfo = getBeanTypeInfoFromPlainPropertyBean(contextDescriptor, classElement);
     const beanInfo = getPropertyDecoratorBeanInfo(classElement);
 
     if (typeInfo === null) {
@@ -42,22 +41,22 @@ export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor,
         scope: beanInfo.scope,
         node: classElement,
         typeNode: typeInfo.typeNode,
-        beanKind: 'arrowFunction',
+        beanKind: 'plainProperty',
         beanSourceLocation: null,
         isPublic: false,
     });
 };
 
-function getBeanTypeInfoFromArrowFunction(contextDescriptor: IContextDescriptor, classElement: ClassPropertyArrowFunction): IQualifiedTypeWithTypeNode | null {
-    const functionReturnType = classElement.initializer.type ?? null;
+function getBeanTypeInfoFromPlainPropertyBean(contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): IQualifiedTypeWithTypeNode | null {
+    const propertyType = classElement.type ?? null;
 
-    if (functionReturnType !== null) {
-        const qualified = typeQualifier(functionReturnType);
+    if (propertyType !== null) {
+        const qualified = typeQualifier(propertyType);
 
         return qualified ?
             {
                 ...qualified,
-                typeNode: functionReturnType,
+                typeNode: propertyType,
             }
             : null;
     } else {

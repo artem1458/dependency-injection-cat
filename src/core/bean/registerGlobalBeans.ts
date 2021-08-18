@@ -4,6 +4,10 @@ import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBea
 import { registerPropertyBean } from './registerPropertyBean';
 import { registerMethodBean } from './registerMethodBean';
 import { BeanRepository } from './BeanRepository';
+import { isArrowFunctionBean } from '../ts-helpers/predicates/isArrowFunctionBean';
+import { registerArrowFunctionBean } from './registerArrowFunctionBean';
+import { isPlainPropertyBean } from '../ts-helpers/predicates/isPlainPropertyBean';
+import { registerPlainPropertyBean } from './registerPlainPropertyBean';
 
 export const registerGlobalBeans = (contextDescriptor: IContextDescriptor) => {
     BeanRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
@@ -14,6 +18,12 @@ export const registerGlobalBeans = (contextDescriptor: IContextDescriptor) => {
         }
         if (isClassPropertyBean(classElement)) {
             registerPropertyBean(contextDescriptor, classElement);
+        }
+        if (isArrowFunctionBean(classElement)) {
+            registerArrowFunctionBean(contextDescriptor, classElement);
+        }
+        if (isPlainPropertyBean(classElement)) {
+            registerPlainPropertyBean(contextDescriptor, classElement);
         }
     });
 };
