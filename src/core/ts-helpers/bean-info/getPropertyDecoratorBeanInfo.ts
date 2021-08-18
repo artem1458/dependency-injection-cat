@@ -3,16 +3,17 @@ import { getScopeValue } from './getScopeValue';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { isBeanDecorator } from '../predicates/isBeanDecorator';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
+import { ClassPropertyArrowFunction } from '../types';
 
-export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICompilationBeanInfo => {
-    const bean = methodDeclaration.decorators?.find(isBeanDecorator) ?? null;
+export const getPropertyDecoratorBeanInfo = (node: ts.MethodDeclaration | ClassPropertyArrowFunction | ts.PropertyDeclaration): ICompilationBeanInfo => {
+    const bean = node.decorators?.find(isBeanDecorator) ?? null;
 
     if (bean === null) {
         CompilationContext.reportError({
-            node: methodDeclaration,
+            node: node,
             message: 'Bean should have @Bean decorator',
-            filePath: methodDeclaration.getSourceFile().fileName,
-            relatedContextPath: methodDeclaration.getSourceFile().fileName,
+            filePath: node.getSourceFile().fileName,
+            relatedContextPath: node.getSourceFile().fileName,
         });
 
         return {
@@ -35,8 +36,8 @@ export const getMethodBeanInfo = (methodDeclaration: ts.MethodDeclaration): ICom
             CompilationContext.reportError({
                 message: 'Bean configuration should be an object literal',
                 node: bean,
-                filePath: methodDeclaration.getSourceFile().fileName,
-                relatedContextPath: methodDeclaration.getSourceFile().fileName,
+                filePath: node.getSourceFile().fileName,
+                relatedContextPath: node.getSourceFile().fileName,
             });
 
             return {

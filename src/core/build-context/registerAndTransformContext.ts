@@ -16,6 +16,8 @@ import { registerGlobalBeans } from '../bean/registerGlobalBeans';
 import { registerGlobalCatContext } from '../context/registerGlobalCatContext';
 import { addGlobalContextInstance } from './transformers/addGlobalContextInstance';
 import { TContextDescriptorToIdentifier } from './utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { transformArrowFunctionBeans } from './transformers/transformArrowFunctionBeans';
+import { transformExpressionBeans } from './transformers/transformExpressionBeans';
 
 export function registerAndTransformContext(
     context: ts.TransformationContext,
@@ -45,6 +47,8 @@ export function registerAndTransformContext(
             replaceExtendingFromCatContext(newGlobalContextDescriptor),
             replacePropertyBeans(contextDescriptorToIdentifierList),
             transformMethodBeans(contextDescriptorToIdentifierList),
+            transformArrowFunctionBeans(contextDescriptorToIdentifierList),
+            transformExpressionBeans(),
             addNecessaryImports(contextDescriptorToIdentifierList),
         ];
 
@@ -53,7 +57,7 @@ export function registerAndTransformContext(
             transformers,
         ).transformed[0];
 
-        const fileText = ts.createPrinter().printFile(file);
+        // const fileText = ts.createPrinter().printFile(file);
 
         return file;
     }
@@ -78,6 +82,8 @@ export function registerAndTransformContext(
         replaceExtendingFromCatContext(contextDescriptor),
         replacePropertyBeans(contextDescriptorToIdentifierList),
         transformMethodBeans(contextDescriptorToIdentifierList),
+        transformArrowFunctionBeans(contextDescriptorToIdentifierList),
+        transformExpressionBeans(),
         addNecessaryImports(contextDescriptorToIdentifierList),
     ];
 

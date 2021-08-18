@@ -7,29 +7,20 @@ import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { restrictedBeanNames } from './constants';
 
-export const registerMethodBean = (contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void => {
+export const registerExpressionBean = (contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): void => {
     const classElementName = classElement.name.getText();
 
     if (restrictedBeanNames.includes(classElementName)) {
         CompilationContext.reportError({
             node: classElement,
-            message: `${classElementName} method is reserved for the di-container, please use another name instead`,
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
-        return;
-    }
-    if (classElement.body === undefined) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Method Bean should have a body',
+            message: `${classElementName} name is reserved for the di-container, please use another name instead`,
             filePath: contextDescriptor.absolutePath,
             relatedContextPath: contextDescriptor.absolutePath,
         });
         return;
     }
 
-    const typeInfo = getBeanTypeInfoFromMethod(contextDescriptor, classElement);
+    const typeInfo = getBeanTypeInfoFromExpressionBean(contextDescriptor, classElement);
     const beanInfo = getPropertyDecoratorBeanInfo(classElement);
 
     if (typeInfo === null) {
@@ -49,23 +40,23 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         originalTypeName: typeInfo.originalTypeName,
         scope: beanInfo.scope,
         node: classElement,
-        typeNode: classElement.type!,
-        beanKind: 'method',
+        typeNode: typeInfo.typeNode,
+        beanKind: 'expression',
         beanSourceLocation: null,
         isPublic: false,
     });
 };
 
-function getBeanTypeInfoFromMethod(contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): IQualifiedTypeWithTypeNode | null {
-    const methodReturnType = classElement.type ?? null;
+function getBeanTypeInfoFromExpressionBean(contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): IQualifiedTypeWithTypeNode | null {
+    const propertyType = classElement.type ?? null;
 
-    if (methodReturnType !== null) {
-        const qualified = typeQualifier(methodReturnType);
+    if (propertyType !== null) {
+        const qualified = typeQualifier(propertyType);
 
         return qualified ?
             {
                 ...qualified,
-                typeNode: methodReturnType,
+                typeNode: propertyType,
             }
             : null;
     } else {

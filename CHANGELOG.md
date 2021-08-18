@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.8
+
+- [Feature] Added **Arrow Function Beans** and **Expression Beans**
+
 ## 0.2.7
 
 - [Fix] Replace relative path to InternalCatContext and ContextPool

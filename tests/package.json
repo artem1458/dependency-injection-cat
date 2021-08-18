@@ -9,11 +9,13 @@
     "test:ttypescript": "env TS_NODE_PROJECT=\"tsconfig.ttypescriptCompiler.json\"  mocha -r ts-node/register 'test/**/*.test.ts'"
   },
   "dependencies": {
+    "assert": "^2.0.0",
     "dependency-injection-cat": "../dist",
     "mocha": "^9.0.2",
     "ts-patch": "^1.4.1"
   },
   "devDependencies": {
+    "@types/assert": "^1.5.5",
     "@types/mocha": "^9.0.0",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
     "mochapack": "^2.1.2",

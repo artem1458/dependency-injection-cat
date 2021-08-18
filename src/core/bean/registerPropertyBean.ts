@@ -11,7 +11,6 @@ import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descripto
 import { END_PATH_TOKEN, START_PATH_TOKEN } from '../ts-helpers/type-qualifier/parseTokens';
 import { restrictedBeanNames } from './constants';
 
-
 export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
     const classElementName = classElement.name.getText();
 

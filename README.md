@@ -590,6 +590,61 @@ export class ApplicationContext extends CatContext<IBeans> {
 }
 ```
 
+### Arrow Function Bean
+
+Arrow Function Beans allows you to write more compact code, they work same as "Method Beans"
+
+#### Rules
+
+- Same as for "Method Beans"
+
+#### Syntax and Usage
+
+```typescript
+export class ApplicationContext extends CatContext<IBeans> {
+  //Bean don't have any dependencies
+  @Bean useCase = (): IUseCase => new UseCase();
+  //OR with body
+  @Bean useCase = (): IUseCase => {
+      return new UseCase();
+  }
+
+  //Bean have dependencies
+  dependency: IUseCaseDependency = Bean(UseCaseDependency);
+
+  @Bean useCase = (useCaseDependency: IUseCaseDependency): IUseCase => new UseCase(useCaseDependency);
+  //OR with body
+  @Bean useCase = (useCaseDependency: IUseCaseDependency): IUseCase => {
+      return new UseCase(useCaseDependency);
+  }
+
+  //Configure Bean
+  @Bean({scope: 'prototype'}) useCase = (): IUseCase => new UseCase();
+}
+```
+
+### Expression Bean
+
+Expression Beans allows you to define plain value/instance as a Bean, instead of using "Method Beans"
+Expression Beans can not have any dependencies, but can be a dependency
+
+#### Rules
+
+- Expression Bean should always have a type, and it should not be primitive (string, number...). To register Bean with
+  primitive type you should use type alias.
+
+#### Syntax and Usage
+
+```typescript
+export class ApplicationContext extends CatContext<IBeans> {
+  @Bean useCase: IUseCase = new UseCase();
+  @Bean importedInstanceOfUseCase: IUseCase = importedInstanceOfUseCase;
+
+  //Configure Bean
+  @Bean({scope: 'prototype'}) useCase: IUseCase = new UseCase();
+}
+```
+
 ## Qualifier
 
 Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type. By default, the qualifier is the

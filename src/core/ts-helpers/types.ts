@@ -7,3 +7,11 @@ export interface NamedClassDeclaration extends ts.ClassDeclaration {
 export interface ClassPropertyDeclarationWithInitializer extends PropertyDeclaration {
     initializer: CallExpression;
 }
+
+export interface ClassPropertyArrowFunction extends PropertyDeclaration {
+    initializer: ts.ArrowFunction;
+}
+
+export interface ClassPropertyDeclarationWithExpressionInitializer extends PropertyDeclaration {
+    initializer: ts.Expression;
+}
