@@ -76,12 +76,9 @@ export abstract class InternalCatContext implements IInternalCatContext {
         });
 
         return Object.keys(publicBeansConfigurations)
-            .reduce((previousValue, key) => {
-                Object.defineProperty(previousValue, key, {
-                    get: (): any => this.getBean(key)
-                });
-
-                return previousValue;
-            }, {});
+            .reduce((previousValue, currentValue) => ({
+                ...previousValue,
+                [currentValue]: this.getBean(currentValue),
+            }), {});
     }
 }
