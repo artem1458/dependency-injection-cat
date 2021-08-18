@@ -2,8 +2,13 @@ import * as ts from 'typescript';
 import { PropertyDeclaration } from 'typescript';
 import { isBeanDecorator } from './isBeanDecorator';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { isClassPropertyBean } from './isClassPropertyBean';
 
 export const isExpressionBean = (node: ts.Node): node is PropertyDeclaration => {
+    if (isClassPropertyBean(node)) {
+        return false;
+    }
+
     if (!ts.isPropertyDeclaration(node)) {
         return false;
     }

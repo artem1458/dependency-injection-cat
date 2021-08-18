@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.8
+## 0.2.8 - 0.2.9
 
 - [Feature] Added **Arrow Function Beans** and **Expression Beans**
 
