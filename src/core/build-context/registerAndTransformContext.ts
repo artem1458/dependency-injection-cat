@@ -16,6 +16,7 @@ import { registerGlobalBeans } from '../bean/registerGlobalBeans';
 import { registerGlobalCatContext } from '../context/registerGlobalCatContext';
 import { addGlobalContextInstance } from './transformers/addGlobalContextInstance';
 import { TContextDescriptorToIdentifier } from './utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { transformArrowFunctionBeans } from './transformers/transformArrowFunctionBeans';
 
 export function registerAndTransformContext(
     context: ts.TransformationContext,
@@ -45,6 +46,7 @@ export function registerAndTransformContext(
             replaceExtendingFromCatContext(newGlobalContextDescriptor),
             replacePropertyBeans(contextDescriptorToIdentifierList),
             transformMethodBeans(contextDescriptorToIdentifierList),
+            transformArrowFunctionBeans(contextDescriptorToIdentifierList),
             addNecessaryImports(contextDescriptorToIdentifierList),
         ];
 
@@ -78,6 +80,7 @@ export function registerAndTransformContext(
         replaceExtendingFromCatContext(contextDescriptor),
         replacePropertyBeans(contextDescriptorToIdentifierList),
         transformMethodBeans(contextDescriptorToIdentifierList),
+        transformArrowFunctionBeans(contextDescriptorToIdentifierList),
         addNecessaryImports(contextDescriptorToIdentifierList),
     ];
 

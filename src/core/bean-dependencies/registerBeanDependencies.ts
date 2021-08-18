@@ -1,23 +1,28 @@
 import ts from 'typescript';
 import { BeanRepository, IBeanDescriptor } from '../bean/BeanRepository';
-import { isMethodBean } from '../ts-helpers/predicates/isMethodBean';
 import { registerMethodBeanDependencies } from './registerMethodBeanDependencies';
-import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
 import { registerPropertyBeanDependencies } from './registerPropertyBeanDependencies';
-import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
+import { ClassPropertyArrowFunction, ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
+import { registerArrowFunctionBeanDependencies } from './registerArrowFunctionBeanDependencies';
 
 export const registerBeanDependencies = (contextDescriptor: IContextDescriptor) => {
     BeanDependenciesRepository.clearBeanDependenciesByContextDescriptor(contextDescriptor);
     const beanDescriptorList = BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
 
     beanDescriptorList.forEach(descriptor => {
-        if (isMethodBean(descriptor.node)) {
+        switch (descriptor.beanKind) {
+        case 'method':
             registerMethodBeanDependencies(descriptor as IBeanDescriptor<ts.MethodDeclaration>);
-        }
-        if (isClassPropertyBean(descriptor.node)) {
+            break;
+
+        case 'property':
             registerPropertyBeanDependencies(descriptor as IBeanDescriptor<ClassPropertyDeclarationWithInitializer>);
+            break;
+
+        case 'arrowFunction':
+            registerArrowFunctionBeanDependencies(descriptor as IBeanDescriptor<ClassPropertyArrowFunction>);
         }
     });
 };

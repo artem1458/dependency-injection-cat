@@ -6,8 +6,9 @@ import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropert
 import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { restrictedBeanNames } from './constants';
+import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 
-export const registerMethodBean = (contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void => {
+export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyArrowFunction): void => {
     const classElementName = classElement.name.getText();
 
     if (restrictedBeanNames.includes(classElementName)) {
@@ -19,17 +20,8 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         });
         return;
     }
-    if (classElement.body === undefined) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Method Bean should have a body',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
-        return;
-    }
 
-    const typeInfo = getBeanTypeInfoFromMethod(contextDescriptor, classElement);
+    const typeInfo = getBeanTypeInfoFromArrowFunction(contextDescriptor, classElement);
     const beanInfo = getPropertyDecoratorBeanInfo(classElement);
 
     if (typeInfo === null) {
@@ -49,23 +41,23 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         originalTypeName: typeInfo.originalTypeName,
         scope: beanInfo.scope,
         node: classElement,
-        typeNode: classElement.type!,
-        beanKind: 'method',
+        typeNode: typeInfo.typeNode,
+        beanKind: 'arrowFunction',
         beanSourceLocation: null,
         isPublic: false,
     });
 };
 
-function getBeanTypeInfoFromMethod(contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): IQualifiedTypeWithTypeNode | null {
-    const methodReturnType = classElement.type ?? null;
+function getBeanTypeInfoFromArrowFunction(contextDescriptor: IContextDescriptor, classElement: ClassPropertyArrowFunction): IQualifiedTypeWithTypeNode | null {
+    const functionReturnType = classElement.initializer.type ?? null;
 
-    if (methodReturnType !== null) {
-        const qualified = typeQualifier(methodReturnType);
+    if (functionReturnType !== null) {
+        const qualified = typeQualifier(functionReturnType);
 
         return qualified ?
             {
                 ...qualified,
-                typeNode: methodReturnType,
+                typeNode: functionReturnType,
             }
             : null;
     } else {

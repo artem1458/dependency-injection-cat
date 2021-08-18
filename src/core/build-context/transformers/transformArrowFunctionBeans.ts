@@ -7,28 +7,26 @@ import {
     getGlobalContextIdentifierFromArrayOrCreateNewAndPush,
     TContextDescriptorToIdentifier
 } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { ClassPropertyArrowFunction } from '../../ts-helpers/types';
 
-export const transformMethodBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
+export const transformArrowFunctionBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
                 const beanDescriptor = BeanRepository.beanNodeToBeanDescriptorMap.get(node as TBeanNode) ?? null;
 
-                if (beanDescriptor?.beanKind === 'method') {
-                    const typedNode = beanDescriptor.node as ts.MethodDeclaration;
-                    const newBody = getNewBody(beanDescriptor, contextDescriptorToIdentifierList);
+                if (beanDescriptor?.beanKind === 'arrowFunction') {
+                    const typedNode = beanDescriptor.node as ClassPropertyArrowFunction;
+                    const newArrowFunction = getTransformedArrowFunction(beanDescriptor, contextDescriptorToIdentifierList);
 
-                    return factory.updateMethodDeclaration(
+                    return factory.updatePropertyDeclaration(
                         typedNode,
                         undefined,
                         undefined,
-                        undefined,
                         typedNode.name,
-                        undefined,
-                        undefined,
-                        [],
+                        typedNode.questionToken,
                         typedNode.type,
-                        newBody,
+                        newArrowFunction,
                     );
                 }
 
@@ -40,9 +38,12 @@ export const transformMethodBeans = (contextDescriptorToIdentifierList: TContext
     };
 };
 
-function getNewBody (beanDescriptor: IBeanDescriptorWithId, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
-    const node = beanDescriptor.node as ts.MethodDeclaration;
-    const nodeBody = node.body ?? factory.createBlock([]);
+function getTransformedArrowFunction (
+    beanDescriptor: IBeanDescriptorWithId,
+    contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]
+): ts.ArrowFunction {
+    const node = beanDescriptor.node as ClassPropertyArrowFunction;
+    const arrowFunction = node.initializer;
 
     const dependencies = BeanDependenciesRepository.beanDependenciesRepository
         .get(beanDescriptor.contextDescriptor.name)?.get(beanDescriptor) ?? [];
@@ -103,11 +104,33 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId, contextDescriptorToI
         );
     });
 
-    return factory.updateBlock(
-        nodeBody,
-        [
-            ...compact(dependenciesStatements),
-            ...nodeBody.statements,
-        ]
+    let newBody: ts.Block;
+
+    if (ts.isBlock(arrowFunction.body)) {
+        newBody = factory.createBlock(
+            [
+                ...compact(dependenciesStatements),
+                ...arrowFunction.body.statements,
+            ],
+            true,
+        );
+    } else {
+        newBody = factory.createBlock(
+            [
+                ...compact(dependenciesStatements),
+                factory.createReturnStatement(arrowFunction.body),
+            ],
+            true,
+        );
+    }
+
+    return factory.updateArrowFunction(
+        arrowFunction,
+        arrowFunction.modifiers,
+        arrowFunction.typeParameters,
+        [],
+        arrowFunction.type,
+        arrowFunction.equalsGreaterThanToken,
+        newBody,
     );
 }

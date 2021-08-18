@@ -13,12 +13,9 @@ export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContext
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
-                if (ts.isPropertyDeclaration(node) && BeanRepository.beanNodeToBeanDescriptorMap.has(node as TBeanNode)) {
-                    const beanDescriptor = BeanRepository.beanNodeToBeanDescriptorMap.get(node as TBeanNode) ?? null;
-                    if (beanDescriptor === null) {
-                        return;
-                    }
+                const beanDescriptor = BeanRepository.beanNodeToBeanDescriptorMap.get(node as TBeanNode);
 
+                if (beanDescriptor?.beanKind === 'property') {
                     return factory.createMethodDeclaration(
                         undefined,
                         undefined,

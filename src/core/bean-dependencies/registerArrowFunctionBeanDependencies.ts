@@ -1,12 +1,12 @@
-import ts from 'typescript';
 import { IBeanDescriptor } from '../bean/BeanRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
+import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import { getQualifierValueFromFunctionArgument } from './getQualifierValueFromFunctionArgument';
 
-export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.MethodDeclaration>) => {
-    const parameters = descriptor.node.parameters;
+export const registerArrowFunctionBeanDependencies = (descriptor: IBeanDescriptor<ClassPropertyArrowFunction>) => {
+    const parameters = descriptor.node.initializer.parameters;
 
     parameters.forEach(parameter => {
         const qualifier = getQualifierValueFromFunctionArgument(parameter, descriptor);
@@ -36,3 +36,5 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
         );
     });
 };
+
+

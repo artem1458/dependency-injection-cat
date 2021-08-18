@@ -7,6 +7,9 @@ module.exports = {
     mode: 'development',
     devtool: 'source-map',
     resolve: {
+        fallback: {
+            assert: require.resolve('assert')
+        },
         extensions: ['.js', '.ts'],
         plugins: [new TsconfigPathsPlugin()]
     },
