@@ -6,8 +6,8 @@ import { registerMethodBean } from './registerMethodBean';
 import { BeanRepository } from './BeanRepository';
 import { isArrowFunctionBean } from '../ts-helpers/predicates/isArrowFunctionBean';
 import { registerArrowFunctionBean } from './registerArrowFunctionBean';
-import { isPlainPropertyBean } from '../ts-helpers/predicates/isPlainPropertyBean';
-import { registerPlainPropertyBean } from './registerPlainPropertyBean';
+import { isExpressionBean } from '../ts-helpers/predicates/isExpressionBean';
+import { registerExpressionBean } from './registerExpressionBean';
 
 export const registerGlobalBeans = (contextDescriptor: IContextDescriptor) => {
     BeanRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
@@ -22,8 +22,8 @@ export const registerGlobalBeans = (contextDescriptor: IContextDescriptor) => {
         if (isArrowFunctionBean(classElement)) {
             registerArrowFunctionBean(contextDescriptor, classElement);
         }
-        if (isPlainPropertyBean(classElement)) {
-            registerPlainPropertyBean(contextDescriptor, classElement);
+        if (isExpressionBean(classElement)) {
+            registerExpressionBean(contextDescriptor, classElement);
         }
     });
 };

@@ -3,7 +3,7 @@ import { PropertyDeclaration } from 'typescript';
 import { isBeanDecorator } from './isBeanDecorator';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
-export const isPlainPropertyBean = (node: ts.Node): node is PropertyDeclaration => {
+export const isExpressionBean = (node: ts.Node): node is PropertyDeclaration => {
     if (!ts.isPropertyDeclaration(node)) {
         return false;
     }

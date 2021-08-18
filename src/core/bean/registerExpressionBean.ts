@@ -7,7 +7,7 @@ import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { restrictedBeanNames } from './constants';
 
-export const registerPlainPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): void => {
+export const registerExpressionBean = (contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): void => {
     const classElementName = classElement.name.getText();
 
     if (restrictedBeanNames.includes(classElementName)) {
@@ -20,7 +20,7 @@ export const registerPlainPropertyBean = (contextDescriptor: IContextDescriptor,
         return;
     }
 
-    const typeInfo = getBeanTypeInfoFromPlainPropertyBean(contextDescriptor, classElement);
+    const typeInfo = getBeanTypeInfoFromExpressionBean(contextDescriptor, classElement);
     const beanInfo = getPropertyDecoratorBeanInfo(classElement);
 
     if (typeInfo === null) {
@@ -41,13 +41,13 @@ export const registerPlainPropertyBean = (contextDescriptor: IContextDescriptor,
         scope: beanInfo.scope,
         node: classElement,
         typeNode: typeInfo.typeNode,
-        beanKind: 'plainProperty',
+        beanKind: 'expression',
         beanSourceLocation: null,
         isPublic: false,
     });
 };
 
-function getBeanTypeInfoFromPlainPropertyBean(contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): IQualifiedTypeWithTypeNode | null {
+function getBeanTypeInfoFromExpressionBean(contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): IQualifiedTypeWithTypeNode | null {
     const propertyType = classElement.type ?? null;
 
     if (propertyType !== null) {

@@ -5,7 +5,7 @@ import { IContextDescriptor } from '../context/ContextRepository';
 import { uniqId } from '../utils/uniqId';
 
 export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer | ClassPropertyArrowFunction | ts.PropertyDeclaration;
-type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'plainProperty';
+type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression';
 
 export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     classMemberName: string;
