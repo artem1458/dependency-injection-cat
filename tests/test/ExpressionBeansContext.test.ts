@@ -13,6 +13,7 @@ describe('ExpressionBeansContext tests', () => {
         });
 
         //When
+        console.log(context.getBeans());
         const instance = context.getBean('testClass1Dependency');
 
         //Then
