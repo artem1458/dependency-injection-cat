@@ -12,6 +12,7 @@
     "assert": "^2.0.0",
     "dependency-injection-cat": "../dist",
     "mocha": "^9.0.2",
+    "mock_node_module": "./mock_node_module",
     "ts-patch": "^1.4.1"
   },
   "devDependencies": {

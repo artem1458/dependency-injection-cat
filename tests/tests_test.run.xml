@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="*.test.ts" type="mocha-javascript-test-runner" nameIsGenerated="true">
+    <node-interpreter>project</node-interpreter>
+    <node-options />
+    <mocha-package>$PROJECT_DIR$/tests/node_modules/mocha</mocha-package>
+    <working-directory>$PROJECT_DIR$/tests</working-directory>
+    <pass-parent-env>true</pass-parent-env>
+    <envs>
+      <env name="TS_NODE_PROJECT" value="tsconfig.ttypescriptCompiler.json" />
+    </envs>
+    <ui>bdd</ui>
+    <extra-mocha-options>--require ts-node/register 'test/**/*.test.ts'</extra-mocha-options>
+    <test-kind>PATTERN</test-kind>
+    <test-pattern>*.test.ts</test-pattern>
+    <method v="2" />
+  </configuration>
+</component>
