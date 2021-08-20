@@ -32,6 +32,6 @@ jobs:
         run: cd tests && yarn run test:webpack-ttypescript
 
       - name: publish to npm
-        run: npm publish
+        run: cd dist && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
