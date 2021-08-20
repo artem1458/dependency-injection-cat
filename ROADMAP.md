@@ -14,7 +14,7 @@
     - Errors highlighting
     - Navigation between Beans
     - ...
-  - Inject beans to class from node_modules (only if it has .d.ts declaration file)
+  - ✅Inject beans to class from node_modules (only if it has .d.ts declaration file)
   - Refactor "TypeQualifier"
   - Bean injection, when one Bean implements multiple types/interfaces e.g. `crudRepository: IReadRepository | IWriteRepository = Bean(CRUDRepository);`
   - Bean list injection e.g. `@Bean drawer(figures: IFigure[]): IDrawer => new Drawer(figures)`

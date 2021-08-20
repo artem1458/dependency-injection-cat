@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.10
+
+- [Improvement] Added injection Beans from node_modules and qualifying class dependencies from node_modules
+
 ## 0.2.8 - 0.2.9
 
 - [Feature] Added **Arrow Function Beans** and **Expression Beans**
