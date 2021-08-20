@@ -3,9 +3,7 @@
 DI Cat is a truly clean DI-container, which allows you not to pollute your business logic with decorators from DI/IOC libraries!
 
 -----
-
-![npm](https://img.shields.io/npm/v/dependency-injection-cat?style=flat)
-
+[![npm](https://img.shields.io/npm/v/dependency-injection-cat?style=flat)](https://www.npmjs.com/package/dependency-injection-cat)
 -----
 
 ## Example
