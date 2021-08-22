@@ -646,6 +646,7 @@ class ApplicationContext extends CatContext<IBeans> {
 ## PostConstruct
 PostConstruct decorator allows you to call method right after context construction, it can be used to make some subscriptions, etc...
 You can add arguments to annotated method, beans will be injected instead of arguments
+You can have several PostConstruct methods, they will be called in order of declaring
 
 #### Syntax
 ```typescript
