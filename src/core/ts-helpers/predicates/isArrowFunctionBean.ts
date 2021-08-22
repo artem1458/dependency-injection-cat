@@ -15,7 +15,7 @@ export const isArrowFunctionBean = (node: ts.Node): node is ClassPropertyArrowFu
     if (node.initializer === undefined) {
         CompilationContext.reportError({
             node: node,
-            message: 'Property Bean should hold value',
+            message: 'Arrow function Bean should be initialized',
             filePath: node.getSourceFile().fileName,
         });
 

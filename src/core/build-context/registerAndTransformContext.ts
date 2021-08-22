@@ -18,6 +18,7 @@ import { addGlobalContextInstance } from './transformers/addGlobalContextInstanc
 import { TContextDescriptorToIdentifier } from './utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { transformArrowFunctionBeans } from './transformers/transformArrowFunctionBeans';
 import { transformExpressionBeans } from './transformers/transformExpressionBeans';
+import { registerContextLifecycleMethods } from '../context-lifecycle/registerContextLifecycleMethods';
 
 export function registerAndTransformContext(
     context: ts.TransformationContext,
@@ -38,6 +39,7 @@ export function registerAndTransformContext(
         registerGlobalBeans(newGlobalContextDescriptor);
         registerBeanDependencies(newGlobalContextDescriptor);
         buildDependencyGraphAndFillQualifiedBeans(newGlobalContextDescriptor);
+        registerContextLifecycleMethods(newGlobalContextDescriptor);
         reportAboutCyclicDependencies(newGlobalContextDescriptor);
 
         const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
@@ -73,6 +75,7 @@ export function registerAndTransformContext(
     checkIsAllBeansRegisteredInContextAndFillBeanRequierness(contextDescriptor);
     registerBeanDependencies(contextDescriptor);
     buildDependencyGraphAndFillQualifiedBeans(contextDescriptor);
+    registerContextLifecycleMethods(contextDescriptor);
     reportAboutCyclicDependencies(contextDescriptor);
 
     const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
