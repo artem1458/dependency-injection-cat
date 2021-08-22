@@ -5,12 +5,12 @@ import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
-import { restrictedBeanNames } from './constants';
+import { restrictedClassMemberNames } from './constants';
 
 export const registerExpressionBean = (contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): void => {
     const classElementName = classElement.name.getText();
 
-    if (restrictedBeanNames.includes(classElementName)) {
+    if (restrictedClassMemberNames.includes(classElementName)) {
         CompilationContext.reportError({
             node: classElement,
             message: `${classElementName} name is reserved for the di-container, please use another name instead`,

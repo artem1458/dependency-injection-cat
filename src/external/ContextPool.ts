@@ -50,12 +50,10 @@ export class ContextPool {
             return oldContext;
         }
 
-        const newContext = new this.context(this.contextName, this.beanConfigurationRecord);
-        newContext.config = config;
-
-        this.pool.set(key, newContext);
-
-        return newContext;
+        return this.initContext({
+            key,
+            config,
+        });
     }
 
     clearContext({ key = this.DEFAULT_CONTEXT_KEY }: IContextProps): void {

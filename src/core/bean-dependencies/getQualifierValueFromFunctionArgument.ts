@@ -1,9 +1,9 @@
 import ts from 'typescript';
-import { IBeanDescriptor } from '../bean/BeanRepository';
 import { isParameterQualifierDecorator } from '../ts-helpers/predicates/isParameterQualifierDecorator';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IContextDescriptor } from '../context/ContextRepository';
 
-export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDeclaration, beanDescriptor: IBeanDescriptor): string | null {
+export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDeclaration, contextDescriptor: IContextDescriptor): string | null {
     const qualifierDecorators = parameter.decorators?.filter(isParameterQualifierDecorator) ?? [];
 
     if (qualifierDecorators.length === 0) {
@@ -14,8 +14,8 @@ export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDec
         CompilationContext.reportError({
             node: parameter,
             message: 'Parameter Qualifier should not have more than 1 @Qualifier decorator',
-            filePath: beanDescriptor.contextDescriptor.absolutePath,
-            relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
+            filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
 
         return null;
@@ -27,8 +27,8 @@ export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDec
         CompilationContext.reportError({
             node: qualifierDecorators[0],
             message: 'You should call @Qualifier with string, when decorating parameter',
-            filePath: beanDescriptor.contextDescriptor.absolutePath,
-            relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
+            filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
         });
         return null;
     }
@@ -40,8 +40,8 @@ export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDec
             CompilationContext.reportError({
                 node: decoratorExpression,
                 message: '@Qualifier should have only 1 argument',
-                filePath: beanDescriptor.contextDescriptor.absolutePath,
-                relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
+                filePath: contextDescriptor.absolutePath,
+                relatedContextPath: contextDescriptor.absolutePath,
             });
             return null;
         }
@@ -50,8 +50,8 @@ export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDec
             CompilationContext.reportError({
                 node: decoratorExpression,
                 message: '@Qualifier should have only 1 argument',
-                filePath: beanDescriptor.contextDescriptor.absolutePath,
-                relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
+                filePath: contextDescriptor.absolutePath,
+                relatedContextPath: contextDescriptor.absolutePath,
             });
             return null;
         }
@@ -62,8 +62,8 @@ export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDec
             CompilationContext.reportError({
                 node: decoratorExpression,
                 message: 'Qualifier should be a string literal',
-                filePath: beanDescriptor.contextDescriptor.absolutePath,
-                relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
+                filePath: contextDescriptor.absolutePath,
+                relatedContextPath: contextDescriptor.absolutePath,
             });
             return null;
         }

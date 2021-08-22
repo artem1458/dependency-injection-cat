@@ -1,1 +1,7 @@
-export const restrictedBeanNames = ['getBean', 'getBean', 'config', 'getPrivateBean', 'getBeanConfiguration'];
+export const restrictedClassMemberNames = [
+    'getBean',
+    'config',
+    'getPrivateBean',
+    'getBeanConfiguration',
+    '___postConstruct',
+];

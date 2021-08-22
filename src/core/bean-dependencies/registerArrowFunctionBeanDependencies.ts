@@ -9,7 +9,7 @@ export const registerArrowFunctionBeanDependencies = (descriptor: IBeanDescripto
     const parameters = descriptor.node.initializer.parameters;
 
     parameters.forEach(parameter => {
-        const qualifier = getQualifierValueFromFunctionArgument(parameter, descriptor);
+        const qualifier = getQualifierValueFromFunctionArgument(parameter, descriptor.contextDescriptor);
         const type = getParameterType(parameter);
 
         if (type === null) {
