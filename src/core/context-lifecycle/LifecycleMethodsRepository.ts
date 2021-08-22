@@ -27,6 +27,15 @@ export class LifecycleMethodsRepository {
         existSet.add(lifecycleDescriptor);
     }
 
+    static getLifecycleDescriptorsByContextDescriptorAndLifecycleType(
+        contextDescriptor: IContextDescriptor,
+        lifecycleType: TLifecycle
+    ): Set<IContextLifecycleDescriptor> {
+        const descriptors = this.contextDescriptorToLifecycleDescriptors.get(contextDescriptor) ?? new Set<IContextLifecycleDescriptor>();
+
+        return new Set(Array.from(descriptors).filter(it => it.types.has(lifecycleType)));
+    }
+
     static clearBeanInfoByContextDescriptor(contextDescriptor: IContextDescriptor): void {
         this.contextDescriptorToLifecycleDescriptors.delete(contextDescriptor);
     }
