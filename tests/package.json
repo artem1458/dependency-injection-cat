@@ -6,7 +6,7 @@
   "private": false,
   "scripts": {
     "build": "webpack --config webpack.ttypescript.config.ts",
-    "test:webpack-ttypescript": "mochapack --webpack-config webpack.ttypescript.config.ts test/**/*.test.ts",
+    "test:webpack-ttypescript": "mochapack --webpack-config webpack.ttypescript.config.ts 'test/**/*.test.ts'",
     "test:ttypescript": "env TS_NODE_PROJECT=\"tsconfig.ttypescriptCompiler.json\"  mocha -r ts-node/register 'test/**/*.test.ts'"
   },
   "dependencies": {
