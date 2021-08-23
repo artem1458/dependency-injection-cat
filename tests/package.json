@@ -19,8 +19,10 @@
   "devDependencies": {
     "@types/assert": "^1.5.5",
     "@types/mocha": "^9.0.0",
+    "@types/sinon": "^10.0.2",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
     "mochapack": "^2.1.2",
+    "sinon": "^11.1.2",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.1.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",

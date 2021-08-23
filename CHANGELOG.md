@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.11
+
+- [Feature] Added Context Lifecycle methods **@PostConstruct** and **@BeforeDestruct** decorators
+
 ## 0.2.10
 
 - [Improvement] Added injection Beans from node_modules and qualifying class dependencies from node_modules

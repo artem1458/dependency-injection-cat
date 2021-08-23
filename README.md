@@ -643,22 +643,29 @@ class ApplicationContext extends CatContext<IBeans> {
 }
 ```
 
-## PostConstruct
-PostConstruct decorator allows you to call method right after context construction, it can be used to make some subscriptions, etc...
+## Context Lifecycle
+Context have its own lifecycle, when you're initializing context with `container.initContext` or `container.getOrInitContext`
+and when you're clearing context with `container.clearContext`
+If you need to make some subscriptions/unsubscription/side effects - you can use **@PostConstruct** and **@BeforeDestruct** decorators
+One method can be decorated with **@PostConstruct** and **@BeforeDestruct** at the same time
+
+### PostConstruct, BeforeDestruct
+PostConstruct decorator allows you to call method right after context initialization (after calling `container.initContext`), it can be used to make some subscriptions, etc...
+BeforeDestruct decorator allows you to call method right before context clearing (after calling `container.clearContext`), it can be used to make some unsubscription, etc...
 You can add arguments to annotated method, beans will be injected instead of arguments
-You can have several PostConstruct methods, they will be called in order of declaring
+You can have several Lifecycle methods, they will be called in order of declaring
 
 #### Syntax
 ```typescript
 import { Bean, PostConstruct, CatContext } from 'dependency-injection-cat';
 
 class ApplicationContext extends CatContext<IBeans> {
-    @PostConstruct
+    @PostConstruct /* OR */ @BeforeDestruct
     subscribeToEvents(subscriber: ISubscriber): void {
         subscriber.subscribe();
     }
     //OR
-    @PostConstruct
+    @PostConstruct /* OR */ @BeforeDestruct
     subscribeToEvents = (subscriber: ISubscriber): void => subscriber.subscribe();
 
     @Bean
@@ -666,7 +673,7 @@ class ApplicationContext extends CatContext<IBeans> {
 }
 ```
 
-## Qualifier
+### Qualifier
 
 Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type. By default, the qualifier is the
 name of the parameter in the class constructor, or in the **Method Bean**`
