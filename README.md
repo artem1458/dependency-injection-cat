@@ -657,7 +657,7 @@ You can have several Lifecycle methods, they will be called in order of declarin
 
 #### Syntax
 ```typescript
-import { Bean, PostConstruct, CatContext } from 'dependency-injection-cat';
+import { Bean, PostConstruct, BeforeDestruct, CatContext } from 'dependency-injection-cat';
 
 class ApplicationContext extends CatContext<IBeans> {
     @PostConstruct /* OR / AND */ @BeforeDestruct
