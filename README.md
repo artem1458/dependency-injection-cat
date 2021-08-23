@@ -668,7 +668,6 @@ class ApplicationContext extends CatContext<IBeans> {
     @PostConstruct /* OR / AND */ @BeforeDestruct
     subscribeToEvents = (subscriber: ISubscriber): void => subscriber.subscribe();
 
-    @Bean
     subscriber: ISubscriber = Bean(Subscriber);
 }
 ```
