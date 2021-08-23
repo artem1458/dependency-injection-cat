@@ -660,12 +660,12 @@ You can have several Lifecycle methods, they will be called in order of declarin
 import { Bean, PostConstruct, CatContext } from 'dependency-injection-cat';
 
 class ApplicationContext extends CatContext<IBeans> {
-    @PostConstruct /* OR */ @BeforeDestruct
+    @PostConstruct /* OR / AND */ @BeforeDestruct
     subscribeToEvents(subscriber: ISubscriber): void {
         subscriber.subscribe();
     }
     //OR
-    @PostConstruct /* OR */ @BeforeDestruct
+    @PostConstruct /* OR / AND */ @BeforeDestruct
     subscribeToEvents = (subscriber: ISubscriber): void => subscriber.subscribe();
 
     @Bean
