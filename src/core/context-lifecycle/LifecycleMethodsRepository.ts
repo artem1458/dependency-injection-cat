@@ -2,18 +2,23 @@ import { IContextDescriptor } from '../context/ContextRepository';
 import { IBeanDescriptor } from '../bean/BeanRepository';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import ts from 'typescript';
+import { TLifecycle } from '../../external/InternalCatContext';
 
-export type TLifecycle = 'post-construct' | 'before-destruct'
+export type TLifecycleNodeKind = 'method' | 'arrow-function';
+type TParameterName = string;
 
-interface IContextLifecycleDescriptor {
+export interface IContextLifecycleDescriptor {
     types: Set<TLifecycle>;
     node: ClassPropertyArrowFunction | ts.MethodDeclaration;
+    nodeKind: TLifecycleNodeKind;
     classMemberName: string;
-    dependencies: Set<IBeanDescriptor>;
+    contextDescriptor: IContextDescriptor;
+    dependencies: Map<TParameterName, IBeanDescriptor>;
 }
 
 export class LifecycleMethodsRepository {
     static contextDescriptorToLifecycleDescriptors = new Map<IContextDescriptor, Set<IContextLifecycleDescriptor>>();
+    static nodeToContextLifecycleDescriptor = new Map<ts.Node, IContextLifecycleDescriptor>();
 
     static register(contextDescriptor: IContextDescriptor, lifecycleDescriptor: IContextLifecycleDescriptor): void {
         let existSet = this.contextDescriptorToLifecycleDescriptors.get(contextDescriptor);
@@ -25,6 +30,7 @@ export class LifecycleMethodsRepository {
         }
 
         existSet.add(lifecycleDescriptor);
+        this.nodeToContextLifecycleDescriptor.set(lifecycleDescriptor.node, lifecycleDescriptor);
     }
 
     static getLifecycleDescriptorsByContextDescriptorAndLifecycleType(
@@ -37,6 +43,9 @@ export class LifecycleMethodsRepository {
     }
 
     static clearBeanInfoByContextDescriptor(contextDescriptor: IContextDescriptor): void {
+        const contextLifecycleDescriptors = this.contextDescriptorToLifecycleDescriptors.get(contextDescriptor) ?? new Set<IContextLifecycleDescriptor>();
+
         this.contextDescriptorToLifecycleDescriptors.delete(contextDescriptor);
+        contextLifecycleDescriptors.forEach(it => this.nodeToContextLifecycleDescriptor.delete(it.node));
     }
 }

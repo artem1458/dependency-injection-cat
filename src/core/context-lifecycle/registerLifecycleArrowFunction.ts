@@ -1,7 +1,7 @@
 import { IContextDescriptor } from '../context/ContextRepository';
-import { TLifecycle } from './LifecycleMethodsRepository';
 import { registerLifecycleExpression } from './registerLifecycleExpression';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
+import { TLifecycle } from '../../external/InternalCatContext';
 
 export const registerLifecycleArrowFunction = (
     contextDescriptor: IContextDescriptor,
@@ -15,5 +15,6 @@ export const registerLifecycleArrowFunction = (
         classMemberName,
         node,
         lifecycles,
+        'arrow-function',
     );
 };

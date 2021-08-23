@@ -44,6 +44,25 @@ function buildGlobalContextInstance(contextDescriptor: IContextDescriptor): ts.S
                             )]
                         ),
                         getBeanConfigObjectLiteral(contextDescriptor),
+                        factory.createObjectLiteralExpression(
+                            [
+                                factory.createPropertyAssignment(
+                                    factory.createStringLiteral('post-construct'),
+                                    factory.createArrayLiteralExpression(
+                                        [],
+                                        false
+                                    )
+                                ),
+                                factory.createPropertyAssignment(
+                                    factory.createStringLiteral('before-destruct'),
+                                    factory.createArrayLiteralExpression(
+                                        [],
+                                        false
+                                    )
+                                )
+                            ],
+                            true
+                        ),
                     ]
                 )
             )],

@@ -3,6 +3,7 @@ import { IContextDescriptor } from '../../context/ContextRepository';
 import { PRIVATE_TOKEN } from '../constants';
 import { CONTEXT_POOL_IMPORT } from './addNecessaryImports';
 import { getBeanConfigObjectLiteral } from './getBeanConfigObjectLiteral';
+import { LIFECYCLE_CONFIG_VARIABLE_NAME } from './addLifecycleConfiguration';
 
 export const CONTEXT_POOL_POSTFIX = `_POOL${PRIVATE_TOKEN}`;
 
@@ -38,6 +39,7 @@ function createContextNamePool(contextDescriptor: IContextDescriptor): ts.Statem
                             factory.createIdentifier('name')
                         ),
                         getBeanConfigObjectLiteral(contextDescriptor),
+                        factory.createIdentifier(LIFECYCLE_CONFIG_VARIABLE_NAME),
                         contextDescriptor.node.name,
                     ]
                 )

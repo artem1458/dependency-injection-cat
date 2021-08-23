@@ -1,8 +1,8 @@
 import ts from 'typescript';
 import { compact } from 'lodash';
-import { TLifecycle } from './LifecycleMethodsRepository';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { libraryName } from '../../constants/libraryName';
+import { TLifecycle } from '../../external/InternalCatContext';
 
 export const CONTEXT_LIFECYCLE_DECORATORS = [
     'PostConstruct',

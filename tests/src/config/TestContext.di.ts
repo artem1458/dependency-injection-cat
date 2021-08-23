@@ -1,4 +1,4 @@
-import { Bean, CatContext, PostConstruct, BeforeDestruct } from 'dependency-injection-cat';
+import { Bean, CatContext } from 'dependency-injection-cat';
 import { IWithoutDependencies } from '../classes/without-dependencies/IWithoutDependencies';
 import { WithoutDependencies } from '../classes/without-dependencies/WithoutDependencies';
 import {
@@ -22,8 +22,4 @@ class TestContext extends CatContext<IBeans> {
     dependencyFromNodeModulesWithoutDependencies: IDependencyFromNodeModuleWithoutDependencies = Bean(DependencyFromNodeModuleWithoutDependencies)
     withDependenciesFromNodeModule: IDependencyFromNodeModuleWithDependency = Bean(DependencyFromNodeModuleWithDependency)
     withDependenciesFromNodeModuleImpl = Bean(DependencyFromNodeModuleWithDependency)
-
-    @PostConstruct
-    @BeforeDestruct
-    onPostConstruct(withoutDependencies: IWithoutDependencies) {}
 }

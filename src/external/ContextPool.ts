@@ -1,5 +1,6 @@
 import { NoContextByKey } from '../exceptions/runtime/NoContextByKey';
-import { IFullBeanConfig, TInternalCatContext } from './IInternalCatContext';
+import { IFullBeanConfig, IInternalCatContext, TInternalCatContext } from './IInternalCatContext';
+import { TLifecycleConfiguration } from './InternalCatContext';
 
 interface IContextProps {
     key: any;
@@ -10,11 +11,12 @@ type TBeanName = string;
 
 export class ContextPool {
     private DEFAULT_CONTEXT_KEY = {};
-    private pool = new Map();
+    private pool = new Map<any, IInternalCatContext>();
 
     constructor(
         private contextName: string,
         private beanConfigurationRecord: Record<TBeanName, IFullBeanConfig>,
+        private lifecycleConfiguration: TLifecycleConfiguration,
         private context: TInternalCatContext,
     ) {}
 
@@ -22,10 +24,12 @@ export class ContextPool {
         key = this.DEFAULT_CONTEXT_KEY,
         config,
     }: IContextProps): any {
-        const newContext = new this.context(this.contextName, this.beanConfigurationRecord);
+        const newContext = new this.context(this.contextName, this.beanConfigurationRecord, this.lifecycleConfiguration);
         newContext.config = config;
 
         this.pool.set(key, newContext);
+
+        newContext.___postConstruct();
 
         return newContext;
     }
@@ -57,7 +61,9 @@ export class ContextPool {
     }
 
     clearContext({ key = this.DEFAULT_CONTEXT_KEY }: IContextProps): void {
-        if (!this.pool.has(key)) {
+        const contextInstance = this.pool.get(key);
+
+        if (!contextInstance) {
             if (this.isDefaultKey(key)) {
                 console.warn(`Trying to clear not initialized context, contextName: ${this.contextName}`);
             } else {
@@ -65,6 +71,7 @@ export class ContextPool {
             }
         }
 
+        contextInstance?.___beforeDestruct();
         this.pool.delete(key);
     }
 

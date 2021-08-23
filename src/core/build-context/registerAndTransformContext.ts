@@ -19,6 +19,9 @@ import { TContextDescriptorToIdentifier } from './utils/getGlobalContextIdentifi
 import { transformArrowFunctionBeans } from './transformers/transformArrowFunctionBeans';
 import { transformExpressionBeans } from './transformers/transformExpressionBeans';
 import { registerContextLifecycleMethods } from '../context-lifecycle/registerContextLifecycleMethods';
+import { transformLifecycleMethods } from './transformers/transformLifecycleMethods';
+import { transformLifecycleArrowFunctions } from './transformers/transformLifecycleArrowFunctions';
+import { addLifecycleConfiguration } from './transformers/addLifecycleConfiguration';
 
 export function registerAndTransformContext(
     context: ts.TransformationContext,
@@ -81,12 +84,15 @@ export function registerAndTransformContext(
     const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
     const transformers: ts.TransformerFactory<any>[] = [
+        addLifecycleConfiguration(contextDescriptor),
         addContextPool(contextDescriptor),
         replaceExtendingFromCatContext(contextDescriptor),
         replacePropertyBeans(contextDescriptorToIdentifierList),
         transformMethodBeans(contextDescriptorToIdentifierList),
         transformArrowFunctionBeans(contextDescriptorToIdentifierList),
         transformExpressionBeans(),
+        transformLifecycleMethods(contextDescriptorToIdentifierList),
+        transformLifecycleArrowFunctions(contextDescriptorToIdentifierList),
         addNecessaryImports(contextDescriptorToIdentifierList),
     ];
 

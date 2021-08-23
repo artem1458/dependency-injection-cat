@@ -5,6 +5,7 @@ import { getLifecycleTypes } from './getLifecycleTypes';
 import { isContextLifecycleArrowFunction } from './isContextLifecycleArrowFunction';
 import { registerLifecycleArrowFunction } from './registerLifecycleArrowFunction';
 import { LifecycleMethodsRepository } from './LifecycleMethodsRepository';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export const registerContextLifecycleMethods = (contextDescriptor: IContextDescriptor): void => {
     LifecycleMethodsRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
@@ -17,8 +18,28 @@ export const registerContextLifecycleMethods = (contextDescriptor: IContextDescr
         }
 
         if (isContextLifecycleMethod(it)) {
+            if (contextDescriptor.isGlobal) {
+                CompilationContext.reportError({
+                    node: it,
+                    filePath: contextDescriptor.absolutePath,
+                    relatedContextPath: contextDescriptor.absolutePath,
+                    message: 'Global Contexts does not support lifecycle methods',
+                });
+                return;
+            }
+
             registerLifecycleMethod(contextDescriptor, it, lifecycles);
         } else if (isContextLifecycleArrowFunction(it)) {
+            if (contextDescriptor.isGlobal) {
+                CompilationContext.reportError({
+                    node: it,
+                    filePath: contextDescriptor.absolutePath,
+                    relatedContextPath: contextDescriptor.absolutePath,
+                    message: 'Global Contexts does not support lifecycle methods',
+                });
+                return;
+            }
+
             registerLifecycleArrowFunction(contextDescriptor, it, lifecycles);
         }
     });

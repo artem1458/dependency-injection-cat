@@ -4,4 +4,5 @@ export const restrictedClassMemberNames = [
     'getPrivateBean',
     'getBeanConfiguration',
     '___postConstruct',
+    '___beforeDestruct',
 ];

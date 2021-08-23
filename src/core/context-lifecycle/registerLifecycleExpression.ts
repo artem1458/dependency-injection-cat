@@ -1,18 +1,20 @@
 import ts from 'typescript';
 import { IContextDescriptor } from '../context/ContextRepository';
-import { LifecycleMethodsRepository, TLifecycle } from './LifecycleMethodsRepository';
+import { LifecycleMethodsRepository, TLifecycleNodeKind } from './LifecycleMethodsRepository';
 import { getQualifierValueFromFunctionArgument } from '../bean-dependencies/getQualifierValueFromFunctionArgument';
 import { getParameterType } from '../bean-dependencies/getParameterType';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { BeanRepository, IBeanDescriptor } from '../bean/BeanRepository';
 import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
+import { TLifecycle } from '../../external/InternalCatContext';
 
 export const registerLifecycleExpression = (
     contextDescriptor: IContextDescriptor,
     classMemberName: string,
     node: ClassPropertyArrowFunction | ts.MethodDeclaration,
     lifecycles: Set<TLifecycle>,
+    lifecycleNodeKind: TLifecycleNodeKind,
 ) => {
     const beansMap = BeanRepository.beanDescriptorRepository.get(contextDescriptor.name);
 
@@ -20,7 +22,7 @@ export const registerLifecycleExpression = (
         return;
     }
 
-    const qualifiedBeanDescriptors = new Set<IBeanDescriptor>();
+    const qualifiedBeanDescriptors = new Map<string, IBeanDescriptor>();
 
     let parameters: ts.NodeArray<ts.ParameterDeclaration>;
 
@@ -67,7 +69,7 @@ export const registerLifecycleExpression = (
         }
 
         if (beanCandidatesFromCurrentContext.length === 1) {
-            qualifiedBeanDescriptors.add(beanCandidatesFromCurrentContext[0]);
+            qualifiedBeanDescriptors.set(parameterName, beanCandidatesFromCurrentContext[0]);
             return;
         }
 
@@ -76,7 +78,7 @@ export const registerLifecycleExpression = (
                 .filter(it => it.classMemberName === parameterName);
 
             if (beanCandidatesFromCurrentContextQualifiedByParameterName.length === 1) {
-                qualifiedBeanDescriptors.add(beanCandidatesFromCurrentContextQualifiedByParameterName[0]);
+                qualifiedBeanDescriptors.set(parameterName, beanCandidatesFromCurrentContextQualifiedByParameterName[0]);
                 return;
             }
 
@@ -106,7 +108,7 @@ export const registerLifecycleExpression = (
         }
 
         if (beanCandidatesFromGlobalContext.length === 1) {
-            qualifiedBeanDescriptors.add(beanCandidatesFromGlobalContext[0]);
+            qualifiedBeanDescriptors.set(parameterName, beanCandidatesFromGlobalContext[0]);
             return;
         }
 
@@ -115,7 +117,7 @@ export const registerLifecycleExpression = (
                 .filter(it => it.classMemberName === parameterName);
 
             if (beanCandidatesFromGlobalContextQualifiedByParameterName.length === 1) {
-                qualifiedBeanDescriptors.add(beanCandidatesFromGlobalContextQualifiedByParameterName[0]);
+                qualifiedBeanDescriptors.set(parameterName, beanCandidatesFromGlobalContextQualifiedByParameterName[0]);
                 return;
             }
 
@@ -148,7 +150,9 @@ export const registerLifecycleExpression = (
     LifecycleMethodsRepository.register(contextDescriptor, {
         types: lifecycles,
         dependencies: qualifiedBeanDescriptors,
+        nodeKind: lifecycleNodeKind,
         node,
-        classMemberName
+        classMemberName,
+        contextDescriptor,
     });
 };
