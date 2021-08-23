@@ -7,7 +7,7 @@
 - Apply "Semantic release" model
 - Add CI/CD based on GitHub Actions
 - Features/Code improvements
-  - "PostConstruct" inside contexts
+  - ✅"PostConstruct", "BeforeDestruct" inside contexts
   - Lazy beans (needed?)
   - Context inheritance (needed?)
   - JetBrains platform plugin for DI-Cat support:
@@ -16,8 +16,8 @@
     - ...
   - ✅Inject beans to class from node_modules (only if it has .d.ts declaration file)
   - Refactor "TypeQualifier"
-  - Bean injection, when one Bean implements multiple types/interfaces e.g. `crudRepository: IReadRepository | IWriteRepository = Bean(CRUDRepository);`
-  - Bean list injection e.g. `@Bean drawer(figures: IFigure[]): IDrawer => new Drawer(figures)`
+    - Bean injection, when one Bean implements multiple types/interfaces e.g. `crudRepository: IReadRepository | IWriteRepository = Bean(CRUDRepository);`
+    - Bean list injection e.g. `@Bean drawer(figures: IFigure[]): IDrawer => new Drawer(figures)`
   - ✅Add "Expressions" and "Arrow Functions" Beans. Examples:
     -  ✅"Expression" Bean: `@Bean requester: IRequester = instanceOfRequester;`
     - ✅"Arrow Function" Bean: `@Bean requester(): IRequester => new Requester();`

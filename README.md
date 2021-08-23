@@ -10,7 +10,7 @@ DI Cat is a truly clean DI-container, which allows you not to pollute your busin
 
 ```tsx
 //ApplicationContext.di.ts
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   useCase = Bean<IUseCase>(UseCase)
   mobxRepository = Bean<IRepository>(MobxRepository)
 }
@@ -302,7 +302,7 @@ should use GlobalCatContext.
 
 ```typescript
 //GlobalApplicationContext.di.ts
-export class GlobalApplicationContext extends GlobalCatContext {
+class GlobalApplicationContext extends GlobalCatContext {
 
   @Bean
   logger(): ILogger {
@@ -311,7 +311,7 @@ export class GlobalApplicationContext extends GlobalCatContext {
 }
 
 //ApplicationContext.di.ts
-export class AppContext extends CatContext<IBeans> {
+class AppContext extends CatContext<IBeans> {
 
   @Bean
   useCase(
@@ -500,7 +500,7 @@ Property Beans resolving class dependencies automatically from the constructor o
 #### Syntax
 
 ```typescript
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   //First argument passed in Bean should be a class, di-container will try to resolve class dependencies
   useCase = Bean(UseCaseClass);
 
@@ -544,7 +544,7 @@ export class UseCase implements IUseCase {
 //ApplicationContext.di.ts
 import { CatContext, Bean } from 'dependency-injection-cat';
 
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   useCaseDependency = Bean<IUseCaseDependency>(UseCaseDependency);
 
   useCase = Bean<IUseCase>(UseCase);
@@ -563,7 +563,7 @@ Method Beans are more flexible, for example it allows you to pass configuration 
 #### Syntax and Usage
 
 ```typescript
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   //Bean don't have any dependencies
   @Bean
   useCase(): IUseCase {
@@ -599,7 +599,7 @@ Arrow Function Beans allows you to write more compact code, they work same as "M
 #### Syntax and Usage
 
 ```typescript
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   //Bean don't have any dependencies
   @Bean useCase = (): IUseCase => new UseCase();
   //OR with body
@@ -634,7 +634,7 @@ Expression Beans can not have any dependencies, but can be a dependency
 #### Syntax and Usage
 
 ```typescript
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   @Bean useCase: IUseCase = new UseCase();
   @Bean importedInstanceOfUseCase: IUseCase = importedInstanceOfUseCase;
 
@@ -643,7 +643,37 @@ export class ApplicationContext extends CatContext<IBeans> {
 }
 ```
 
-## Qualifier
+## Context Lifecycle
+Context have its own lifecycle, when you're initializing context with `container.initContext` or `container.getOrInitContext`
+and when you're clearing context with `container.clearContext`
+If you need to make some subscriptions/unsubscription/side effects - you can use **@PostConstruct** and **@BeforeDestruct** decorators
+One method can be decorated with **@PostConstruct** and **@BeforeDestruct** at the same time
+
+### PostConstruct, BeforeDestruct
+PostConstruct decorator allows you to call method right after context initialization (after calling `container.initContext`), it can be used to make some subscriptions, etc...
+BeforeDestruct decorator allows you to call method right before context clearing (after calling `container.clearContext`), it can be used to make some unsubscription, etc...
+You can add arguments to annotated method, beans will be injected instead of arguments
+You can have several Lifecycle methods, they will be called in order of declaring
+
+#### Syntax
+```typescript
+import { Bean, PostConstruct, BeforeDestruct, CatContext } from 'dependency-injection-cat';
+
+class ApplicationContext extends CatContext<IBeans> {
+    @PostConstruct /* OR / AND */ @BeforeDestruct
+    subscribeToEvents(subscriber: ISubscriber): void {
+        subscriber.subscribe();
+    }
+    //OR
+    @PostConstruct /* OR / AND */ @BeforeDestruct
+    subscribeToEvents = (subscriber: ISubscriber): void => subscriber.subscribe();
+
+    @Bean
+    subscriber: ISubscriber = Bean(Subscriber);
+}
+```
+
+### Qualifier
 
 Qualifier needed, when you have 2 or more **Beans** in the **Context** with same type. By default, the qualifier is the
 name of the parameter in the class constructor, or in the **Method Bean**`
@@ -659,7 +689,7 @@ Also, you can use qualifier, when injecting **Beans** from **GlobalCatContext**
 
 ```typescript
 //Implicit declaration of the qualifier
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   httpRequester: IRequester = Bean(HttpRequester);
   graphQLRequester: IRequester = Bean(GraphQLRequester);
 
@@ -674,7 +704,7 @@ export class ApplicationContext extends CatContext<IBeans> {
 
 ```typescript
 //When Bean placed in current context
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   httpRequester: IRequester = Bean(HttpRequester);
   graphQLRequester: IRequester = Bean(GraphQLRequester);
 
@@ -691,13 +721,13 @@ export class ApplicationContext extends CatContext<IBeans> {
 //When Bean placed in Global context
 
 //GlobalApplicationContext.di.ts
-export class GlobalApplicationContext extends GlobalCatContext {
+class GlobalApplicationContext extends GlobalCatContext {
   graphQLRequester: IRequester = Bean(GraphQLRequester);
   httpRequester: IRequester = Bean(HttpRequester);
 }
 
 //ApplicationContext.di.ts
-export class ApplicationContext extends CatContext<IBeans> {
+class ApplicationContext extends CatContext<IBeans> {
   @Bean
   useCase(
     @Qualifier('graphQLRequester') requester: IRequester,

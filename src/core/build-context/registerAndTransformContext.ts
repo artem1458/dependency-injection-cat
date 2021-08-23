@@ -18,6 +18,10 @@ import { addGlobalContextInstance } from './transformers/addGlobalContextInstanc
 import { TContextDescriptorToIdentifier } from './utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { transformArrowFunctionBeans } from './transformers/transformArrowFunctionBeans';
 import { transformExpressionBeans } from './transformers/transformExpressionBeans';
+import { registerContextLifecycleMethods } from '../context-lifecycle/registerContextLifecycleMethods';
+import { transformLifecycleMethods } from './transformers/transformLifecycleMethods';
+import { transformLifecycleArrowFunctions } from './transformers/transformLifecycleArrowFunctions';
+import { addLifecycleConfiguration } from './transformers/addLifecycleConfiguration';
 
 export function registerAndTransformContext(
     context: ts.TransformationContext,
@@ -38,6 +42,7 @@ export function registerAndTransformContext(
         registerGlobalBeans(newGlobalContextDescriptor);
         registerBeanDependencies(newGlobalContextDescriptor);
         buildDependencyGraphAndFillQualifiedBeans(newGlobalContextDescriptor);
+        registerContextLifecycleMethods(newGlobalContextDescriptor);
         reportAboutCyclicDependencies(newGlobalContextDescriptor);
 
         const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
@@ -73,17 +78,21 @@ export function registerAndTransformContext(
     checkIsAllBeansRegisteredInContextAndFillBeanRequierness(contextDescriptor);
     registerBeanDependencies(contextDescriptor);
     buildDependencyGraphAndFillQualifiedBeans(contextDescriptor);
+    registerContextLifecycleMethods(contextDescriptor);
     reportAboutCyclicDependencies(contextDescriptor);
 
     const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
     const transformers: ts.TransformerFactory<any>[] = [
+        addLifecycleConfiguration(contextDescriptor),
         addContextPool(contextDescriptor),
         replaceExtendingFromCatContext(contextDescriptor),
         replacePropertyBeans(contextDescriptorToIdentifierList),
         transformMethodBeans(contextDescriptorToIdentifierList),
         transformArrowFunctionBeans(contextDescriptorToIdentifierList),
         transformExpressionBeans(),
+        transformLifecycleMethods(contextDescriptorToIdentifierList),
+        transformLifecycleArrowFunctions(contextDescriptorToIdentifierList),
         addNecessaryImports(contextDescriptorToIdentifierList),
     ];
 

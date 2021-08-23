@@ -4,13 +4,28 @@ import { BeanNotFoundInContext } from '../exceptions/runtime/BeanNotFoundInConte
 
 type TBeanName = string;
 
+export type TLifecycle = 'post-construct' | 'before-destruct';
+export type TLifecycleConfiguration = Record<TLifecycle, TBeanName[]>
+
 export abstract class InternalCatContext implements IInternalCatContext {
     [beanName: string]: any;
 
     constructor(
         private contextName: string,
         private beanConfigurationRecord: Record<TBeanName, IFullBeanConfig>,
+        private lifecycleConfiguration: TLifecycleConfiguration,
     ) {}
+
+    ___postConstruct(): void {
+        this.lifecycleConfiguration['post-construct'].forEach(methodName => {
+            this[methodName]();
+        });
+    }
+    ___beforeDestruct(): void {
+        this.lifecycleConfiguration['before-destruct'].forEach(methodName => {
+            this[methodName]();
+        });
+    }
 
     private singletonMap = new Map<TBeanName, any>();
 

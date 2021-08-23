@@ -5,7 +5,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "test:webpack-ttypescript": "mochapack --webpack-config webpack.ttypescript.config.ts test/**/*.test.ts",
+    "build": "webpack --config webpack.ttypescript.config.ts",
+    "test:webpack-ttypescript": "mochapack --webpack-config webpack.ttypescript.config.ts 'test/**/*.test.ts'",
     "test:ttypescript": "env TS_NODE_PROJECT=\"tsconfig.ttypescriptCompiler.json\"  mocha -r ts-node/register 'test/**/*.test.ts'"
   },
   "dependencies": {
@@ -18,11 +19,15 @@
   "devDependencies": {
     "@types/assert": "^1.5.5",
     "@types/mocha": "^9.0.0",
+    "@types/sinon": "^10.0.2",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
     "mochapack": "^2.1.2",
+    "sinon": "^11.1.2",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.1.0",
     "tsconfig-paths-webpack-plugin": "^3.5.1",
-    "ttypescript": "^1.5.12"
+    "ttypescript": "^1.5.12",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.8.0"
   }
 }

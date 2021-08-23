@@ -9,7 +9,7 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
     const parameters = descriptor.node.parameters;
 
     parameters.forEach(parameter => {
-        const qualifier = getQualifierValueFromFunctionArgument(parameter, descriptor);
+        const qualifier = getQualifierValueFromFunctionArgument(parameter, descriptor.contextDescriptor);
         const type = getParameterType(parameter);
 
         if (type === null) {

@@ -9,12 +9,12 @@ import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { END_PATH_TOKEN, START_PATH_TOKEN } from '../ts-helpers/type-qualifier/parseTokens';
-import { restrictedBeanNames } from './constants';
+import { restrictedClassMemberNames } from './constants';
 
 export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
     const classElementName = classElement.name.getText();
 
-    if (restrictedBeanNames.includes(classElementName)) {
+    if (restrictedClassMemberNames.includes(classElementName)) {
         CompilationContext.reportError({
             node: classElement,
             message: `"${classElementName}" property is reserved for the di-container, please use another name instead`,
