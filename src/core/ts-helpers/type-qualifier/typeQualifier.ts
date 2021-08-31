@@ -12,8 +12,11 @@ import {
 } from './parseTokens';
 import { IQualifiedType } from './types';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { TypeQualifier } from '../type-qualifier-v2/TypeQualifier';
 
 export function typeQualifier(typeNode: ts.TypeNode): IQualifiedType | null {
+    TypeQualifier.qualify(typeNode);
+
     const typeId = getTypesNameDeep(typeNode);
 
     if (typeId === null) {
