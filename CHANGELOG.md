@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.12
+
+- [Fix] Make **typescript** as a Peer Dependency
+
 ## 0.2.11
 
 - [Feature] Added Context Lifecycle methods **@PostConstruct** and **@BeforeDestruct** decorators
