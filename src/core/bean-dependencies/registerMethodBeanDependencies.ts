@@ -10,9 +10,9 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
 
     parameters.forEach(parameter => {
         const qualifier = getQualifierValueFromFunctionArgument(parameter, descriptor.contextDescriptor);
-        const type = getParameterType(parameter);
+        const qualifiedType = getParameterType(parameter);
 
-        if (type === null) {
+        if (qualifiedType === null) {
             CompilationContext.reportError({
                 node: parameter,
                 message: 'Can\'t qualify type of Bean parameter',
@@ -27,8 +27,7 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
             {
                 node: parameter,
                 contextName: descriptor.contextDescriptor.name,
-                originalTypeName: type.originalTypeName,
-                type: type.typeId,
+                qualifiedType: qualifiedType,
                 parameterName: parameter.name.getText(),
                 qualifier,
                 qualifiedBean: null

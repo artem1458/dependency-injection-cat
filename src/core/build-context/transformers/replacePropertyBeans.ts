@@ -24,7 +24,7 @@ export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContext
                         undefined,
                         undefined,
                         [],
-                        beanDescriptor.typeNode,
+                        beanDescriptor.qualifiedType.typeNode,
                         getBeanBlock(beanDescriptor, contextDescriptorToIdentifierList),
                     );
                 }

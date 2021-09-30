@@ -8,6 +8,7 @@ import { findClassDeclarationInSourceFileByName } from '../ts-helpers/predicates
 import { getParameterType } from './getParameterType';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
+import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
 
 export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<ClassPropertyDeclarationWithInitializer>) => {
     //Assuming that we're already checked that first argument in property bean is reference
@@ -48,20 +49,19 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
         return;
     }
 
-    const parameterTypes: Array<[ts.ParameterDeclaration, IQualifiedType | null]> =
+    const parameterTypes: Array<[ts.ParameterDeclaration, QualifiedType | null]> =
         constructor.parameters.map(parameter => [parameter, getParameterType(parameter)]);
 
     const qualifiedParameters = parameterTypes.filter(([_, parameterType]) =>
-        parameterType !== null) as Array<[ts.ParameterDeclaration, IQualifiedType]>;
+        parameterType !== null) as Array<[ts.ParameterDeclaration, QualifiedType]>;
 
-    qualifiedParameters.forEach(([parameter, parameterType]) => {
+    qualifiedParameters.forEach(([parameter, qualifiedType]) => {
         BeanDependenciesRepository.registerBeanDependency(
             descriptor,
             {
                 qualifier: null,
-                type: parameterType.typeId,
-                originalTypeName: parameterType.originalTypeName,
                 contextName: descriptor.contextDescriptor.name,
+                qualifiedType: qualifiedType,
                 parameterName: parameter.name.getText(),
                 node: parameter,
                 qualifiedBean: null,

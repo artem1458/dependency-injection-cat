@@ -1,12 +1,10 @@
 import { IContextDescriptor } from '../context/ContextRepository';
-import * as ts from 'typescript';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
-import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { restrictedClassMemberNames } from './constants';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
+import { TypeQualifier } from '../ts-helpers/type-qualifier-v2/TypeQualifier';
 
 export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyArrowFunction): void => {
     const classElementName = classElement.name.getText();
@@ -21,10 +19,23 @@ export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor,
         return;
     }
 
-    const typeInfo = getBeanTypeInfoFromArrowFunction(contextDescriptor, classElement);
+    const functionReturnType = classElement.initializer.type ?? null;
     const beanInfo = getPropertyDecoratorBeanInfo(classElement);
 
-    if (typeInfo === null) {
+    if (functionReturnType === null) {
+        CompilationContext.reportError({
+            node: classElement,
+            message: 'Can\'t qualify type of Bean, please specify type explicitly',
+            filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
+        });
+
+        return;
+    }
+
+    const qualifiedType = TypeQualifier.qualify(functionReturnType);
+
+    if (qualifiedType === null) {
         CompilationContext.reportError({
             node: classElement,
             message: 'Can\'t qualify type of Bean',
@@ -37,41 +48,11 @@ export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor,
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
         contextDescriptor,
-        type: typeInfo.typeId,
-        originalTypeName: typeInfo.originalTypeName,
         scope: beanInfo.scope,
         node: classElement,
-        typeNode: typeInfo.typeNode,
+        qualifiedType: qualifiedType,
         beanKind: 'arrowFunction',
         beanSourceLocation: null,
         isPublic: false,
     });
 };
-
-function getBeanTypeInfoFromArrowFunction(contextDescriptor: IContextDescriptor, classElement: ClassPropertyArrowFunction): IQualifiedTypeWithTypeNode | null {
-    const functionReturnType = classElement.initializer.type ?? null;
-
-    if (functionReturnType !== null) {
-        const qualified = typeQualifier(functionReturnType);
-
-        return qualified ?
-            {
-                ...qualified,
-                typeNode: functionReturnType,
-            }
-            : null;
-    } else {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Can\'t qualify type of Bean, please specify type explicitly',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
-
-        return null;
-    }
-}
-
-interface IQualifiedTypeWithTypeNode extends IQualifiedType {
-    typeNode: ts.TypeNode;
-}
