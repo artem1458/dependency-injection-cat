@@ -7,11 +7,12 @@ export interface XZ<T> {
 }
 
 class TestContext extends CatContext<ITestContext> {
-    @Bean test: string & XZ<string & number> = [] as any;
+    // @ts-ignore
+    @Bean test: string & number & XZ<any> = [] as any;
 
     @Bean
     xz(
-        d: string & XZ<string & number>,
+        d: string[],
     ): void {
         d;
     }

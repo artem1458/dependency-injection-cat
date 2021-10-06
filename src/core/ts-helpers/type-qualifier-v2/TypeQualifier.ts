@@ -1,5 +1,5 @@
 import ts, { factory, KeywordTypeNode, SyntaxKind } from 'typescript';
-import { QualifiedType, QualifiedTypeEnum } from './QualifiedType';
+import { QualifiedType, QualifiedTypeKind } from './QualifiedType';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { ExtendedSet } from '../../utils/ExtendedSet';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
@@ -51,6 +51,11 @@ const KEYWORD_TYPES = [
     SyntaxKind.VoidKeyword
 ];
 
+interface IQualifiedTypes {
+    types: string[];
+    fullTypeId: string;
+}
+
 export class TypeQualifier {
 
     //TODO Add related context to errors
@@ -59,10 +64,10 @@ export class TypeQualifier {
 
         const qualifiedType = new QualifiedType();
 
-        let qualifiedTypes: string[] | null;
+        let qualifiedTypes: IQualifiedTypes | null;
 
         if (ts.isArrayTypeNode(typeNode)) {
-            qualifiedType.kind = QualifiedTypeEnum.LIST;
+            qualifiedType.kind = QualifiedTypeKind.LIST;
             qualifiedTypes = this._qualify(typeNode.elementType);
         } else {
             qualifiedTypes = this._qualify(typeNode);
@@ -81,22 +86,29 @@ export class TypeQualifier {
                 return null;
             }
 
-            const nonNullableQualifiedTypes = this.filterNotNull(qualifiedNullableTypes).sort();
+            const nonNullableQualifiedTypes = this.filterNotNull(qualifiedNullableTypes).map(it => it.types).sort();
 
-            qualifiedTypes = this.generateAllIntersectionCombinations(nonNullableQualifiedTypes);
+            const qualifiedTypeCombinations = this.generateAllIntersectionCombinations(nonNullableQualifiedTypes.flat());
+            const fullTypeId = this.getLongestStringFromList(qualifiedTypeCombinations);
+
+            qualifiedTypes = {
+                types: qualifiedTypeCombinations,
+                fullTypeId: fullTypeId,
+            };
         }
 
         if (qualifiedTypes === null) {
             return null;
         }
 
-        qualifiedType.typeIds = new ExtendedSet<string>(qualifiedTypes);
+        qualifiedType.typeIds = new ExtendedSet<string>(qualifiedTypes.types);
+        qualifiedType.fullTypeId = qualifiedTypes.fullTypeId;
         qualifiedType.typeNode = typeNode;
 
         return qualifiedType;
     }
 
-    private static _qualify(typeNode: ts.TypeNode): string[] | null {
+    private static _qualify(typeNode: ts.TypeNode): IQualifiedTypes | null {
         if (ts.isParenthesizedTypeNode(typeNode)) {
             CompilationContext.reportError({
                 message: 'Parenthesizing of types allowed only on top level of type',
@@ -111,7 +123,10 @@ export class TypeQualifier {
             const literalTypeId = this.getLiteralTypeId(typeNode);
 
             if (literalTypeId !== null) {
-                return [literalTypeId];
+                return {
+                    fullTypeId: literalTypeId,
+                    types: [literalTypeId],
+                };
             } else {
                 CompilationContext.reportError({
                     message: 'Can not qualify literal type',
@@ -127,7 +142,10 @@ export class TypeQualifier {
             const keywordTypeId = this.getKeywordTypeId(typeNode);
 
             if (keywordTypeId !== null) {
-                return [keywordTypeId];
+                return {
+                    fullTypeId: keywordTypeId,
+                    types: [keywordTypeId]
+                };
             } else {
                 CompilationContext.reportError({
                     message: 'Can not qualify keyword type',
@@ -152,7 +170,12 @@ export class TypeQualifier {
                 return null;
             }
 
-            return [this.filterNotNull(qualifiedNullableTypes).sort().join(' &intersection& ')];
+            const intersectionType = this.filterNotNull(qualifiedNullableTypes).sort().join(' &intersection& ');
+
+            return {
+                fullTypeId: intersectionType,
+                types: [intersectionType],
+            };
         }
 
         if (ts.isTypeReferenceNode(typeNode)) {
@@ -184,9 +207,13 @@ export class TypeQualifier {
                 return null;
             }
 
-            const qualifiedTypes = this.filterNotNull(nullableQualifiedTypeArguments).map(it => it.join(''));
+            const qualifiedTypeArgumentTypes = this.filterNotNull(nullableQualifiedTypeArguments).map(it => it.fullTypeId);
+            const qualifiedType = `${typeReferenceFullName}<${qualifiedTypeArgumentTypes.join(', ')}>`;
 
-            return [`${typeReferenceFullName}<${qualifiedTypes.join(', ')}>`];
+            return {
+                fullTypeId: qualifiedType,
+                types: [qualifiedType],
+            };
         }
 
         return null;
@@ -269,5 +296,9 @@ export class TypeQualifier {
         combine(list);
 
         return result;
+    }
+
+    private static getLongestStringFromList(list: string[]): string {
+        return list.sort((a, b) => b.length - a.length)[0];
     }
 }
