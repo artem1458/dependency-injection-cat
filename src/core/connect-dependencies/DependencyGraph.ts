@@ -6,7 +6,7 @@ type TContextName = string;
 export class DependencyGraph {
     static readonly graph = new Graph({directed: true});
 
-    static addNodeWithEdges(node: IBeanDescriptorWithId, ...edges: IBeanDescriptorWithId[]) {
+    static addNodeWithEdges(node: IBeanDescriptorWithId, edges: IBeanDescriptorWithId[]) {
         this.graph.setNodes(
             [
                 node.id,

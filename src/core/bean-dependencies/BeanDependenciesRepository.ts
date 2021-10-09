@@ -2,6 +2,7 @@ import ts from 'typescript';
 import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { ExtendedSet } from '../utils/ExtendedSet';
 
 export interface IBeanDependencyDescriptor {
     parameterName: string;
@@ -9,7 +10,7 @@ export interface IBeanDependencyDescriptor {
     contextName: TContextName;
     qualifiedType: QualifiedType;
     node: ts.ParameterDeclaration;
-    qualifiedBean: IBeanDescriptorWithId | null;
+    qualifiedBeans: ExtendedSet<IBeanDescriptorWithId>;
 }
 
 type TBeanDependencyQualifier = string | null;

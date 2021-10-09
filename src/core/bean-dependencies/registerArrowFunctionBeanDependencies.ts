@@ -1,9 +1,10 @@
-import { IBeanDescriptor } from '../bean/BeanRepository';
+import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import { getQualifierValueFromFunctionArgument } from './getQualifierValueFromFunctionArgument';
+import { ExtendedSet } from '../utils/ExtendedSet';
 
 export const registerArrowFunctionBeanDependencies = (descriptor: IBeanDescriptor<ClassPropertyArrowFunction>) => {
     const parameters = descriptor.node.initializer.parameters;
@@ -30,7 +31,7 @@ export const registerArrowFunctionBeanDependencies = (descriptor: IBeanDescripto
                 qualifiedType: qualifiedType,
                 parameterName: parameter.name.getText(),
                 qualifier,
-                qualifiedBean: null
+                qualifiedBeans: new ExtendedSet()
             }
         );
     });

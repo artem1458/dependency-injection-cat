@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "declaration": true,
     "outDir": "./dist",
-    "target": "es5",
+    "target": "ESNext",
     "module": "CommonJS",
     "strict": true,
     "baseUrl": ".",

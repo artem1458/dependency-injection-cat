@@ -9,6 +9,8 @@ import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descripto
 import { restrictedClassMemberNames } from './constants';
 import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
 import { TypeQualifier } from '../ts-helpers/type-qualifier-v2/TypeQualifier';
+import { ExtendedSet } from '../utils/ExtendedSet';
+import { factory } from 'typescript';
 
 export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
     const classElementName = classElement.name.getText();
@@ -116,8 +118,11 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
     const typeReferenceFullName = `${nodeSourceDescriptor.name}${nodeSourceDescriptor.path}`;
 
     const qualifiedType = new QualifiedType();
-
-    qualifiedType.typeIds.add(typeReferenceFullName);
+    qualifiedType.typeIds = new ExtendedSet([typeReferenceFullName]);
+    qualifiedType.fullTypeId = typeReferenceFullName;
+    qualifiedType.typeNode = factory.createTypeReferenceNode(
+        factory.createIdentifier(firstArgument.getText()),
+    );
 
     return qualifiedType;
 }

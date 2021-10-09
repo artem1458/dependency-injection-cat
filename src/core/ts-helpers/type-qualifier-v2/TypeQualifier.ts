@@ -208,7 +208,9 @@ export class TypeQualifier {
             }
 
             const qualifiedTypeArgumentTypes = this.filterNotNull(nullableQualifiedTypeArguments).map(it => it.fullTypeId);
-            const qualifiedType = `${typeReferenceFullName}<${qualifiedTypeArgumentTypes.join(', ')}>`;
+            const qualifiedType = qualifiedTypeArgumentTypes.length === 0
+                ? typeReferenceFullName
+                : `${typeReferenceFullName}<${qualifiedTypeArgumentTypes.join(', ')}>`;
 
             return {
                 fullTypeId: qualifiedType,

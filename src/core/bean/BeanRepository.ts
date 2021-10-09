@@ -3,7 +3,8 @@ import { TBeanScopeValue } from '../ts-helpers/bean-info/ICompilationBeanInfo';
 import { ClassPropertyArrowFunction, ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { uniqId } from '../utils/uniqId';
-import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { QualifiedType, QualifiedTypeKind } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer | ClassPropertyArrowFunction | ts.PropertyDeclaration;
 type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression';
@@ -11,7 +12,6 @@ type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression';
 export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     classMemberName: string;
     contextDescriptor: IContextDescriptor;
-    type: TBeanType;
     qualifiedType: QualifiedType;
     scope: TBeanScopeValue;
     node: T;
@@ -35,6 +35,17 @@ export class BeanRepository {
     static beanNodeToBeanDescriptorMap = new Map<TBeanNode, IBeanDescriptorWithId>();
 
     static registerBean(descriptor: IBeanDescriptor): void {
+        if (descriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
+            CompilationContext.reportError({
+                node: descriptor.qualifiedType.typeNode,
+                message: 'Bean type can not be a list',
+                relatedContextPath: descriptor.contextDescriptor.absolutePath,
+                filePath: descriptor.contextDescriptor.absolutePath,
+            });
+
+            return;
+        }
+
         const descriptorWithId: IBeanDescriptorWithId = {
             ...descriptor,
             id: uniqId(),
@@ -54,9 +65,9 @@ export class BeanRepository {
             if (beanDescriptorList === null) {
                 beanDescriptorList = [];
                 contextMap!.set(typeId, beanDescriptorList);
-
-                beanDescriptorList.push(descriptorWithId);
             }
+
+            beanDescriptorList.push(descriptorWithId);
         });
 
         this.beanIdToBeanDescriptorMap.set(descriptorWithId.id, descriptorWithId);

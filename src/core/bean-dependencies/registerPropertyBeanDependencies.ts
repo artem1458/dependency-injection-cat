@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { IBeanDescriptor } from '../bean/BeanRepository';
+import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
@@ -9,6 +9,7 @@ import { getParameterType } from './getParameterType';
 import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { ExtendedSet } from '../utils/ExtendedSet';
 
 export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<ClassPropertyDeclarationWithInitializer>) => {
     //Assuming that we're already checked that first argument in property bean is reference
@@ -64,7 +65,7 @@ export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<Cla
                 qualifiedType: qualifiedType,
                 parameterName: parameter.name.getText(),
                 node: parameter,
-                qualifiedBean: null,
+                qualifiedBeans: new ExtendedSet(),
             }
         );
     });

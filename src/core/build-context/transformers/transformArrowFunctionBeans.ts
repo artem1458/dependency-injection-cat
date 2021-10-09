@@ -1,6 +1,9 @@
 import ts, { factory } from 'typescript';
 import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
-import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
+import {
+    BeanDependenciesRepository,
+    IBeanDependencyDescriptor
+} from '../../bean-dependencies/BeanDependenciesRepository';
 import { compact } from 'lodash';
 import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
 import {
@@ -8,6 +11,8 @@ import {
     TContextDescriptorToIdentifier
 } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { ClassPropertyArrowFunction } from '../../ts-helpers/types';
+import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier-v2/QualifiedType';
+import { getCallExpressionForBean } from './getCallExpressionForBean';
 
 export const transformArrowFunctionBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
@@ -39,21 +44,29 @@ export const transformArrowFunctionBeans = (contextDescriptorToIdentifierList: T
 };
 
 function getTransformedArrowFunction (
-    beanDescriptor: IBeanDescriptorWithId,
+    parentBeanDescriptor: IBeanDescriptorWithId,
     contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]
 ): ts.ArrowFunction {
-    const node = beanDescriptor.node as ClassPropertyArrowFunction;
+    const node = parentBeanDescriptor.node as ClassPropertyArrowFunction;
     const arrowFunction = node.initializer;
 
     const dependencies = BeanDependenciesRepository.beanDependenciesRepository
-        .get(beanDescriptor.contextDescriptor.name)?.get(beanDescriptor) ?? [];
+        .get(parentBeanDescriptor.contextDescriptor.name)?.get(parentBeanDescriptor) ?? [];
 
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {
-        if (dependencyDescriptor.qualifiedBean === null) {
-            return;
-        }
+        if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.PLAIN) {
+            const qualifiedBeanDescriptor = dependencyDescriptor.qualifiedBeans.firstOrNull();
 
-        if (isBeanDependencyFromCurrentContext(beanDescriptor, dependencyDescriptor.qualifiedBean)) {
+            if (qualifiedBeanDescriptor === null) {
+                return;
+            }
+
+            const expression = getCallExpressionForBean(
+                qualifiedBeanDescriptor,
+                parentBeanDescriptor,
+                contextDescriptorToIdentifierList,
+            );
+
             return factory.createVariableStatement(
                 undefined,
                 factory.createVariableDeclarationList(
@@ -61,47 +74,37 @@ function getTransformedArrowFunction (
                         factory.createIdentifier(dependencyDescriptor.parameterName),
                         undefined,
                         dependencyDescriptor.node.type,
-                        factory.createCallExpression(
-                            factory.createPropertyAccessExpression(
-                                factory.createThis(),
-                                factory.createIdentifier('getPrivateBean')
-                            ),
-                            undefined,
-                            [factory.createStringLiteral(dependencyDescriptor.qualifiedBean?.classMemberName ?? '')]
-                        )
+                        expression,
                     )],
                     ts.NodeFlags.Const
                 )
             );
         }
 
-        const globalContextIdentifier = getGlobalContextIdentifierFromArrayOrCreateNewAndPush(
-            dependencyDescriptor.qualifiedBean.contextDescriptor,
-            contextDescriptorToIdentifierList,
-        );
+        if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
+            const expressions = dependencyDescriptor.qualifiedBeans.list()
+                .map(beanDescriptor => getCallExpressionForBean(
+                    beanDescriptor,
+                    parentBeanDescriptor,
+                    contextDescriptorToIdentifierList
+                ));
 
-        return factory.createVariableStatement(
-            undefined,
-            factory.createVariableDeclarationList(
-                [factory.createVariableDeclaration(
-                    factory.createIdentifier(dependencyDescriptor.parameterName),
-                    undefined,
-                    dependencyDescriptor.node.type,
-                    factory.createCallExpression(
-                        factory.createPropertyAccessExpression(
-                            factory.createPropertyAccessExpression(
-                                globalContextIdentifier,
-                                factory.createIdentifier(globalContextIdentifier.text),
-                            ),
-                            factory.createIdentifier('getPrivateBean')
-                        ),
+            return factory.createVariableStatement(
+                undefined,
+                factory.createVariableDeclarationList(
+                    [factory.createVariableDeclaration(
+                        factory.createIdentifier(dependencyDescriptor.parameterName),
                         undefined,
-                        [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]
-                    ),
-                )],
-                ts.NodeFlags.Const
-            )
-        );
+                        dependencyDescriptor.node.type,
+                        factory.createArrayLiteralExpression(
+                            expressions,
+                            true
+                        ),
+                    )],
+                    ts.NodeFlags.Const
+                )
+            );
+        }
     });
 
     let newBody: ts.Block;

@@ -1,9 +1,10 @@
 import ts from 'typescript';
-import { IBeanDescriptor } from '../bean/BeanRepository';
+import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { getQualifierValueFromFunctionArgument } from './getQualifierValueFromFunctionArgument';
+import { ExtendedSet } from '../utils/ExtendedSet';
 
 export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.MethodDeclaration>) => {
     const parameters = descriptor.node.parameters;
@@ -30,7 +31,7 @@ export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.Me
                 qualifiedType: qualifiedType,
                 parameterName: parameter.name.getText(),
                 qualifier,
-                qualifiedBean: null
+                qualifiedBeans: new ExtendedSet()
             }
         );
     });

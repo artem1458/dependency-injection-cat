@@ -1,13 +1,18 @@
 import ts, { factory } from 'typescript';
 import { compact } from 'lodash';
-import { BeanRepository, IBeanDescriptor, TBeanNode } from '../../bean/BeanRepository';
-import { BeanDependenciesRepository, } from '../../bean-dependencies/BeanDependenciesRepository';
+import { BeanRepository, IBeanDescriptor, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
+import {
+    BeanDependenciesRepository,
+    IBeanDependencyDescriptor,
+} from '../../bean-dependencies/BeanDependenciesRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../../ts-helpers/types';
 import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
 import {
     getGlobalContextIdentifierFromArrayOrCreateNewAndPush,
     TContextDescriptorToIdentifier
 } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier-v2/QualifiedType';
+import { getCallExpressionForBean } from './getCallExpressionForBean';
 
 export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
@@ -37,45 +42,41 @@ export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContext
     };
 };
 
-function getBeanBlock(beanDescriptor: IBeanDescriptor, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
+function getBeanBlock(parentBeanDescriptor: IBeanDescriptor, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
     const dependencies = BeanDependenciesRepository.beanDependenciesRepository
-        .get(beanDescriptor.contextDescriptor.name)?.get(beanDescriptor) ?? [];
+        .get(parentBeanDescriptor.contextDescriptor.name)?.get(parentBeanDescriptor) ?? [];
 
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {
-        if (dependencyDescriptor.qualifiedBean === null) {
-            return null;
-        }
+        if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.PLAIN) {
+            const qualifiedBeanDescriptor = dependencyDescriptor.qualifiedBeans.firstOrNull();
 
-        if (isBeanDependencyFromCurrentContext(beanDescriptor, dependencyDescriptor.qualifiedBean)) {
-            return factory.createCallExpression(
-                factory.createPropertyAccessExpression(
-                    factory.createThis(),
-                    factory.createIdentifier('getPrivateBean')
-                ),
-                undefined,
-                [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]
+            if (qualifiedBeanDescriptor === null) {
+                return;
+            }
+
+            return getCallExpressionForBean(
+                qualifiedBeanDescriptor,
+                parentBeanDescriptor,
+                contextDescriptorToIdentifierList,
             );
         }
 
-        const globalContextIdentifier = getGlobalContextIdentifierFromArrayOrCreateNewAndPush(
-            dependencyDescriptor.qualifiedBean.contextDescriptor,
-            contextDescriptorToIdentifierList,
-        );
+        if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
+            const expressions = dependencyDescriptor.qualifiedBeans.list()
+                .map(beanDescriptor => getCallExpressionForBean(
+                    beanDescriptor,
+                    parentBeanDescriptor,
+                    contextDescriptorToIdentifierList,
+                ));
 
-        return factory.createCallExpression(
-            factory.createPropertyAccessExpression(
-                factory.createPropertyAccessExpression(
-                    globalContextIdentifier,
-                    factory.createIdentifier(globalContextIdentifier.text),
-                ),
-                factory.createIdentifier('getPrivateBean')
-            ),
-            undefined,
-            [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]
-        );
+            return factory.createArrayLiteralExpression(
+                expressions,
+                true
+            );
+        }
     });
 
-    const node = beanDescriptor.node as ClassPropertyDeclarationWithInitializer;
+    const node = parentBeanDescriptor.node as ClassPropertyDeclarationWithInitializer;
     const className = node.initializer.arguments[0];
 
     return factory.createBlock(
