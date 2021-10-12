@@ -15,6 +15,7 @@ import { TLifecycle } from '../../external/InternalCatContext';
 import { QualifiedTypeKind } from '../ts-helpers/type-qualifier-v2/QualifiedType';
 import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
 import { ExtendedSet } from '../utils/ExtendedSet';
+import { uniqNotEmpty } from '../utils/uniqNotEmpty';
 
 export const registerLifecycleExpression = (
     contextDescriptor: IContextDescriptor,
@@ -208,7 +209,3 @@ export const registerLifecycleExpression = (
         contextDescriptor,
     });
 };
-
-function uniqNotEmpty<T>(list: (T | undefined | null)[]): T[] {
-    return Array.from(new Set(list)).filter((it): it is T => Boolean(it));
-}

@@ -5,6 +5,7 @@ import { DependencyGraph } from './DependencyGraph';
 import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { QualifiedTypeKind } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { uniqNotEmpty } from '../utils/uniqNotEmpty';
 
 export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: IContextDescriptor) => {
     const beansMap = BeanRepository.beanDescriptorRepository.get(contextDescriptor.name);
@@ -163,6 +164,3 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
     });
 };
 
-function uniqNotEmpty<T>(list: (T | undefined | null)[]): T[] {
-    return Array.from(new Set(list)).filter((it): it is T => Boolean(it));
-}
