@@ -74,10 +74,6 @@ export class ContextRepository {
         return this.contextMap.get(name) ?? null;
     }
 
-    static hasContext(name: TContextName): boolean {
-        return this.contextMap.has(name);
-    }
-
     static registerTBeanType(contextDescriptor: IContextDescriptor, nodeSourceDescriptor: INodeSourceDescriptor) {
         this.contextNameToTBeanNodeSourceDescriptor.set(
             contextDescriptor.name,

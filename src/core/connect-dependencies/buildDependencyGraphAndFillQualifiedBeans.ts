@@ -15,7 +15,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
         return;
     }
 
-    beansMap.forEach((beanDescriptors, beanType) => {
+    beansMap.forEach((beanDescriptors) => {
         beanDescriptors.forEach(beanDescriptor => {
             const dependencies = beanDependenciesMap.get(beanDescriptor) ?? [];
 
