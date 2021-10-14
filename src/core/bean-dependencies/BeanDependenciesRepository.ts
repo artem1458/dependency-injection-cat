@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
 import { IContextDescriptor } from '../context/ContextRepository';
-import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
 
 export interface IBeanDependencyDescriptor {

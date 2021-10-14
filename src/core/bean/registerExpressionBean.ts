@@ -4,7 +4,7 @@ import { CompilationContext } from '../../compilation-context/CompilationContext
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
 import { restrictedClassMemberNames } from './constants';
-import { TypeQualifier } from '../ts-helpers/type-qualifier-v2/TypeQualifier';
+import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 
 export const registerExpressionBean = (contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): void => {
     const classElementName = classElement.name.getText();

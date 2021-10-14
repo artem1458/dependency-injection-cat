@@ -8,12 +8,11 @@ import {
 import { getQualifierValueFromFunctionArgument } from '../bean-dependencies/getQualifierValueFromFunctionArgument';
 import { getParameterType } from '../bean-dependencies/getParameterType';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { BeanRepository, IBeanDescriptor } from '../bean/BeanRepository';
+import { BeanRepository } from '../bean/BeanRepository';
 import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import { TLifecycle } from '../../external/InternalCatContext';
-import { QualifiedTypeKind } from '../ts-helpers/type-qualifier-v2/QualifiedType';
-import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
+import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
 

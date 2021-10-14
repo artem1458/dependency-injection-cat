@@ -4,7 +4,7 @@ import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import ts from 'typescript';
 import { TLifecycle } from '../../external/InternalCatContext';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 
 export type TLifecycleNodeKind = 'method' | 'arrow-function';
 

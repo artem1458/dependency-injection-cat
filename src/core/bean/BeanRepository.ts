@@ -3,8 +3,7 @@ import { TBeanScopeValue } from '../ts-helpers/bean-info/ICompilationBeanInfo';
 import { ClassPropertyArrowFunction, ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { uniqId } from '../utils/uniqId';
-import { QualifiedType, QualifiedTypeKind } from '../ts-helpers/type-qualifier-v2/QualifiedType';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 
 export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer | ClassPropertyArrowFunction | ts.PropertyDeclaration;
 type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression';
@@ -35,16 +34,16 @@ export class BeanRepository {
     static beanNodeToBeanDescriptorMap = new Map<TBeanNode, IBeanDescriptorWithId>();
 
     static registerBean(descriptor: IBeanDescriptor): void {
-        if (descriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
-            CompilationContext.reportError({
-                node: descriptor.qualifiedType.typeNode,
-                message: 'Bean type can not be a list',
-                relatedContextPath: descriptor.contextDescriptor.absolutePath,
-                filePath: descriptor.contextDescriptor.absolutePath,
-            });
-
-            return;
-        }
+        // if (descriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
+        //     CompilationContext.reportError({
+        //         node: descriptor.qualifiedType.typeNode,
+        //         message: 'Bean type can not be a list',
+        //         relatedContextPath: descriptor.contextDescriptor.absolutePath,
+        //         filePath: descriptor.contextDescriptor.absolutePath,
+        //     });
+        //
+        //     return;
+        // }
 
         const descriptorWithId: IBeanDescriptorWithId = {
             ...descriptor,

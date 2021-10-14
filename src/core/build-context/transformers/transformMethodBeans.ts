@@ -2,12 +2,8 @@ import ts, { factory } from 'typescript';
 import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
 import { compact } from 'lodash';
-import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
-import {
-    getGlobalContextIdentifierFromArrayOrCreateNewAndPush,
-    TContextDescriptorToIdentifier
-} from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
-import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier-v2/QualifiedType';
+import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 import { getCallExpressionForBean } from './getCallExpressionForBean';
 
 export const transformMethodBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {

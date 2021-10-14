@@ -1,4 +1,4 @@
-import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
+import { IBeanDescriptor } from '../bean/BeanRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';

@@ -5,14 +5,15 @@ import {
 } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import ts, { factory } from 'typescript';
 import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
+import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 
 export const getCallExpressionForBean = (
     qualifiedBean: IBeanDescriptor,
     dependencyParentBean: IBeanDescriptor,
     contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[],
-): ts.CallExpression => {
+): ts.CallExpression | ts.SpreadElement => {
     if (isBeanDependencyFromCurrentContext(qualifiedBean, dependencyParentBean)) {
-        return factory.createCallExpression(
+        const callExpression = factory.createCallExpression(
             factory.createPropertyAccessExpression(
                 factory.createThis(),
                 factory.createIdentifier('getPrivateBean')
@@ -20,6 +21,12 @@ export const getCallExpressionForBean = (
             undefined,
             [factory.createStringLiteral(qualifiedBean.classMemberName)]
         );
+
+        if (qualifiedBean.qualifiedType.kind === QualifiedTypeKind.LIST) {
+            return factory.createSpreadElement(callExpression);
+        } else {
+            return callExpression;
+        }
     }
 
     const globalContextIdentifier = getGlobalContextIdentifierFromArrayOrCreateNewAndPush(
@@ -27,7 +34,7 @@ export const getCallExpressionForBean = (
         contextDescriptorToIdentifierList,
     );
 
-    return factory.createCallExpression(
+    const callExpression = factory.createCallExpression(
         factory.createPropertyAccessExpression(
             factory.createPropertyAccessExpression(
                 globalContextIdentifier,
@@ -38,4 +45,10 @@ export const getCallExpressionForBean = (
         undefined,
         [factory.createStringLiteral(qualifiedBean.classMemberName)]
     );
+
+    if (qualifiedBean.qualifiedType.kind === QualifiedTypeKind.LIST) {
+        return factory.createSpreadElement(callExpression);
+    } else {
+        return callExpression;
+    }
 };

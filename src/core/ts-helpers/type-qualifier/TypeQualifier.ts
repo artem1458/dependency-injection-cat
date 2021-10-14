@@ -183,7 +183,6 @@ export class TypeQualifier {
                 typeNode.getSourceFile(),
                 typeNode.typeName.getText(),
             );
-
             if (nodeSourceDescriptor === null) {
                 CompilationContext.reportError({
                     message: 'Can not qualify type reference',

@@ -4,7 +4,7 @@ import { CompilationContext } from '../../compilation-context/CompilationContext
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
 import { BeanRepository, IBeanDescriptorWithId } from './BeanRepository';
-import { TypeQualifier } from '../ts-helpers/type-qualifier-v2/TypeQualifier';
+import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 
 //Only for non-global contexts
 export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (contextDescriptor: IContextDescriptor) => {
@@ -116,7 +116,7 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (context
         }
 
         const requiredBeanDescriptor = contextBeans.get(qualifiedPropertyType.fullTypeId)
-            ?.find(it => it.classMemberName === requiredBeanName && it.qualifiedType);
+            ?.find(it => it.classMemberName === requiredBeanName && it.qualifiedType.kind === qualifiedPropertyType.kind);
 
         if (requiredBeanDescriptor) {
             requiredBeanDescriptor.isPublic = true;

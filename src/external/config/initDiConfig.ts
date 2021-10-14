@@ -1,4 +1,4 @@
-import { isArray, mergeWith, get } from 'lodash';
+import { get, isArray, mergeWith } from 'lodash';
 import { IDiConfig } from './IDiConfig';
 import { diConfig } from './diConfig';
 import { logLogo } from '../../core/transformers/logLogo';

@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+import { factory } from 'typescript';
 import { isEqual } from 'lodash';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
@@ -7,10 +8,9 @@ import { BeanRepository } from './BeanRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { restrictedClassMemberNames } from './constants';
-import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
-import { TypeQualifier } from '../ts-helpers/type-qualifier-v2/TypeQualifier';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
+import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { factory } from 'typescript';
 
 export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
     const classElementName = classElement.name.getText();

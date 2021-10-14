@@ -1,20 +1,17 @@
 import { Bean, CatContext } from 'dependency-injection-cat';
 
 export interface ITestContext {
-    data: string & number
+    test: string[]
 }
 export interface XZ {}
 
 class TestContext extends CatContext<ITestContext> {
-    // @ts-ignore
-    @Bean data: string & number = '';
-    @Bean objectAndString: string & XZ = 'objectAndString'
-    @Bean strOnly: XZ & string = 'strOnly'
+    @Bean listString: string[] = [];
 
     @Bean
     test(
-        objectAndString: XZ & string,
-    ): string {
-        return '';
+        allStrings: string[],
+    ): string[] {
+        return allStrings;
     }
 }

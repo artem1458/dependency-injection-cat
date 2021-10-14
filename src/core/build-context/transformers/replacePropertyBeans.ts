@@ -1,17 +1,10 @@
 import ts, { factory } from 'typescript';
 import { compact } from 'lodash';
-import { BeanRepository, IBeanDescriptor, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
-import {
-    BeanDependenciesRepository,
-    IBeanDependencyDescriptor,
-} from '../../bean-dependencies/BeanDependenciesRepository';
+import { BeanRepository, IBeanDescriptor, TBeanNode } from '../../bean/BeanRepository';
+import { BeanDependenciesRepository, } from '../../bean-dependencies/BeanDependenciesRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../../ts-helpers/types';
-import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
-import {
-    getGlobalContextIdentifierFromArrayOrCreateNewAndPush,
-    TContextDescriptorToIdentifier
-} from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
-import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier-v2/QualifiedType';
+import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 import { getCallExpressionForBean } from './getCallExpressionForBean';
 
 export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {

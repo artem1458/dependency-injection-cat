@@ -4,7 +4,7 @@ import { CompilationContext } from '../../compilation-context/CompilationContext
 import { DependencyGraph } from './DependencyGraph';
 import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { IContextDescriptor } from '../context/ContextRepository';
-import { QualifiedTypeKind } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
 
 export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: IContextDescriptor) => {

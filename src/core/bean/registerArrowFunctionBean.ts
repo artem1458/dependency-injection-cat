@@ -4,7 +4,7 @@ import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropert
 import { BeanRepository } from './BeanRepository';
 import { restrictedClassMemberNames } from './constants';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
-import { TypeQualifier } from '../ts-helpers/type-qualifier-v2/TypeQualifier';
+import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 
 export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyArrowFunction): void => {
     const classElementName = classElement.name.getText();

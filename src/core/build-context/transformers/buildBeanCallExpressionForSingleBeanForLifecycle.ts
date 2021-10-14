@@ -9,7 +9,7 @@ import {
     TContextDescriptorToIdentifier
 } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { IContextDescriptor } from '../../context/ContextRepository';
-import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier-v2/QualifiedType';
+import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 
 export function buildDependenciesStatementsForLifecycle(
     lifecycleDescriptor: IContextLifecycleDescriptor,

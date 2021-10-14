@@ -1,17 +1,10 @@
 import ts, { factory } from 'typescript';
 import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
-import {
-    BeanDependenciesRepository,
-    IBeanDependencyDescriptor
-} from '../../bean-dependencies/BeanDependenciesRepository';
+import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
 import { compact } from 'lodash';
-import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
-import {
-    getGlobalContextIdentifierFromArrayOrCreateNewAndPush,
-    TContextDescriptorToIdentifier
-} from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { ClassPropertyArrowFunction } from '../../ts-helpers/types';
-import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier-v2/QualifiedType';
+import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 import { getCallExpressionForBean } from './getCallExpressionForBean';
 
 export const transformArrowFunctionBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {

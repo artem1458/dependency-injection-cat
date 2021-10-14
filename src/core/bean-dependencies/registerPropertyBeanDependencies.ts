@@ -1,14 +1,13 @@
 import ts from 'typescript';
-import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
+import { IBeanDescriptor } from '../bean/BeanRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { SourceFilesCache } from '../ts-helpers/source-files-cache/SourceFilesCache';
 import { findClassDeclarationInSourceFileByName } from '../ts-helpers/predicates/findClassDeclarationInSourceFileByName';
 import { getParameterType } from './getParameterType';
-import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
-import { QualifiedType } from '../ts-helpers/type-qualifier-v2/QualifiedType';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
 
 export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<ClassPropertyDeclarationWithInitializer>) => {
