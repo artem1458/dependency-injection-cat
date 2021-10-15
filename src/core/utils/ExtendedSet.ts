@@ -1,4 +1,4 @@
-export class ExtendedSet<T = unknown> implements Set<T> {
+export class ExtendedSet<T = unknown> {
     private readonly set: Set<T>;
 
     constructor(values?: readonly T[] | null) {
@@ -13,7 +13,9 @@ export class ExtendedSet<T = unknown> implements Set<T> {
         return Array.from(this);
     }
 
-    readonly [Symbol.toStringTag]: string;
+    get[Symbol.toStringTag](): string {
+        return this.set[Symbol.toStringTag];
+    }
 
     get size(): number {
         return this.set.size;
