@@ -23,14 +23,5 @@ jobs:
       - name: Install DI Cat Dependencies
         run: yarn
 
-      - name: Build DI-Cat
-        run: yarn run build
-
-      - name: Install Test Dependencies
-        run: cd tests && yarn
-
-      - name: ttypescript tests
-        run: cd tests && yarn run test:ttypescript
-
-      - name: webpack + ttypescript tests
-        run: cd tests && yarn run test:webpack-ttypescript
+      - name: Build and test DI-Cat
+        run: yarn run build-and-test

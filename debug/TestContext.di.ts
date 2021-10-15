@@ -1,17 +1,26 @@
 import { Bean, CatContext } from 'dependency-injection-cat';
 
 export interface ITestContext {
-    test: string[]
 }
-export interface XZ {}
+
+export interface IRequester {}
 
 class TestContext extends CatContext<ITestContext> {
-    @Bean listString: string[] = [];
+    @Bean requester0: IRequester = {}
+    @Bean requester1: IRequester = {}
+    @Bean requester2: IRequester = {}
+    @Bean requester3: IRequester = {}
+    @Bean requester4: IRequester = {}
+    @Bean requester5: IRequester = {}
 
     @Bean
-    test(
-        allStrings: string[],
-    ): string[] {
-        return allStrings;
+    xz(
+        requesters: IRequester[],
+    ): string {
+        requesters.forEach(requester => {
+            //requester.get();
+        });
+
+        return '';
     }
 }

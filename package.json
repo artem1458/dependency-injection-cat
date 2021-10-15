@@ -1,6 +1,6 @@
 {
   "name": "dependency-injection-cat",
-  "version": "0.2.12",
+  "version": "0.0.0-development",
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Artem Kornev",
@@ -25,7 +25,8 @@
   "scripts": {
     "lint": "eslint './src/**/*.ts'",
     "build": "sh scripts/build.sh",
-    "build-and-test": "sh scripts/buildAndTest.sh"
+    "build-and-test": "sh scripts/buildAndTest.sh",
+    "semantic-release": "semantic-release"
   },
   "devDependencies": {
     "@types/glob": "^7.1.2",
@@ -42,7 +43,8 @@
     "dts-bundle-generator": "^5.7.0",
     "eslint": "^7.10.0",
     "ts-loader": "^7.0.5",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.2",
+    "semantic-release": "^18.0.0"
   },
   "peerDependencies": {
     "typescript": "4.X.X"
