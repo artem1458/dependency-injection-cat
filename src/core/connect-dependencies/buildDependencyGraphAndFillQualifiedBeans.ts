@@ -30,7 +30,9 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                         ...beansFromGlobalContext,
                     ].filter(it => it !== beanDescriptor);
 
-                    if (mergedBeans.length === 0) {
+                    const uniqMergedBeans = uniqNotEmpty(mergedBeans);
+
+                    if (uniqMergedBeans.length === 0) {
                         CompilationContext.reportError({
                             node: dependencyDescriptor.node,
                             message: 'Not found any Bean candidates for list',
@@ -40,10 +42,10 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                         return;
                     }
 
-                    mergedBeans.forEach(bean => {
+                    uniqMergedBeans.forEach(bean => {
                         dependencyDescriptor.qualifiedBeans.add(bean);
                     });
-                    DependencyGraph.addNodeWithEdges(beanDescriptor, mergedBeans);
+                    DependencyGraph.addNodeWithEdges(beanDescriptor, uniqMergedBeans);
 
                     return;
                 }

@@ -58,7 +58,9 @@ export const registerLifecycleExpression = (
                 ...beansFromGlobalContext,
             ];
 
-            if (mergedBeans.length === 0) {
+            const uniqMergedBeans = uniqNotEmpty(mergedBeans);
+
+            if (uniqMergedBeans.length === 0) {
                 CompilationContext.reportError({
                     node: parameter,
                     message: 'Not found any Bean candidates for list',
@@ -71,7 +73,7 @@ export const registerLifecycleExpression = (
             dependencies.add({
                 qualifiedType,
                 parameterName,
-                beanDescriptors: new ExtendedSet(mergedBeans)
+                beanDescriptors: new ExtendedSet(uniqMergedBeans)
             });
             return;
         }
