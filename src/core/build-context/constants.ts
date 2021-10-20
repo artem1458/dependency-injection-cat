@@ -1,3 +1,1 @@
-import { uniqId } from '../utils/uniqId';
-
-export const PRIVATE_TOKEN = `_${uniqId()}`;
+export const PRIVATE_TOKEN = '_DEPENDENCY_INJECTION_CAT_PRIVATE_TOKEN';

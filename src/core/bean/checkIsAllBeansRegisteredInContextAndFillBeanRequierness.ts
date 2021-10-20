@@ -3,7 +3,8 @@ import ts from 'typescript';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { removeQuotesFromString } from '../utils/removeQuotesFromString';
-import { BeanRepository } from './BeanRepository';
+import { BeanRepository, IBeanDescriptorWithId } from './BeanRepository';
+import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 
 //Only for non-global contexts
 export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (contextDescriptor: IContextDescriptor) => {
@@ -87,14 +88,35 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (context
     const requiredBeanProperties: ts.PropertySignature[] = nodeDescriptor.node.members.map((it) => it as ts.PropertySignature);
 
     const contextBeans = BeanRepository
-        .contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
+        .beanDescriptorRepository.get(contextDescriptor.name) ?? new Map<string, IBeanDescriptorWithId[]>();
 
     const missingBeans: ts.PropertySignature[] = [];
 
     requiredBeanProperties.forEach(requiredBeanProperty => {
+        if (!requiredBeanProperty.type) {
+            CompilationContext.reportError({
+                message: 'TBean interface property should have a type',
+                node: requiredBeanProperty,
+                relatedContextPath: contextDescriptor.absolutePath,
+                filePath: requiredBeanProperty.getSourceFile().fileName,
+            });
+            return;
+        }
         const requiredBeanName = removeQuotesFromString(requiredBeanProperty.name.getText());
+        const qualifiedPropertyType = TypeQualifier.qualify(requiredBeanProperty.type);
 
-        const requiredBeanDescriptor = contextBeans.find(it => it.classMemberName === requiredBeanName);
+        if (qualifiedPropertyType === null) {
+            CompilationContext.reportError({
+                message: 'Can not qualify type of TBean property',
+                node: requiredBeanProperty,
+                relatedContextPath: contextDescriptor.absolutePath,
+                filePath: requiredBeanProperty.getSourceFile().fileName,
+            });
+            return;
+        }
+
+        const requiredBeanDescriptor = contextBeans.get(qualifiedPropertyType.fullTypeId)
+            ?.find(it => it.classMemberName === requiredBeanName && it.qualifiedType.kind === qualifiedPropertyType.kind);
 
         if (requiredBeanDescriptor) {
             requiredBeanDescriptor.isPublic = true;

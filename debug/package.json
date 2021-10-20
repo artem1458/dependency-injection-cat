@@ -1,0 +1,16 @@
+{
+  "name": "debug",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "debug": "ttsc"
+  },
+  "dependencies": {
+    "dependency-injection-cat": "link:../src"
+  },
+  "devDependencies": {
+    "ts-node": "^10.2.1",
+    "ttypescript": "^1.5.12"
+  }
+}

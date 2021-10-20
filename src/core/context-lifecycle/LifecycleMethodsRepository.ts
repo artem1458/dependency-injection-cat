@@ -3,9 +3,16 @@ import { IBeanDescriptor } from '../bean/BeanRepository';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import ts from 'typescript';
 import { TLifecycle } from '../../external/InternalCatContext';
+import { ExtendedSet } from '../utils/ExtendedSet';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 
 export type TLifecycleNodeKind = 'method' | 'arrow-function';
-type TParameterName = string;
+
+export interface ILifecycleDependencyDescriptor {
+    parameterName: string;
+    qualifiedType: QualifiedType;
+    beanDescriptors: ExtendedSet<IBeanDescriptor>;
+}
 
 export interface IContextLifecycleDescriptor {
     types: Set<TLifecycle>;
@@ -13,12 +20,12 @@ export interface IContextLifecycleDescriptor {
     nodeKind: TLifecycleNodeKind;
     classMemberName: string;
     contextDescriptor: IContextDescriptor;
-    dependencies: Map<TParameterName, IBeanDescriptor>;
+    dependencies: ExtendedSet<ILifecycleDependencyDescriptor>;
 }
 
 export class LifecycleMethodsRepository {
     static contextDescriptorToLifecycleDescriptors = new Map<IContextDescriptor, Set<IContextLifecycleDescriptor>>();
-    static nodeToContextLifecycleDescriptor = new Map<ts.Node, IContextLifecycleDescriptor>();
+    static nodeToContextLifecycleDescriptor = new WeakMap<ts.Node, IContextLifecycleDescriptor>();
 
     static register(contextDescriptor: IContextDescriptor, lifecycleDescriptor: IContextLifecycleDescriptor): void {
         let existSet = this.contextDescriptorToLifecycleDescriptors.get(contextDescriptor);

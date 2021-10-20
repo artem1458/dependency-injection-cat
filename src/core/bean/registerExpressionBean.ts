@@ -1,11 +1,10 @@
 import { IContextDescriptor } from '../context/ContextRepository';
 import * as ts from 'typescript';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
-import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { restrictedClassMemberNames } from './constants';
+import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 
 export const registerExpressionBean = (contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): void => {
     const classElementName = classElement.name.getText();
@@ -20,10 +19,22 @@ export const registerExpressionBean = (contextDescriptor: IContextDescriptor, cl
         return;
     }
 
-    const typeInfo = getBeanTypeInfoFromExpressionBean(contextDescriptor, classElement);
+    const propertyType = classElement.type ?? null;
     const beanInfo = getPropertyDecoratorBeanInfo(classElement);
 
-    if (typeInfo === null) {
+    if (propertyType === null) {
+        CompilationContext.reportError({
+            node: classElement,
+            message: 'Can\'t qualify type of Bean, please specify type explicitly',
+            filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
+        });
+        return;
+    }
+
+    const qualifiedType = TypeQualifier.qualify(propertyType);
+
+    if (qualifiedType === null) {
         CompilationContext.reportError({
             node: classElement,
             message: 'Can\'t qualify type of Bean',
@@ -36,41 +47,11 @@ export const registerExpressionBean = (contextDescriptor: IContextDescriptor, cl
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
         contextDescriptor,
-        type: typeInfo.typeId,
-        originalTypeName: typeInfo.originalTypeName,
+        qualifiedType: qualifiedType,
         scope: beanInfo.scope,
         node: classElement,
-        typeNode: typeInfo.typeNode,
         beanKind: 'expression',
         beanSourceLocation: null,
         isPublic: false,
     });
 };
-
-function getBeanTypeInfoFromExpressionBean(contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): IQualifiedTypeWithTypeNode | null {
-    const propertyType = classElement.type ?? null;
-
-    if (propertyType !== null) {
-        const qualified = typeQualifier(propertyType);
-
-        return qualified ?
-            {
-                ...qualified,
-                typeNode: propertyType,
-            }
-            : null;
-    } else {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Can\'t qualify type of Bean, please specify type explicitly',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
-
-        return null;
-    }
-}
-
-interface IQualifiedTypeWithTypeNode extends IQualifiedType {
-    typeNode: ts.TypeNode;
-}

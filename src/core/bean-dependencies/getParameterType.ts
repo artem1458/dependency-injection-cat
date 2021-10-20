@@ -1,11 +1,11 @@
 import ts from 'typescript';
-import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
-import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
+import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 
-export const getParameterType = (parameter: ts.ParameterDeclaration): IQualifiedType | null => {
+export const getParameterType = (parameter: ts.ParameterDeclaration): QualifiedType | null => {
     if (parameter.type === undefined) {
         return null;
     }
 
-    return typeQualifier(parameter.type);
+    return TypeQualifier.qualify(parameter.type);
 };

@@ -1,11 +1,10 @@
 import { IContextDescriptor } from '../context/ContextRepository';
 import * as ts from 'typescript';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { typeQualifier } from '../ts-helpers/type-qualifier/typeQualifier';
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
-import { IQualifiedType } from '../ts-helpers/type-qualifier/types';
 import { restrictedClassMemberNames } from './constants';
+import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 
 export const registerMethodBean = (contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void => {
     const classElementName = classElement.name.getText();
@@ -29,10 +28,22 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
         return;
     }
 
-    const typeInfo = getBeanTypeInfoFromMethod(contextDescriptor, classElement);
+    const methodReturnType = classElement.type ?? null;
     const beanInfo = getPropertyDecoratorBeanInfo(classElement);
 
-    if (typeInfo === null) {
+    if (methodReturnType === null) {
+        CompilationContext.reportError({
+            node: classElement,
+            message: 'Can\'t qualify type of Bean, please specify type explicitly',
+            filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
+        });
+        return;
+    }
+
+    const qualifiedType = TypeQualifier.qualify(methodReturnType);
+
+    if (qualifiedType === null) {
         CompilationContext.reportError({
             node: classElement,
             message: 'Can\'t qualify type of Bean',
@@ -45,41 +56,11 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
         contextDescriptor,
-        type: typeInfo.typeId,
-        originalTypeName: typeInfo.originalTypeName,
+        qualifiedType: qualifiedType,
         scope: beanInfo.scope,
         node: classElement,
-        typeNode: classElement.type!,
         beanKind: 'method',
         beanSourceLocation: null,
         isPublic: false,
     });
 };
-
-function getBeanTypeInfoFromMethod(contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): IQualifiedTypeWithTypeNode | null {
-    const methodReturnType = classElement.type ?? null;
-
-    if (methodReturnType !== null) {
-        const qualified = typeQualifier(methodReturnType);
-
-        return qualified ?
-            {
-                ...qualified,
-                typeNode: methodReturnType,
-            }
-            : null;
-    } else {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Can\'t qualify type of Bean, please specify type explicitly',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
-
-        return null;
-    }
-}
-
-interface IQualifiedTypeWithTypeNode extends IQualifiedType {
-    typeNode: ts.TypeNode;
-}

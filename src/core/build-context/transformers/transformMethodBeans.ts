@@ -2,11 +2,9 @@ import ts, { factory } from 'typescript';
 import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
 import { compact } from 'lodash';
-import { isBeanDependencyFromCurrentContext } from '../utils/isBeanDependencyFromCurrentContext';
-import {
-    getGlobalContextIdentifierFromArrayOrCreateNewAndPush,
-    TContextDescriptorToIdentifier
-} from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
+import { getCallExpressionForBean } from './getCallExpressionForBean';
 
 export const transformMethodBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
@@ -40,19 +38,27 @@ export const transformMethodBeans = (contextDescriptorToIdentifierList: TContext
     };
 };
 
-function getNewBody (beanDescriptor: IBeanDescriptorWithId, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
-    const node = beanDescriptor.node as ts.MethodDeclaration;
+function getNewBody (parentBeanDescriptor: IBeanDescriptorWithId, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
+    const node = parentBeanDescriptor.node as ts.MethodDeclaration;
     const nodeBody = node.body ?? factory.createBlock([]);
 
     const dependencies = BeanDependenciesRepository.beanDependenciesRepository
-        .get(beanDescriptor.contextDescriptor.name)?.get(beanDescriptor) ?? [];
+        .get(parentBeanDescriptor.contextDescriptor.name)?.get(parentBeanDescriptor) ?? [];
 
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {
-        if (dependencyDescriptor.qualifiedBean === null) {
-            return;
-        }
+        if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.PLAIN) {
+            const qualifiedBeanDescriptor = dependencyDescriptor.qualifiedBeans.firstOrNull();
 
-        if (isBeanDependencyFromCurrentContext(beanDescriptor, dependencyDescriptor.qualifiedBean)) {
+            if (qualifiedBeanDescriptor === null) {
+                return;
+            }
+
+            const callExpressionForBean = getCallExpressionForBean(
+                qualifiedBeanDescriptor,
+                parentBeanDescriptor,
+                contextDescriptorToIdentifierList,
+            );
+
             return factory.createVariableStatement(
                 undefined,
                 factory.createVariableDeclarationList(
@@ -60,13 +66,31 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId, contextDescriptorToI
                         factory.createIdentifier(dependencyDescriptor.parameterName),
                         undefined,
                         dependencyDescriptor.node.type,
-                        factory.createCallExpression(
-                            factory.createPropertyAccessExpression(
-                                factory.createThis(),
-                                factory.createIdentifier('getPrivateBean')
-                            ),
-                            undefined,
-                            [factory.createStringLiteral(dependencyDescriptor.qualifiedBean?.classMemberName ?? '')]
+                        callExpressionForBean
+                    )],
+                    ts.NodeFlags.Const
+                )
+            );
+        }
+
+        if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
+            const callExpressionForBeans = dependencyDescriptor.qualifiedBeans.list()
+                .map(qualifiedBean => getCallExpressionForBean(
+                    qualifiedBean,
+                    parentBeanDescriptor,
+                    contextDescriptorToIdentifierList,
+                ));
+
+            return factory.createVariableStatement(
+                undefined,
+                factory.createVariableDeclarationList(
+                    [factory.createVariableDeclaration(
+                        factory.createIdentifier(dependencyDescriptor.parameterName),
+                        undefined,
+                        dependencyDescriptor.node.type,
+                        factory.createArrayLiteralExpression(
+                            callExpressionForBeans,
+                            true,
                         )
                     )],
                     ts.NodeFlags.Const
@@ -74,33 +98,6 @@ function getNewBody (beanDescriptor: IBeanDescriptorWithId, contextDescriptorToI
             );
         }
 
-        const globalContextIdentifier = getGlobalContextIdentifierFromArrayOrCreateNewAndPush(
-            dependencyDescriptor.qualifiedBean.contextDescriptor,
-            contextDescriptorToIdentifierList,
-        );
-
-        return factory.createVariableStatement(
-            undefined,
-            factory.createVariableDeclarationList(
-                [factory.createVariableDeclaration(
-                    factory.createIdentifier(dependencyDescriptor.parameterName),
-                    undefined,
-                    dependencyDescriptor.node.type,
-                    factory.createCallExpression(
-                        factory.createPropertyAccessExpression(
-                            factory.createPropertyAccessExpression(
-                                globalContextIdentifier,
-                                factory.createIdentifier(globalContextIdentifier.text),
-                            ),
-                            factory.createIdentifier('getPrivateBean')
-                        ),
-                        undefined,
-                        [factory.createStringLiteral(dependencyDescriptor.qualifiedBean.classMemberName)]
-                    ),
-                )],
-                ts.NodeFlags.Const
-            )
-        );
     });
 
     return factory.updateBlock(

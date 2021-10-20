@@ -1,15 +1,12 @@
 import ts, { factory } from 'typescript';
 import { compact } from 'lodash';
-import {
-    getGlobalContextIdentifierFromArrayOrCreateNewAndPush,
-    TContextDescriptorToIdentifier
-} from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
+import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import {
     IContextLifecycleDescriptor,
     LifecycleMethodsRepository
 } from '../../context-lifecycle/LifecycleMethodsRepository';
-import { IContextDescriptor } from '../../context/ContextRepository';
 import { ClassPropertyArrowFunction } from '../../ts-helpers/types';
+import { buildDependenciesStatementsForLifecycle } from './buildBeanCallExpressionForSingleBeanForLifecycle';
 
 export const transformLifecycleArrowFunctions = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
@@ -46,58 +43,7 @@ function getTransformedArrowFunction (
 ): ts.ArrowFunction {
     const node = lifecycleDescriptor.node as ClassPropertyArrowFunction;
     const arrowFunction = node.initializer;
-
-    const dependenciesStatements = Array.from(lifecycleDescriptor.dependencies.entries()).map(([parameterName, beanDescriptor]) => {
-        if (isBeanFromCurrentContext(lifecycleDescriptor.contextDescriptor, beanDescriptor.contextDescriptor)) {
-            return factory.createVariableStatement(
-                undefined,
-                factory.createVariableDeclarationList(
-                    [factory.createVariableDeclaration(
-                        factory.createIdentifier(parameterName),
-                        undefined,
-                        beanDescriptor.node.type,
-                        factory.createCallExpression(
-                            factory.createPropertyAccessExpression(
-                                factory.createThis(),
-                                factory.createIdentifier('getPrivateBean')
-                            ),
-                            undefined,
-                            [factory.createStringLiteral(beanDescriptor.classMemberName)]
-                        )
-                    )],
-                    ts.NodeFlags.Const
-                )
-            );
-        }
-
-        const globalContextIdentifier = getGlobalContextIdentifierFromArrayOrCreateNewAndPush(
-            beanDescriptor.contextDescriptor,
-            contextDescriptorToIdentifierList,
-        );
-
-        return factory.createVariableStatement(
-            undefined,
-            factory.createVariableDeclarationList(
-                [factory.createVariableDeclaration(
-                    factory.createIdentifier(parameterName),
-                    undefined,
-                    beanDescriptor.node.type,
-                    factory.createCallExpression(
-                        factory.createPropertyAccessExpression(
-                            factory.createPropertyAccessExpression(
-                                globalContextIdentifier,
-                                factory.createIdentifier(globalContextIdentifier.text),
-                            ),
-                            factory.createIdentifier('getPrivateBean')
-                        ),
-                        undefined,
-                        [factory.createStringLiteral(beanDescriptor.classMemberName)]
-                    ),
-                )],
-                ts.NodeFlags.Const
-            )
-        );
-    });
+    const dependenciesStatements = buildDependenciesStatementsForLifecycle(lifecycleDescriptor, contextDescriptorToIdentifierList);
 
     let newBody: ts.Block;
 
@@ -130,6 +76,3 @@ function getTransformedArrowFunction (
     );
 }
 
-
-const isBeanFromCurrentContext = (dependencyBeanContext: IContextDescriptor, lifecycleContext: IContextDescriptor): boolean =>
-    dependencyBeanContext.id === lifecycleContext.id;

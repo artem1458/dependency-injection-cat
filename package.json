@@ -1,6 +1,6 @@
 {
   "name": "dependency-injection-cat",
-  "version": "0.2.12",
+  "version": "0.0.0-development",
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Artem Kornev",
@@ -13,7 +13,11 @@
     "dependency injection",
     "typescript",
     "babel",
-    "webpack"
+    "webpack",
+    "cat",
+    "clean architecture",
+    "container",
+    "dependency injection container"
   ],
   "repository": {
     "url": "https://github.com/artem1458/dependency-injection-cat"
@@ -24,24 +28,19 @@
     "build-and-test": "sh scripts/buildAndTest.sh"
   },
   "devDependencies": {
-    "@babel/runtime": "^7.14.0",
     "@types/glob": "^7.1.2",
-    "@types/glob-to-regexp": "^0.4.0",
     "@types/graphlib": "^2.1.7",
     "@types/line-column": "^1.0.0",
     "@types/lodash": "^4.14.169",
     "@types/md5": "^2.3.0",
     "@types/minimatch": "^3.0.3",
     "@types/node": "^14.0.27",
-    "@types/typescript": "^2.0.0",
-    "@types/uuid": "^8.3.0",
     "@types/webpack": "^5.28.0",
     "@typescript-eslint/eslint-plugin": "^4.3.0",
     "@typescript-eslint/parser": "^4.3.0",
     "concurrently": "^6.0.1",
     "dts-bundle-generator": "^5.7.0",
     "eslint": "^7.10.0",
-    "serve": "^11.3.2",
     "ts-loader": "^7.0.5",
     "typescript": "^4.4.2"
   },
