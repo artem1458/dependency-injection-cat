@@ -23,6 +23,6 @@ jobs:
         run: yarn run build-and-test
 
       - name: publish to npm
-        run: cd dist && npm version 0.0.${{ github.run_number }} && npm publish --tag beta
+        run: cd dist && npm version 0.0.${{ github.run_number }}-beta && npm publish --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
