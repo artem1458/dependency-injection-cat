@@ -157,6 +157,49 @@ export class TypeQualifier {
             }
         }
 
+        if (ts.isUnionTypeNode(typeNode)) {
+            const qualifiedNullableTypes = typeNode.types.map(it => this._qualify(it)).flat();
+
+            if (qualifiedNullableTypes.includes(null)) {
+                CompilationContext.reportError({
+                    message: 'Can not qualify intersection type',
+                    node: typeNode,
+                    filePath: typeNode.getSourceFile().fileName,
+                });
+
+                return null;
+            }
+
+            const unionType = this.filterNotNull(qualifiedNullableTypes).map(it => it.fullTypeId).sort()
+                .join('|union|');
+
+            return {
+                fullTypeId: unionType,
+                types: [unionType]
+            };
+        }
+
+        if (ts.isArrayTypeNode(typeNode)) {
+            const qualified = this._qualify(typeNode.elementType);
+
+            if (qualified === null) {
+                CompilationContext.reportError({
+                    message: 'Can not qualify array type',
+                    node: typeNode,
+                    filePath: typeNode.getSourceFile().fileName,
+                });
+
+                return null;
+            }
+
+            const type = `${qualified.fullTypeId}_array_type`;
+
+            return {
+                types: [type],
+                fullTypeId: type
+            };
+        }
+
         if (ts.isIntersectionTypeNode(typeNode)) {
             const qualifiedNullableTypes = typeNode.types.map(it => this._qualify(it)).flat();
 
@@ -170,7 +213,8 @@ export class TypeQualifier {
                 return null;
             }
 
-            const intersectionType = this.filterNotNull(qualifiedNullableTypes).sort().join(' &intersection& ');
+            const intersectionType = this.filterNotNull(qualifiedNullableTypes).map(it => it.fullTypeId)
+                .sort().join(' &intersection& ');
 
             return {
                 fullTypeId: intersectionType,
