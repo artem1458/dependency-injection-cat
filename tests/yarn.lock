@@ -673,7 +673,7 @@ del@^4.1.1:
     rimraf "^2.6.3"
 
 dependency-injection-cat@../dist:
-  version "0.2.12"
+  version "0.0.0-development"
   dependencies:
     chalk "^4.1.0"
     glob "^7.1.6"

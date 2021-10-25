@@ -1,5 +1,6 @@
 export const restrictedClassMemberNames = new Set([
     'contextName',
+    'notInitializedConfigMarker',
     'beanConfigurationRecord',
     'lifecycleConfiguration',
     '___postConstruct',

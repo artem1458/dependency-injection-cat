@@ -29,10 +29,11 @@ export abstract class InternalCatContext implements IInternalCatContext {
 
     private singletonMap = new Map<TBeanName, any>();
 
-    private _config: any = 'UNINITIALIZED_CONFIG';
+    private notInitializedConfigMarker = {}
+    private _config: any = this.notInitializedConfigMarker;
 
     get config(): any {
-        if (this._config === 'UNINITIALIZED_CONFIG') {
+        if (this._config === this.notInitializedConfigMarker) {
             throw new NotInitializedConfig();
         }
 
@@ -47,7 +48,7 @@ export abstract class InternalCatContext implements IInternalCatContext {
         const beanConfiguration = this.getBeanConfiguration(beanName);
 
         if (!beanConfiguration.isPublic) {
-            console.warn(`You are accessing to the Bean ${beanName}, that is not defined in TBeans interface. Context name: ${this.contextName}`);
+            console.warn(`Bean ${beanName} is not defined in TBeans interface.\nThis Bean will not be checked for correctness at compile-time.\nContext name: ${this.contextName}`);
         }
 
         return this.getPrivateBean(beanName);
