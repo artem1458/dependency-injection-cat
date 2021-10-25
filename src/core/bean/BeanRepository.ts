@@ -34,17 +34,6 @@ export class BeanRepository {
     static beanNodeToBeanDescriptorMap = new Map<TBeanNode, IBeanDescriptorWithId>();
 
     static registerBean(descriptor: IBeanDescriptor): void {
-        // if (descriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
-        //     CompilationContext.reportError({
-        //         node: descriptor.qualifiedType.typeNode,
-        //         message: 'Bean type can not be a list',
-        //         relatedContextPath: descriptor.contextDescriptor.absolutePath,
-        //         filePath: descriptor.contextDescriptor.absolutePath,
-        //     });
-        //
-        //     return;
-        // }
-
         const descriptorWithId: IBeanDescriptorWithId = {
             ...descriptor,
             id: uniqId(),
