@@ -15,7 +15,7 @@ import { ExtendedSet } from '../utils/ExtendedSet';
 export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
     const classElementName = classElement.name.getText();
 
-    if (restrictedClassMemberNames.includes(classElementName)) {
+    if (restrictedClassMemberNames.has(classElementName)) {
         CompilationContext.reportError({
             node: classElement,
             message: `"${classElementName}" property is reserved for the di-container, please use another name instead`,

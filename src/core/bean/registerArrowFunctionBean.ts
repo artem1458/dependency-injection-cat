@@ -9,7 +9,7 @@ import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyArrowFunction): void => {
     const classElementName = classElement.name.getText();
 
-    if (restrictedClassMemberNames.includes(classElementName)) {
+    if (restrictedClassMemberNames.has(classElementName)) {
         CompilationContext.reportError({
             node: classElement,
             message: `${classElementName} name is reserved for the di-container, please use another name instead`,

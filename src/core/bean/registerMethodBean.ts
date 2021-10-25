@@ -9,7 +9,7 @@ import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 export const registerMethodBean = (contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void => {
     const classElementName = classElement.name.getText();
 
-    if (restrictedClassMemberNames.includes(classElementName)) {
+    if (restrictedClassMemberNames.has(classElementName)) {
         CompilationContext.reportError({
             node: classElement,
             message: `${classElementName} method is reserved for the di-container, please use another name instead`,

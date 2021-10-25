@@ -15,6 +15,7 @@ import { TLifecycle } from '../../external/InternalCatContext';
 import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
+import { restrictedClassMemberNames } from '../bean/constants';
 
 export const registerLifecycleExpression = (
     contextDescriptor: IContextDescriptor,
@@ -23,6 +24,16 @@ export const registerLifecycleExpression = (
     lifecycles: Set<TLifecycle>,
     lifecycleNodeKind: TLifecycleNodeKind,
 ) => {
+    if (restrictedClassMemberNames.has(classMemberName)) {
+        CompilationContext.reportError({
+            node: node,
+            message: `"${classMemberName}" name is reserved for the di-container, please use another name instead`,
+            filePath: contextDescriptor.absolutePath,
+            relatedContextPath: contextDescriptor.absolutePath,
+        });
+        return;
+    }
+
     const beansMap = BeanRepository.beanDescriptorRepository.get(contextDescriptor.name);
 
     if (!beansMap) {
