@@ -1,5 +1,6 @@
 import { alg, Graph } from 'graphlib';
 import { BeanRepository, IBeanDescriptorWithId } from '../bean/BeanRepository';
+import { IContextDescriptor } from '../context/ContextRepository';
 
 type TContextName = string;
 
@@ -38,5 +39,11 @@ export class DependencyGraph {
         });
 
         return resultMap;
+    }
+
+    static clearByContextDescriptor(contextDescriptor: IContextDescriptor): void {
+        (BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? []).forEach(descriptor => {
+            this.graph.removeNode(descriptor.id);
+        });
     }
 }
