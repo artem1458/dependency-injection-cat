@@ -40,19 +40,18 @@ export class BeanRepository {
         };
         const { contextDescriptor: { name: contextName }, qualifiedType } = descriptor;
 
-        let contextMap = this.beanDescriptorRepository.get(contextName) ?? null;
+        const contextMap = this.beanDescriptorRepository.get(contextName) ?? new Map();
 
-        if (contextMap === null) {
-            contextMap = new Map();
+        if (!this.beanDescriptorRepository.has(contextName)) {
             this.beanDescriptorRepository.set(contextName, contextMap);
         }
 
         qualifiedType.typeIds.forEach(typeId => {
-            let beanDescriptorList = contextMap!.get(typeId) ?? null;
+            let beanDescriptorList = contextMap.get(typeId) ?? null;
 
             if (beanDescriptorList === null) {
                 beanDescriptorList = [];
-                contextMap!.set(typeId, beanDescriptorList);
+                contextMap.set(typeId, beanDescriptorList);
             }
 
             beanDescriptorList.push(descriptorWithId);

@@ -20,10 +20,9 @@ export class BeanDependenciesRepository {
     static beanDependenciesRepository = new Map<TContextName, Map<IBeanDescriptor, IBeanDependencyDescriptor[]>>();
 
     static registerBeanDependency(beanDescriptor: IBeanDescriptor, dependencyDescriptor: IBeanDependencyDescriptor) {
-        let dependenciesMap = this.beanDependenciesRepository.get(dependencyDescriptor.contextName) ?? null;
+        const dependenciesMap = this.beanDependenciesRepository.get(dependencyDescriptor.contextName) ?? new Map();
 
-        if (dependenciesMap === null) {
-            dependenciesMap = new Map();
+        if (!this.beanDependenciesRepository.has(dependencyDescriptor.contextName)) {
             this.beanDependenciesRepository.set(dependencyDescriptor.contextName, dependenciesMap);
         }
 
