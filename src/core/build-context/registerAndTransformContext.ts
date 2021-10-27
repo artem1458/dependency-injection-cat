@@ -22,6 +22,7 @@ import { registerContextLifecycleMethods } from '../context-lifecycle/registerCo
 import { transformLifecycleMethods } from './transformers/transformLifecycleMethods';
 import { transformLifecycleArrowFunctions } from './transformers/transformLifecycleArrowFunctions';
 import { addLifecycleConfiguration } from './transformers/addLifecycleConfiguration';
+import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
 
 export function registerAndTransformContext(
     context: ts.TransformationContext,
@@ -65,6 +66,10 @@ export function registerAndTransformContext(
         // const fileText = ts.createPrinter().printFile(file);
 
         return file;
+    }
+
+    if (oldContextDescriptor && !oldContextDescriptor?.isGlobal) {
+        DependencyGraph.clearByContextDescriptor(oldContextDescriptor);
     }
 
     registerContext(sourceFile);

@@ -1,29 +1,28 @@
 import ts from 'typescript';
 import { IBeanDescriptor, IBeanDescriptorWithId } from '../bean/BeanRepository';
 import { IContextDescriptor } from '../context/ContextRepository';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
+import { ExtendedSet } from '../utils/ExtendedSet';
 
 export interface IBeanDependencyDescriptor {
     parameterName: string;
     qualifier: TBeanDependencyQualifier;
     contextName: TContextName;
-    type: TBeanDependencyType;
-    originalTypeName: string;
+    qualifiedType: QualifiedType;
     node: ts.ParameterDeclaration;
-    qualifiedBean: IBeanDescriptorWithId | null;
+    qualifiedBeans: ExtendedSet<IBeanDescriptorWithId>;
 }
 
 type TBeanDependencyQualifier = string | null;
 type TContextName = string;
-type TBeanDependencyType = string;
 
 export class BeanDependenciesRepository {
     static beanDependenciesRepository = new Map<TContextName, Map<IBeanDescriptor, IBeanDependencyDescriptor[]>>();
 
     static registerBeanDependency(beanDescriptor: IBeanDescriptor, dependencyDescriptor: IBeanDependencyDescriptor) {
-        let dependenciesMap = this.beanDependenciesRepository.get(dependencyDescriptor.contextName) ?? null;
+        const dependenciesMap = this.beanDependenciesRepository.get(dependencyDescriptor.contextName) ?? new Map();
 
-        if (dependenciesMap === null) {
-            dependenciesMap = new Map();
+        if (!this.beanDependenciesRepository.has(dependencyDescriptor.contextName)) {
             this.beanDependenciesRepository.set(dependencyDescriptor.contextName, dependenciesMap);
         }
 

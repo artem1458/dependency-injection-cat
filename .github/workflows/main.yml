@@ -1,4 +1,4 @@
-name: deploy
+name: main
 
 # Controls when the workflow will run
 on:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  test:
+  test-and-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

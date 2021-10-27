@@ -1,12 +1,13 @@
 import { alg, Graph } from 'graphlib';
 import { BeanRepository, IBeanDescriptorWithId } from '../bean/BeanRepository';
+import { IContextDescriptor } from '../context/ContextRepository';
 
 type TContextName = string;
 
 export class DependencyGraph {
     static readonly graph = new Graph({directed: true});
 
-    static addNodeWithEdges(node: IBeanDescriptorWithId, ...edges: IBeanDescriptorWithId[]) {
+    static addNodeWithEdges(node: IBeanDescriptorWithId, edges: IBeanDescriptorWithId[]) {
         this.graph.setNodes(
             [
                 node.id,
@@ -38,5 +39,11 @@ export class DependencyGraph {
         });
 
         return resultMap;
+    }
+
+    static clearByContextDescriptor(contextDescriptor: IContextDescriptor): void {
+        (BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? []).forEach(descriptor => {
+            this.graph.removeNode(descriptor.id);
+        });
     }
 }

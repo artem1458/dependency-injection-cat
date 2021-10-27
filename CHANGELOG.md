@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+
+- [Fix] [Issue#15](https://github.com/artem1458/dependency-injection-cat/issues/26)
+- [Feature] Bean injection, when one Bean implements multiple types/interfaces e.g. `crudRepository: IReadRepository & IWriteRepository = Bean(CRUDRepository);`
+- [Feature] Bean list injection e.g. `@Bean drawer(figures: IFigure[]): IDrawer => new Drawer(figures)`
+
 ## 0.2.12
 
 - [Fix] Make **typescript** as a Peer Dependency

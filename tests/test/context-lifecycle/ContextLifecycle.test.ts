@@ -3,12 +3,6 @@ import { IContextLifecycle } from './IContextLifecycle';
 import { assertEquals, assertTrue } from '../assertions';
 
 describe('ContextLifecycleTests', () => {
-    afterEach(() => {
-        container.clearContext({
-            name: 'ContextLifecycle',
-        });
-    });
-
     it('should subscribe subscriber when initializing context in correct order from method and arrow function', () => {
         //When
         const context = container.initContext<IContextLifecycle>({
@@ -22,6 +16,10 @@ describe('ContextLifecycleTests', () => {
         assertEquals(subscriber.unSubscribe.callCount, 0);
         assertTrue(subscriber.subscribe.getCall(0).calledWithExactly('subscribe from method'));
         assertTrue(subscriber.subscribe.getCall(1).calledWithExactly('subscribe from arrow function'));
+
+        container.clearContext({
+            name: 'ContextLifecycle',
+        });
     });
 
     it('should subscribe subscriber when initializing context, and unsubscribe when clearing context for method and arrow functions', () => {

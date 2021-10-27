@@ -3,6 +3,7 @@ import { TBeanScopeValue } from '../ts-helpers/bean-info/ICompilationBeanInfo';
 import { ClassPropertyArrowFunction, ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { uniqId } from '../utils/uniqId';
+import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 
 export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer | ClassPropertyArrowFunction | ts.PropertyDeclaration;
 type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression';
@@ -10,11 +11,9 @@ type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression';
 export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     classMemberName: string;
     contextDescriptor: IContextDescriptor;
-    type: TBeanType;
-    originalTypeName: string;
+    qualifiedType: QualifiedType;
     scope: TBeanScopeValue;
     node: T;
-    typeNode: ts.TypeNode;
     beanKind: TBeanKind;
     beanSourceLocation: string | null;
     isPublic: boolean;
@@ -39,23 +38,25 @@ export class BeanRepository {
             ...descriptor,
             id: uniqId(),
         };
-        const { contextDescriptor: { name: contextName }, type } = descriptor;
+        const { contextDescriptor: { name: contextName }, qualifiedType } = descriptor;
 
-        let contextMap = this.beanDescriptorRepository.get(contextName) ?? null;
+        const contextMap = this.beanDescriptorRepository.get(contextName) ?? new Map();
 
-        if (contextMap === null) {
-            contextMap = new Map();
+        if (!this.beanDescriptorRepository.has(contextName)) {
             this.beanDescriptorRepository.set(contextName, contextMap);
         }
 
-        let beanDescriptorList = contextMap.get(type) ?? null;
+        qualifiedType.typeIds.forEach(typeId => {
+            let beanDescriptorList = contextMap.get(typeId) ?? null;
 
-        if (beanDescriptorList === null) {
-            beanDescriptorList = [];
-            contextMap.set(type, beanDescriptorList);
-        }
+            if (beanDescriptorList === null) {
+                beanDescriptorList = [];
+                contextMap.set(typeId, beanDescriptorList);
+            }
 
-        beanDescriptorList.push(descriptorWithId);
+            beanDescriptorList.push(descriptorWithId);
+        });
+
         this.beanIdToBeanDescriptorMap.set(descriptorWithId.id, descriptorWithId);
         this.beanNodeToBeanDescriptorMap.set(descriptorWithId.node, descriptorWithId);
 
