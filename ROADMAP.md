@@ -19,5 +19,5 @@
     - ✅Bean injection, when one Bean implements multiple types/interfaces e.g. `crudRepository: IReadRepository & IWriteRepository = Bean(CRUDRepository);`
     - ✅Bean list injection e.g. `@Bean drawer(figures: IFigure[]): IDrawer => new Drawer(figures)`
   - ✅Add "Expressions" and "Arrow Functions" Beans. Examples:
-    -  ✅"Expression" Bean: `@Bean requester: IRequester = instanceOfRequester;`
+    - ✅"Expression" Bean: `@Bean requester: IRequester = instanceOfRequester;`
     - ✅"Arrow Function" Bean: `@Bean requester(): IRequester => new Requester();`
