@@ -20,10 +20,10 @@ import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 * TemplateLiteralTypeSpan
 * TemplateLiteralTypeNode
 * InferTypeNode - method<T>(): T
+* TypeLiteralNode - {} with some members. Should allow it?
 * */
 
 /* TypeNodes that is allowed
-* TypeLiteralNode - {} with some members. Should allow it?
 * UnionTypeNode - Should allow it?  // A | B | C
 *
 * DONE - LiteralTypeNode - '' | NullLiteral | BooleanLiteral | LiteralExpression | PrefixUnaryExpression

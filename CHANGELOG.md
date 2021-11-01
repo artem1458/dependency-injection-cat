@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- [Improvement] Allow container access inside files with context
+
 ## 1.0.0
 
 - [Fix] [Issue#15](https://github.com/artem1458/dependency-injection-cat/issues/26)

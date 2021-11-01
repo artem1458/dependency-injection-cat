@@ -13,10 +13,10 @@ interface SourceFile extends ts.SourceFile {
 
 export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
-        if (minimatch(sourceFile.fileName, diConfig.diConfigPattern!)) {
-            const transformedContext = registerAndTransformContext(context, sourceFile);
+        let transformedSourceFile: ts.SourceFile = sourceFile;
 
-            return transformedContext;
+        if (minimatch(sourceFile.fileName, diConfig.diConfigPattern!)) {
+            transformedSourceFile = registerAndTransformContext(context, transformedSourceFile);
         }
 
         const factoryImportsToAdd: ts.ImportDeclaration[] = [];
@@ -29,7 +29,7 @@ export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> =>
             return ts.visitEachChild(node, visitor, context);
         });
 
-        const newSourceFile = ts.visitNode(sourceFile, visitor);
+        const newSourceFile = ts.visitNode(transformedSourceFile, visitor);
 
         const uniqFactoryImportsToAdd = uniqBy(factoryImportsToAdd, it => {
             if (ts.isStringLiteral(it.moduleSpecifier)) {
@@ -38,7 +38,7 @@ export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> =>
         });
 
         return factory.updateSourceFile(
-            sourceFile,
+            transformedSourceFile,
             [
                 ...uniqFactoryImportsToAdd,
                 ...newSourceFile.statements,

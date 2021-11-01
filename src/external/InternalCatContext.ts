@@ -61,10 +61,9 @@ export abstract class InternalCatContext implements IInternalCatContext {
             return this[beanName]();
         }
 
-        let savedInstance = this.singletonMap.get(beanName) ?? null;
+        const savedInstance = this.singletonMap.get(beanName) ?? this[beanName]();
 
-        if (savedInstance === null) {
-            savedInstance = this[beanName]();
+        if (!this.singletonMap.has(beanName)) {
             this.singletonMap.set(beanName, savedInstance);
         }
 
