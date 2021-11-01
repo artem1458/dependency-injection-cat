@@ -12,7 +12,6 @@ import { registerBeanDependencies } from '../bean-dependencies/registerBeanDepen
 import { buildDependencyGraphAndFillQualifiedBeans } from '../connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
 import { reportAboutCyclicDependencies } from '../report-cyclic-dependencies/reportAboutCyclicDependencies';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { registerGlobalBeans } from '../bean/registerGlobalBeans';
 import { registerGlobalCatContext } from '../context/registerGlobalCatContext';
 import { addGlobalContextInstance } from './transformers/addGlobalContextInstance';
 import { TContextDescriptorToIdentifier } from './utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
@@ -40,7 +39,7 @@ export function registerAndTransformContext(
             throw new Error('Global Context is not registered');
         }
 
-        registerGlobalBeans(newGlobalContextDescriptor);
+        registerBeans(newGlobalContextDescriptor);
         registerBeanDependencies(newGlobalContextDescriptor);
         buildDependencyGraphAndFillQualifiedBeans(newGlobalContextDescriptor);
         registerContextLifecycleMethods(newGlobalContextDescriptor);

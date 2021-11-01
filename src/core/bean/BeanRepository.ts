@@ -1,12 +1,20 @@
 import ts from 'typescript';
 import { TBeanScopeValue } from '../ts-helpers/bean-info/ICompilationBeanInfo';
-import { ClassPropertyArrowFunction, ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
+import {
+    ClassPropertyArrowFunction,
+    ClassPropertyDeclarationWithExpressionInitializer,
+    ClassPropertyDeclarationWithInitializer
+} from '../ts-helpers/types';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { uniqId } from '../utils/uniqId';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 
-export type TBeanNode = ts.MethodDeclaration | ClassPropertyDeclarationWithInitializer | ClassPropertyArrowFunction | ts.PropertyDeclaration;
-type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression';
+export type TBeanNode = ts.MethodDeclaration
+    | ClassPropertyDeclarationWithInitializer
+    | ClassPropertyArrowFunction
+    | ts.PropertyDeclaration
+    | ClassPropertyDeclarationWithExpressionInitializer;
+type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression' | 'embedded';
 
 export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     classMemberName: string;
@@ -60,12 +68,12 @@ export class BeanRepository {
         this.beanIdToBeanDescriptorMap.set(descriptorWithId.id, descriptorWithId);
         this.beanNodeToBeanDescriptorMap.set(descriptorWithId.node, descriptorWithId);
 
-        let contextDescriptors = this.contextIdToBeanDescriptorsMap.get(descriptor.contextDescriptor.id) ?? null;
+        const contextDescriptors = this.contextIdToBeanDescriptorsMap.get(descriptor.contextDescriptor.id) ?? [];
 
-        if (contextDescriptors === null) {
-            contextDescriptors = [];
+        if (!this.contextIdToBeanDescriptorsMap.has(descriptor.contextDescriptor.id)) {
             this.contextIdToBeanDescriptorsMap.set(descriptor.contextDescriptor.id, contextDescriptors);
         }
+
         contextDescriptors.push(descriptorWithId);
     }
 

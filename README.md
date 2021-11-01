@@ -206,9 +206,6 @@ module.exports = {
       {
         "transform": "dependency-injection-cat/transformers/typescript",
         //Here is configuration options, see below
-      },
-      {
-        "transform": "dependency-injection-cat/plugins/typescript/ReportErrorsTypescriptPlugin"
       }
     ]
   }
