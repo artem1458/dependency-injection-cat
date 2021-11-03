@@ -34,6 +34,7 @@ export const registerPropertyBean = (contextDescriptor: IContextDescriptor, clas
 
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
+        nestedProperty: null,
         contextDescriptor,
         scope: beanInfo.scope,
         qualifiedType: qualifiedType,

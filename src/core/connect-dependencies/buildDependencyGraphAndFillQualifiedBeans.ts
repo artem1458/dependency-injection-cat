@@ -51,25 +51,35 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                 }
 
                 if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.PLAIN) {
-                    const nonUniqBeanDescriptorsFromCurrentContext =
-                        (beansMap.get(dependencyDescriptor.qualifiedType.fullTypeId) ?? [])
-                            .filter(it => it !== beanDescriptor);
-                    const nonUniqBeanDescriptorsFromGlobalContext =
+                    const currentContextBeans = beansMap.get(dependencyDescriptor.qualifiedType.fullTypeId) ?? [];
+
+                    const currentContextNonEmbeddedBeans = currentContextBeans
+                        .filter(it => it !== beanDescriptor && it.beanKind !== 'embedded');
+                    const currentContextEmbeddedBeans = currentContextBeans
+                        .filter(it => it !== beanDescriptor && it.beanKind === 'embedded');
+                    const globalContextBeans =
                         (BeanRepository.beanDescriptorRepository.get(GLOBAL_CONTEXT_NAME)?.
                             get(dependencyDescriptor.qualifiedType.fullTypeId) ?? [])
                             .filter(it => it !== beanDescriptor);
 
-                    let beanCandidatesFromCurrentContext = uniqNotEmpty(nonUniqBeanDescriptorsFromCurrentContext);
-                    let beanCandidatesFromGlobalContext = uniqNotEmpty(nonUniqBeanDescriptorsFromGlobalContext);
+                    let nonEmbeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextNonEmbeddedBeans);
+                    let embeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextEmbeddedBeans);
+                    let beanCandidatesFromGlobalContext = uniqNotEmpty(globalContextBeans);
 
                     if (dependencyDescriptor.qualifier !== null) {
-                        beanCandidatesFromCurrentContext = beanCandidatesFromCurrentContext
+                        nonEmbeddedBeanCandidatesFromCurrentContext = nonEmbeddedBeanCandidatesFromCurrentContext
                             .filter(it => it.classMemberName === dependencyDescriptor.qualifier);
+                        embeddedBeanCandidatesFromCurrentContext = embeddedBeanCandidatesFromCurrentContext
+                            .filter(it => it.nestedProperty === dependencyDescriptor.qualifier);
                         beanCandidatesFromGlobalContext = beanCandidatesFromGlobalContext
                             .filter(it => it.classMemberName === dependencyDescriptor.qualifier);
                     }
 
-                    if (beanCandidatesFromCurrentContext.length === 0 && beanCandidatesFromGlobalContext.length === 0) {
+                    if (
+                        nonEmbeddedBeanCandidatesFromCurrentContext.length === 0
+                        && embeddedBeanCandidatesFromCurrentContext.length === 0
+                        && beanCandidatesFromGlobalContext.length === 0
+                    ) {
                         CompilationContext.reportError({
                             node: dependencyDescriptor.node,
                             message: 'Bean for dependency is not registered',
@@ -79,14 +89,14 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                         return;
                     }
 
-                    if (beanCandidatesFromCurrentContext.length === 1) {
-                        dependencyDescriptor.qualifiedBeans.add(beanCandidatesFromCurrentContext[0]);
-                        DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidatesFromCurrentContext);
+                    if (nonEmbeddedBeanCandidatesFromCurrentContext.length === 1) {
+                        dependencyDescriptor.qualifiedBeans.add(nonEmbeddedBeanCandidatesFromCurrentContext[0]);
+                        DependencyGraph.addNodeWithEdges(beanDescriptor, nonEmbeddedBeanCandidatesFromCurrentContext);
                         return;
                     }
 
-                    if (beanCandidatesFromCurrentContext.length > 1) {
-                        const beanCandidatesFromCurrentContextQualifiedByParameterName = beanCandidatesFromCurrentContext
+                    if (nonEmbeddedBeanCandidatesFromCurrentContext.length > 1) {
+                        const beanCandidatesFromCurrentContextQualifiedByParameterName = nonEmbeddedBeanCandidatesFromCurrentContext
                             .filter(it => it.classMemberName === dependencyDescriptor.parameterName);
 
                         if (beanCandidatesFromCurrentContextQualifiedByParameterName.length === 1) {
@@ -111,9 +121,50 @@ export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: ICo
                         CompilationContext.reportErrorWithMultipleNodes({
                             nodes: [
                                 dependencyDescriptor.node,
-                                ...beanCandidatesFromCurrentContext.map(it => it.node),
+                                ...nonEmbeddedBeanCandidatesFromCurrentContext.map(it => it.node),
                             ],
-                            message: `Found ${beanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
+                            message: `Found ${nonEmbeddedBeanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
+                            filePath: beanDescriptor.contextDescriptor.absolutePath,
+                            relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
+                        });
+                        return;
+                    }
+
+                    if (embeddedBeanCandidatesFromCurrentContext.length === 1) {
+                        dependencyDescriptor.qualifiedBeans.add(embeddedBeanCandidatesFromCurrentContext[0]);
+                        DependencyGraph.addNodeWithEdges(beanDescriptor, embeddedBeanCandidatesFromCurrentContext);
+                        return;
+                    }
+
+                    if (embeddedBeanCandidatesFromCurrentContext.length > 1) {
+                        const beansByParameterName = embeddedBeanCandidatesFromCurrentContext
+                            .filter(it => it.nestedProperty === dependencyDescriptor.parameterName);
+
+                        if (beansByParameterName.length === 1) {
+                            dependencyDescriptor.qualifiedBeans.add(beansByParameterName[0]);
+                            DependencyGraph.addNodeWithEdges(beanDescriptor, beansByParameterName);
+                            return;
+                        }
+
+                        if (beansByParameterName.length > 1) {
+                            CompilationContext.reportErrorWithMultipleNodes({
+                                nodes: [
+                                    dependencyDescriptor.node,
+                                    ...beansByParameterName.map(it => it.node),
+                                ],
+                                message: `Found ${beansByParameterName.length} Embedded Bean candidates, with same name, please rename one of beans`,
+                                filePath: beanDescriptor.contextDescriptor.absolutePath,
+                                relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
+                            });
+                            return;
+                        }
+
+                        CompilationContext.reportErrorWithMultipleNodes({
+                            nodes: [
+                                dependencyDescriptor.node,
+                                ...embeddedBeanCandidatesFromCurrentContext.map(it => it.node),
+                            ],
+                            message: `Found ${embeddedBeanCandidatesFromCurrentContext.length} Embedded Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
                             filePath: beanDescriptor.contextDescriptor.absolutePath,
                             relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
                         });

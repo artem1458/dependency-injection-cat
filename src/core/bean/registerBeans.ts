@@ -8,6 +8,8 @@ import { isArrowFunctionBean } from '../ts-helpers/predicates/isArrowFunctionBea
 import { registerArrowFunctionBean } from './registerArrowFunctionBean';
 import { isExpressionBean } from '../ts-helpers/predicates/isExpressionBean';
 import { registerExpressionBean } from './registerExpressionBean';
+import { isEmbeddedBean } from '../ts-helpers/predicates/isEmbeddedBean';
+import { registerEmbeddedBean } from './registerEmbeddedBeans';
 
 export function registerBeans(contextDescriptor: IContextDescriptor) {
     BeanRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
@@ -24,6 +26,9 @@ export function registerBeans(contextDescriptor: IContextDescriptor) {
         }
         if (isExpressionBean(classElement)) {
             registerExpressionBean(contextDescriptor, classElement);
+        }
+        if (isEmbeddedBean(classElement)) {
+            registerEmbeddedBean(contextDescriptor, classElement);
         }
     });
 }
