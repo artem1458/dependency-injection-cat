@@ -46,6 +46,7 @@ export const registerExpressionBean = (contextDescriptor: IContextDescriptor, cl
 
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
+        nestedProperty: null,
         contextDescriptor,
         qualifiedType: qualifiedType,
         scope: beanInfo.scope,

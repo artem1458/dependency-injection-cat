@@ -27,8 +27,7 @@
       "scripthost"
     ],
     "plugins": [
-      { "transform": "dependency-injection-cat/transformers/typescript/index.ts" },
-      { "transform": "dependency-injection-cat/plugins/typescript/ReportErrorsTypescriptPlugin.ts" }
+      { "transform": "dependency-injection-cat/transformers/typescript/index.ts" }
     ]
   }
 }

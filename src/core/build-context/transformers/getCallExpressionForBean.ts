@@ -11,9 +11,9 @@ export const getCallExpressionForBean = (
     qualifiedBean: IBeanDescriptor,
     dependencyParentBean: IBeanDescriptor,
     contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[],
-): ts.CallExpression | ts.SpreadElement => {
+): ts.Expression => {
     if (isBeanDependencyFromCurrentContext(qualifiedBean, dependencyParentBean)) {
-        const callExpression = factory.createCallExpression(
+        let beanAccessExpression: ts.Expression = factory.createCallExpression(
             factory.createPropertyAccessExpression(
                 factory.createThis(),
                 factory.createIdentifier('getPrivateBean')
@@ -22,10 +22,17 @@ export const getCallExpressionForBean = (
             [factory.createStringLiteral(qualifiedBean.classMemberName)]
         );
 
+        if (qualifiedBean.nestedProperty !== null) {
+            beanAccessExpression = factory.createPropertyAccessExpression(
+                beanAccessExpression,
+                factory.createIdentifier(qualifiedBean.nestedProperty),
+            );
+        }
+
         if (qualifiedBean.qualifiedType.kind === QualifiedTypeKind.LIST) {
-            return factory.createSpreadElement(callExpression);
+            return factory.createSpreadElement(beanAccessExpression);
         } else {
-            return callExpression;
+            return beanAccessExpression;
         }
     }
 
@@ -34,7 +41,7 @@ export const getCallExpressionForBean = (
         contextDescriptorToIdentifierList,
     );
 
-    const callExpression = factory.createCallExpression(
+    let beanAccessExpression: ts.Expression = factory.createCallExpression(
         factory.createPropertyAccessExpression(
             factory.createPropertyAccessExpression(
                 globalContextIdentifier,
@@ -46,9 +53,16 @@ export const getCallExpressionForBean = (
         [factory.createStringLiteral(qualifiedBean.classMemberName)]
     );
 
+    if (qualifiedBean.nestedProperty !== null) {
+        beanAccessExpression = factory.createPropertyAccessExpression(
+            beanAccessExpression,
+            factory.createIdentifier(qualifiedBean.nestedProperty),
+        );
+    }
+
     if (qualifiedBean.qualifiedType.kind === QualifiedTypeKind.LIST) {
-        return factory.createSpreadElement(callExpression);
+        return factory.createSpreadElement(beanAccessExpression);
     } else {
-        return callExpression;
+        return beanAccessExpression;
     }
 };

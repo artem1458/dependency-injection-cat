@@ -47,6 +47,7 @@ export const registerArrowFunctionBean = (contextDescriptor: IContextDescriptor,
 
     BeanRepository.registerBean({
         classMemberName: classElement.name.getText(),
+        nestedProperty: null,
         contextDescriptor,
         scope: beanInfo.scope,
         node: classElement,
