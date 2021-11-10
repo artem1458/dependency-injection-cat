@@ -90,21 +90,30 @@ export const registerLifecycleExpression = (
         }
 
         if (qualifiedType.kind === QualifiedTypeKind.PLAIN) {
-            const nonUniqBeanDescriptorsFromCurrentContext = beansMap.get(qualifiedType.fullTypeId) ?? [];
+            const currentContextBeans = beansMap.get(qualifiedType.fullTypeId) ?? [];
+            const currentContextNonEmbeddedBeans = currentContextBeans.filter(it => it.beanKind !== 'embedded');
+            const currentContextEmbeddedBeans = currentContextBeans.filter(it => it.beanKind === 'embedded');
             const nonUniqBeanDescriptorsFromGlobalContext = BeanRepository
                 .beanDescriptorRepository.get(GLOBAL_CONTEXT_NAME)?.get(qualifiedType.fullTypeId) ?? [];
 
-            let beanCandidatesFromCurrentContext = uniqNotEmpty(nonUniqBeanDescriptorsFromCurrentContext);
+            let nonEmbeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextNonEmbeddedBeans);
+            let embeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextEmbeddedBeans);
             let beanCandidatesFromGlobalContext = uniqNotEmpty(nonUniqBeanDescriptorsFromGlobalContext);
 
             if (qualifier !== null) {
-                beanCandidatesFromCurrentContext = beanCandidatesFromCurrentContext
+                nonEmbeddedBeanCandidatesFromCurrentContext = nonEmbeddedBeanCandidatesFromCurrentContext
                     .filter(it => it.classMemberName === qualifier);
+                embeddedBeanCandidatesFromCurrentContext = embeddedBeanCandidatesFromCurrentContext
+                    .filter(it => it.nestedProperty === qualifier);
                 beanCandidatesFromGlobalContext = beanCandidatesFromGlobalContext
                     .filter(it => it.classMemberName === qualifier);
             }
 
-            if (beanCandidatesFromCurrentContext.length === 0 && beanCandidatesFromGlobalContext.length === 0) {
+            if (
+                nonEmbeddedBeanCandidatesFromCurrentContext.length === 0
+                && embeddedBeanCandidatesFromCurrentContext.length === 0
+                && beanCandidatesFromGlobalContext.length === 0
+            ) {
                 CompilationContext.reportError({
                     node: parameter,
                     message: 'Bean for dependency is not registered',
@@ -114,17 +123,17 @@ export const registerLifecycleExpression = (
                 return;
             }
 
-            if (beanCandidatesFromCurrentContext.length === 1) {
+            if (nonEmbeddedBeanCandidatesFromCurrentContext.length === 1) {
                 dependencies.add({
                     parameterName,
                     qualifiedType,
-                    beanDescriptors: new ExtendedSet(beanCandidatesFromCurrentContext),
+                    beanDescriptors: new ExtendedSet(nonEmbeddedBeanCandidatesFromCurrentContext),
                 });
                 return;
             }
 
-            if (beanCandidatesFromCurrentContext.length > 1) {
-                const beanCandidatesFromCurrentContextQualifiedByParameterName = beanCandidatesFromCurrentContext
+            if (nonEmbeddedBeanCandidatesFromCurrentContext.length > 1) {
+                const beanCandidatesFromCurrentContextQualifiedByParameterName = nonEmbeddedBeanCandidatesFromCurrentContext
                     .filter(it => it.classMemberName === parameterName);
 
                 if (beanCandidatesFromCurrentContextQualifiedByParameterName.length === 1) {
@@ -152,9 +161,56 @@ export const registerLifecycleExpression = (
                 CompilationContext.reportErrorWithMultipleNodes({
                     nodes: [
                         parameter,
-                        ...beanCandidatesFromCurrentContext.map(it => it.node),
+                        ...nonEmbeddedBeanCandidatesFromCurrentContext.map(it => it.node),
                     ],
-                    message: `Found ${beanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
+                    message: `Found ${nonEmbeddedBeanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
+                    filePath: contextDescriptor.absolutePath,
+                    relatedContextPath: contextDescriptor.absolutePath,
+                });
+                return;
+            }
+
+            if (embeddedBeanCandidatesFromCurrentContext.length === 1) {
+                dependencies.add({
+                    parameterName,
+                    qualifiedType,
+                    beanDescriptors: new ExtendedSet(embeddedBeanCandidatesFromCurrentContext),
+                });
+                return;
+            }
+
+            if (embeddedBeanCandidatesFromCurrentContext.length > 1) {
+                const beansByParameterName = embeddedBeanCandidatesFromCurrentContext
+                    .filter(it => it.nestedProperty === parameterName);
+
+                if (beansByParameterName.length === 1) {
+                    dependencies.add({
+                        parameterName,
+                        qualifiedType,
+                        beanDescriptors: new ExtendedSet(beansByParameterName)
+                    });
+                    return;
+                }
+
+                if (beansByParameterName.length > 1) {
+                    CompilationContext.reportErrorWithMultipleNodes({
+                        nodes: [
+                            parameter,
+                            ...beansByParameterName.map(it => it.node),
+                        ],
+                        message: `Found ${beansByParameterName.length} Bean candidates, with same name, please rename one of beans`,
+                        filePath: contextDescriptor.absolutePath,
+                        relatedContextPath: contextDescriptor.absolutePath,
+                    });
+                    return;
+                }
+
+                CompilationContext.reportErrorWithMultipleNodes({
+                    nodes: [
+                        parameter,
+                        ...embeddedBeanCandidatesFromCurrentContext.map(it => it.node),
+                    ],
+                    message: `Found ${embeddedBeanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
                     filePath: contextDescriptor.absolutePath,
                     relatedContextPath: contextDescriptor.absolutePath,
                 });

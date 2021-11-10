@@ -16,7 +16,7 @@ import { registerGlobalCatContext } from '../context/registerGlobalCatContext';
 import { addGlobalContextInstance } from './transformers/addGlobalContextInstance';
 import { TContextDescriptorToIdentifier } from './utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { transformArrowFunctionBeans } from './transformers/transformArrowFunctionBeans';
-import { transformExpressionBeans } from './transformers/transformExpressionBeans';
+import { transformExpressionAndEmbeddedBeans } from './transformers/transformExpressionAndEmbeddedBeans';
 import { registerContextLifecycleMethods } from '../context-lifecycle/registerContextLifecycleMethods';
 import { transformLifecycleMethods } from './transformers/transformLifecycleMethods';
 import { transformLifecycleArrowFunctions } from './transformers/transformLifecycleArrowFunctions';
@@ -53,7 +53,7 @@ export function registerAndTransformContext(
             replacePropertyBeans(contextDescriptorToIdentifierList),
             transformMethodBeans(contextDescriptorToIdentifierList),
             transformArrowFunctionBeans(contextDescriptorToIdentifierList),
-            transformExpressionBeans(),
+            transformExpressionAndEmbeddedBeans(),
             addNecessaryImports(contextDescriptorToIdentifierList),
         ];
 
@@ -94,7 +94,7 @@ export function registerAndTransformContext(
         replacePropertyBeans(contextDescriptorToIdentifierList),
         transformMethodBeans(contextDescriptorToIdentifierList),
         transformArrowFunctionBeans(contextDescriptorToIdentifierList),
-        transformExpressionBeans(),
+        transformExpressionAndEmbeddedBeans(),
         transformLifecycleMethods(contextDescriptorToIdentifierList),
         transformLifecycleArrowFunctions(contextDescriptorToIdentifierList),
         addNecessaryImports(contextDescriptorToIdentifierList),

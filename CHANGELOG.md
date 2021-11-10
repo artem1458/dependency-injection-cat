@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- [Feature] EmbeddedBean feature implemented
+
 ## 1.0.1
 
 - [Improvement] Allow container access inside files with context

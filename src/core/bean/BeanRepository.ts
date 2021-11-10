@@ -18,6 +18,7 @@ type TBeanKind = 'method' | 'property' | 'arrowFunction' | 'expression' | 'embed
 
 export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     classMemberName: string;
+    nestedProperty: string | null;
     contextDescriptor: IContextDescriptor;
     qualifiedType: QualifiedType;
     scope: TBeanScopeValue;

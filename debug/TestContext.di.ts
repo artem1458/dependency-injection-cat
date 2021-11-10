@@ -1,17 +1,24 @@
-import { Bean, CatContext, PostConstruct } from 'dependency-injection-cat';
+import { CatContext, EmbeddedBean, PostConstruct } from 'dependency-injection-cat';
 
 export interface ITestContext {
+    embeddedBeans: IEmbeddedBeans;
 }
 
-export interface IRequester<T> {}
+export interface IRequester {}
+export interface IEmbeddedBeans {
+    requester: IRequester;
+}
+
 
 class TestContext extends CatContext<ITestContext> {
-    @PostConstruct
-    test(
-        t: string
-    ): void {
-        this;
+    @EmbeddedBean embeddedBeans: IEmbeddedBeans = {
+        requester: {}
     }
 
-    @Bean requester5: IRequester<string[]> = {}
+    @PostConstruct
+    postConstruct(
+        requester: IRequester,
+    ): void {
+        console.log(requester);
+    }
 }

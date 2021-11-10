@@ -77,9 +77,9 @@ export function buildBeanCallExpressionForSingleBeanForLifecycle(
     dependencyDescriptor: ILifecycleDependencyDescriptor,
     contextLifecycleDescriptor: IContextLifecycleDescriptor,
     contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[],
-): ts.CallExpression {
+): ts.Expression {
     if (isBeanFromCurrentContext(beanDescriptor.contextDescriptor, contextLifecycleDescriptor.contextDescriptor)) {
-        return factory.createCallExpression(
+        let beanAccessExpression: ts.Expression = factory.createCallExpression(
             factory.createPropertyAccessExpression(
                 factory.createThis(),
                 factory.createIdentifier('getPrivateBean')
@@ -87,6 +87,15 @@ export function buildBeanCallExpressionForSingleBeanForLifecycle(
             undefined,
             [factory.createStringLiteral(beanDescriptor.classMemberName)]
         );
+
+        if (beanDescriptor.nestedProperty !== null) {
+            beanAccessExpression = factory.createPropertyAccessExpression(
+                beanAccessExpression,
+                factory.createIdentifier(beanDescriptor.nestedProperty),
+            );
+        }
+
+        return beanAccessExpression;
     }
 
     const globalContextIdentifier = getGlobalContextIdentifierFromArrayOrCreateNewAndPush(
@@ -94,7 +103,7 @@ export function buildBeanCallExpressionForSingleBeanForLifecycle(
         contextDescriptorToIdentifierList,
     );
 
-    return factory.createCallExpression(
+    let beanAccessExpression: ts.Expression = factory.createCallExpression(
         factory.createPropertyAccessExpression(
             factory.createPropertyAccessExpression(
                 globalContextIdentifier,
@@ -105,6 +114,15 @@ export function buildBeanCallExpressionForSingleBeanForLifecycle(
         undefined,
         [factory.createStringLiteral(beanDescriptor.classMemberName)]
     );
+
+    if (beanDescriptor.nestedProperty !== null) {
+        beanAccessExpression = factory.createPropertyAccessExpression(
+            beanAccessExpression,
+            factory.createIdentifier(beanDescriptor.nestedProperty),
+        );
+    }
+
+    return beanAccessExpression;
 }
 
 function isBeanFromCurrentContext(dependencyBeanContext: IContextDescriptor, lifecycleContext: IContextDescriptor): boolean {

@@ -2,13 +2,13 @@ import ts, { factory } from 'typescript';
 import { BeanRepository, TBeanNode } from '../../bean/BeanRepository';
 import { ClassPropertyDeclarationWithExpressionInitializer } from '../../ts-helpers/types';
 
-export const transformExpressionBeans = (): ts.TransformerFactory<ts.SourceFile> => {
+export const transformExpressionAndEmbeddedBeans = (): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
                 const beanDescriptor = BeanRepository.beanNodeToBeanDescriptorMap.get(node as TBeanNode) ?? null;
 
-                if (beanDescriptor?.beanKind === 'expression') {
+                if (beanDescriptor?.beanKind === 'expression' || beanDescriptor?.beanKind === 'embedded') {
                     const typedNode = beanDescriptor.node as ClassPropertyDeclarationWithExpressionInitializer;
                     const newExpression = factory.createArrowFunction(
                         typedNode.modifiers,

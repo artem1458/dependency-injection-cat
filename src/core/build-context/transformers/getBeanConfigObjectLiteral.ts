@@ -1,10 +1,12 @@
 import ts, { factory } from 'typescript';
+import { uniqBy } from 'lodash';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { BeanRepository } from '../../bean/BeanRepository';
 
 export function getBeanConfigObjectLiteral(contextDescriptor: IContextDescriptor): ts.ObjectLiteralExpression {
     const contextBeans = BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
-    const objectLiteralMembers: ts.PropertyAssignment[] = contextBeans.map(bean => (
+    const notNestedContextBeans = contextBeans.filter(it => it.nestedProperty === null);
+    const objectLiteralMembers: ts.PropertyAssignment[] = notNestedContextBeans.map(bean => (
         factory.createPropertyAssignment(
             factory.createComputedPropertyName(factory.createStringLiteral(bean.classMemberName)),
             factory.createObjectLiteralExpression(
