@@ -5,8 +5,8 @@ import { BeanRepository } from '../../bean/BeanRepository';
 
 export function getBeanConfigObjectLiteral(contextDescriptor: IContextDescriptor): ts.ObjectLiteralExpression {
     const contextBeans = BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
-    const uniqContextBeans = uniqBy(contextBeans, it => it.classMemberName);
-    const objectLiteralMembers: ts.PropertyAssignment[] = uniqContextBeans.map(bean => (
+    const notNestedContextBeans = contextBeans.filter(it => it.nestedProperty === null);
+    const objectLiteralMembers: ts.PropertyAssignment[] = notNestedContextBeans.map(bean => (
         factory.createPropertyAssignment(
             factory.createComputedPropertyName(factory.createStringLiteral(bean.classMemberName)),
             factory.createObjectLiteralExpression(

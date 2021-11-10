@@ -134,7 +134,7 @@ export const registerEmbeddedBean = (contextDescriptor: IContextDescriptor, clas
         qualifiedType,
         scope: 'singleton',
         node: classElement,
-        beanKind: 'expression',
+        beanKind: 'embedded',
         beanSourceLocation: null,
         isPublic: false,
     });
