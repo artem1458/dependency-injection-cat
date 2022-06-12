@@ -3,7 +3,7 @@ import { getScopeValue } from './getScopeValue';
 import { isBeanDecorator } from '../predicates/isBeanDecorator';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
 import { ClassPropertyArrowFunction } from '../types';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../../build-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { UnknownError } from '../../../exceptions/compilation/errors/UnknownError';
 import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';

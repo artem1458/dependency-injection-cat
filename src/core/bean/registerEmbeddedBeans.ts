@@ -4,7 +4,7 @@ import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { BeanRepository } from './BeanRepository';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
 import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
 import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';

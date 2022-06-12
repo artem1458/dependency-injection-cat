@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { IContainerAccessNode } from './isContainerAccess';
 import { unquoteString } from '../../utils/unquoteString';
-import { TransformationContext } from '../../../compilation-context/TransformationContext';
+import { TransformationContext } from '../../../build-context/TransformationContext';
 import { IncorrectContainerAccessError } from '../../../exceptions/transformation/errors/IncorrectContainerAccessError';
 
 type TContextName = string;

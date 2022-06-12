@@ -8,7 +8,7 @@ import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
 import { ContextNamesRepository } from '../../context/ContextNamesRepository';
 import { registerAllContextNames } from '../../context/registerContextNames';
 import { removeExtensionFromPath } from '../../utils/removeExtensionFromPath';
-import { TransformationContext } from '../../../compilation-context/TransformationContext';
+import { TransformationContext } from '../../../build-context/TransformationContext';
 import { IncorrectContainerAccessError } from '../../../exceptions/transformation/errors/IncorrectContainerAccessError';
 import { ContextNotFoundError } from '../../../exceptions/transformation/errors/ContextNotFoundError';
 

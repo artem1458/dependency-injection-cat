@@ -4,7 +4,7 @@ import { ContextNamesRepository } from './ContextNamesRepository';
 import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCatContextContext';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { getContextPaths } from './getContextPaths';
-import { TransformationContext } from '../../compilation-context/TransformationContext';
+import { TransformationContext } from '../../build-context/TransformationContext';
 
 export function registerAllContextNames(transformationContext: TransformationContext) {
     ContextNamesRepository.nameToPath.clear();

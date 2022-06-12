@@ -25,7 +25,7 @@ import { transformLifecycleMethods } from './transformers/transformLifecycleMeth
 import { transformLifecycleArrowFunctions } from './transformers/transformLifecycleArrowFunctions';
 import { addLifecycleConfiguration } from './transformers/addLifecycleConfiguration';
 import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 
 export function registerAndTransformContext(
     compilationContext: CompilationContext,

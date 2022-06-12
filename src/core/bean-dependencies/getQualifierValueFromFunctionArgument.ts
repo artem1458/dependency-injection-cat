@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { isParameterQualifierDecorator } from '../ts-helpers/predicates/isParameterQualifierDecorator';
 import { IContextDescriptor } from '../context/ContextRepository';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 import { DecoratorsCountError } from '../../exceptions/compilation/errors/DecoratorsCountError';
 import { IncorrectArgumentError } from '../../exceptions/compilation/errors/IncorrectArgumentError';
 import { IncorrectExpressionUsageError } from '../../exceptions/compilation/errors/IncorrectExpressionUsageError';

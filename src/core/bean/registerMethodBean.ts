@@ -4,7 +4,7 @@ import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropert
 import { BeanRepository } from './BeanRepository';
 import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
 import { MissingInitializerError } from '../../exceptions/compilation/errors/MissingInitializerError';
 import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';

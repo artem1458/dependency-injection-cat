@@ -1,6 +1,6 @@
 import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
 import { IContextDescriptor } from '../context/ContextRepository';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 import { CyclicDependenciesError } from '../../exceptions/compilation/errors/CyclicDependenciesError';
 
 export const reportAboutCyclicDependencies = (

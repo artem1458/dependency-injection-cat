@@ -4,7 +4,7 @@ import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { getQualifierValueFromFunctionArgument } from './getQualifierValueFromFunctionArgument';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
 
 export const registerMethodBeanDependencies = (

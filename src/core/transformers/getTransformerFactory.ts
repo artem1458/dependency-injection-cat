@@ -6,8 +6,8 @@ import { unquoteString } from '../utils/unquoteString';
 import minimatch from 'minimatch';
 import { diConfig } from '../../external/config';
 import { registerAndTransformContext } from '../build-context/registerAndTransformContext';
-import { TransformationContext } from '../../compilation-context/TransformationContext';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { TransformationContext } from '../../build-context/TransformationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 
 export const getTransformerFactory = (
     compilationContext: CompilationContext,

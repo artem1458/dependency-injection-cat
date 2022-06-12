@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { ClassPropertyArrowFunction } from '../types';
 import { isBeanDecorator } from './isBeanDecorator';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../../build-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { MissingInitializerError } from '../../../exceptions/compilation/errors/MissingInitializerError';
 

@@ -5,7 +5,7 @@ import { initContexts } from '../../core/initContexts';
 import DICatWebpackPlugin from '../../plugins/webpack';
 import { get } from 'lodash';
 import { getTransformersContext } from '../getTransformersContext';
-import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
+import { BuildErrorFormatter } from '../../build-context/BuildErrorFormatter';
 
 export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<ts.SourceFile> => {
     initDiConfig(config);

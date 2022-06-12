@@ -6,7 +6,7 @@ import { ContextRepository } from './context/ContextRepository';
 import ts, { ScriptTarget } from 'typescript';
 import fs from 'fs';
 import { registerBeans } from './bean/registerBeans';
-import { CompilationContext } from '../compilation-context/CompilationContext';
+import { CompilationContext } from '../build-context/CompilationContext';
 
 let wasInitiated = false;
 

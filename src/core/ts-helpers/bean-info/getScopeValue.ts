@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { unquoteString } from '../../utils/unquoteString';
 import { TBeanScopeValue } from './ICompilationBeanInfo';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../../build-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';
 

@@ -2,7 +2,7 @@ import * as ts from 'typescript';
 import { getScopeValue } from './getScopeValue';
 import { ClassPropertyDeclarationWithInitializer } from '../types';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../../build-context/CompilationContext';
 import { IncorrectArgumentsLengthError } from '../../../exceptions/compilation/errors/IncorrectArgumentsLengthError';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';

@@ -3,7 +3,7 @@ import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCa
 import { ContextRepository } from './ContextRepository';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { isExtendsGlobalCatContextContext } from '../ts-helpers/predicates/isExtendsGlobalCatContext';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 import { IncorrectContextDeclarationError } from '../../exceptions/compilation/errors/IncorrectContextDeclarationError';
 
 export const registerGlobalCatContext = (

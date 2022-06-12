@@ -1,5 +1,5 @@
-import { TransformationContext } from '../compilation-context/TransformationContext';
-import { CompilationContext } from '../compilation-context/CompilationContext';
+import { TransformationContext } from '../build-context/TransformationContext';
+import { CompilationContext } from '../build-context/CompilationContext';
 
 export type TContexts = [compilationContext: CompilationContext, transofrmationContext: TransformationContext];
 

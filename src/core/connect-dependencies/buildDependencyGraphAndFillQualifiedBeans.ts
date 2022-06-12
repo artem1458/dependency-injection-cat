@@ -5,7 +5,7 @@ import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 import { DependencyResolvingError } from '../../exceptions/compilation/errors/DependencyResolvingError';
 
 export const buildDependencyGraphAndFillQualifiedBeans = (

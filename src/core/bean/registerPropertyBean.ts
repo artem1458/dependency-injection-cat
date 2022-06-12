@@ -10,7 +10,7 @@ import { restrictedClassMemberNames } from './constants';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext } from '../../build-context/CompilationContext';
 import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
 import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
 import { IncorrectArgumentError } from '../../exceptions/compilation/errors/IncorrectArgumentError';

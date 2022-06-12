@@ -5,7 +5,7 @@ import { ContextRepository } from '../../core/context/ContextRepository';
 import { RebuildStatusRepository } from './RebuildStatusRepository';
 import { BeanRepository } from '../../core/bean/BeanRepository';
 import { getTransformersContext } from '../../transformers/getTransformersContext';
-import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
+import { BuildErrorFormatter } from '../../build-context/BuildErrorFormatter';
 
 let wasReportedAboutGlobalContexts = false;
 
