@@ -15,7 +15,6 @@ import {
     buildDependencyGraphAndFillQualifiedBeans
 } from '../connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
 import { reportAboutCyclicDependencies } from '../report-cyclic-dependencies/reportAboutCyclicDependencies';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { registerGlobalCatContext } from '../context/registerGlobalCatContext';
 import { addGlobalContextInstance } from './transformers/addGlobalContextInstance';
 import { TContextDescriptorToIdentifier } from './utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
@@ -26,14 +25,14 @@ import { transformLifecycleMethods } from './transformers/transformLifecycleMeth
 import { transformLifecycleArrowFunctions } from './transformers/transformLifecycleArrowFunctions';
 import { addLifecycleConfiguration } from './transformers/addLifecycleConfiguration';
 import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export function registerAndTransformContext(
+    compilationContext: CompilationContext,
     context: ts.TransformationContext,
     sourceFile: ts.SourceFile
 ): ts.SourceFile {
-    const compilationContext = new CompilationContext2();
-    CompilationContext.clearErrorsByFilePath(sourceFile.fileName);
+    compilationContext.clearErrorsByFilePath(sourceFile.fileName);
 
     const oldContextDescriptor = ContextRepository.contextPathToContextDescriptor.get(sourceFile.fileName);
 

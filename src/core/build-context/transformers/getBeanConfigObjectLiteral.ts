@@ -1,5 +1,4 @@
 import ts, { factory } from 'typescript';
-import { uniqBy } from 'lodash';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { BeanRepository } from '../../bean/BeanRepository';
 

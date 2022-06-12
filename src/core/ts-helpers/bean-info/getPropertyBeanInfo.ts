@@ -1,19 +1,26 @@
 import * as ts from 'typescript';
 import { getScopeValue } from './getScopeValue';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { ClassPropertyDeclarationWithInitializer } from '../types';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { IncorrectArgumentsLengthError } from '../../../exceptions/compilation/errors/IncorrectArgumentsLengthError';
+import { IContextDescriptor } from '../../context/ContextRepository';
+import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';
 
-export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclarationWithInitializer): ICompilationBeanInfo {
+export function getPropertyBeanInfo(
+    compilationContext: CompilationContext,
+    contextDescriptor: IContextDescriptor,
+    propertyDeclaration: ClassPropertyDeclarationWithInitializer
+): ICompilationBeanInfo {
     const beanCall = propertyDeclaration.initializer;
 
     if (beanCall.arguments.length === 0) {
-        CompilationContext.reportError({
-            node: beanCall.expression,
-            message: 'You should pass at least 1 argument to the Bean call',
-            filePath: propertyDeclaration.getSourceFile().fileName,
-            relatedContextPath: propertyDeclaration.getSourceFile().fileName,
-        });
+        compilationContext.report(new IncorrectArgumentsLengthError(
+            null,
+            propertyDeclaration,
+            contextDescriptor.node,
+        ));
+
         return {
             scope: 'singleton',
         };
@@ -28,12 +35,11 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
     }
 
     if (!ts.isObjectLiteralExpression(secondArg)) {
-        CompilationContext.reportError({
-            node: secondArg,
-            message: 'Argument in Bean should be object literal',
-            filePath: propertyDeclaration.getSourceFile().fileName,
-            relatedContextPath: propertyDeclaration.getSourceFile().fileName,
-        });
+        compilationContext.report(new IncorrectArgumentError(
+            'Configuration object should be an object literal.',
+            secondArg,
+            contextDescriptor.node,
+        ));
 
         return {
             scope: 'singleton',
@@ -41,6 +47,6 @@ export function getPropertyBeanInfo(propertyDeclaration: ClassPropertyDeclaratio
     }
 
     return {
-        scope: getScopeValue(secondArg),
+        scope: getScopeValue(compilationContext, contextDescriptor, secondArg),
     };
 }

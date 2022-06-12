@@ -4,14 +4,14 @@ import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { BeanRepository } from './BeanRepository';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
 import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
 import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
 import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
 
 export const registerEmbeddedBean = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor,
     classElement: ts.PropertyDeclaration
 ): void => {
@@ -19,7 +19,7 @@ export const registerEmbeddedBean = (
 
     if (restrictedClassMemberNames.has(classElementName)) {
         compilationContext.report(new IncorrectNameError(
-            `${classElementName} name is reserved for the di-container.`,
+            `"${classElementName}" name is reserved for the di-container.`,
             classElement.name,
             contextDescriptor.node,
         ));
@@ -92,7 +92,7 @@ export const registerEmbeddedBean = (
             return;
         }
 
-        const qualifiedType = TypeQualifier.qualify(propertyType);
+        const qualifiedType = TypeQualifier.qualify(compilationContext, contextDescriptor, propertyType);
 
         if (qualifiedType === null) {
             compilationContext.report(new TypeQualifyError(
@@ -117,7 +117,7 @@ export const registerEmbeddedBean = (
     });
 
 
-    const qualifiedType = TypeQualifier.qualify(classElementType);
+    const qualifiedType = TypeQualifier.qualify(compilationContext, contextDescriptor, classElementType);
 
     if (qualifiedType === null) {
         compilationContext.report(

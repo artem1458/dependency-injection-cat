@@ -1,20 +1,22 @@
 import ts from 'typescript';
 import { IContainerAccessNode } from './isContainerAccess';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { unquoteString } from '../../utils/unquoteString';
+import { TransformationContext } from '../../../compilation-context/TransformationContext';
+import { IncorrectContainerAccessError } from '../../../exceptions/transformation/errors/IncorrectContainerAccessError';
 
 type TContextName = string;
 
-export const getContextNameFromContainerCall = (node: IContainerAccessNode): TContextName | null => {
+export const getContextNameFromContainerCall = (
+    transformationContext: TransformationContext,
+    node: IContainerAccessNode
+): TContextName | null => {
     const firstArg: ts.Node | null = node.arguments[0] ?? null;
 
     if (firstArg && !ts.isObjectLiteralExpression(firstArg)) {
-        CompilationContext.reportError({
-            node: node,
-            message: 'First argument in container access should be an object literal',
-            filePath: node.getSourceFile().fileName,
-        });
-
+        transformationContext.report(new IncorrectContainerAccessError(
+            'First argument in container access call should be an object literal.',
+            node,
+        ));
         return null;
     }
 
@@ -23,21 +25,19 @@ export const getContextNameFromContainerCall = (node: IContainerAccessNode): TCo
         .find(it => it.name?.getText() === 'name') ?? null;
 
     if (contextNameProperty === null) {
-        CompilationContext.reportError({
+        transformationContext.report(new IncorrectContainerAccessError(
+            'You should pass "name" property to the container access props.',
             node,
-            message: 'You should pass "name" property to the container access props',
-            filePath: node.getSourceFile().fileName,
-        });
+        ));
 
         return null;
     }
 
     if (!ts.isStringLiteral(contextNameProperty.initializer)) {
-        CompilationContext.reportError({
+        transformationContext.report(new IncorrectContainerAccessError(
+            'Property "name" in container access props should be a string literal.',
             node,
-            message: 'Property "name" in container access props should be a string literal',
-            filePath: node.getSourceFile().fileName,
-        });
+        ));
 
         return null;
     }

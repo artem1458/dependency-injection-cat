@@ -1,17 +1,16 @@
 import { IContextDescriptor } from '../context/ContextRepository';
 import * as ts from 'typescript';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
 import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
 import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
 import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
 
 export const registerExpressionBean = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor,
     classElement: ts.PropertyDeclaration,
 ): void => {
@@ -19,7 +18,7 @@ export const registerExpressionBean = (
 
     if (restrictedClassMemberNames.has(classElementName)) {
         compilationContext.report(new IncorrectNameError(
-            `${classElementName} name is reserved for the di-container.`,
+            `"${classElementName}" name is reserved for the di-container.`,
             classElement.name,
             contextDescriptor.node,
         ));
@@ -27,7 +26,7 @@ export const registerExpressionBean = (
     }
 
     const propertyType = classElement.type ?? null;
-    const beanInfo = getPropertyDecoratorBeanInfo(classElement);
+    const beanInfo = getPropertyDecoratorBeanInfo(compilationContext, contextDescriptor, classElement);
 
     if (propertyType === null) {
         compilationContext.report(new MissingTypeDefinitionError(
@@ -38,7 +37,7 @@ export const registerExpressionBean = (
         return;
     }
 
-    const qualifiedType = TypeQualifier.qualify(propertyType);
+    const qualifiedType = TypeQualifier.qualify(compilationContext, contextDescriptor, propertyType);
 
     if (qualifiedType === null) {
         compilationContext.report(new TypeQualifyError(

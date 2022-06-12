@@ -2,16 +2,20 @@ import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { libraryName } from '../../constants/libraryName';
-import { ProgramRepository } from '../../core/program/ProgramRepository';
 import { initContexts } from '../../core/initContexts';
 import { uniqId } from '../../core/utils/uniqId';
+import { getTransformersContext } from '../getTransformersContext';
 
 const IGNORE_TRANSFORM_PROPERTY_KEY = uniqId();
 
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);
-    initContexts();
-    const transformerFactory = getTransformerFactory();
+    const [
+        compilationContext,
+        transformationContext
+    ] = getTransformersContext();
+    initContexts(compilationContext);
+    const transformerFactory = getTransformerFactory(compilationContext, transformationContext);
     const printer = ts.createPrinter();
 
     return {
@@ -39,7 +43,7 @@ export default function(api: any, options?: IDiConfig) {
                 const tsSourceFile = ts.createSourceFile(
                     filePath,
                     fileText,
-                    ProgramRepository.program.getCompilerOptions().target ?? ts.ScriptTarget.ESNext,
+                    ts.ScriptTarget.Latest,
                     true,
                 );
                 const result = ts.transform<ts.SourceFile>(

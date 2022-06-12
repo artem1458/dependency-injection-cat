@@ -1,7 +1,6 @@
 import ts, { factory } from 'typescript';
 import upath from 'upath';
 import { IContainerAccessNode } from './isContainerAccess';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { getContextNameFromContainerCall } from './getContextNameFromContainerCall';
 import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContextPool';
 import { validContainerKeys } from './validContainerKeys';
@@ -9,47 +8,54 @@ import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
 import { ContextNamesRepository } from '../../context/ContextNamesRepository';
 import { registerAllContextNames } from '../../context/registerContextNames';
 import { removeExtensionFromPath } from '../../utils/removeExtensionFromPath';
+import { TransformationContext } from '../../../compilation-context/TransformationContext';
+import { IncorrectContainerAccessError } from '../../../exceptions/transformation/errors/IncorrectContainerAccessError';
+import { ContextNotFoundError } from '../../../exceptions/transformation/errors/ContextNotFoundError';
 
-export const replaceContainerCall = (node: IContainerAccessNode, factoryImportsToAdd: ts.ImportDeclaration[]): ts.Node => {
-    CompilationContext.clearErrorsByFilePath(node.getSourceFile().fileName);
+export const replaceContainerCall = (
+    transformationContext: TransformationContext,
+    node: IContainerAccessNode,
+    factoryImportsToAdd: ts.ImportDeclaration[]
+): ts.Node => {
+    transformationContext.clearErrorsByFilePath(node.getSourceFile().fileName);
 
     if (!validContainerKeys.includes(node.expression.name.getText())) {
-        CompilationContext.reportError({
-            node: node,
-            message: `Container has only following methods: ${validContainerKeys.join(', ')}`,
-            filePath: node.getSourceFile().fileName,
-        });
+        transformationContext.report(new IncorrectContainerAccessError(
+            `Container has only following methods: ${validContainerKeys.join(', ')}`,
+            node,
+        ));
+
         return node;
     }
 
-    const contextName = getContextNameFromContainerCall(node);
+    const contextName = getContextNameFromContainerCall(transformationContext, node);
 
     if (contextName === null) {
         return node;
     }
 
     if (contextName === GLOBAL_CONTEXT_NAME) {
-        CompilationContext.reportError({
-            message: 'You can\'t access Global Context',
-            node: node,
-            filePath: node.getSourceFile().fileName,
-        });
+        transformationContext.report(new IncorrectContainerAccessError(
+            'You can not access Global context',
+            node,
+        ));
+
         return node;
     }
 
     let contextPath: string | null = ContextNamesRepository.nameToPath.get(contextName) ?? null;
 
     if (contextPath === null) {
-        registerAllContextNames();
+        registerAllContextNames(transformationContext);
 
         contextPath = ContextNamesRepository.nameToPath.get(contextName) ?? null;
 
         if (contextPath === null) {
-            CompilationContext.reportError({
+            transformationContext.report(new ContextNotFoundError(
+                null,
                 node,
-                message: `Context with name "${contextName}" not found`,
-                filePath: node.getSourceFile().fileName,
-            });
+            ));
+
             return node;
         }
     }

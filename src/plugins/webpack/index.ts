@@ -1,20 +1,28 @@
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
 import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
 import { Compilation, Compiler, NormalModule } from 'webpack';
 import { ContextRepository } from '../../core/context/ContextRepository';
 import { RebuildStatusRepository } from './RebuildStatusRepository';
 import { BeanRepository } from '../../core/bean/BeanRepository';
+import { getTransformersContext } from '../../transformers/getTransformersContext';
+import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
+
+let wasReportedAboutGlobalContexts = false;
 
 const reportDIErrorsHook = (compilation: Compilation) => {
     const globalContextsCount = Array.from(ContextRepository.globalContexts.values()).length;
 
-    if (globalContextsCount > 0) {
+    if (globalContextsCount > 0 && !wasReportedAboutGlobalContexts) {
+        wasReportedAboutGlobalContexts = true;
         compilation.warnings
             .push(buildWebpackError('You have Defined Global Cat Context, Currently, DI Cat does not support hot reloading of them'));
     }
 
-    const message = CompilationContext.getErrorMessage();
+    const [compilationContext, transformationContext] = getTransformersContext();
+    const message = BuildErrorFormatter.formatErrors(
+        Array.from(compilationContext.errors.values()),
+        Array.from(transformationContext.errors.values()),
+    );
 
     if (message === null) {
         SourceFilesCache.clearCache();

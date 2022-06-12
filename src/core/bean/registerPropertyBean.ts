@@ -5,35 +5,43 @@ import { IContextDescriptor } from '../context/ContextRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getPropertyBeanInfo } from '../ts-helpers/bean-info/getPropertyBeanInfo';
 import { BeanRepository } from './BeanRepository';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { restrictedClassMemberNames } from './constants';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
+import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
+import { IncorrectArgumentError } from '../../exceptions/compilation/errors/IncorrectArgumentError';
+import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
+import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
 
 export const registerPropertyBean = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor,
     classElement: ClassPropertyDeclarationWithInitializer,
 ): void => {
     const classElementName = classElement.name.getText();
 
     if (restrictedClassMemberNames.has(classElementName)) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: `"${classElementName}" property is reserved for the di-container, please use another name instead`,
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectNameError(
+            `"${classElementName}" name is reserved for the di-container.`,
+            classElement.name,
+            contextDescriptor.node,
+        ));
         return;
     }
 
-    const qualifiedType = getBeanTypeInfoFromClassProperty(contextDescriptor, classElement);
-    const beanInfo = getPropertyBeanInfo(classElement);
+    const qualifiedType = getBeanTypeInfoFromClassProperty(compilationContext, contextDescriptor, classElement);
+    const beanInfo = getPropertyBeanInfo(compilationContext, contextDescriptor, classElement);
 
     if (qualifiedType === null) {
+        compilationContext.report(new TypeQualifyError(
+            null,
+            classElement,
+            contextDescriptor.node,
+        ));
         return;
     }
 
@@ -51,14 +59,18 @@ export const registerPropertyBean = (
     });
 };
 
-function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): QualifiedType | null {
+function getBeanTypeInfoFromClassProperty(
+    compilationContext: CompilationContext,
+    contextDescriptor: IContextDescriptor,
+    classElement: ClassPropertyDeclarationWithInitializer
+): QualifiedType | null {
     const propertyType = classElement.type ?? null;
     const beanGenericType = (classElement.initializer.typeArguments ?? [])[0] ?? null;
 
     if (propertyType !== null && beanGenericType !== null) {
         //TODO add caching of type nodes in typeQualifier
-        const resolvedPropertyType = TypeQualifier.qualify(propertyType);
-        const resolvedBeanGenericType = TypeQualifier.qualify(beanGenericType);
+        const resolvedPropertyType = TypeQualifier.qualify(compilationContext, contextDescriptor, propertyType);
+        const resolvedBeanGenericType = TypeQualifier.qualify(compilationContext, contextDescriptor, beanGenericType);
 
         if (resolvedPropertyType === null && resolvedBeanGenericType === null) {
             return null;
@@ -67,12 +79,11 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
         if (resolvedPropertyType !== null && resolvedBeanGenericType !== null && isEqual(resolvedPropertyType.typeIds, resolvedBeanGenericType.typeIds)) {
             return resolvedBeanGenericType;
         } else {
-            CompilationContext.reportError({
-                node: beanGenericType,
-                message: 'Bean generic type and property type should be equal',
-                filePath: contextDescriptor.absolutePath,
-                relatedContextPath: contextDescriptor.absolutePath,
-            });
+            compilationContext.report(new IncorrectTypeDefinitionError(
+                'Generic type and property types should be the same.',
+                classElement,
+                contextDescriptor.node,
+            ));
         }
 
         if (resolvedBeanGenericType !== null) {
@@ -85,23 +96,21 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
     }
 
     if (propertyType === null && beanGenericType !== null) {
-        return TypeQualifier.qualify(beanGenericType);
+        return TypeQualifier.qualify(compilationContext, contextDescriptor, beanGenericType);
     }
 
     if (beanGenericType === null && propertyType !== null) {
-        return TypeQualifier.qualify(propertyType);
+        return TypeQualifier.qualify(compilationContext, contextDescriptor, propertyType);
     }
 
     const firstArgument = classElement.initializer.arguments[0];
 
     if (!ts.isIdentifier(firstArgument)) {
-        CompilationContext.reportError({
-            node: firstArgument,
-            message: 'First argument in property bean should be a class reference',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
-
+        compilationContext.report(new IncorrectArgumentError(
+            'Argument should be a class reference.',
+            firstArgument,
+            contextDescriptor.node,
+        ));
         return null;
     }
 
@@ -111,13 +120,13 @@ function getBeanTypeInfoFromClassProperty(contextDescriptor: IContextDescriptor,
     );
 
     if (nodeSourceDescriptor === null) {
-        CompilationContext.reportError({
-            node: firstArgument,
-            message: 'Can\'t qualify type of Bean, please specify type explicitly',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
-
+        compilationContext.report(
+            new MissingTypeDefinitionError(
+                null,
+                classElement,
+                contextDescriptor.node,
+            )
+        );
         return null;
     }
 

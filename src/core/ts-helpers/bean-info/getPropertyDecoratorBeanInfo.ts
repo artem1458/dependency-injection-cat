@@ -1,20 +1,26 @@
 import * as ts from 'typescript';
 import { getScopeValue } from './getScopeValue';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { isBeanDecorator } from '../predicates/isBeanDecorator';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
 import { ClassPropertyArrowFunction } from '../types';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { IContextDescriptor } from '../../context/ContextRepository';
+import { UnknownError } from '../../../exceptions/compilation/errors/UnknownError';
+import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';
 
-export const getPropertyDecoratorBeanInfo = (node: ts.MethodDeclaration | ClassPropertyArrowFunction | ts.PropertyDeclaration): ICompilationBeanInfo => {
+export const getPropertyDecoratorBeanInfo = (
+    compilationContext: CompilationContext,
+    contextDescriptor: IContextDescriptor,
+    node: ts.MethodDeclaration | ClassPropertyArrowFunction | ts.PropertyDeclaration
+): ICompilationBeanInfo => {
     const bean = node.decorators?.find(isBeanDecorator) ?? null;
 
     if (bean === null) {
-        CompilationContext.reportError({
-            node: node,
-            message: 'Bean should have @Bean decorator',
-            filePath: node.getSourceFile().fileName,
-            relatedContextPath: node.getSourceFile().fileName,
-        });
+        compilationContext.report(new UnknownError(
+            'Bean do not have @Bean decorator',
+            node,
+            contextDescriptor.node,
+        ));
 
         return {
             scope: 'singleton',
@@ -33,12 +39,11 @@ export const getPropertyDecoratorBeanInfo = (node: ts.MethodDeclaration | ClassP
         const firstArg = expression.arguments[0];
 
         if (!ts.isObjectLiteralExpression(firstArg)) {
-            CompilationContext.reportError({
-                message: 'Bean configuration should be an object literal',
-                node: bean,
-                filePath: node.getSourceFile().fileName,
-                relatedContextPath: node.getSourceFile().fileName,
-            });
+            compilationContext.report(new IncorrectArgumentError(
+                'Configuration object should be an object literal.',
+                firstArg,
+                contextDescriptor.node,
+            ));
 
             return {
                 scope: 'singleton',
@@ -46,7 +51,7 @@ export const getPropertyDecoratorBeanInfo = (node: ts.MethodDeclaration | ClassP
         }
 
         return {
-            scope: getScopeValue(firstArg),
+            scope: getScopeValue(compilationContext, contextDescriptor, firstArg),
         };
     }
 

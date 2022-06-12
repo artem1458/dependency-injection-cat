@@ -1,8 +1,10 @@
 import ts, { factory, KeywordTypeNode, SyntaxKind } from 'typescript';
 import { QualifiedType, QualifiedTypeKind } from './QualifiedType';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { ExtendedSet } from '../../utils/ExtendedSet';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { IContextDescriptor } from '../../context/ContextRepository';
+import { TypeQualifyError } from '../../../exceptions/compilation/errors/TypeQualifyError';
 
 /* TypeNodes that is not allowed
 * FunctionTypeNode
@@ -59,7 +61,11 @@ interface IQualifiedTypes {
 export class TypeQualifier {
 
     //TODO Add related context to errors
-    static qualify(node: ts.TypeNode): QualifiedType | null {
+    static qualify(
+        compilationContext: CompilationContext,
+        contextDescriptor: IContextDescriptor,
+        node: ts.TypeNode
+    ): QualifiedType | null {
         const typeNode = this.removeParenthesizingFromTypeNode(node);
 
         const qualifiedType = new QualifiedType();
@@ -68,21 +74,20 @@ export class TypeQualifier {
 
         if (ts.isArrayTypeNode(typeNode)) {
             qualifiedType.kind = QualifiedTypeKind.LIST;
-            qualifiedTypes = this._qualify(typeNode.elementType);
+            qualifiedTypes = this._qualify(compilationContext, contextDescriptor,typeNode.elementType);
         } else {
-            qualifiedTypes = this._qualify(typeNode);
+            qualifiedTypes = this._qualify(compilationContext, contextDescriptor, typeNode);
         }
 
         if (ts.isIntersectionTypeNode(typeNode)) {
-            const qualifiedNullableTypes = typeNode.types.map(it => this._qualify(it)).flat();
+            const qualifiedNullableTypes = typeNode.types.map(it => this._qualify(compilationContext, contextDescriptor, it)).flat();
 
             if (qualifiedNullableTypes.includes(null)) {
-                CompilationContext.reportError({
-                    message: 'Can not qualify intersection type',
-                    node: typeNode,
-                    filePath: typeNode.getSourceFile().fileName,
-                });
-
+                compilationContext.report(new TypeQualifyError(
+                    'Intersection types is not supported.',
+                    typeNode,
+                    contextDescriptor.node,
+                ));
                 return null;
             }
 
@@ -108,13 +113,17 @@ export class TypeQualifier {
         return qualifiedType;
     }
 
-    private static _qualify(typeNode: ts.TypeNode): IQualifiedTypes | null {
+    private static _qualify(
+        compilationContext: CompilationContext,
+        contextDescriptor: IContextDescriptor,
+        typeNode: ts.TypeNode
+    ): IQualifiedTypes | null {
         if (ts.isParenthesizedTypeNode(typeNode)) {
-            CompilationContext.reportError({
-                message: 'Parenthesizing of types allowed only on top level of type',
-                node: typeNode,
-                filePath: typeNode.getSourceFile().fileName,
-            });
+            compilationContext.report(new TypeQualifyError(
+                'Parenthesizing in types is not allowed in nested types.',
+                typeNode,
+                contextDescriptor.node,
+            ));
 
             return null;
         }
@@ -128,12 +137,11 @@ export class TypeQualifier {
                     types: [literalTypeId],
                 };
             } else {
-                CompilationContext.reportError({
-                    message: 'Can not qualify literal type',
-                    node: typeNode,
-                    filePath: typeNode.getSourceFile().fileName,
-                });
-
+                compilationContext.report(new TypeQualifyError(
+                    'Can not qualify literal type.',
+                    typeNode,
+                    contextDescriptor.node,
+                ));
                 return null;
             }
         }
@@ -147,26 +155,24 @@ export class TypeQualifier {
                     types: [keywordTypeId]
                 };
             } else {
-                CompilationContext.reportError({
-                    message: 'Can not qualify keyword type',
-                    node: typeNode,
-                    filePath: typeNode.getSourceFile().fileName,
-                });
-
+                compilationContext.report(new TypeQualifyError(
+                    'Can not qualify keyword type.',
+                    typeNode,
+                    contextDescriptor.node,
+                ));
                 return null;
             }
         }
 
         if (ts.isUnionTypeNode(typeNode)) {
-            const qualifiedNullableTypes = typeNode.types.map(it => this._qualify(it)).flat();
+            const qualifiedNullableTypes = typeNode.types.map(it => this._qualify(compilationContext, contextDescriptor, it)).flat();
 
             if (qualifiedNullableTypes.includes(null)) {
-                CompilationContext.reportError({
-                    message: 'Can not qualify intersection type',
-                    node: typeNode,
-                    filePath: typeNode.getSourceFile().fileName,
-                });
-
+                compilationContext.report(new TypeQualifyError(
+                    'Can not qualify intersection type.',
+                    typeNode,
+                    contextDescriptor.node,
+                ));
                 return null;
             }
 
@@ -180,15 +186,14 @@ export class TypeQualifier {
         }
 
         if (ts.isArrayTypeNode(typeNode)) {
-            const qualified = this._qualify(typeNode.elementType);
+            const qualified = this._qualify(compilationContext, contextDescriptor, typeNode.elementType);
 
             if (qualified === null) {
-                CompilationContext.reportError({
-                    message: 'Can not qualify array type',
-                    node: typeNode,
-                    filePath: typeNode.getSourceFile().fileName,
-                });
-
+                compilationContext.report(new TypeQualifyError(
+                    'Can not qualify array type.',
+                    typeNode,
+                    contextDescriptor.node,
+                ));
                 return null;
             }
 
@@ -201,15 +206,14 @@ export class TypeQualifier {
         }
 
         if (ts.isIntersectionTypeNode(typeNode)) {
-            const qualifiedNullableTypes = typeNode.types.map(it => this._qualify(it)).flat();
+            const qualifiedNullableTypes = typeNode.types.map(it => this._qualify(compilationContext, contextDescriptor, it)).flat();
 
             if (qualifiedNullableTypes.includes(null)) {
-                CompilationContext.reportError({
-                    message: 'Can not qualify intersection type',
-                    node: typeNode,
-                    filePath: typeNode.getSourceFile().fileName,
-                });
-
+                compilationContext.report(new TypeQualifyError(
+                    'Can not qualify intersection type.',
+                    typeNode,
+                    contextDescriptor.node,
+                ));
                 return null;
             }
 
@@ -228,25 +232,25 @@ export class TypeQualifier {
                 typeNode.typeName.getText(),
             );
             if (nodeSourceDescriptor === null) {
-                CompilationContext.reportError({
-                    message: 'Can not qualify type reference',
-                    node: typeNode,
-                    filePath: typeNode.getSourceFile().fileName,
-                });
+                compilationContext.report(new TypeQualifyError(
+                    'Can not qualify type reference.',
+                    typeNode,
+                    contextDescriptor.node,
+                ));
                 return null;
             }
 
             const typeReferenceFullName = `${nodeSourceDescriptor.name}${nodeSourceDescriptor.path}`;
 
             const typeArguments = typeNode.typeArguments ?? factory.createNodeArray();
-            const nullableQualifiedTypeArguments = typeArguments.map(it => this._qualify(it));
+            const nullableQualifiedTypeArguments = typeArguments.map(it => this._qualify(compilationContext, contextDescriptor, it));
 
             if (nullableQualifiedTypeArguments.includes(null)) {
-                CompilationContext.reportError({
-                    message: 'Can not qualify type reference',
-                    node: typeNode,
-                    filePath: typeNode.getSourceFile().fileName,
-                });
+                compilationContext.report(new TypeQualifyError(
+                    'Can not qualify type reference.',
+                    typeNode,
+                    contextDescriptor.node,
+                ));
                 return null;
             }
 

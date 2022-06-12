@@ -1,10 +1,16 @@
 import * as ts from 'typescript';
 import { PropertyDeclaration } from 'typescript';
 import { isBeanDecorator } from './isBeanDecorator';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { isClassPropertyBean } from './isClassPropertyBean';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { IContextDescriptor } from '../../context/ContextRepository';
+import { MissingInitializerError } from '../../../exceptions/compilation/errors/MissingInitializerError';
 
-export const isExpressionBean = (node: ts.Node): node is PropertyDeclaration => {
+export const isExpressionBean = (
+    compilationContext: CompilationContext,
+    contextDescriptor: IContextDescriptor,
+    node: ts.Node
+): node is PropertyDeclaration => {
     if (isClassPropertyBean(node)) {
         return false;
     }
@@ -18,11 +24,11 @@ export const isExpressionBean = (node: ts.Node): node is PropertyDeclaration => 
     }
 
     if (node.initializer === undefined) {
-        CompilationContext.reportError({
-            node: node,
-            message: 'Property Bean should hold value',
-            filePath: node.getSourceFile().fileName,
-        });
+        compilationContext.report(new MissingInitializerError(
+            null,
+            node,
+            contextDescriptor.node,
+        ));
 
         return false;
     }

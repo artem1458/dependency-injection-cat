@@ -48,7 +48,7 @@
     "typescript": "4.X.X"
   },
   "dependencies": {
-    "chalk": "^5.0.1",
+    "chalk": "^4.1.2",
     "glob": "^8.0.3",
     "graphlib": "^2.1.8",
     "json-beautify": "^1.1.1",

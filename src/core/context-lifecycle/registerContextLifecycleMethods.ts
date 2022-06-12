@@ -6,10 +6,10 @@ import { isContextLifecycleArrowFunction } from './isContextLifecycleArrowFuncti
 import { registerLifecycleArrowFunction } from './registerLifecycleArrowFunction';
 import { LifecycleMethodsRepository } from './LifecycleMethodsRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { IncorrectUsageError } from '../../exceptions/compilation/errors/IncorrectUsageError';
 
 export const registerContextLifecycleMethods = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor
 ): void => {
     LifecycleMethodsRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
@@ -23,24 +23,22 @@ export const registerContextLifecycleMethods = (
 
         if (isContextLifecycleMethod(it)) {
             if (contextDescriptor.isGlobal) {
-                CompilationContext.reportError({
-                    node: it,
-                    filePath: contextDescriptor.absolutePath,
-                    relatedContextPath: contextDescriptor.absolutePath,
-                    message: 'Global Contexts does not support lifecycle methods',
-                });
+                compilationContext.report(new IncorrectUsageError(
+                    'Global Contexts do not support lifecycle methods',
+                    it,
+                    contextDescriptor.node,
+                ));
                 return;
             }
 
-            registerLifecycleMethod(contextDescriptor, it, lifecycles);
-        } else if (isContextLifecycleArrowFunction(it)) {
+            registerLifecycleMethod(compilationContext, contextDescriptor, it, lifecycles);
+        } else if (isContextLifecycleArrowFunction(compilationContext, contextDescriptor, it)) {
             if (contextDescriptor.isGlobal) {
-                CompilationContext.reportError({
-                    node: it,
-                    filePath: contextDescriptor.absolutePath,
-                    relatedContextPath: contextDescriptor.absolutePath,
-                    message: 'Global Contexts does not support lifecycle methods',
-                });
+                compilationContext.report(new IncorrectUsageError(
+                    'Global Contexts do not support lifecycle methods',
+                    it,
+                    contextDescriptor.node,
+                ));
                 return;
             }
 

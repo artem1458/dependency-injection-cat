@@ -1,12 +1,17 @@
 import * as ts from 'typescript';
 import { isContextLifecycleDecorator } from './getLifecycleTypes';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { isArrowFunctionBean } from '../ts-helpers/predicates/isArrowFunctionBean';
 import { isExpressionBean } from '../ts-helpers/predicates/isExpressionBean';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IContextDescriptor } from '../context/ContextRepository';
 
-export const isContextLifecycleArrowFunction = (node: ts.Node): node is ClassPropertyArrowFunction => {
-    if (isArrowFunctionBean(node) || isExpressionBean(node)) {
+export const isContextLifecycleArrowFunction = (
+    compilationContext: CompilationContext,
+    contextDescriptor: IContextDescriptor,
+    node: ts.Node
+): node is ClassPropertyArrowFunction => {
+    if (isArrowFunctionBean(compilationContext, contextDescriptor, node) || isExpressionBean(compilationContext, contextDescriptor, node)) {
         return false;
     }
 
@@ -19,12 +24,6 @@ export const isContextLifecycleArrowFunction = (node: ts.Node): node is ClassPro
     }
 
     if (node.initializer === undefined) {
-        CompilationContext.reportError({
-            node: node,
-            message: 'Context lifecycle method should be initialized',
-            filePath: node.getSourceFile().fileName,
-        });
-
         return false;
     }
 

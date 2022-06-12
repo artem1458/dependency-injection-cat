@@ -1,5 +1,5 @@
 import { AbstractCompilationError } from '../AbstractCompilationError';
-import { ErrorCode } from '../ErrorCode';
+import { ErrorCode } from '../../ErrorCode';
 
 export class IncorrectNameError extends AbstractCompilationError {
     public code = ErrorCode.DI_6;

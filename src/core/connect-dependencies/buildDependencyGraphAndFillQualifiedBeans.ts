@@ -1,15 +1,15 @@
 import { BeanRepository } from '../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../bean-dependencies/BeanDependenciesRepository';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { DependencyGraph } from './DependencyGraph';
 import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { DependencyResolvingError } from '../../exceptions/compilation/errors/DependencyResolvingError';
 
 export const buildDependencyGraphAndFillQualifiedBeans = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor
 ) => {
     const beansMap = BeanRepository.beanDescriptorRepository.get(contextDescriptor.name);
@@ -37,12 +37,11 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                     const uniqMergedBeans = uniqNotEmpty(mergedBeans);
 
                     if (uniqMergedBeans.length === 0) {
-                        CompilationContext.reportError({
-                            node: dependencyDescriptor.node,
-                            message: 'Not found any Bean candidates for list',
-                            filePath: beanDescriptor.contextDescriptor.absolutePath,
-                            relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
-                        });
+                        compilationContext.report(new DependencyResolvingError(
+                            `Can not find Bean candidates for ${dependencyDescriptor.parameterName}.`,
+                            beanDescriptor.node,
+                            contextDescriptor.node,
+                        ));
                         return;
                     }
 
@@ -62,10 +61,10 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                     const currentContextEmbeddedBeans = currentContextBeans
                         .filter(it => it !== beanDescriptor && it.beanKind === 'embedded');
                     const globalContextBeans =
-                        (BeanRepository.beanDescriptorRepository.get(GLOBAL_CONTEXT_NAME)?.
-                            get(dependencyDescriptor.qualifiedType.fullTypeId) ?? [])
+                        (BeanRepository.beanDescriptorRepository.get(GLOBAL_CONTEXT_NAME)?.get(dependencyDescriptor.qualifiedType.fullTypeId) ?? [])
                             .filter(it => it !== beanDescriptor);
 
+                    //<editor-fold desc="Trying to find in current context (not-embedded Beans)">
                     let nonEmbeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextNonEmbeddedBeans);
                     let embeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextEmbeddedBeans);
                     let beanCandidatesFromGlobalContext = uniqNotEmpty(globalContextBeans);
@@ -84,12 +83,11 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         && embeddedBeanCandidatesFromCurrentContext.length === 0
                         && beanCandidatesFromGlobalContext.length === 0
                     ) {
-                        CompilationContext.reportError({
-                            node: dependencyDescriptor.node,
-                            message: 'Bean for dependency is not registered',
-                            filePath: beanDescriptor.contextDescriptor.absolutePath,
-                            relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
-                        });
+                        compilationContext.report(new DependencyResolvingError(
+                            `Can not find Bean candidate for ${dependencyDescriptor.parameterName}.`,
+                            beanDescriptor.node,
+                            contextDescriptor.node,
+                        ));
                         return;
                     }
 
@@ -110,30 +108,24 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         }
 
                         if (beanCandidatesFromCurrentContextQualifiedByParameterName.length > 1) {
-                            CompilationContext.reportErrorWithMultipleNodes({
-                                nodes: [
-                                    dependencyDescriptor.node,
-                                    ...beanCandidatesFromCurrentContextQualifiedByParameterName.map(it => it.node),
-                                ],
-                                message: `Found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} Bean candidates, with same name, please rename one of beans`,
-                                filePath: beanDescriptor.contextDescriptor.absolutePath,
-                                relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
-                            });
+                            compilationContext.report(new DependencyResolvingError(
+                                `Can not find Bean candidate for ${dependencyDescriptor.parameterName}, found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates with same name.`,
+                                beanDescriptor.node,
+                                contextDescriptor.node,
+                            ));
                             return;
                         }
 
-                        CompilationContext.reportErrorWithMultipleNodes({
-                            nodes: [
-                                dependencyDescriptor.node,
-                                ...nonEmbeddedBeanCandidatesFromCurrentContext.map(it => it.node),
-                            ],
-                            message: `Found ${nonEmbeddedBeanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
-                            filePath: beanDescriptor.contextDescriptor.absolutePath,
-                            relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
-                        });
+                        compilationContext.report(new DependencyResolvingError(
+                            `Can not find Bean candidate for ${dependencyDescriptor.parameterName}, found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                            beanDescriptor.node,
+                            contextDescriptor.node,
+                        ));
                         return;
                     }
+                    //</editor-fold>
 
+                    //<editor-fold desc="Trying to find in current context (embedded Beans)">
                     if (embeddedBeanCandidatesFromCurrentContext.length === 1) {
                         dependencyDescriptor.qualifiedBeans.add(embeddedBeanCandidatesFromCurrentContext[0]);
                         DependencyGraph.addNodeWithEdges(beanDescriptor, embeddedBeanCandidatesFromCurrentContext);
@@ -151,30 +143,24 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         }
 
                         if (beansByParameterName.length > 1) {
-                            CompilationContext.reportErrorWithMultipleNodes({
-                                nodes: [
-                                    dependencyDescriptor.node,
-                                    ...beansByParameterName.map(it => it.node),
-                                ],
-                                message: `Found ${beansByParameterName.length} Embedded Bean candidates, with same name, please rename one of beans`,
-                                filePath: beanDescriptor.contextDescriptor.absolutePath,
-                                relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
-                            });
+                            compilationContext.report(new DependencyResolvingError(
+                                `Can not find EmbeddedBean candidate for ${dependencyDescriptor.parameterName}, found ${beansByParameterName.length} candidates with same name.`,
+                                beanDescriptor.node,
+                                contextDescriptor.node,
+                            ));
                             return;
                         }
 
-                        CompilationContext.reportErrorWithMultipleNodes({
-                            nodes: [
-                                dependencyDescriptor.node,
-                                ...embeddedBeanCandidatesFromCurrentContext.map(it => it.node),
-                            ],
-                            message: `Found ${embeddedBeanCandidatesFromCurrentContext.length} Embedded Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
-                            filePath: beanDescriptor.contextDescriptor.absolutePath,
-                            relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
-                        });
+                        compilationContext.report(new DependencyResolvingError(
+                            `Can not find EmbeddedBean candidate for ${dependencyDescriptor.parameterName}, found ${embeddedBeanCandidatesFromCurrentContext.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                            beanDescriptor.node,
+                            contextDescriptor.node,
+                        ));
                         return;
                     }
+                    //</editor-fold>
 
+                    //<editor-fold desc="Trying to find in global context">
                     if (beanCandidatesFromGlobalContext.length === 1) {
                         dependencyDescriptor.qualifiedBeans.add(beanCandidatesFromGlobalContext[0]);
                         DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidatesFromGlobalContext);
@@ -192,29 +178,22 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         }
 
                         if (beanCandidatesFromGlobalContextQualifiedByParameterName.length > 1) {
-                            CompilationContext.reportErrorWithMultipleNodes({
-                                nodes: [
-                                    dependencyDescriptor.node,
-                                    ...beanCandidatesFromGlobalContextQualifiedByParameterName.map(it => it.node),
-                                ],
-                                message: `Found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} Bean candidates in Global context, with same name, please rename one of beans`,
-                                filePath: beanDescriptor.contextDescriptor.absolutePath,
-                                relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
-                            });
+                            compilationContext.report(new DependencyResolvingError(
+                                `Can not find Bean candidate for ${dependencyDescriptor.parameterName}, found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} candidates in Global context with same name.`,
+                                beanDescriptor.node,
+                                contextDescriptor.node,
+                            ));
                             return;
                         }
 
-                        CompilationContext.reportErrorWithMultipleNodes({
-                            nodes: [
-                                dependencyDescriptor.node,
-                                ...beanCandidatesFromGlobalContext.map(it => it.node),
-                            ],
-                            message: `Found ${beanCandidatesFromGlobalContext.length} Bean candidates in Global context, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
-                            filePath: beanDescriptor.contextDescriptor.absolutePath,
-                            relatedContextPath: beanDescriptor.contextDescriptor.absolutePath,
-                        });
+                        compilationContext.report(new DependencyResolvingError(
+                            `Can not find Bean candidate for ${dependencyDescriptor.parameterName}, found ${beanCandidatesFromGlobalContext.length} candidates in Global context. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                            beanDescriptor.node,
+                            contextDescriptor.node,
+                        ));
                         return;
                     }
+                    //</editor-fold>
                 }
             });
         });

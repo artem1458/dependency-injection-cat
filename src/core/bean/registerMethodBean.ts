@@ -1,18 +1,17 @@
 import { IContextDescriptor } from '../context/ContextRepository';
 import * as ts from 'typescript';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
 import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
 import { MissingInitializerError } from '../../exceptions/compilation/errors/MissingInitializerError';
 import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
 import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
 
 export const registerMethodBean = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor,
     classElement: ts.MethodDeclaration,
 ): void => {
@@ -20,7 +19,7 @@ export const registerMethodBean = (
 
     if (restrictedClassMemberNames.has(classElementName)) {
         compilationContext.report(new IncorrectNameError(
-            `${classElementName} name is reserved for the di-container.`,
+            `"${classElementName}" name is reserved for the di-container.`,
             classElement.name,
             contextDescriptor.node,
         ));
@@ -36,7 +35,7 @@ export const registerMethodBean = (
     }
 
     const methodReturnType = classElement.type ?? null;
-    const beanInfo = getPropertyDecoratorBeanInfo(classElement);
+    const beanInfo = getPropertyDecoratorBeanInfo(compilationContext, contextDescriptor, classElement);
 
     if (methodReturnType === null) {
         compilationContext.report(new MissingTypeDefinitionError(
@@ -47,7 +46,7 @@ export const registerMethodBean = (
         return;
     }
 
-    const qualifiedType = TypeQualifier.qualify(methodReturnType);
+    const qualifiedType = TypeQualifier.qualify(compilationContext, contextDescriptor, methodReturnType);
 
     if (qualifiedType === null) {
         compilationContext.report(new TypeQualifyError(

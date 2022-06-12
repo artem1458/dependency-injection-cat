@@ -1,5 +1,5 @@
 import { AbstractCompilationError } from '../AbstractCompilationError';
-import { ErrorCode } from '../ErrorCode';
+import { ErrorCode } from '../../ErrorCode';
 
 export class MissingBeanDeclarationError extends AbstractCompilationError {
     public code = ErrorCode.DI_5;

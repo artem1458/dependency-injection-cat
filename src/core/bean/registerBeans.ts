@@ -10,9 +10,9 @@ import { isExpressionBean } from '../ts-helpers/predicates/isExpressionBean';
 import { registerExpressionBean } from './registerExpressionBean';
 import { isEmbeddedBean } from '../ts-helpers/predicates/isEmbeddedBean';
 import { registerEmbeddedBean } from './registerEmbeddedBeans';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
-export function registerBeans(compilationContext: CompilationContext2, contextDescriptor: IContextDescriptor) {
+export function registerBeans(compilationContext: CompilationContext, contextDescriptor: IContextDescriptor) {
     BeanRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
 
     contextDescriptor.node.members.forEach((classElement) => {
@@ -22,13 +22,13 @@ export function registerBeans(compilationContext: CompilationContext2, contextDe
         if (isClassPropertyBean(classElement)) {
             registerPropertyBean(compilationContext, contextDescriptor, classElement);
         }
-        if (isArrowFunctionBean(classElement)) {
+        if (isArrowFunctionBean(compilationContext, contextDescriptor, classElement)) {
             registerArrowFunctionBean(compilationContext, contextDescriptor, classElement);
         }
-        if (isExpressionBean(classElement)) {
+        if (isExpressionBean(compilationContext, contextDescriptor, classElement)) {
             registerExpressionBean(compilationContext, contextDescriptor, classElement);
         }
-        if (isEmbeddedBean(classElement)) {
+        if (isEmbeddedBean(compilationContext, contextDescriptor, classElement)) {
             registerEmbeddedBean(compilationContext, contextDescriptor, classElement);
         }
     });

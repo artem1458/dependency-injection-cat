@@ -1,9 +1,17 @@
 import ts from 'typescript';
 import { isParameterQualifierDecorator } from '../ts-helpers/predicates/isParameterQualifierDecorator';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../context/ContextRepository';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { DecoratorsCountError } from '../../exceptions/compilation/errors/DecoratorsCountError';
+import { IncorrectArgumentError } from '../../exceptions/compilation/errors/IncorrectArgumentError';
+import { IncorrectExpressionUsageError } from '../../exceptions/compilation/errors/IncorrectExpressionUsageError';
+import { IncorrectArgumentsLengthError } from '../../exceptions/compilation/errors/IncorrectArgumentsLengthError';
 
-export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDeclaration, contextDescriptor: IContextDescriptor): string | null {
+export function getQualifierValueFromFunctionArgument(
+    compilationContext: CompilationContext,
+    parameter: ts.ParameterDeclaration,
+    contextDescriptor: IContextDescriptor
+): string | null {
     const qualifierDecorators = parameter.decorators?.filter(isParameterQualifierDecorator) ?? [];
 
     if (qualifierDecorators.length === 0) {
@@ -11,25 +19,24 @@ export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDec
     }
 
     if (qualifierDecorators.length > 1) {
-        CompilationContext.reportError({
-            node: parameter,
-            message: 'Parameter Qualifier should not have more than 1 @Qualifier decorator',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
+        qualifierDecorators.slice(1).forEach(it => {
+            compilationContext.report(new DecoratorsCountError(
+                'Only 1 @Qualifier decorator is allowed',
+                it,
+                contextDescriptor.node,
+            ));
         });
-
         return null;
     }
 
     const decoratorExpression = qualifierDecorators[0].expression;
 
     if (ts.isIdentifier(decoratorExpression)) {
-        CompilationContext.reportError({
-            node: qualifierDecorators[0],
-            message: 'You should call @Qualifier with string, when decorating parameter',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectExpressionUsageError(
+            'You should call @Qualifier with a name argument.',
+            qualifierDecorators[0],
+            contextDescriptor.node,
+        ));
         return null;
     }
 
@@ -37,34 +44,31 @@ export function getQualifierValueFromFunctionArgument(parameter: ts.ParameterDec
         const args = decoratorExpression.arguments;
 
         if (args.length === 0) {
-            CompilationContext.reportError({
-                node: decoratorExpression,
-                message: '@Qualifier should have only 1 argument',
-                filePath: contextDescriptor.absolutePath,
-                relatedContextPath: contextDescriptor.absolutePath,
-            });
+            compilationContext.report(new IncorrectArgumentsLengthError(
+                null,
+                decoratorExpression,
+                contextDescriptor.node,
+            ));
             return null;
         }
 
         if (args.length > 1) {
-            CompilationContext.reportError({
-                node: decoratorExpression,
-                message: '@Qualifier should have only 1 argument',
-                filePath: contextDescriptor.absolutePath,
-                relatedContextPath: contextDescriptor.absolutePath,
-            });
+            compilationContext.report(new IncorrectArgumentsLengthError(
+                null,
+                decoratorExpression,
+                contextDescriptor.node,
+            ));
             return null;
         }
 
         const qualifierValue = args[0];
 
         if (!ts.isStringLiteral(qualifierValue)) {
-            CompilationContext.reportError({
-                node: decoratorExpression,
-                message: 'Qualifier should be a string literal',
-                filePath: contextDescriptor.absolutePath,
-                relatedContextPath: contextDescriptor.absolutePath,
-            });
+            compilationContext.report(new IncorrectArgumentError(
+                'Should be a plain string literal.',
+                decoratorExpression,
+                contextDescriptor.node,
+            ));
             return null;
         }
 

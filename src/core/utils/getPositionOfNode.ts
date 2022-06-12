@@ -1,12 +1,22 @@
 import ts from 'typescript';
 import LineColumn from 'line-column';
 
-export const getPositionOfNode = (node: ts.Node): [number, number] => {
+export interface INodePosition {
+    line: number;
+    startColumn: number;
+    endColumn: number;
+}
+
+export const getPositionOfNode = (node: ts.Node): INodePosition => {
     const sourceFileText = node.getSourceFile().text;
     const lengthBeforeNode = sourceFileText.slice(0, node.getStart()).length;
     const actualPosition = sourceFileText.slice(node.getStart()).search(/\S+/) + lengthBeforeNode;
     const columnFinder = LineColumn(sourceFileText);
     const result = columnFinder.fromIndex(actualPosition) ?? { col: 0, line: 0 };
 
-    return [result.line, result.col];
+    return {
+        line: result.line,
+        startColumn: result.col,
+        endColumn: result.col + node.getWidth(),
+    };
 };

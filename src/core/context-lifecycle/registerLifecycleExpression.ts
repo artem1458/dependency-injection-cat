@@ -7,7 +7,6 @@ import {
 } from './LifecycleMethodsRepository';
 import { getQualifierValueFromFunctionArgument } from '../bean-dependencies/getQualifierValueFromFunctionArgument';
 import { getParameterType } from '../bean-dependencies/getParameterType';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { BeanRepository } from '../bean/BeanRepository';
 import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
@@ -16,10 +15,14 @@ import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
 import { restrictedClassMemberNames } from '../bean/constants';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
+import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
+import { DependencyResolvingError } from '../../exceptions/compilation/errors/DependencyResolvingError';
+import { unquoteString } from '../utils/unquoteString';
 
 export const registerLifecycleExpression = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor,
     classMemberName: string,
     node: ClassPropertyArrowFunction | ts.MethodDeclaration,
@@ -27,12 +30,11 @@ export const registerLifecycleExpression = (
     lifecycleNodeKind: TLifecycleNodeKind,
 ) => {
     if (restrictedClassMemberNames.has(classMemberName)) {
-        CompilationContext.reportError({
-            node: node,
-            message: `"${classMemberName}" name is reserved for the di-container, please use another name instead`,
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectNameError(
+            `"${classMemberName}" name is reserved for the di-container.`,
+            node.name,
+            contextDescriptor.node,
+        ));
         return;
     }
 
@@ -47,17 +49,16 @@ export const registerLifecycleExpression = (
     const parameters = ts.isMethodDeclaration(node) ? node.parameters : node.initializer.parameters;
 
     parameters.forEach(parameter => {
-        const parameterName = parameter.name.getText();
-        const qualifier = getQualifierValueFromFunctionArgument(parameter, contextDescriptor);
-        const qualifiedType = getParameterType(parameter);
+        const parameterName = unquoteString(parameter.name.getText());
+        const qualifier = getQualifierValueFromFunctionArgument(compilationContext, parameter, contextDescriptor);
+        const qualifiedType = getParameterType(compilationContext, contextDescriptor, parameter);
 
         if (qualifiedType === null) {
-            CompilationContext.reportError({
-                node: parameter,
-                message: 'Can\'t qualify type of Context Lifecycle parameter',
-                filePath: contextDescriptor.absolutePath,
-                relatedContextPath: contextDescriptor.absolutePath,
-            });
+            compilationContext.report(new TypeQualifyError(
+                null,
+                parameter,
+                contextDescriptor.node
+            ));
             return;
         }
 
@@ -74,12 +75,11 @@ export const registerLifecycleExpression = (
             const uniqMergedBeans = uniqNotEmpty(mergedBeans);
 
             if (uniqMergedBeans.length === 0) {
-                CompilationContext.reportError({
-                    node: parameter,
-                    message: 'Not found any Bean candidates for list',
-                    filePath: contextDescriptor.absolutePath,
-                    relatedContextPath: contextDescriptor.absolutePath,
-                });
+                compilationContext.report(new DependencyResolvingError(
+                    `Can not find Bean candidates for ${parameterName}.`,
+                    parameter,
+                    contextDescriptor.node,
+                ));
                 return;
             }
 
@@ -116,12 +116,11 @@ export const registerLifecycleExpression = (
                 && embeddedBeanCandidatesFromCurrentContext.length === 0
                 && beanCandidatesFromGlobalContext.length === 0
             ) {
-                CompilationContext.reportError({
-                    node: parameter,
-                    message: 'Bean for dependency is not registered',
-                    filePath: contextDescriptor.absolutePath,
-                    relatedContextPath: contextDescriptor.absolutePath,
-                });
+                compilationContext.report(new DependencyResolvingError(
+                    `Can not find Bean candidate for ${parameterName}.`,
+                    parameter,
+                    contextDescriptor.node,
+                ));
                 return;
             }
 
@@ -148,27 +147,19 @@ export const registerLifecycleExpression = (
                 }
 
                 if (beanCandidatesFromCurrentContextQualifiedByParameterName.length > 1) {
-                    CompilationContext.reportErrorWithMultipleNodes({
-                        nodes: [
-                            parameter,
-                            ...beanCandidatesFromCurrentContextQualifiedByParameterName.map(it => it.node),
-                        ],
-                        message: `Found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} Bean candidates, with same name, please rename one of beans`,
-                        filePath: contextDescriptor.absolutePath,
-                        relatedContextPath: contextDescriptor.absolutePath,
-                    });
+                    compilationContext.report(new DependencyResolvingError(
+                        `Can not find Bean candidate for ${parameterName}, found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates with same name.`,
+                        parameter,
+                        contextDescriptor.node,
+                    ));
                     return;
                 }
 
-                CompilationContext.reportErrorWithMultipleNodes({
-                    nodes: [
-                        parameter,
-                        ...nonEmbeddedBeanCandidatesFromCurrentContext.map(it => it.node),
-                    ],
-                    message: `Found ${nonEmbeddedBeanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
-                    filePath: contextDescriptor.absolutePath,
-                    relatedContextPath: contextDescriptor.absolutePath,
-                });
+                compilationContext.report(new DependencyResolvingError(
+                    `Can not find Bean candidate for ${parameterName}, found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                    parameter,
+                    contextDescriptor.node,
+                ));
                 return;
             }
 
@@ -195,27 +186,19 @@ export const registerLifecycleExpression = (
                 }
 
                 if (beansByParameterName.length > 1) {
-                    CompilationContext.reportErrorWithMultipleNodes({
-                        nodes: [
-                            parameter,
-                            ...beansByParameterName.map(it => it.node),
-                        ],
-                        message: `Found ${beansByParameterName.length} Bean candidates, with same name, please rename one of beans`,
-                        filePath: contextDescriptor.absolutePath,
-                        relatedContextPath: contextDescriptor.absolutePath,
-                    });
+                    compilationContext.report(new DependencyResolvingError(
+                        `Can not find EmbeddedBean candidate for ${parameterName}, found ${beansByParameterName.length} candidates with same name.`,
+                        parameter,
+                        contextDescriptor.node,
+                    ));
                     return;
                 }
 
-                CompilationContext.reportErrorWithMultipleNodes({
-                    nodes: [
-                        parameter,
-                        ...embeddedBeanCandidatesFromCurrentContext.map(it => it.node),
-                    ],
-                    message: `Found ${embeddedBeanCandidatesFromCurrentContext.length} Bean candidates, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
-                    filePath: contextDescriptor.absolutePath,
-                    relatedContextPath: contextDescriptor.absolutePath,
-                });
+                compilationContext.report(new DependencyResolvingError(
+                    `Can not find EmbeddedBean candidate for ${parameterName}, found ${embeddedBeanCandidatesFromCurrentContext.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                    parameter,
+                    contextDescriptor.node,
+                ));
                 return;
             }
 
@@ -242,27 +225,19 @@ export const registerLifecycleExpression = (
                 }
 
                 if (beanCandidatesFromGlobalContextQualifiedByParameterName.length > 1) {
-                    CompilationContext.reportErrorWithMultipleNodes({
-                        nodes: [
-                            parameter,
-                            ...beanCandidatesFromGlobalContextQualifiedByParameterName.map(it => it.node),
-                        ],
-                        message: `Found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} Bean candidates in Global context, with same name, please rename one of beans`,
-                        filePath: contextDescriptor.absolutePath,
-                        relatedContextPath: contextDescriptor.absolutePath,
-                    });
+                    compilationContext.report(new DependencyResolvingError(
+                        `Can not find Bean candidate for ${parameterName}, found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} candidates in Global context with same name.`,
+                        parameter,
+                        contextDescriptor.node,
+                    ));
                     return;
                 }
 
-                CompilationContext.reportErrorWithMultipleNodes({
-                    nodes: [
-                        parameter,
-                        ...beanCandidatesFromGlobalContext.map(it => it.node),
-                    ],
-                    message: `Found ${beanCandidatesFromGlobalContext.length} Bean candidates in Global context, please use @Qualifier or rename parameter to match bean name, to specify which Bean should be injected`,
-                    filePath: contextDescriptor.absolutePath,
-                    relatedContextPath: contextDescriptor.absolutePath,
-                });
+                compilationContext.report(new DependencyResolvingError(
+                    `Can not find Bean candidate for ${parameterName}, found ${beanCandidatesFromGlobalContext.length} candidates in Global context. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                    parameter,
+                    contextDescriptor.node,
+                ));
                 return;
             }
 

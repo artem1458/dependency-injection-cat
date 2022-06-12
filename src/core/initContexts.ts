@@ -1,16 +1,18 @@
 import { TsConfigProvider } from './ts-config-path-provider/TsConfigProvider';
 import { PathResolver } from './ts-helpers/path-resolver/PathResolver';
-import { ProgramRepository } from './program/ProgramRepository';
 import { registerGlobalCatContext } from './context/registerGlobalCatContext';
 import { getContextPaths } from './context/getContextPaths';
 import { ContextRepository } from './context/ContextRepository';
 import ts, { ScriptTarget } from 'typescript';
 import fs from 'fs';
 import { registerBeans } from './bean/registerBeans';
+import { CompilationContext } from '../compilation-context/CompilationContext';
 
 let wasInitiated = false;
 
-export const initContexts = () => {
+export const initContexts = (
+    compilationContext: CompilationContext,
+) => {
     if (wasInitiated) {
         return;
     }
@@ -18,7 +20,6 @@ export const initContexts = () => {
 
     TsConfigProvider.init();
     PathResolver.init();
-    ProgramRepository.initProgram([]);
 
     getContextPaths()
         .map(it => ts.createSourceFile(
@@ -27,6 +28,6 @@ export const initContexts = () => {
             ScriptTarget.ESNext,
             true,
         ))
-        .forEach(registerGlobalCatContext);
-    ContextRepository.globalContexts.forEach(registerBeans);
+        .forEach(it => registerGlobalCatContext(compilationContext, it));
+    ContextRepository.globalContexts.forEach(it => registerBeans(compilationContext, it));
 };

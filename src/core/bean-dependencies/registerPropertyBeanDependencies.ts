@@ -2,34 +2,36 @@ import ts from 'typescript';
 import { IBeanDescriptor } from '../bean/BeanRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { SourceFilesCache } from '../ts-helpers/source-files-cache/SourceFilesCache';
-import { findClassDeclarationInSourceFileByName } from '../ts-helpers/predicates/findClassDeclarationInSourceFileByName';
+import {
+    findClassDeclarationInSourceFileByName
+} from '../ts-helpers/predicates/findClassDeclarationInSourceFileByName';
 import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
+import { DependencyResolvingError } from '../../exceptions/compilation/errors/DependencyResolvingError';
 
 export const registerPropertyBeanDependencies = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     descriptor: IBeanDescriptor<ClassPropertyDeclarationWithInitializer>
 ) => {
     //Assuming that we're already checked that first argument in property bean is reference
     const classReference = descriptor.node.initializer.arguments[0];
 
-    const nameToFind = classReference.getText();
+    const classReferenceName = classReference.getText();
     const sourceFile = classReference.getSourceFile();
 
-    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(sourceFile, nameToFind);
+    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(sourceFile, classReferenceName);
 
     if (nodeSourceDescriptor === null) {
-        CompilationContext.reportError({
-            node: classReference,
-            message: 'Can\'t qualify property Bean dependencies, please try to use method Bean',
-            filePath: descriptor.contextDescriptor.absolutePath,
-            relatedContextPath: descriptor.contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new DependencyResolvingError(
+            'Try to use method bean instead.',
+            classReference,
+            descriptor.contextDescriptor.node,
+        ));
         return;
     }
 
@@ -38,12 +40,11 @@ export const registerPropertyBeanDependencies = (
     descriptor.beanSourceLocation = nodeSourceDescriptor.path;
 
     if (classDeclaration === null) {
-        CompilationContext.reportError({
-            node: classReference,
-            message: 'Can\'t qualify property Bean dependencies, please try to use method bean',
-            filePath: descriptor.contextDescriptor.absolutePath,
-            relatedContextPath: descriptor.contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new DependencyResolvingError(
+            'Try to use method bean instead.',
+            classReference,
+            descriptor.contextDescriptor.node,
+        ));
         return;
     }
 
@@ -54,7 +55,10 @@ export const registerPropertyBeanDependencies = (
     }
 
     const parameterTypes: Array<[ts.ParameterDeclaration, QualifiedType | null]> =
-        constructor.parameters.map(parameter => [parameter, getParameterType(parameter)]);
+        constructor.parameters.map(parameter => [
+            parameter,
+            getParameterType(compilationContext, descriptor.contextDescriptor, parameter)
+        ]);
 
     const qualifiedParameters = parameterTypes.filter(([_, parameterType]) =>
         parameterType !== null) as Array<[ts.ParameterDeclaration, QualifiedType]>;
@@ -73,18 +77,13 @@ export const registerPropertyBeanDependencies = (
         );
     });
 
-    const unQualifiedParameters = parameterTypes.filter(([_, parameterType]) => parameterType === null);
-    if (unQualifiedParameters.length === 0) {
-        return;
-    }
+    const unqualifiedParameters = parameterTypes.filter(([_, parameterType]) => parameterType === null);
 
-    const unQualifiedParametersText = unQualifiedParameters
-        .map(([parameter]) => `${parameter.getText()} <--`).join('\n');
-
-    CompilationContext.reportError({
-        node: classReference,
-        message: `Class "${classReference.getText()}" have some unqualified dependencies, please try to use "method Bean" instead:\n${unQualifiedParametersText}`,
-        filePath: descriptor.contextDescriptor.absolutePath,
-        relatedContextPath: descriptor.contextDescriptor.absolutePath,
+    unqualifiedParameters.forEach(([parameter]) => {
+        compilationContext.report(new TypeQualifyError(
+            `Parameter name: ${parameter.name.getText()}`,
+            classReference,
+            descriptor.contextDescriptor.node,
+        ));
     });
 };

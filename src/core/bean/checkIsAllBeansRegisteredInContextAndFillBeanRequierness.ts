@@ -4,7 +4,7 @@ import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descripto
 import { unquoteString } from '../utils/unquoteString';
 import { BeanRepository, IBeanDescriptorWithId } from './BeanRepository';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
 import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
 import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
@@ -12,7 +12,7 @@ import { MissingBeanDeclarationError } from '../../exceptions/compilation/errors
 
 //Only for non-global contexts
 export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor
 ) => {
     const extendsHeritageClause = contextDescriptor.node.heritageClauses
@@ -106,7 +106,7 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
         }
 
         const requiredBeanName = unquoteString(requiredBeanProperty.name.getText());
-        const qualifiedPropertyType = TypeQualifier.qualify(requiredBeanProperty.type);
+        const qualifiedPropertyType = TypeQualifier.qualify(compilationContext, contextDescriptor, requiredBeanProperty.type);
 
         if (qualifiedPropertyType === null) {
             compilationContext.report(new TypeQualifyError(

@@ -6,20 +6,25 @@ import { unquoteString } from '../utils/unquoteString';
 import minimatch from 'minimatch';
 import { diConfig } from '../../external/config';
 import { registerAndTransformContext } from '../build-context/registerAndTransformContext';
+import { TransformationContext } from '../../compilation-context/TransformationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
-export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> => context => {
+export const getTransformerFactory = (
+    compilationContext: CompilationContext,
+    transformationContext: TransformationContext,
+): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
         let transformedSourceFile: ts.SourceFile = sourceFile;
 
         if (minimatch(sourceFile.fileName, diConfig.diConfigPattern!)) {
-            transformedSourceFile = registerAndTransformContext(context, transformedSourceFile);
+            transformedSourceFile = registerAndTransformContext(compilationContext, context, transformedSourceFile);
         }
 
         const factoryImportsToAdd: ts.ImportDeclaration[] = [];
 
         const visitor: ts.Visitor = (node => {
             if (isContainerAccess(node)) {
-                return replaceContainerCall(node, factoryImportsToAdd);
+                return replaceContainerCall(transformationContext, node, factoryImportsToAdd);
             }
 
             return ts.visitEachChild(node, visitor, context);

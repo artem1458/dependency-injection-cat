@@ -9,9 +9,10 @@ import { isNamedImports, isNamespaceImportDeclaration } from './ImportDeclaratio
 import { unquoteString } from '../../utils/unquoteString';
 import { PathResolverCache } from '../path-resolver/PathResolverCache';
 import { SourceFilesCache } from '../source-files-cache/SourceFilesCache';
-import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './ExportDeclarationWithoutClauseAndModuleSpecifier';
+import {
+    isExportDeclarationWithoutClauseAndWithModuleSpecifier
+} from './ExportDeclarationWithoutClauseAndModuleSpecifier';
 import { isExternalExportDeclaration, isNamedExternalExportsDeclaration } from './ExternalExportDeclaration';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { isPathRelative } from '../../utils/isPathRelative';
 
 //TODO Add support for default imports/exports
@@ -156,11 +157,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         );
 
         if (!upath.isAbsolute(resolvedPath)) {
-            CompilationContext.reportError({
-                node: externalNamespaceExport,
-                message: 'DI container does not support export * as Something from "node-module"',
-                filePath: sourceFile.fileName,
-            });
+            console.error('DI container does not support export * as Something from "node-module"');
 
             return null;
         }
@@ -192,11 +189,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         );
 
         if (!upath.isAbsolute(resolvedPath)) {
-            CompilationContext.reportError({
-                node: externalExportSpecifier,
-                message: 'DI container does not support export * as Something from "node-module"',
-                filePath: sourceFile.fileName,
-            });
+            console.error('DI container does not support export * as Something from "node-module"');
 
             return null;
         }
@@ -218,11 +211,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
         );
 
         if (!upath.isAbsolute(resolvedPath)) {
-            CompilationContext.reportError({
-                message: 'DI container does not support export * from "node-module"',
-                node: it,
-                filePath: sourceFile.fileName,
-            });
+            console.error('DI container does not support export * as Something from "node-module"');
 
             return null;
         }

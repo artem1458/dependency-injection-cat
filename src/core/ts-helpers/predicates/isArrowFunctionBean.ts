@@ -2,8 +2,14 @@ import * as ts from 'typescript';
 import { ClassPropertyArrowFunction } from '../types';
 import { isBeanDecorator } from './isBeanDecorator';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { IContextDescriptor } from '../../context/ContextRepository';
+import { MissingInitializerError } from '../../../exceptions/compilation/errors/MissingInitializerError';
 
-export const isArrowFunctionBean = (node: ts.Node): node is ClassPropertyArrowFunction => {
+export const isArrowFunctionBean = (
+    compilationContext: CompilationContext,
+    contextDescriptor: IContextDescriptor,
+    node: ts.Node
+): node is ClassPropertyArrowFunction => {
     if (!ts.isPropertyDeclaration(node)) {
         return false;
     }
@@ -13,11 +19,11 @@ export const isArrowFunctionBean = (node: ts.Node): node is ClassPropertyArrowFu
     }
 
     if (node.initializer === undefined) {
-        CompilationContext.reportError({
-            node: node,
-            message: 'Arrow function Bean should be initialized',
-            filePath: node.getSourceFile().fileName,
-        });
+        compilationContext.report(new MissingInitializerError(
+            null,
+            node,
+            contextDescriptor.node,
+        ));
 
         return false;
     }

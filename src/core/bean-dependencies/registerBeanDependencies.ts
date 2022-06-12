@@ -6,10 +6,10 @@ import { ClassPropertyArrowFunction, ClassPropertyDeclarationWithInitializer } f
 import { IContextDescriptor } from '../context/ContextRepository';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { registerArrowFunctionBeanDependencies } from './registerArrowFunctionBeanDependencies';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export const registerBeanDependencies = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor,
 ) => {
     BeanDependenciesRepository.clearBeanDependenciesByContextDescriptor(contextDescriptor);

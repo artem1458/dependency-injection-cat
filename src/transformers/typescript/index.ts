@@ -2,24 +2,34 @@ import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { initContexts } from '../../core/initContexts';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import DICatWebpackPlugin from '../../plugins/webpack';
 import { get } from 'lodash';
+import { getTransformersContext } from '../getTransformersContext';
+import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
 
 export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<ts.SourceFile> => {
     initDiConfig(config);
-    initContexts();
+    const [
+        compilationContext,
+        transformationContext
+    ] = getTransformersContext();
+    initContexts(compilationContext);
 
-    const transformerFactory = getTransformerFactory();
+    const transformerFactory = getTransformerFactory(compilationContext, transformationContext);
 
     return context => sourceFile => {
         const transformedSourceFile = transformerFactory(context)(sourceFile);
 
         if (!get(DICatWebpackPlugin, 'isErrorsHandledByWebpack')) {
-            const errorMessage = CompilationContext.getErrorMessage();
+            const [compilationContext, transformationContext] = getTransformersContext();
+            const message = BuildErrorFormatter.formatErrors(
+                Array.from(compilationContext.errors.values()),
+                Array.from(transformationContext.errors.values()),
+            );
 
-            if (errorMessage !== null) {
-                throw new Error(errorMessage);
+            if (message !== null) {
+                console.log(message);
+                process.exit(1);
             }
         }
 

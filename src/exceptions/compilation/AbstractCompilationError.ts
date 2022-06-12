@@ -1,13 +1,13 @@
 import ts from 'typescript';
-import LineColumn from 'line-column';
-import { ErrorCode } from './ErrorCode';
+import { ErrorCode } from '../ErrorCode';
 import { NamedClassDeclaration } from '../../core/ts-helpers/types';
 import { unquoteString } from '../../core/utils/unquoteString';
+import { getPositionOfNode, INodePosition } from '../../core/utils/getPositionOfNode';
 
 export abstract class AbstractCompilationError {
     public abstract code: ErrorCode
     public abstract description: string
-    public readonly position: [start: number, end: number];
+    public readonly position: INodePosition;
     public readonly contextDetails: IContextDetails | null;
     public readonly filePath: string;
 
@@ -16,19 +16,9 @@ export abstract class AbstractCompilationError {
         node: ts.Node,
         contextNode: NamedClassDeclaration | null
     ) {
-        this.position = this.getNodePosition(node);
+        this.position = getPositionOfNode(node);
         this.filePath = node.getSourceFile().fileName;
         this.contextDetails = this.getContextDetails(contextNode);
-    }
-
-    private getNodePosition(node: ts.Node): typeof this.position {
-        const sourceFileText = node.getSourceFile().text;
-        const lengthBeforeNode = sourceFileText.slice(0, node.getStart()).length;
-        const actualPosition = sourceFileText.slice(node.getStart()).search(/\S+/) + lengthBeforeNode;
-        const columnFinder = LineColumn(sourceFileText);
-        const result = columnFinder.fromIndex(actualPosition) ?? { col: 0, line: 0 };
-
-        return [result.line, result.col];
     }
 
     private getContextDetails(contextNode: NamedClassDeclaration | null): IContextDetails | null {
@@ -39,7 +29,7 @@ export abstract class AbstractCompilationError {
         return {
             name: unquoteString(contextNode.name.getText()),
             path: contextNode.getSourceFile().fileName,
-            position: this.getNodePosition(contextNode.name),
+            namePosition: getPositionOfNode(contextNode.name),
         };
     }
 }
@@ -47,5 +37,5 @@ export abstract class AbstractCompilationError {
 export interface IContextDetails {
     name: string;
     path: string;
-    position: [start: number, end: number];
+    namePosition: INodePosition;
 }

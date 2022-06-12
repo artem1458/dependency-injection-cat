@@ -1,11 +1,17 @@
 import ts from 'typescript';
 import { isClassPropertyBean } from './isClassPropertyBean';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { isExpressionBean } from './isExpressionBean';
 import { isEmbeddedBeanDecorator } from './isEmbeddedBeanDecorator';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { IContextDescriptor } from '../../context/ContextRepository';
+import { MissingInitializerError } from '../../../exceptions/compilation/errors/MissingInitializerError';
 
-export const isEmbeddedBean = (node: ts.Node): node is ts.PropertyDeclaration => {
-    if (isClassPropertyBean(node) || isExpressionBean(node)) {
+export const isEmbeddedBean = (
+    compilationContext: CompilationContext,
+    contextDescriptor: IContextDescriptor,
+    node: ts.Node
+): node is ts.PropertyDeclaration => {
+    if (isClassPropertyBean(node) || isExpressionBean(compilationContext, contextDescriptor, node)) {
         return false;
     }
 
@@ -18,11 +24,11 @@ export const isEmbeddedBean = (node: ts.Node): node is ts.PropertyDeclaration =>
     }
 
     if (node.initializer === undefined) {
-        CompilationContext.reportError({
-            node: node,
-            message: 'Embedded Bean should hold value',
-            filePath: node.getSourceFile().fileName,
-        });
+        compilationContext.report(new MissingInitializerError(
+            null,
+            node,
+            contextDescriptor.node,
+        ));
 
         return false;
     }

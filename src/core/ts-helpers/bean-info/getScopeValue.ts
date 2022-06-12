@@ -1,12 +1,19 @@
 import * as ts from 'typescript';
-import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { unquoteString } from '../../utils/unquoteString';
 import { TBeanScopeValue } from './ICompilationBeanInfo';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { IContextDescriptor } from '../../context/ContextRepository';
+import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';
 
 const scopes: Array<TBeanScopeValue | null> = ['singleton', 'prototype'];
 
-export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScopeValue => {
+export const getScopeValue = (
+    compilationContext: CompilationContext,
+    contextDescriptor: IContextDescriptor,
+    expression: ts.ObjectLiteralExpression
+): TBeanScopeValue => {
     const scopeNode = expression.properties.find(it => it.name?.getText() === 'scope');
+
     if (scopeNode === undefined) {
         return 'singleton';
     }
@@ -15,12 +22,11 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
 
     if (ts.isPropertyAssignment(scopeNode)) {
         if (!ts.isStringLiteral(scopeNode.initializer)) {
-            CompilationContext.reportError({
-                message: 'Bean scope should be a string literal',
-                node: scopeNode,
-                filePath: expression.getSourceFile().fileName,
-                relatedContextPath: expression.getSourceFile().fileName,
-            });
+            compilationContext.report(new IncorrectArgumentError(
+                'Bean scope value should be a string literal',
+                scopeNode,
+                contextDescriptor.node,
+            ));
             return 'singleton';
         }
 
@@ -28,12 +34,11 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
     }
 
     if (!scopes.includes(scopeValue as TBeanScopeValue)) {
-        CompilationContext.reportError({
-            message: 'Scope in Bean should be a "prototype" or "singleton"',
-            node: scopeNode,
-            filePath: expression.getSourceFile().fileName,
-            relatedContextPath: expression.getSourceFile().fileName,
-        });
+        compilationContext.report(new IncorrectArgumentError(
+            'Bean scope value should be a a "prototype" or "singleton"',
+            scopeNode,
+            contextDescriptor.node,
+        ));
         return 'singleton';
     }
 

@@ -1,11 +1,10 @@
 import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
-import ts from 'typescript';
 import { IContextDescriptor } from '../context/ContextRepository';
-import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CyclicDependenciesError } from '../../exceptions/compilation/errors/CyclicDependenciesError';
 
 export const reportAboutCyclicDependencies = (
-    compilationContext: CompilationContext2,
+    compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor
 ) => {
     const cycle = DependencyGraph.getCycle();
@@ -16,19 +15,13 @@ export const reportAboutCyclicDependencies = (
         }
 
         cycles.forEach(cycle => {
-            const names: string[] = [];
-            const nodes: ts.Node[] = [];
-
-            cycle.forEach(it => {
-                names.push(it.classMemberName);
-                nodes.push(it.node);
-            });
-
-            CompilationContext.reportErrorWithMultipleNodes({
-                nodes,
-                message: `Cyclic dependencies detected in context "${contextName}" for Beans: ${names.join(' <—> ')}`,
-                filePath: contextDescriptor.absolutePath,
-                relatedContextPath: contextDescriptor.absolutePath,
+            cycle.forEach(item => {
+                const otherDependencyNames = cycle.filter(it => it !== item).map(it => it.classMemberName);
+                compilationContext.report(new CyclicDependenciesError(
+                    `${item.classMemberName} <—> ${otherDependencyNames.join(' <—> ')}`,
+                    item.node,
+                    contextDescriptor.node,
+                ));
             });
         });
     });
