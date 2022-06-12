@@ -11,8 +11,13 @@ import { restrictedClassMemberNames } from './constants';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { ExtendedSet } from '../utils/ExtendedSet';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export const registerPropertyBean = (contextDescriptor: IContextDescriptor, classElement: ClassPropertyDeclarationWithInitializer): void => {
+export const registerPropertyBean = (
+    compilationContext: CompilationContext2,
+    contextDescriptor: IContextDescriptor,
+    classElement: ClassPropertyDeclarationWithInitializer,
+): void => {
     const classElementName = classElement.name.getText();
 
     if (restrictedClassMemberNames.has(classElementName)) {

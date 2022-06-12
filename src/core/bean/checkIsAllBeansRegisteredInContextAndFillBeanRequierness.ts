@@ -1,13 +1,20 @@
 import { ContextRepository, IContextDescriptor } from '../context/ContextRepository';
 import ts from 'typescript';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
-import { removeQuotesFromString } from '../utils/removeQuotesFromString';
+import { unquoteString } from '../utils/unquoteString';
 import { BeanRepository, IBeanDescriptorWithId } from './BeanRepository';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
+import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
+import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
+import { MissingBeanDeclarationError } from '../../exceptions/compilation/errors/MissingBeanDeclarationError';
 
 //Only for non-global contexts
-export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (contextDescriptor: IContextDescriptor) => {
+export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
+    compilationContext: CompilationContext2,
+    contextDescriptor: IContextDescriptor
+) => {
     const extendsHeritageClause = contextDescriptor.node.heritageClauses
         ?.find(clause => clause.token === ts.SyntaxKind.ExtendsKeyword);
 
@@ -18,23 +25,21 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (context
     const typeArgs = extendsHeritageClause.types[0].typeArguments ?? null;
 
     if (typeArgs === null) {
-        CompilationContext.reportError({
-            node: extendsHeritageClause,
-            message: 'You should pass TBeans interface reference to the context inheritance',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new MissingTypeDefinitionError(
+            'You should pass interface reference to the context inheritance.',
+            extendsHeritageClause,
+            contextDescriptor.node,
+        ));
         return;
     }
     const type = typeArgs[0];
 
     if (!type || !ts.isTypeReferenceNode(type)) {
-        CompilationContext.reportError({
-            node: extendsHeritageClause,
-            message: 'TBeans should be a plain interface reference',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectTypeDefinitionError(
+            'Should be an interface reference.',
+            type,
+            contextDescriptor.node,
+        ));
         return;
     }
 
@@ -44,42 +49,38 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (context
     );
 
     if (nodeDescriptor === null || nodeDescriptor.node === null) {
-        CompilationContext.reportError({
-            node: type.typeName,
-            message: 'Can\'t qualify TBeans declaration',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new TypeQualifyError(
+            null,
+            type,
+            contextDescriptor.node,
+        ));
         return;
     }
 
     if (!ts.isInterfaceDeclaration(nodeDescriptor.node)) {
-        CompilationContext.reportError({
-            node: type.typeName,
-            message: 'TBeans should be a plain interface declaration (without extends keyword)',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectTypeDefinitionError(
+            'Referenced type should be an interface declaration with statically known members.',
+            type,
+            contextDescriptor.node,
+        ));
         return;
     }
 
     if (nodeDescriptor.node.heritageClauses !== undefined) {
-        CompilationContext.reportError({
-            node: type.typeName,
-            message: 'TBeans should be a plain interface declaration (without extends keyword)',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectTypeDefinitionError(
+            'Referenced type should be an interface declaration with statically known members.',
+            type,
+            contextDescriptor.node,
+        ));
         return;
     }
 
     if (nodeDescriptor.node.members.some(it => !ts.isPropertySignature(it))) {
-        CompilationContext.reportError({
-            node: type.typeName,
-            message: 'TBeans should be a plain interface declaration without indexed signatures',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectTypeDefinitionError(
+            'Referenced type should be an interface declaration with statically known members.',
+            type,
+            contextDescriptor.node,
+        ));
         return;
     }
 
@@ -94,24 +95,25 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (context
 
     requiredBeanProperties.forEach(requiredBeanProperty => {
         if (!requiredBeanProperty.type) {
-            CompilationContext.reportError({
-                message: 'TBean interface property should have a type',
-                node: requiredBeanProperty,
-                relatedContextPath: contextDescriptor.absolutePath,
-                filePath: requiredBeanProperty.getSourceFile().fileName,
-            });
+            compilationContext.report(
+                new MissingTypeDefinitionError(
+                    null,
+                    requiredBeanProperty,
+                    contextDescriptor.node,
+                )
+            );
             return;
         }
-        const requiredBeanName = removeQuotesFromString(requiredBeanProperty.name.getText());
+
+        const requiredBeanName = unquoteString(requiredBeanProperty.name.getText());
         const qualifiedPropertyType = TypeQualifier.qualify(requiredBeanProperty.type);
 
         if (qualifiedPropertyType === null) {
-            CompilationContext.reportError({
-                message: 'Can not qualify type of TBean property',
-                node: requiredBeanProperty,
-                relatedContextPath: contextDescriptor.absolutePath,
-                filePath: requiredBeanProperty.getSourceFile().fileName,
-            });
+            compilationContext.report(new TypeQualifyError(
+                null,
+                requiredBeanProperty.type,
+                contextDescriptor.node,
+            ));
             return;
         }
 
@@ -126,12 +128,12 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (context
     });
 
     if (missingBeans.length > 0) {
-        const missingBeansText = missingBeans.map(it => removeQuotesFromString(it.name.getText())).join(', ');
-        CompilationContext.reportErrorWithMultipleNodes({
-            nodes: [type, ...missingBeans],
-            message: `Some beans are not registered in Context "${contextDescriptor.name}": [ ${missingBeansText} ]`,
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
+        missingBeans.forEach(it => {
+            compilationContext.report(new MissingBeanDeclarationError(
+                null,
+                it,
+                contextDescriptor.node,
+            ));
         });
         return;
     }

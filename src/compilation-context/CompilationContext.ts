@@ -3,7 +3,6 @@ import { flattenDeep } from 'lodash';
 import { ICompilationContextError, ICompilationContextErrorWithMultipleNodes } from './ICompilationContextError';
 import { getPositionOfNode } from '../core/utils/getPositionOfNode';
 import { CompilationError } from './CompilationError';
-import { diConfig } from '../external/config';
 import { ContextRepository } from '../core/context/ContextRepository';
 
 interface ICompilationContext {
@@ -41,22 +40,12 @@ export class CompilationContext {
         this.compilationContext.errorsWithMultipleNodes.push(error);
     }
 
-    static reportErrorMessage(message: string): void {
-        this.compilationContext.textErrors.push(message);
-    }
-
     static reportAndThrowErrorMessage(message: string): never {
         throw new CompilationError(message);
     }
 
     static getErrorMessage(): string | null {
-        switch (diConfig.errorMessageType) {
-        case 'human':
-            return this.getErrorMessagesForHuman();
-
-        case 'debug':
-            return this.getErrorMessagesForDebug();
-        }
+        return this.getErrorMessagesForHuman();
     }
 
     static clearErrorsByFilePath(filePath: string): void {

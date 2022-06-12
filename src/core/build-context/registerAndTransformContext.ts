@@ -7,9 +7,13 @@ import { addNecessaryImports } from './transformers/addNecessaryImports';
 import { ContextRepository } from '../context/ContextRepository';
 import { registerContext } from '../context/registerContext';
 import { registerBeans } from '../bean/registerBeans';
-import { checkIsAllBeansRegisteredInContextAndFillBeanRequierness } from '../bean/checkIsAllBeansRegisteredInContextAndFillBeanRequierness';
+import {
+    checkIsAllBeansRegisteredInContextAndFillBeanRequierness
+} from '../bean/checkIsAllBeansRegisteredInContextAndFillBeanRequierness';
 import { registerBeanDependencies } from '../bean-dependencies/registerBeanDependencies';
-import { buildDependencyGraphAndFillQualifiedBeans } from '../connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
+import {
+    buildDependencyGraphAndFillQualifiedBeans
+} from '../connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
 import { reportAboutCyclicDependencies } from '../report-cyclic-dependencies/reportAboutCyclicDependencies';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { registerGlobalCatContext } from '../context/registerGlobalCatContext';
@@ -22,28 +26,30 @@ import { transformLifecycleMethods } from './transformers/transformLifecycleMeth
 import { transformLifecycleArrowFunctions } from './transformers/transformLifecycleArrowFunctions';
 import { addLifecycleConfiguration } from './transformers/addLifecycleConfiguration';
 import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
 export function registerAndTransformContext(
     context: ts.TransformationContext,
     sourceFile: ts.SourceFile
 ): ts.SourceFile {
+    const compilationContext = new CompilationContext2();
     CompilationContext.clearErrorsByFilePath(sourceFile.fileName);
 
     const oldContextDescriptor = ContextRepository.contextPathToContextDescriptor.get(sourceFile.fileName);
 
     if (oldContextDescriptor?.isGlobal) {
-        registerGlobalCatContext(sourceFile);
+        registerGlobalCatContext(compilationContext, sourceFile);
         const newGlobalContextDescriptor = ContextRepository.contextPathToContextDescriptor.get(sourceFile.fileName) ?? null;
 
         if (!newGlobalContextDescriptor) {
             throw new Error('Global Context is not registered');
         }
 
-        registerBeans(newGlobalContextDescriptor);
-        registerBeanDependencies(newGlobalContextDescriptor);
-        buildDependencyGraphAndFillQualifiedBeans(newGlobalContextDescriptor);
-        registerContextLifecycleMethods(newGlobalContextDescriptor);
-        reportAboutCyclicDependencies(newGlobalContextDescriptor);
+        registerBeans(compilationContext, newGlobalContextDescriptor);
+        registerBeanDependencies(compilationContext, newGlobalContextDescriptor);
+        buildDependencyGraphAndFillQualifiedBeans(compilationContext, newGlobalContextDescriptor);
+        registerContextLifecycleMethods(compilationContext, newGlobalContextDescriptor);
+        reportAboutCyclicDependencies(compilationContext, newGlobalContextDescriptor);
 
         const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
@@ -57,33 +63,29 @@ export function registerAndTransformContext(
             addNecessaryImports(contextDescriptorToIdentifierList),
         ];
 
-        const file = ts.transform<ts.SourceFile>(
+        return ts.transform<ts.SourceFile>(
             sourceFile,
             transformers,
         ).transformed[0];
-
-        // const fileText = ts.createPrinter().printFile(file);
-
-        return file;
     }
 
     if (oldContextDescriptor && !oldContextDescriptor?.isGlobal) {
         DependencyGraph.clearByContextDescriptor(oldContextDescriptor);
     }
 
-    registerContext(sourceFile);
+    registerContext(compilationContext, sourceFile);
     const contextDescriptor = ContextRepository.contextPathToContextDescriptor.get(sourceFile.fileName) ?? null;
 
     if (!contextDescriptor) {
         throw new Error('Context is not registered');
     }
 
-    registerBeans(contextDescriptor);
-    checkIsAllBeansRegisteredInContextAndFillBeanRequierness(contextDescriptor);
-    registerBeanDependencies(contextDescriptor);
-    buildDependencyGraphAndFillQualifiedBeans(contextDescriptor);
-    registerContextLifecycleMethods(contextDescriptor);
-    reportAboutCyclicDependencies(contextDescriptor);
+    registerBeans(compilationContext, contextDescriptor);
+    checkIsAllBeansRegisteredInContextAndFillBeanRequierness(compilationContext, contextDescriptor);
+    registerBeanDependencies(compilationContext,contextDescriptor);
+    buildDependencyGraphAndFillQualifiedBeans(compilationContext, contextDescriptor);
+    registerContextLifecycleMethods(compilationContext, contextDescriptor);
+    reportAboutCyclicDependencies(compilationContext, contextDescriptor);
 
     const contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[] = [];
 
@@ -100,12 +102,8 @@ export function registerAndTransformContext(
         addNecessaryImports(contextDescriptorToIdentifierList),
     ];
 
-    const file = ts.transform<ts.SourceFile>(
+    return ts.transform<ts.SourceFile>(
         sourceFile,
         transformers,
     ).transformed[0];
-
-    // const fileText = ts.createPrinter().printFile(file);
-
-    return file;
 }

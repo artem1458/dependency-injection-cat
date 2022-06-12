@@ -6,7 +6,7 @@ import { isLocalExportDeclaration } from './LocalExportDeclaration';
 import { isNamedStatement } from './NamedStatement';
 import { isNamedExportStatement } from './NamedExportStatement';
 import { isNamedImports, isNamespaceImportDeclaration } from './ImportDeclarationWithClauseAndNamedBindings';
-import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
+import { unquoteString } from '../../utils/unquoteString';
 import { PathResolverCache } from '../path-resolver/PathResolverCache';
 import { SourceFilesCache } from '../source-files-cache/SourceFilesCache';
 import { isExportDeclarationWithoutClauseAndWithModuleSpecifier } from './ExportDeclarationWithoutClauseAndModuleSpecifier';
@@ -26,7 +26,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
     const foundNamespaceImport = namespaceImports.find(it => it.importClause.namedBindings.name.getText() === splittedNameToFind[0]);
 
     if (foundNamespaceImport !== undefined) {
-        const modulePath = removeQuotesFromString(foundNamespaceImport.moduleSpecifier.getText());
+        const modulePath = unquoteString(foundNamespaceImport.moduleSpecifier.getText());
 
         const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
             sourceFile.fileName,
@@ -72,7 +72,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
     }));
 
     if (foundNamedImport !== undefined) {
-        const modulePath = removeQuotesFromString(foundNamedImport.moduleSpecifier.getText());
+        const modulePath = unquoteString(foundNamedImport.moduleSpecifier.getText());
         const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
             sourceFile.fileName,
             modulePath,
@@ -149,7 +149,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
 
     if (externalNamespaceExport !== undefined && !exportNodesStack.includes(externalNamespaceExport)) {
         exportNodesStack.push(externalNamespaceExport);
-        const modulePath = removeQuotesFromString(externalNamespaceExport.moduleSpecifier.getText());
+        const modulePath = unquoteString(externalNamespaceExport.moduleSpecifier.getText());
         const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
             sourceFile.fileName,
             modulePath,
@@ -185,7 +185,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
                 ...splittedNameToFind.slice(1),
             ].join('.')
             : splittedNameToFind.join('.');
-        const modulePath = removeQuotesFromString(exportExpression.moduleSpecifier!.getText());
+        const modulePath = unquoteString(exportExpression.moduleSpecifier!.getText());
         const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
             sourceFile.fileName,
             modulePath,
@@ -211,7 +211,7 @@ export function getNodeSourceDescriptorDeep(sourceFile: ts.SourceFile, nameToFin
     let result: INodeSourceDescriptor | null = null;
 
     exportAllStatements.some(it => {
-        const modulePath = removeQuotesFromString(it.moduleSpecifier.getText());
+        const modulePath = unquoteString(it.moduleSpecifier.getText());
         const resolvedPath = PathResolverCache.getAbsolutePathWithExtension(
             sourceFile.fileName,
             modulePath,

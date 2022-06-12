@@ -5,8 +5,12 @@ import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import { getQualifierValueFromFunctionArgument } from './getQualifierValueFromFunctionArgument';
 import { ExtendedSet } from '../utils/ExtendedSet';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export const registerArrowFunctionBeanDependencies = (descriptor: IBeanDescriptor<ClassPropertyArrowFunction>) => {
+export const registerArrowFunctionBeanDependencies = (
+    compilationContext: CompilationContext2,
+    descriptor: IBeanDescriptor<ClassPropertyArrowFunction>
+) => {
     const parameters = descriptor.node.initializer.parameters;
 
     parameters.forEach(parameter => {

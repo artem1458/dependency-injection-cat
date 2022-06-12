@@ -9,8 +9,12 @@ import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export const registerPropertyBeanDependencies = (descriptor: IBeanDescriptor<ClassPropertyDeclarationWithInitializer>) => {
+export const registerPropertyBeanDependencies = (
+    compilationContext: CompilationContext2,
+    descriptor: IBeanDescriptor<ClassPropertyDeclarationWithInitializer>
+) => {
     //Assuming that we're already checked that first argument in property bean is reference
     const classReference = descriptor.node.initializer.arguments[0];
 

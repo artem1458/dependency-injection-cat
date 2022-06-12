@@ -2,8 +2,12 @@ import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import ts from 'typescript';
 import { IContextDescriptor } from '../context/ContextRepository';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export const reportAboutCyclicDependencies = (contextDescriptor: IContextDescriptor) => {
+export const reportAboutCyclicDependencies = (
+    compilationContext: CompilationContext2,
+    contextDescriptor: IContextDescriptor
+) => {
     const cycle = DependencyGraph.getCycle();
 
     cycle.forEach((cycles, contextName) => {

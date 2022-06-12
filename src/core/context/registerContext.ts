@@ -4,8 +4,9 @@ import { CompilationContext } from '../../compilation-context/CompilationContext
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { GLOBAL_CONTEXT_NAME } from './constants';
 import { ContextRepository } from './ContextRepository';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export function registerContext(sourceFile: ts.SourceFile) {
+export function registerContext(compilationContext: CompilationContext2, sourceFile: ts.SourceFile) {
     const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
 
     if (catContextClassDeclarations.length > 1) {

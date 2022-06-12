@@ -1,6 +1,6 @@
 import { NamedClassDeclaration } from '../ts-helpers/types';
 import { INodeSourceDescriptor } from '../ts-helpers/node-source-descriptor';
-import { removeQuotesFromString } from '../utils/removeQuotesFromString';
+import { unquoteString } from '../utils/unquoteString';
 import { GLOBAL_CONTEXT_NAME } from './constants';
 import md5 from 'md5';
 
@@ -38,7 +38,7 @@ export class ContextRepository {
             id,
             name,
             isGlobal: false,
-            className: removeQuotesFromString(classDeclaration.name.getText()),
+            className: unquoteString(classDeclaration.name.getText()),
             absolutePath: sourceFile.fileName,
             node: classDeclaration,
         };
@@ -61,7 +61,7 @@ export class ContextRepository {
             isGlobal: true,
             absolutePath: sourceFile.fileName,
             node: classDeclaration,
-            className: removeQuotesFromString(classDeclaration.name.getText()),
+            className: unquoteString(classDeclaration.name.getText()),
         };
 
         this.globalContexts.set(id, descriptor);

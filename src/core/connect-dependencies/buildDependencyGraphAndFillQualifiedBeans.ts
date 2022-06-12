@@ -6,8 +6,12 @@ import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export const buildDependencyGraphAndFillQualifiedBeans = (contextDescriptor: IContextDescriptor) => {
+export const buildDependencyGraphAndFillQualifiedBeans = (
+    compilationContext: CompilationContext2,
+    contextDescriptor: IContextDescriptor
+) => {
     const beansMap = BeanRepository.beanDescriptorRepository.get(contextDescriptor.name);
     const beanDependenciesMap = BeanDependenciesRepository.getBeanDescriptorMapByContextName(contextDescriptor.name);
 

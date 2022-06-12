@@ -1,77 +1,79 @@
 import { IContextDescriptor } from '../context/ContextRepository';
 import * as ts from 'typescript';
 import { restrictedClassMemberNames } from './constants';
-import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { BeanRepository } from './BeanRepository';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
+import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
+import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
+import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
 
-export const registerEmbeddedBean = (contextDescriptor: IContextDescriptor, classElement: ts.PropertyDeclaration): void => {
+export const registerEmbeddedBean = (
+    compilationContext: CompilationContext2,
+    contextDescriptor: IContextDescriptor,
+    classElement: ts.PropertyDeclaration
+): void => {
     const classElementName = classElement.name.getText();
 
     if (restrictedClassMemberNames.has(classElementName)) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: `${classElementName} name is reserved for the di-container, please use another name instead`,
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectNameError(
+            `${classElementName} name is reserved for the di-container.`,
+            classElement.name,
+            contextDescriptor.node,
+        ));
         return;
     }
 
-    const propertyType = classElement.type ?? null;
+    const classElementType = classElement.type ?? null;
 
-    if (propertyType === null) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Can\'t qualify type of Embedded Bean, please specify type explicitly',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+    if (classElementType === null) {
+        compilationContext.report(new MissingTypeDefinitionError(
+            null,
+            classElement,
+            contextDescriptor.node,
+        ));
         return;
     }
 
-    if (!ts.isTypeReferenceNode(propertyType)) {
-        CompilationContext.reportError({
-            node: propertyType,
-            message: 'Type of Embedded Bean should be a type reference',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+    if (!ts.isTypeReferenceNode(classElementType)) {
+        compilationContext.report(new IncorrectTypeDefinitionError(
+            'Should be an interface reference.',
+            classElementType,
+            contextDescriptor.node,
+        ));
         return;
     }
 
-    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(propertyType.getSourceFile(), propertyType.getText());
+    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(classElementType.getSourceFile(), classElementType.getText());
 
-    if (!nodeSourceDescriptor?.node) {
-        CompilationContext.reportError({
-            node: propertyType,
-            message: 'Can not find type of Embedded Bean',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+    if (nodeSourceDescriptor === null || nodeSourceDescriptor.node === null) {
+        compilationContext.report(new TypeQualifyError(
+            null,
+            classElementType,
+            contextDescriptor.node,
+        ));
         return;
     }
 
     if (!ts.isInterfaceDeclaration(nodeSourceDescriptor.node)) {
-        CompilationContext.reportError({
-            node: propertyType,
-            message: 'Type of Embedded Bean should be a plain interface declaration (without extends keyword)',
-            filePath: nodeSourceDescriptor.path,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectTypeDefinitionError(
+            'Referenced type should be an interface declaration with statically known members.',
+            classElementType,
+            contextDescriptor.node,
+        ));
         return;
     }
 
     const interfaceMembers = nodeSourceDescriptor.node.members;
 
     if (!isPropertySignatureList(interfaceMembers)) {
-        CompilationContext.reportError({
-            node: nodeSourceDescriptor.node,
-            message: 'Type of Embedded Bean should be a plain interface declaration (without extends keyword)',
-            filePath: nodeSourceDescriptor.path,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectTypeDefinitionError(
+            'Referenced type should be an interface declaration with statically known members.',
+            classElementType,
+            contextDescriptor.node,
+        ));
         return;
     }
 
@@ -80,24 +82,24 @@ export const registerEmbeddedBean = (contextDescriptor: IContextDescriptor, clas
         const propertyType = node.type;
 
         if (!propertyType) {
-            CompilationContext.reportError({
-                node,
-                message: 'Each interface element Embedded Bean type should have a type',
-                filePath: nodeSourceDescriptor.path,
-                relatedContextPath: contextDescriptor.absolutePath,
-            });
+            compilationContext.report(
+                new MissingTypeDefinitionError(
+                    null,
+                    node,
+                    contextDescriptor.node,
+                )
+            );
             return;
         }
 
         const qualifiedType = TypeQualifier.qualify(propertyType);
 
         if (qualifiedType === null) {
-            CompilationContext.reportError({
-                node,
-                message: 'Can\'t qualify type of Nested Bean element',
-                filePath: nodeSourceDescriptor.path,
-                relatedContextPath: contextDescriptor.absolutePath,
-            });
+            compilationContext.report(new TypeQualifyError(
+                null,
+                propertyType,
+                contextDescriptor.node,
+            ));
             return;
         }
 
@@ -115,15 +117,16 @@ export const registerEmbeddedBean = (contextDescriptor: IContextDescriptor, clas
     });
 
 
-    const qualifiedType = TypeQualifier.qualify(propertyType);
+    const qualifiedType = TypeQualifier.qualify(classElementType);
 
     if (qualifiedType === null) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Can\'t qualify type of Embedded Bean',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(
+            new MissingTypeDefinitionError(
+                null,
+                classElementType,
+                contextDescriptor.node,
+            )
+        );
         return;
     }
 

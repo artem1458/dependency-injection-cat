@@ -2,14 +2,10 @@ import ts, { factory } from 'typescript';
 import { uniqBy } from 'lodash';
 import { isContainerAccess } from '../ts-helpers/container/isContainerAccess';
 import { replaceContainerCall } from '../ts-helpers/container/replaceContainerCall';
-import { removeQuotesFromString } from '../utils/removeQuotesFromString';
+import { unquoteString } from '../utils/unquoteString';
 import minimatch from 'minimatch';
 import { diConfig } from '../../external/config';
 import { registerAndTransformContext } from '../build-context/registerAndTransformContext';
-
-interface SourceFile extends ts.SourceFile {
-    bindDiagnostics: ts.Diagnostic[];
-}
 
 export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
@@ -33,7 +29,7 @@ export const getTransformerFactory = (): ts.TransformerFactory<ts.SourceFile> =>
 
         const uniqFactoryImportsToAdd = uniqBy(factoryImportsToAdd, it => {
             if (ts.isStringLiteral(it.moduleSpecifier)) {
-                return removeQuotesFromString(it.moduleSpecifier.text);
+                return unquoteString(it.moduleSpecifier.text);
             }
         });
 

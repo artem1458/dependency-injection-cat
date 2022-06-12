@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { IContainerAccessNode } from './isContainerAccess';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
-import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
+import { unquoteString } from '../../utils/unquoteString';
 
 type TContextName = string;
 
@@ -42,5 +42,5 @@ export const getContextNameFromContainerCall = (node: IContainerAccessNode): TCo
         return null;
     }
 
-    return removeQuotesFromString(contextNameProperty.initializer.getText());
+    return unquoteString(contextNameProperty.initializer.getText());
 };

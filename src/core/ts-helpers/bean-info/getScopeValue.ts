@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
-import { removeQuotesFromString } from '../../utils/removeQuotesFromString';
+import { unquoteString } from '../../utils/unquoteString';
 import { TBeanScopeValue } from './ICompilationBeanInfo';
 
 const scopes: Array<TBeanScopeValue | null> = ['singleton', 'prototype'];
@@ -24,7 +24,7 @@ export const getScopeValue = (expression: ts.ObjectLiteralExpression): TBeanScop
             return 'singleton';
         }
 
-        scopeValue = removeQuotesFromString(scopeNode.initializer.getText());
+        scopeValue = unquoteString(scopeNode.initializer.getText());
     }
 
     if (!scopes.includes(scopeValue as TBeanScopeValue)) {

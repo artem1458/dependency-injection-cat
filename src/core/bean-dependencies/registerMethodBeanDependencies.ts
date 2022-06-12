@@ -5,8 +5,12 @@ import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { getQualifierValueFromFunctionArgument } from './getQualifierValueFromFunctionArgument';
 import { ExtendedSet } from '../utils/ExtendedSet';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export const registerMethodBeanDependencies = (descriptor: IBeanDescriptor<ts.MethodDeclaration>) => {
+export const registerMethodBeanDependencies = (
+    compilationContext: CompilationContext2,
+    descriptor: IBeanDescriptor<ts.MethodDeclaration>
+) => {
     const parameters = descriptor.node.parameters;
 
     parameters.forEach(parameter => {

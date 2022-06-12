@@ -5,26 +5,33 @@ import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropert
 import { BeanRepository } from './BeanRepository';
 import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
+import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
+import { MissingInitializerError } from '../../exceptions/compilation/errors/MissingInitializerError';
+import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
+import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
 
-export const registerMethodBean = (contextDescriptor: IContextDescriptor, classElement: ts.MethodDeclaration): void => {
+export const registerMethodBean = (
+    compilationContext: CompilationContext2,
+    contextDescriptor: IContextDescriptor,
+    classElement: ts.MethodDeclaration,
+): void => {
     const classElementName = classElement.name.getText();
 
     if (restrictedClassMemberNames.has(classElementName)) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: `${classElementName} method is reserved for the di-container, please use another name instead`,
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new IncorrectNameError(
+            `${classElementName} name is reserved for the di-container.`,
+            classElement.name,
+            contextDescriptor.node,
+        ));
         return;
     }
     if (classElement.body === undefined) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Method Bean should have a body',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new MissingInitializerError(
+            'Method Bean should have a body',
+            classElement.name,
+            contextDescriptor.node,
+        ));
         return;
     }
 
@@ -32,24 +39,22 @@ export const registerMethodBean = (contextDescriptor: IContextDescriptor, classE
     const beanInfo = getPropertyDecoratorBeanInfo(classElement);
 
     if (methodReturnType === null) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Can\'t qualify type of Bean, please specify type explicitly',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new MissingTypeDefinitionError(
+            null,
+            classElement,
+            contextDescriptor.node,
+        ));
         return;
     }
 
     const qualifiedType = TypeQualifier.qualify(methodReturnType);
 
     if (qualifiedType === null) {
-        CompilationContext.reportError({
-            node: classElement,
-            message: 'Can\'t qualify type of Bean',
-            filePath: contextDescriptor.absolutePath,
-            relatedContextPath: contextDescriptor.absolutePath,
-        });
+        compilationContext.report(new TypeQualifyError(
+            null,
+            methodReturnType,
+            contextDescriptor.node,
+        ));
         return;
     }
 

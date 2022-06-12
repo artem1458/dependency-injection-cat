@@ -6,8 +6,12 @@ import { isContextLifecycleArrowFunction } from './isContextLifecycleArrowFuncti
 import { registerLifecycleArrowFunction } from './registerLifecycleArrowFunction';
 import { LifecycleMethodsRepository } from './LifecycleMethodsRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export const registerContextLifecycleMethods = (contextDescriptor: IContextDescriptor): void => {
+export const registerContextLifecycleMethods = (
+    compilationContext: CompilationContext2,
+    contextDescriptor: IContextDescriptor
+): void => {
     LifecycleMethodsRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
 
     contextDescriptor.node.members.forEach(it => {
@@ -40,7 +44,7 @@ export const registerContextLifecycleMethods = (contextDescriptor: IContextDescr
                 return;
             }
 
-            registerLifecycleArrowFunction(contextDescriptor, it, lifecycles);
+            registerLifecycleArrowFunction(compilationContext, contextDescriptor, it, lifecycles);
         }
     });
 };

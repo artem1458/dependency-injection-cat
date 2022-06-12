@@ -16,8 +16,10 @@ import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
 import { restrictedClassMemberNames } from '../bean/constants';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
 export const registerLifecycleExpression = (
+    compilationContext: CompilationContext2,
     contextDescriptor: IContextDescriptor,
     classMemberName: string,
     node: ClassPropertyArrowFunction | ts.MethodDeclaration,

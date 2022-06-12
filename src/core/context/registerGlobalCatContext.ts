@@ -4,8 +4,9 @@ import { ContextRepository } from './ContextRepository';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { isExtendsGlobalCatContextContext } from '../ts-helpers/predicates/isExtendsGlobalCatContext';
+import { CompilationContext2 } from '../../compilation-context/CompilationContext2';
 
-export const registerGlobalCatContext = (sourceFile: ts.SourceFile) => {
+export const registerGlobalCatContext = (compilationContext: CompilationContext2, sourceFile: ts.SourceFile) => {
     CompilationContext.clearErrorsByFilePath(sourceFile.fileName);
 
     const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
