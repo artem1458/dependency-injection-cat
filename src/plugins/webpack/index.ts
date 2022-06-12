@@ -24,14 +24,12 @@ const reportDIErrorsHook = (compilation: Compilation) => {
         Array.from(transformationContext.errors.values()),
     );
 
-    if (message === null) {
-        SourceFilesCache.clearCache();
-        PathResolverCache.clearCache();
-        return;
-    }
-
     PathResolverCache.clearCache();
     SourceFilesCache.clearCache();
+
+    if (message === null) {
+        return;
+    }
 
     compilation.errors.push(buildWebpackError(message));
 };

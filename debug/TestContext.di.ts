@@ -8,6 +8,7 @@ export interface IRequester {}
 
 
 class TestContext extends CatContext<ITestContext> {
+    @Bean data: string = '123';
     a = Bean(A);
 }
 
