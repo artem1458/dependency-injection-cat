@@ -4,11 +4,11 @@ import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descripto
 import { unquoteString } from '../utils/unquoteString';
 import { BeanRepository, IBeanDescriptorWithId } from './BeanRepository';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
-import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
-import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
-import { MissingBeanDeclarationError } from '../../exceptions/compilation/errors/MissingBeanDeclarationError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
+import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
+import { IncorrectTypeDefinitionError } from '../../compilation-context/messages/errors/IncorrectTypeDefinitionError';
+import { MissingBeanDeclarationError } from '../../compilation-context/messages/errors/MissingBeanDeclarationError';
 
 //Only for non-global contexts
 export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (

@@ -10,9 +10,9 @@ import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
-import { DependencyResolvingError } from '../../exceptions/compilation/errors/DependencyResolvingError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
+import { DependencyResolvingError } from '../../compilation-context/messages/errors/DependencyResolvingError';
 
 export const registerPropertyBeanDependencies = (
     compilationContext: CompilationContext,

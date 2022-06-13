@@ -3,10 +3,10 @@ import { getScopeValue } from './getScopeValue';
 import { isBeanDecorator } from '../predicates/isBeanDecorator';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
 import { ClassPropertyArrowFunction } from '../types';
-import { CompilationContext } from '../../../build-context/CompilationContext';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
-import { UnknownError } from '../../../exceptions/compilation/errors/UnknownError';
-import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';
+import { UnknownError } from '../../../compilation-context/messages/errors/UnknownError';
+import { IncorrectArgumentError } from '../../../compilation-context/messages/errors/IncorrectArgumentError';
 
 export const getPropertyDecoratorBeanInfo = (
     compilationContext: CompilationContext,

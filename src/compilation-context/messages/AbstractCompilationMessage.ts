@@ -1,11 +1,13 @@
 import ts from 'typescript';
-import { ErrorCode } from '../ErrorCode';
+import { MessageCode } from './MessageCode';
 import { NamedClassDeclaration } from '../../core/ts-helpers/types';
 import { unquoteString } from '../../core/utils/unquoteString';
 import { getPositionOfNode, INodePosition } from '../../core/utils/getPositionOfNode';
+import { MessageType } from './MessageType';
 
-export abstract class AbstractCompilationError {
-    public abstract code: ErrorCode
+export abstract class AbstractCompilationMessage {
+    public abstract code: MessageCode
+    public abstract type: MessageType
     public abstract description: string
     public readonly position: INodePosition;
     public readonly contextDetails: IContextDetails | null;

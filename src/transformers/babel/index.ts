@@ -4,18 +4,15 @@ import { getTransformerFactory } from '../../core/transformers/getTransformerFac
 import { libraryName } from '../../constants/libraryName';
 import { initContexts } from '../../core/initContexts';
 import { uniqId } from '../../core/utils/uniqId';
-import { getTransformersContext } from '../getTransformersContext';
+import { getCompilationContext } from '../getCompilationContext';
 
 const IGNORE_TRANSFORM_PROPERTY_KEY = uniqId();
 
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);
-    const [
-        compilationContext,
-        transformationContext
-    ] = getTransformersContext();
+    const compilationContext = getCompilationContext();
     initContexts(compilationContext);
-    const transformerFactory = getTransformerFactory(compilationContext, transformationContext);
+    const transformerFactory = getTransformerFactory(compilationContext);
     const printer = ts.createPrinter();
 
     return {

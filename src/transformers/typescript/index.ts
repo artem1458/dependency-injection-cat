@@ -4,27 +4,22 @@ import { getTransformerFactory } from '../../core/transformers/getTransformerFac
 import { initContexts } from '../../core/initContexts';
 import DICatWebpackPlugin from '../../plugins/webpack';
 import { get } from 'lodash';
-import { getTransformersContext } from '../getTransformersContext';
-import { BuildErrorFormatter } from '../../build-context/BuildErrorFormatter';
+import { getCompilationContext } from '../getCompilationContext';
+import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
 
 export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<ts.SourceFile> => {
     initDiConfig(config);
-    const [
-        compilationContext,
-        transformationContext
-    ] = getTransformersContext();
+    const compilationContext = getCompilationContext();
     initContexts(compilationContext);
 
-    const transformerFactory = getTransformerFactory(compilationContext, transformationContext);
+    const transformerFactory = getTransformerFactory(compilationContext);
 
     return context => sourceFile => {
         const transformedSourceFile = transformerFactory(context)(sourceFile);
 
         if (!get(DICatWebpackPlugin, 'isErrorsHandledByWebpack')) {
-            const [compilationContext, transformationContext] = getTransformersContext();
             const message = BuildErrorFormatter.formatErrors(
-                Array.from(compilationContext.errors.values()),
-                Array.from(transformationContext.errors.values()),
+                compilationContext.errors,
             );
 
             if (message !== null) {

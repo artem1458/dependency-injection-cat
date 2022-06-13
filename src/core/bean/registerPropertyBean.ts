@@ -10,12 +10,12 @@ import { restrictedClassMemberNames } from './constants';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
-import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
-import { IncorrectArgumentError } from '../../exceptions/compilation/errors/IncorrectArgumentError';
-import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
-import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
+import { IncorrectTypeDefinitionError } from '../../compilation-context/messages/errors/IncorrectTypeDefinitionError';
+import { IncorrectArgumentError } from '../../compilation-context/messages/errors/IncorrectArgumentError';
+import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
+import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
 
 export const registerPropertyBean = (
     compilationContext: CompilationContext,

@@ -4,15 +4,15 @@ import { ContextNamesRepository } from './ContextNamesRepository';
 import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCatContextContext';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { getContextPaths } from './getContextPaths';
-import { TransformationContext } from '../../build-context/TransformationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
-export function registerAllContextNames(transformationContext: TransformationContext) {
+export function registerAllContextNames(compilationContext: CompilationContext) {
     ContextNamesRepository.nameToPath.clear();
     ContextNamesRepository.pathToName.clear();
     const contextPaths = getContextPaths();
 
     contextPaths.forEach(contextPath => {
-        transformationContext.clearErrorsByFilePath(contextPath);
+        compilationContext.clearMessagesByFilePath(contextPath);
 
         const sourceFile = ts.createSourceFile(
             '',

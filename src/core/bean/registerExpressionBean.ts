@@ -4,10 +4,10 @@ import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropert
 import { BeanRepository } from './BeanRepository';
 import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
-import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
-import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
+import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
+import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
 
 export const registerExpressionBean = (
     compilationContext: CompilationContext,

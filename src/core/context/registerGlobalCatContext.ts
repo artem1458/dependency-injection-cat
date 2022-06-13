@@ -3,14 +3,14 @@ import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCa
 import { ContextRepository } from './ContextRepository';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { isExtendsGlobalCatContextContext } from '../ts-helpers/predicates/isExtendsGlobalCatContext';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { IncorrectContextDeclarationError } from '../../exceptions/compilation/errors/IncorrectContextDeclarationError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IncorrectContextDeclarationError } from '../../compilation-context/messages/errors/IncorrectContextDeclarationError';
 
 export const registerGlobalCatContext = (
     compilationContext: CompilationContext,
     sourceFile: ts.SourceFile
 ) => {
-    compilationContext.clearErrorsByFilePath(sourceFile.fileName);
+    compilationContext.clearMessagesByFilePath(sourceFile.fileName);
 
     const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
     const globalCatContextClassDeclarations = sourceFile.statements.filter(isExtendsGlobalCatContextContext);

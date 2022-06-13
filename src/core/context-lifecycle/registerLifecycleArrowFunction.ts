@@ -2,7 +2,7 @@ import { IContextDescriptor } from '../context/ContextRepository';
 import { registerLifecycleExpression } from './registerLifecycleExpression';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import { TLifecycle } from '../../external/InternalCatContext';
-import { CompilationContext } from '../../build-context/CompilationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export const registerLifecycleArrowFunction = (
     compilationContext: CompilationContext,

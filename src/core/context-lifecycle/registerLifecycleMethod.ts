@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { registerLifecycleExpression } from './registerLifecycleExpression';
 import { TLifecycle } from '../../external/InternalCatContext';
-import { CompilationContext } from '../../build-context/CompilationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export const registerLifecycleMethod = (
     compilationContext: CompilationContext,

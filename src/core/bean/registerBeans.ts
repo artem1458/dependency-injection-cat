@@ -10,7 +10,7 @@ import { isExpressionBean } from '../ts-helpers/predicates/isExpressionBean';
 import { registerExpressionBean } from './registerExpressionBean';
 import { isEmbeddedBean } from '../ts-helpers/predicates/isEmbeddedBean';
 import { registerEmbeddedBean } from './registerEmbeddedBeans';
-import { CompilationContext } from '../../build-context/CompilationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export function registerBeans(compilationContext: CompilationContext, contextDescriptor: IContextDescriptor) {
     BeanRepository.clearBeanInfoByContextDescriptor(contextDescriptor);

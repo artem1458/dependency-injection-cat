@@ -1,9 +1,9 @@
 import * as ts from 'typescript';
 import { unquoteString } from '../../utils/unquoteString';
 import { TBeanScopeValue } from './ICompilationBeanInfo';
-import { CompilationContext } from '../../../build-context/CompilationContext';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
-import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';
+import { IncorrectArgumentError } from '../../../compilation-context/messages/errors/IncorrectArgumentError';
 
 const scopes: Array<TBeanScopeValue | null> = ['singleton', 'prototype'];
 

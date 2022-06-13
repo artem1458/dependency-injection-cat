@@ -8,36 +8,38 @@ import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
 import { ContextNamesRepository } from '../../context/ContextNamesRepository';
 import { registerAllContextNames } from '../../context/registerContextNames';
 import { removeExtensionFromPath } from '../../utils/removeExtensionFromPath';
-import { TransformationContext } from '../../../build-context/TransformationContext';
-import { IncorrectContainerAccessError } from '../../../exceptions/transformation/errors/IncorrectContainerAccessError';
-import { ContextNotFoundError } from '../../../exceptions/transformation/errors/ContextNotFoundError';
+import { IncorrectContainerAccessError } from '../../../compilation-context/messages/errors/IncorrectContainerAccessError';
+import { ContextNotFoundError } from '../../../compilation-context/messages/errors/ContextNotFoundError';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
 export const replaceContainerCall = (
-    transformationContext: TransformationContext,
+    compilationContext: CompilationContext,
     node: IContainerAccessNode,
     factoryImportsToAdd: ts.ImportDeclaration[]
 ): ts.Node => {
-    transformationContext.clearErrorsByFilePath(node.getSourceFile().fileName);
+    compilationContext.clearMessagesByFilePath(node.getSourceFile().fileName);
 
     if (!validContainerKeys.includes(node.expression.name.getText())) {
-        transformationContext.report(new IncorrectContainerAccessError(
+        compilationContext.report(new IncorrectContainerAccessError(
             `Container has only following methods: ${validContainerKeys.join(', ')}`,
             node,
+            null,
         ));
 
         return node;
     }
 
-    const contextName = getContextNameFromContainerCall(transformationContext, node);
+    const contextName = getContextNameFromContainerCall(compilationContext, node);
 
     if (contextName === null) {
         return node;
     }
 
     if (contextName === GLOBAL_CONTEXT_NAME) {
-        transformationContext.report(new IncorrectContainerAccessError(
+        compilationContext.report(new IncorrectContainerAccessError(
             'You can not access Global context',
             node,
+            null,
         ));
 
         return node;
@@ -46,14 +48,15 @@ export const replaceContainerCall = (
     let contextPath: string | null = ContextNamesRepository.nameToPath.get(contextName) ?? null;
 
     if (contextPath === null) {
-        registerAllContextNames(transformationContext);
+        registerAllContextNames(compilationContext);
 
         contextPath = ContextNamesRepository.nameToPath.get(contextName) ?? null;
 
         if (contextPath === null) {
-            transformationContext.report(new ContextNotFoundError(
+            compilationContext.report(new ContextNotFoundError(
                 null,
                 node,
+                null,
             ));
 
             return node;

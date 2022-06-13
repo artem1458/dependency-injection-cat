@@ -1,4 +1,4 @@
-export enum ErrorCode {
+export enum MessageCode {
     'DICAT0' = 'DICAT0',
     'DICAT1' = 'DICAT1',
     'DICAT2' = 'DICAT2',

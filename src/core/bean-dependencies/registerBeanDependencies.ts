@@ -6,7 +6,7 @@ import { ClassPropertyArrowFunction, ClassPropertyDeclarationWithInitializer } f
 import { IContextDescriptor } from '../context/ContextRepository';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { registerArrowFunctionBeanDependencies } from './registerArrowFunctionBeanDependencies';
-import { CompilationContext } from '../../build-context/CompilationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export const registerBeanDependencies = (
     compilationContext: CompilationContext,

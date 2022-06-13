@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
-import { CompilationContext } from '../../build-context/CompilationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../context/ContextRepository';
 
 export const getParameterType = (

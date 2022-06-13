@@ -4,11 +4,11 @@ import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { BeanRepository } from './BeanRepository';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
-import { MissingTypeDefinitionError } from '../../exceptions/compilation/errors/MissingTypeDefinitionError';
-import { IncorrectTypeDefinitionError } from '../../exceptions/compilation/errors/IncorrectTypeDefinitionError';
-import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
+import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
+import { IncorrectTypeDefinitionError } from '../../compilation-context/messages/errors/IncorrectTypeDefinitionError';
+import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
 
 export const registerEmbeddedBean = (
     compilationContext: CompilationContext,

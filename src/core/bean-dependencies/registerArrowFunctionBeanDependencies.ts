@@ -4,8 +4,8 @@ import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import { getQualifierValueFromFunctionArgument } from './getQualifierValueFromFunctionArgument';
 import { ExtendedSet } from '../utils/ExtendedSet';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
 
 export const registerArrowFunctionBeanDependencies = (
     compilationContext: CompilationContext,

@@ -15,10 +15,10 @@ import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
 import { restrictedClassMemberNames } from '../bean/constants';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { IncorrectNameError } from '../../exceptions/compilation/errors/IncorrectNameError';
-import { TypeQualifyError } from '../../exceptions/compilation/errors/TypeQualifyError';
-import { DependencyResolvingError } from '../../exceptions/compilation/errors/DependencyResolvingError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
+import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
+import { DependencyResolvingError } from '../../compilation-context/messages/errors/DependencyResolvingError';
 import { unquoteString } from '../utils/unquoteString';
 
 export const registerLifecycleExpression = (

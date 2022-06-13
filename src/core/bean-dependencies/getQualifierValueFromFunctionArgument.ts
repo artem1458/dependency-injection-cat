@@ -1,11 +1,11 @@
 import ts from 'typescript';
 import { isParameterQualifierDecorator } from '../ts-helpers/predicates/isParameterQualifierDecorator';
 import { IContextDescriptor } from '../context/ContextRepository';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { DecoratorsCountError } from '../../exceptions/compilation/errors/DecoratorsCountError';
-import { IncorrectArgumentError } from '../../exceptions/compilation/errors/IncorrectArgumentError';
-import { IncorrectExpressionUsageError } from '../../exceptions/compilation/errors/IncorrectExpressionUsageError';
-import { IncorrectArgumentsLengthError } from '../../exceptions/compilation/errors/IncorrectArgumentsLengthError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { DecoratorsCountError } from '../../compilation-context/messages/errors/DecoratorsCountError';
+import { IncorrectArgumentError } from '../../compilation-context/messages/errors/IncorrectArgumentError';
+import { IncorrectExpressionUsageError } from '../../compilation-context/messages/errors/IncorrectExpressionUsageError';
+import { IncorrectArgumentsLengthError } from '../../compilation-context/messages/errors/IncorrectArgumentsLengthError';
 
 export function getQualifierValueFromFunctionArgument(
     compilationContext: CompilationContext,

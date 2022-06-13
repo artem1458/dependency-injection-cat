@@ -2,9 +2,9 @@ import ts from 'typescript';
 import { isClassPropertyBean } from './isClassPropertyBean';
 import { isExpressionBean } from './isExpressionBean';
 import { isEmbeddedBeanDecorator } from './isEmbeddedBeanDecorator';
-import { CompilationContext } from '../../../build-context/CompilationContext';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
-import { MissingInitializerError } from '../../../exceptions/compilation/errors/MissingInitializerError';
+import { MissingInitializerError } from '../../../compilation-context/messages/errors/MissingInitializerError';
 
 export const isEmbeddedBean = (
     compilationContext: CompilationContext,

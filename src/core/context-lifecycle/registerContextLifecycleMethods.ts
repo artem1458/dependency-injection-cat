@@ -5,8 +5,8 @@ import { getLifecycleTypes } from './getLifecycleTypes';
 import { isContextLifecycleArrowFunction } from './isContextLifecycleArrowFunction';
 import { registerLifecycleArrowFunction } from './registerLifecycleArrowFunction';
 import { LifecycleMethodsRepository } from './LifecycleMethodsRepository';
-import { CompilationContext } from '../../build-context/CompilationContext';
-import { IncorrectUsageError } from '../../exceptions/compilation/errors/IncorrectUsageError';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { IncorrectUsageError } from '../../compilation-context/messages/errors/IncorrectUsageError';
 
 export const registerContextLifecycleMethods = (
     compilationContext: CompilationContext,

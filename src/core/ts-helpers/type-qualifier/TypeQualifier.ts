@@ -2,9 +2,9 @@ import ts, { factory, KeywordTypeNode, SyntaxKind } from 'typescript';
 import { QualifiedType, QualifiedTypeKind } from './QualifiedType';
 import { ExtendedSet } from '../../utils/ExtendedSet';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
-import { CompilationContext } from '../../../build-context/CompilationContext';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
-import { TypeQualifyError } from '../../../exceptions/compilation/errors/TypeQualifyError';
+import { TypeQualifyError } from '../../../compilation-context/messages/errors/TypeQualifyError';
 
 /* TypeNodes that is not allowed
 * FunctionTypeNode

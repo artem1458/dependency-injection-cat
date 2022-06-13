@@ -3,7 +3,7 @@ import { isContextLifecycleDecorator } from './getLifecycleTypes';
 import { isArrowFunctionBean } from '../ts-helpers/predicates/isArrowFunctionBean';
 import { isExpressionBean } from '../ts-helpers/predicates/isExpressionBean';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
-import { CompilationContext } from '../../build-context/CompilationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../context/ContextRepository';
 
 export const isContextLifecycleArrowFunction = (

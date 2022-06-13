@@ -2,10 +2,10 @@ import * as ts from 'typescript';
 import { getScopeValue } from './getScopeValue';
 import { ClassPropertyDeclarationWithInitializer } from '../types';
 import { ICompilationBeanInfo } from './ICompilationBeanInfo';
-import { CompilationContext } from '../../../build-context/CompilationContext';
-import { IncorrectArgumentsLengthError } from '../../../exceptions/compilation/errors/IncorrectArgumentsLengthError';
+import { CompilationContext } from '../../../compilation-context/CompilationContext';
+import { IncorrectArgumentsLengthError } from '../../../compilation-context/messages/errors/IncorrectArgumentsLengthError';
 import { IContextDescriptor } from '../../context/ContextRepository';
-import { IncorrectArgumentError } from '../../../exceptions/compilation/errors/IncorrectArgumentError';
+import { IncorrectArgumentError } from '../../../compilation-context/messages/errors/IncorrectArgumentError';
 
 export function getPropertyBeanInfo(
     compilationContext: CompilationContext,

@@ -25,14 +25,14 @@ import { transformLifecycleMethods } from './transformers/transformLifecycleMeth
 import { transformLifecycleArrowFunctions } from './transformers/transformLifecycleArrowFunctions';
 import { addLifecycleConfiguration } from './transformers/addLifecycleConfiguration';
 import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
-import { CompilationContext } from '../../build-context/CompilationContext';
+import { CompilationContext } from '../../compilation-context/CompilationContext';
 
 export function registerAndTransformContext(
     compilationContext: CompilationContext,
     context: ts.TransformationContext,
     sourceFile: ts.SourceFile
 ): ts.SourceFile {
-    compilationContext.clearErrorsByFilePath(sourceFile.fileName);
+    compilationContext.clearMessagesByFilePath(sourceFile.fileName);
 
     const oldContextDescriptor = ContextRepository.contextPathToContextDescriptor.get(sourceFile.fileName);
 
