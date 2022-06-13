@@ -47,7 +47,11 @@ export class BuildErrorFormatter {
     private static formatError(error: AbstractCompilationMessage): string {
         const filePathWithPosition = this.getPathWithPosition(error.filePath, error.position);
 
-        return `${chalk.red('Error')} ${chalk.gray(error.code + ':')} ${error.description} ${error.details ?? ''} ${filePathWithPosition}`;
+        const errorDetails = error.details === null
+            ? ''
+            : ` ${error.details}`;
+
+        return `${chalk.red('Error')} ${chalk.gray(error.code + ':')} ${error.description}${errorDetails} ${filePathWithPosition}`;
     }
 
     private static getPathWithPosition(
