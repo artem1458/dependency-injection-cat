@@ -13,6 +13,13 @@ class TestContext extends CatContext<ITestContext> {
 
 
 export class A {
-    constructor(data: string) {
+    constructor(
+        data: string,
+        data1: string,
+        data2: string,
+        data3: string,
+        data4: string,
+        data5: string,
+    ) {
     }
 }

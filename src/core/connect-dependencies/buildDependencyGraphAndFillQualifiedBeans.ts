@@ -7,6 +7,7 @@ import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { DependencyResolvingError } from '../../compilation-context/messages/errors/DependencyResolvingError';
+import { getFormattedParameterNameAndType } from '../utils/getFormattedParameterNameAndType';
 
 export const buildDependencyGraphAndFillQualifiedBeans = (
     compilationContext: CompilationContext,
@@ -84,7 +85,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         && beanCandidatesFromGlobalContext.length === 0
                     ) {
                         compilationContext.report(new DependencyResolvingError(
-                            `Can not find Bean candidate for ${dependencyDescriptor.parameterName}.`,
+                            `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}".`,
                             beanDescriptor.node,
                             contextDescriptor.node,
                         ));
@@ -109,7 +110,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
 
                         if (beanCandidatesFromCurrentContextQualifiedByParameterName.length > 1) {
                             compilationContext.report(new DependencyResolvingError(
-                                `Can not find Bean candidate for ${dependencyDescriptor.parameterName}, found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates with same name.`,
+                                `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}", found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates with same name.`,
                                 beanDescriptor.node,
                                 contextDescriptor.node,
                             ));
@@ -117,7 +118,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         }
 
                         compilationContext.report(new DependencyResolvingError(
-                            `Can not find Bean candidate for ${dependencyDescriptor.parameterName}, found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                            `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}", found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
                             beanDescriptor.node,
                             contextDescriptor.node,
                         ));
@@ -144,7 +145,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
 
                         if (beansByParameterName.length > 1) {
                             compilationContext.report(new DependencyResolvingError(
-                                `Can not find EmbeddedBean candidate for ${dependencyDescriptor.parameterName}, found ${beansByParameterName.length} candidates with same name.`,
+                                `Can not find EmbeddedBean candidate for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}", found ${beansByParameterName.length} candidates with same name.`,
                                 beanDescriptor.node,
                                 contextDescriptor.node,
                             ));
@@ -152,7 +153,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         }
 
                         compilationContext.report(new DependencyResolvingError(
-                            `Can not find EmbeddedBean candidate for ${dependencyDescriptor.parameterName}, found ${embeddedBeanCandidatesFromCurrentContext.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                            `Can not find EmbeddedBean candidate for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}", found ${embeddedBeanCandidatesFromCurrentContext.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
                             beanDescriptor.node,
                             contextDescriptor.node,
                         ));
@@ -179,7 +180,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
 
                         if (beanCandidatesFromGlobalContextQualifiedByParameterName.length > 1) {
                             compilationContext.report(new DependencyResolvingError(
-                                `Can not find Bean candidate for ${dependencyDescriptor.parameterName}, found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} candidates in Global context with same name.`,
+                                `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}", found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} candidates in Global context with same name.`,
                                 beanDescriptor.node,
                                 contextDescriptor.node,
                             ));
@@ -187,7 +188,7 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         }
 
                         compilationContext.report(new DependencyResolvingError(
-                            `Can not find Bean candidate for ${dependencyDescriptor.parameterName}, found ${beanCandidatesFromGlobalContext.length} candidates in Global context. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                            `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}", found ${beanCandidatesFromGlobalContext.length} candidates in Global context. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
                             beanDescriptor.node,
                             contextDescriptor.node,
                         ));
