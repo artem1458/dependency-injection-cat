@@ -29,7 +29,7 @@ export abstract class InternalCatContext implements IInternalCatContext {
 
     private singletonMap = new Map<TBeanName, any>();
 
-    private notInitializedConfigMarker = {}
+    private notInitializedConfigMarker = {};
     private _config: any = this.notInitializedConfigMarker;
 
     get config(): any {

@@ -25,7 +25,7 @@ export class ContextRepository {
     static contextMap = new Map<TContextName, IContextDescriptor>();
     static globalContexts = new Map<TContextId, IContextDescriptor>();
     static contextNameToTBeanNodeSourceDescriptor = new Map<TContextName, TBeanTypeDescriptor>();
-    static contextPathToContextDescriptor = new Map<string, IContextDescriptor>()
+    static contextPathToContextDescriptor = new Map<string, IContextDescriptor>();
 
     static registerContext(
         name: string,
