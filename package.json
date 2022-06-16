@@ -7,6 +7,13 @@
   "license": "MIT",
   "private": false,
   "keywords": [
+    "dependency injection cat",
+    "dependency-injection-cat",
+    "di-cat",
+    "dicat",
+    "dependency",
+    "injection",
+    "cat",
     "ioc",
     "inversion of control",
     "di",
@@ -14,7 +21,6 @@
     "typescript",
     "babel",
     "webpack",
-    "cat",
     "clean architecture",
     "container",
     "dependency injection container"
