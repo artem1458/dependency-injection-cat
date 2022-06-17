@@ -5,7 +5,6 @@ import { FileSystemRequest } from './types/file_system/IFSRequest';
 import { FSRequestType } from './types/file_system/FSRequestType';
 import { FileSystem } from '../file-system/FileSystem';
 import { IProcessFilesRequest } from './types/process_files/IProcessFilesRequest';
-import mime from 'mime';
 
 export class DICatServer {
     constructor(
