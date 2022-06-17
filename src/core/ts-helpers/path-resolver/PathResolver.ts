@@ -1,9 +1,9 @@
 import upath from 'upath';
-import fs from 'fs';
 import { createMatchPath, loadConfig, MatchPath } from 'tsconfig-paths';
 import { isPathRelative } from '../../utils/isPathRelative';
 import { extensionsToResolve } from './constants';
 import { libraryName } from '../../../constants/libraryName';
+import { FileSystem } from '../../../file-system/FileSystem';
 
 export class PathResolver {
     private static resolver: MatchPath;
@@ -47,7 +47,7 @@ export class PathResolver {
         const normalizedFromNodeModules = upath.normalize(upath.dirname(require.resolve(normalizedTargetPath)));
         const resolvedWithExtension = extensionsToResolve
             .map(it => upath.join(normalizedFromNodeModules, it))
-            .find(it => fs.existsSync(it)) ?? normalizedTargetPath;
+            .find(it => FileSystem.exists(it)) ?? normalizedTargetPath;
 
         return upath.normalize(resolvedWithExtension);
     }

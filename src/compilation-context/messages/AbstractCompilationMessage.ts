@@ -4,8 +4,9 @@ import { NamedClassDeclaration } from '../../core/ts-helpers/types';
 import { unquoteString } from '../../core/utils/unquoteString';
 import { getPositionOfNode, INodePosition } from '../../core/utils/getPositionOfNode';
 import { MessageType } from './MessageType';
+import { ICompilationMessage, IContextDetails } from './ICompilationMessage';
 
-export abstract class AbstractCompilationMessage {
+export abstract class AbstractCompilationMessage implements ICompilationMessage {
     public abstract code: MessageCode
     public abstract type: MessageType
     public abstract description: string
@@ -34,10 +35,4 @@ export abstract class AbstractCompilationMessage {
             namePosition: getPositionOfNode(contextNode.name),
         };
     }
-}
-
-export interface IContextDetails {
-    name: string;
-    path: string;
-    namePosition: INodePosition;
 }

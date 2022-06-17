@@ -1,5 +1,5 @@
-import fs from 'fs';
 import * as ts from 'typescript';
+import { FileSystem } from '../../../file-system/FileSystem';
 
 export class SourceFilesCache {
     private static cache: Record<string, ts.SourceFile | undefined> = {};
@@ -8,7 +8,7 @@ export class SourceFilesCache {
         const cached = this.cache[filePath];
 
         if (cached === undefined) {
-            const fileText = fs.readFileSync(filePath, 'utf-8');
+            const fileText = FileSystem.readFile(filePath);
             const sourceFile = ts.createSourceFile(
                 filePath,
                 fileText,

@@ -1,7 +1,7 @@
 import { PathResolver } from './PathResolver';
 import upath from 'upath';
-import fs from 'fs';
 import { extensionsToResolve } from './constants';
+import { FileSystem } from '../../../file-system/FileSystem';
 
 export class PathResolverCache {
     private static cache: Record<string, string | undefined> = {};
@@ -24,7 +24,7 @@ export class PathResolverCache {
             candidatesFilePath.unshift(resolved);
         }
 
-        const pathWithExtension = candidatesFilePath.find(it => fs.existsSync(it));
+        const pathWithExtension = candidatesFilePath.find(it => FileSystem.exists(it));
 
         if (pathWithExtension === undefined) {
             throw new Error(`Can not resolve file ${targetPath}`);
