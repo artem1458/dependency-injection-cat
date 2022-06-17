@@ -1,10 +1,10 @@
 import fs from 'fs';
 import ts, { ScriptTarget } from 'typescript';
 import { ContextNamesRepository } from './ContextNamesRepository';
-import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCatContextContext';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { getContextPaths } from './getContextPaths';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { filterClassesNotExtendingDICatClass } from '../ts-helpers/filterClassesNotExtendingDICatClass';
 
 export function registerAllContextNames(compilationContext: CompilationContext) {
     ContextNamesRepository.nameToPath.clear();
@@ -21,7 +21,7 @@ export function registerAllContextNames(compilationContext: CompilationContext) 
             true,
         );
 
-        const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
+        const catContextClassDeclarations = filterClassesNotExtendingDICatClass(sourceFile.statements, 'CatContext');
 
         if (catContextClassDeclarations.length === 0) {
             return;

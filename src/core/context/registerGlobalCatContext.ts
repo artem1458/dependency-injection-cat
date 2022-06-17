@@ -1,10 +1,11 @@
 import ts from 'typescript';
-import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCatContextContext';
 import { ContextRepository } from './ContextRepository';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
-import { isExtendsGlobalCatContextContext } from '../ts-helpers/predicates/isExtendsGlobalCatContext';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { IncorrectContextDeclarationError } from '../../compilation-context/messages/errors/IncorrectContextDeclarationError';
+import {
+    IncorrectContextDeclarationError
+} from '../../compilation-context/messages/errors/IncorrectContextDeclarationError';
+import { filterClassesNotExtendingDICatClass } from '../ts-helpers/filterClassesNotExtendingDICatClass';
 
 export const registerGlobalCatContext = (
     compilationContext: CompilationContext,
@@ -12,8 +13,8 @@ export const registerGlobalCatContext = (
 ) => {
     compilationContext.clearMessagesByFilePath(sourceFile.fileName);
 
-    const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
-    const globalCatContextClassDeclarations = sourceFile.statements.filter(isExtendsGlobalCatContextContext);
+    const catContextClassDeclarations = filterClassesNotExtendingDICatClass(sourceFile.statements, 'CatContext');
+    const globalCatContextClassDeclarations = filterClassesNotExtendingDICatClass(sourceFile.statements, 'GlobalCatContext');
 
     if (catContextClassDeclarations.length > 0 && globalCatContextClassDeclarations.length > 0) {
         [

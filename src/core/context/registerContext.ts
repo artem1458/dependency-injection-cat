@@ -1,14 +1,16 @@
 import ts from 'typescript';
-import { isExtendsCatContextContext } from '../ts-helpers/predicates/isExtendsCatContextContext';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
 import { GLOBAL_CONTEXT_NAME } from './constants';
 import { ContextRepository } from './ContextRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
-import { IncorrectContextDeclarationError } from '../../compilation-context/messages/errors/IncorrectContextDeclarationError';
+import {
+    IncorrectContextDeclarationError
+} from '../../compilation-context/messages/errors/IncorrectContextDeclarationError';
+import { filterClassesNotExtendingDICatClass } from '../ts-helpers/filterClassesNotExtendingDICatClass';
 
 export function registerContext(compilationContext: CompilationContext, sourceFile: ts.SourceFile) {
-    const catContextClassDeclarations = sourceFile.statements.filter(isExtendsCatContextContext);
+    const catContextClassDeclarations = filterClassesNotExtendingDICatClass(sourceFile.statements, 'CatContext');
 
     if (catContextClassDeclarations.length > 1) {
         const excessCatContextClasses = catContextClassDeclarations.slice(1);

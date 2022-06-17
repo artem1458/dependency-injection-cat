@@ -3,7 +3,9 @@ import ts from 'typescript';
 import { libraryName } from '../../../constants/libraryName';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 
-export const isExtendsGlobalCatContextContext = (node: ts.Node): node is ts.ClassDeclaration => {
+export type TDICatClass = 'GlobalCatContext' | 'CatContext';
+
+export const isExtendsClass = (node: ts.Node, className: TDICatClass): node is ts.ClassDeclaration => {
     if (!ts.isClassDeclaration(node)) {
         return false;
     }
@@ -21,5 +23,5 @@ export const isExtendsGlobalCatContextContext = (node: ts.Node): node is ts.Clas
         return false;
     }
 
-    return sourceDescriptor.name === 'GlobalCatContext' && sourceDescriptor.path === libraryName;
+    return sourceDescriptor.name === className && sourceDescriptor.path === libraryName;
 };
