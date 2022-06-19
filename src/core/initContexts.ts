@@ -1,4 +1,3 @@
-import { TsConfigProvider } from './ts-config-path-provider/TsConfigProvider';
 import { PathResolver } from './ts-helpers/path-resolver/PathResolver';
 import { registerGlobalCatContext } from './context/registerGlobalCatContext';
 import { getContextPaths } from './context/getContextPaths';
@@ -18,7 +17,6 @@ export const initContexts = (
     }
     wasInitiated = true;
 
-    TsConfigProvider.init();
     PathResolver.init();
 
     getContextPaths()

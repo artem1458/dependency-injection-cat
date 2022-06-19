@@ -5,6 +5,7 @@ import { FileSystemRequest } from './types/file_system/IFSRequest';
 import { FSRequestType } from './types/file_system/FSRequestType';
 import { FileSystem } from '../file-system/FileSystem';
 import { IProcessFilesRequest } from './types/process_files/IProcessFilesRequest';
+import { IProcessFilesResponse } from './types/process_files/IProcessFilesResponse';
 
 export class DICatServer {
     constructor(
@@ -22,6 +23,16 @@ export class DICatServer {
     }
 
     private initEndpoints(expressServer: Express): void {
+        //TODO add error handling
+        expressServer.post('/init', async(request, response) => {
+            FileSystem.setMode('virtual_fs');
+            await FileSystem.initVirtualFS();
+
+            response
+                .status(StatusCodes.OK)
+                .send(ReasonPhrases.OK);
+        });
+
         expressServer.post('/file_system', (request, response) => {
             const requestBody: FileSystemRequest = request.body;
 
@@ -45,10 +56,16 @@ export class DICatServer {
 
             //TODO Process files and return messages
 
+            const responseBody: IProcessFilesResponse = {
+                messages: [
+
+                ]
+            };
+
             response
                 .status(StatusCodes.OK)
                 .contentType('application/json')
-                .send(requestBody);
+                .send(JSON.stringify(responseBody));
         });
     }
 }
