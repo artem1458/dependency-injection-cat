@@ -63,7 +63,7 @@ export class FileSystem {
         if (this.mode === 'node_fs' || this.isFromNodeModules(normalizedPath)) {
             return fs.existsSync(normalizedPath);
         } else {
-            return this.data.has(normalizedPath);
+            return this.data.has(normalizedPath) || fs.existsSync(normalizedPath);
         }
     }
 
@@ -76,7 +76,7 @@ export class FileSystem {
             const fileContent = this.data.get(normalizedPath) ?? null;
 
             if (fileContent === null) {
-                throw new Error('File not found in virtual FS');
+                return fs.readFileSync(normalizedPath, {encoding: 'utf-8'});
             }
 
             return fileContent;
