@@ -7,7 +7,7 @@ type FSMode = 'node_fs' | 'virtual_fs'
 
 export class FileSystem {
     private static mode: FSMode = 'node_fs';
-    static data = new Map<string, string>();
+    private static data = new Map<string, string>();
 
     static async initVirtualFS(): Promise<void> {
         const projectFiles = await globAsync('**/*', {
