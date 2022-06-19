@@ -16,7 +16,6 @@ export class FileSystem {
                 '**/dist/**',
             ],
             absolute: true,
-            cwd: '/Users/art/IdeaProjects/webui',
         });
 
         await Promise.all(projectFiles.map(async filePath => {
