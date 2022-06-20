@@ -2,6 +2,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "outDir": "./dist",
+    "useUnknownInCatchVariables": false,
     "declaration": true,
     "target": "es5",
     "module": "CommonJS",
