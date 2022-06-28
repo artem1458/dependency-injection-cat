@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
-import { initContexts } from '../../core/initContexts';
+import { initGlobalContexts } from '../../core/initGlobalContexts';
 import DICatWebpackPlugin from '../../plugins/webpack';
 import { get } from 'lodash';
 import { getCompilationContext } from '../getCompilationContext';
@@ -10,7 +10,7 @@ import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatt
 export default (program: ts.Program, config?: IDiConfig): ts.TransformerFactory<ts.SourceFile> => {
     initDiConfig(config);
     const compilationContext = getCompilationContext();
-    initContexts(compilationContext);
+    initGlobalContexts(compilationContext);
 
     const transformerFactory = getTransformerFactory(compilationContext);
 

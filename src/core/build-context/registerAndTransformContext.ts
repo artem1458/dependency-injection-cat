@@ -29,7 +29,6 @@ import { CompilationContext } from '../../compilation-context/CompilationContext
 
 export function registerAndTransformContext(
     compilationContext: CompilationContext,
-    context: ts.TransformationContext,
     sourceFile: ts.SourceFile
 ): ts.SourceFile {
     compilationContext.clearMessagesByFilePath(sourceFile.fileName);

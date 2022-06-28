@@ -55,4 +55,8 @@ export class LifecycleMethodsRepository {
         this.contextDescriptorToLifecycleDescriptors.delete(contextDescriptor);
         contextLifecycleDescriptors.forEach(it => this.nodeToContextLifecycleDescriptor.delete(it.node));
     }
+
+    static clear(): void {
+        this.contextDescriptorToLifecycleDescriptors.clear();
+    }
 }

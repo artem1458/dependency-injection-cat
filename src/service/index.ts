@@ -1,3 +1,10 @@
-import { RequestHandler } from './RequestHandler';
+import { DICatService } from './DICatService';
+import { FileSystemHandler } from './handlers/FileSystemHandler';
+import { ProcessFilesHandler } from './handlers/ProcessFilesHandler';
 
-RequestHandler.init();
+const requestHandler = new DICatService(
+    new FileSystemHandler(),
+    new ProcessFilesHandler(),
+);
+
+requestHandler.run();

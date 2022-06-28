@@ -9,7 +9,7 @@ import { CompilationContext } from '../compilation-context/CompilationContext';
 
 let wasInitiated = false;
 
-export const initContexts = (
+export const initGlobalContexts = (
     compilationContext: CompilationContext,
 ) => {
     if (wasInitiated) {

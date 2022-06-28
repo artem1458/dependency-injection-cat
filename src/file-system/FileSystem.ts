@@ -1,7 +1,7 @@
 import fs from 'fs';
 import upath from 'upath';
-import { globAsync } from './utils';
 import minimatch from 'minimatch';
+import glob, { IOptions } from 'glob';
 
 type FSMode = 'node_fs' | 'virtual_fs'
 
@@ -10,7 +10,9 @@ export class FileSystem {
     private static data = new Map<string, string>();
 
     static async initVirtualFS(): Promise<void> {
-        const projectFiles = await globAsync('**/*', {
+        this.setMode('virtual_fs');
+
+        const projectFiles = await this.globAsync('**/*', {
             ignore: [
                 '**/node_modules/**',
                 '**/dist/**',
@@ -83,6 +85,10 @@ export class FileSystem {
         }
     }
 
+    static getAllFilePaths(): string[] {
+        return Array.from(this.data.keys());
+    }
+
     private static toUPath(path: string): string {
         return upath.normalize(path);
     }
@@ -99,5 +105,17 @@ export class FileSystem {
         }
 
         return null;
+    }
+
+    private static globAsync(pattern: string, options: IOptions): Promise<string[]> {
+        return new Promise((resolve, reject) => {
+            glob(pattern, options, (err, matches) => {
+                if (err !== null) {
+                    reject(err);
+                } else {
+                    resolve(matches);
+                }
+            });
+        });
     }
 }

@@ -98,4 +98,11 @@ export class BeanRepository {
             this.beanNodeToBeanDescriptorMap.delete(beanDescriptor.node);
         });
     }
+
+    static clear(): void {
+        this.beanDescriptorRepository.clear();
+        this.beanIdToBeanDescriptorMap.clear();
+        this.contextIdToBeanDescriptorsMap.clear();
+        this.beanNodeToBeanDescriptorMap.clear();
+    }
 }

@@ -1,5 +1,6 @@
 import { ICompilationMessage } from '../../../compilation-context/messages/ICompilationMessage';
 
+//TODO add more stats
 export interface IProcessFilesResponse {
-    messages: ICompilationMessage[];
+    compilationMessages: ICompilationMessage[];
 }

@@ -1,3 +1,1 @@
-export interface IProcessFilesRequest {
-    paths: string[];
-}
+export interface IProcessFilesRequest {}

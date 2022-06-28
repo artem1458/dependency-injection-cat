@@ -43,4 +43,8 @@ export class BeanDependenciesRepository {
     static clearBeanDependenciesByContextDescriptor(contextDescriptor: IContextDescriptor) {
         this.beanDependenciesRepository.delete(contextDescriptor.name);
     }
+
+    static clear(): void {
+        this.beanDependenciesRepository.clear();
+    }
 }

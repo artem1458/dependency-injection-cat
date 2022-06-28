@@ -35,7 +35,7 @@ export class PathResolverCache {
         return pathWithExtension;
     }
 
-    static clearCache(): void {
+    static clear(): void {
         this.cache = {};
     }
 }

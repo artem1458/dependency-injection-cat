@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "debug": "ttsc"
+    "debug": "ttsc",
+    "testt": "ts-node ../src/service"
   },
   "dependencies": {
     "dependency-injection-cat": "link:../src"

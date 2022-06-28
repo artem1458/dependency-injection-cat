@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { IDiConfig, initDiConfig } from '../../external/config';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { libraryName } from '../../constants/libraryName';
-import { initContexts } from '../../core/initContexts';
+import { initGlobalContexts } from '../../core/initGlobalContexts';
 import { uniqId } from '../../core/utils/uniqId';
 import { getCompilationContext } from '../getCompilationContext';
 
@@ -11,7 +11,7 @@ const IGNORE_TRANSFORM_PROPERTY_KEY = uniqId();
 export default function(api: any, options?: IDiConfig) {
     initDiConfig(options);
     const compilationContext = getCompilationContext();
-    initContexts(compilationContext);
+    initGlobalContexts(compilationContext);
     const transformerFactory = getTransformerFactory(compilationContext);
     const printer = ts.createPrinter();
 

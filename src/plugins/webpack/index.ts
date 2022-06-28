@@ -23,8 +23,8 @@ const reportDIErrorsHook = (compilation: Compilation) => {
         compilationContext.errors,
     );
 
-    PathResolverCache.clearCache();
-    SourceFilesCache.clearCache();
+    PathResolverCache.clear();
+    SourceFilesCache.clear();
 
     if (message === null) {
         return;

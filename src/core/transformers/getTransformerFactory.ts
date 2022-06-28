@@ -15,7 +15,7 @@ export const getTransformerFactory = (
         let transformedSourceFile: ts.SourceFile = sourceFile;
 
         if (minimatch(sourceFile.fileName, diConfig.diConfigPattern!)) {
-            transformedSourceFile = registerAndTransformContext(compilationContext, context, transformedSourceFile);
+            transformedSourceFile = registerAndTransformContext(compilationContext, transformedSourceFile);
         }
 
         const factoryImportsToAdd: ts.ImportDeclaration[] = [];

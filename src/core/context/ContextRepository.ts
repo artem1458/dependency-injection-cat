@@ -80,4 +80,11 @@ export class ContextRepository {
             {contextDescriptor, nodeSourceDescriptor}
         );
     }
+
+    static clear(): void {
+        this.contextMap.clear();
+        this.globalContexts.clear();
+        this.contextNameToTBeanNodeSourceDescriptor.clear();
+        this.contextPathToContextDescriptor.clear();
+    }
 }

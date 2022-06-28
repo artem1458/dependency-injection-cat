@@ -6,7 +6,7 @@ import { libraryName } from '../../../constants/libraryName';
 import { FileSystem } from '../../../file-system/FileSystem';
 
 export class PathResolver {
-    private static resolver: MatchPath;
+    private static resolver: MatchPath | null = null;
 
     static init(): void {
         const config = loadConfig();
@@ -15,7 +15,7 @@ export class PathResolver {
             throw new Error('Can not load tsconfig file');
         }
 
-        PathResolver.resolver = createMatchPath(config.absoluteBaseUrl, config.paths);
+        this.resolver = createMatchPath(config.absoluteBaseUrl, config.paths);
     }
 
     static resolve(sourceFilePath: string, targetPath: string): string {
@@ -33,7 +33,7 @@ export class PathResolver {
             return upath.normalize(resolved);
         }
 
-        const resolved = PathResolver.resolver(
+        const resolved = this.resolver?.(
             normalizedTargetPath,
             undefined,
             undefined,
@@ -50,5 +50,9 @@ export class PathResolver {
             .find(it => FileSystem.exists(it)) ?? normalizedTargetPath;
 
         return upath.normalize(resolvedWithExtension);
+    }
+
+    static clear(): void {
+        this.resolver = null;
     }
 }

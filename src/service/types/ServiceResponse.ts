@@ -1,14 +1,18 @@
-export interface IServiceResponseWithoutPayload {
+import { CommandType } from './ServiceRequest';
+
+export interface IServiceResponse<T extends ResponseType | CommandType, P> {
+    type: T;
     status: ResponseStatus;
+    payload: P;
 }
-export interface IServiceResponse<T extends object> {
-    status: ResponseStatus;
-    payload: T;
+
+export enum ResponseType {
+    INIT = 'INIT',
+    EXIT = 'EXIT',
+    ERROR = 'ERROR',
 }
 
 export enum ResponseStatus {
     OK = 'OK',
     NOT_OK = 'NOT_OK',
 }
-
-export type ServiceResponse<T extends object = object> = IServiceResponseWithoutPayload | IServiceResponse<T>;
