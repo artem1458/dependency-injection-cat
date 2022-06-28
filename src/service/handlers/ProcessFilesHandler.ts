@@ -3,7 +3,6 @@ import { IProcessFilesRequest } from '../types/process_files/IProcessFilesReques
 import { IProcessFilesResponse } from '../types/process_files/IProcessFilesResponse';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
-import { diConfig, IDiConfig } from '../../external/config';
 import { FileSystem } from '../../file-system/FileSystem';
 import minimatch from 'minimatch';
 import { registerGlobalCatContext } from '../../core/context/registerGlobalCatContext';
@@ -17,6 +16,7 @@ import { DependencyGraph } from '../../core/connect-dependencies/DependencyGraph
 import { ContextNamesRepository } from '../../core/context/ContextNamesRepository';
 import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
 import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
+import { ConfigLoader } from '../../external/config/ConfigLoader';
 
 export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest, Promise<IProcessFilesResponse>> {
 
@@ -50,18 +50,9 @@ export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest
 
     private getContextPaths(): string[] {
         const filePaths = FileSystem.getAllFilePaths();
-        const pattern = this.getConfig().diConfigPattern;
-
-        if (!pattern) {
-            throw new Error('Context file pattern is not defined');
-        }
+        const { pattern } = ConfigLoader.load();
 
         return minimatch.match(filePaths, pattern);
-    }
-
-    //TODO use dynamic config
-    private getConfig(): IDiConfig {
-        return diConfig;
     }
 
     private performCleanup(): void {
@@ -73,5 +64,6 @@ export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest
         LifecycleMethodsRepository.clear();
         PathResolver.clear();
         PathResolverCache.clear();
+        ConfigLoader.clear();
     }
 }

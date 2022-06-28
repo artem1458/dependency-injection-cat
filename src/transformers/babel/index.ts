@@ -1,5 +1,4 @@
 import ts from 'typescript';
-import { IDiConfig, initDiConfig } from '../../external/config';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { libraryName } from '../../constants/libraryName';
 import { initGlobalContexts } from '../../core/initGlobalContexts';
@@ -8,8 +7,7 @@ import { getCompilationContext } from '../getCompilationContext';
 
 const IGNORE_TRANSFORM_PROPERTY_KEY = uniqId();
 
-export default function(api: any, options?: IDiConfig) {
-    initDiConfig(options);
+export default function(api: any) {
     const compilationContext = getCompilationContext();
     initGlobalContexts(compilationContext);
     const transformerFactory = getTransformerFactory(compilationContext);

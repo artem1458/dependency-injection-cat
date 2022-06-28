@@ -1,13 +1,8 @@
 import glob from 'glob';
-import { diConfig } from '../../external/config';
-import { GITHUB_REPO_LINK } from '../../exceptions/constants';
+import { ConfigLoader } from '../../external/config/ConfigLoader';
 
 export const getContextPaths = (): Array<string> => {
-    const {diConfigPattern, ignorePatterns} = diConfig;
+    const {pattern, ignorePatterns} = ConfigLoader.load();
 
-    if (!diConfigPattern) {
-        throw new Error(`You forgot define diConfig pattern. Please check configuration guide ${GITHUB_REPO_LINK}`);
-    }
-
-    return glob.sync(diConfigPattern, {absolute: true, ignore: ignorePatterns});
+    return glob.sync(pattern, {absolute: true, ignore: ignorePatterns});
 };

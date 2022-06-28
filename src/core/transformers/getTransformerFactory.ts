@@ -4,17 +4,18 @@ import { isContainerAccess } from '../ts-helpers/container/isContainerAccess';
 import { replaceContainerCall } from '../ts-helpers/container/replaceContainerCall';
 import { unquoteString } from '../utils/unquoteString';
 import minimatch from 'minimatch';
-import { diConfig } from '../../external/config';
 import { registerAndTransformContext } from '../build-context/registerAndTransformContext';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { ConfigLoader } from '../../external/config/ConfigLoader';
 
 export const getTransformerFactory = (
     compilationContext: CompilationContext,
 ): ts.TransformerFactory<ts.SourceFile> => context => {
     return sourceFile => {
         let transformedSourceFile: ts.SourceFile = sourceFile;
+        const config = ConfigLoader.load();
 
-        if (minimatch(sourceFile.fileName, diConfig.diConfigPattern!)) {
+        if (minimatch(sourceFile.fileName, config.pattern)) {
             transformedSourceFile = registerAndTransformContext(compilationContext, transformedSourceFile);
         }
 
