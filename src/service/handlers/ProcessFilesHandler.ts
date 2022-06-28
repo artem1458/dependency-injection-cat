@@ -16,7 +16,7 @@ import { DependencyGraph } from '../../core/connect-dependencies/DependencyGraph
 import { ContextNamesRepository } from '../../core/context/ContextNamesRepository';
 import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
 import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
-import { ConfigLoader } from '../../external/config/ConfigLoader';
+import { ConfigLoader } from '../../config/ConfigLoader';
 
 export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest, Promise<IProcessFilesResponse>> {
 

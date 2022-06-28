@@ -1,5 +1,5 @@
 import glob from 'glob';
-import { ConfigLoader } from '../../external/config/ConfigLoader';
+import { ConfigLoader } from '../../config/ConfigLoader';
 
 export const getContextPaths = (): Array<string> => {
     const {pattern, ignorePatterns} = ConfigLoader.load();

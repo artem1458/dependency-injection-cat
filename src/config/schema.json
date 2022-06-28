@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Dependency Injection Cat configuration schema",
+  "additionalItems": false,
+  "additionalProperties": false,
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "pattern": {
+      "default": "**/*.di.ts",
+      "description": "Glob-pattern for files where placed Contexts",
+      "type": "string"
+    },
+    "ignorePatterns": {
+      "type": "array",
+      "default": true,
+      "description": "Glob-pattern array for files excluded from searching of context files",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "default": "**/node_modules/**"
+      }
+    },
+    "printLogo": {
+      "type": "boolean"
+    }
+  }
+}

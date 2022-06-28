@@ -6,7 +6,7 @@ import { unquoteString } from '../utils/unquoteString';
 import minimatch from 'minimatch';
 import { registerAndTransformContext } from '../build-context/registerAndTransformContext';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { ConfigLoader } from '../../external/config/ConfigLoader';
+import { ConfigLoader } from '../../config/ConfigLoader';
 
 export const getTransformerFactory = (
     compilationContext: CompilationContext,

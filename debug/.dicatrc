@@ -1,3 +1,6 @@
 {
-  "$schema": "../dicatConfigSchema.json"
+  "$schema": "node_modules/dependency-injection-cat/config/schema.json",
+  "pattern": "**/*.did.ts",
+  "ignorePatterns": ["**/node__modules/**"],
+  "printLogo": false
 }

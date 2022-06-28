@@ -65,6 +65,7 @@
     "graphlib": "^2.1.8",
     "http-status-codes": "^2.2.0",
     "json-beautify": "^1.1.1",
+    "jsonschema": "^1.4.1",
     "line-column": "^1.0.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",

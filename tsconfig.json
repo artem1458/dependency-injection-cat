@@ -3,6 +3,7 @@
     "experimentalDecorators": true,
     "outDir": "./dist",
     "useUnknownInCatchVariables": false,
+    "resolveJsonModule": true,
     "declaration": true,
     "target": "es5",
     "module": "CommonJS",

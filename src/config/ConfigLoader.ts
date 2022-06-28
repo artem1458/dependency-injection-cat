@@ -1,6 +1,8 @@
 import { IDIConfig } from './IDIConfig';
 import { cosmiconfigSync } from 'cosmiconfig';
 import TypeScriptLoader from 'cosmiconfig-typescript-loader';
+import { Validator } from 'jsonschema';
+import schema from './schema.json';
 
 export class ConfigLoader {
     private static moduleName = 'dicat';
@@ -37,13 +39,20 @@ export class ConfigLoader {
             }
         });
 
-        const config = loader.search();
+        const loaderResult = loader.search();
+        const config: Partial<IDIConfig | null> = loaderResult?.config ?? null;
 
         if (config === null) {
             this.cachedConfig = this.defaultConfig;
 
             return this.cachedConfig;
         }
+
+        const validator = new Validator();
+
+        validator.validate(config, schema, {
+            throwError: true,
+        });
 
         this.cachedConfig = {
             ...this.defaultConfig,
