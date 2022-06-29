@@ -33,12 +33,8 @@ export class FileSystem {
         this.mode = mode;
     }
 
-    static clearFS(): void {
-        if (this.mode === 'node_fs') {
-            throw new Error('Can not clear node_fs');
-        } else {
-            this.data.clear();
-        }
+    static clearVirtualFS(): void {
+        this.data.clear();
     }
 
     static deleteFile(path: string): void {

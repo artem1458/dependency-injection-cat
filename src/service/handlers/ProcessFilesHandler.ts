@@ -17,8 +17,9 @@ import { ContextNamesRepository } from '../../core/context/ContextNamesRepositor
 import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
 import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
 import { ConfigLoader } from '../../config/ConfigLoader';
+import { IDisposable } from '../types/IDisposable';
 
-export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest, Promise<IProcessFilesResponse>> {
+export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest, Promise<IProcessFilesResponse>>, IDisposable {
 
     async invoke(request: IProcessFilesRequest): Promise<IProcessFilesResponse> {
         try {
@@ -36,8 +37,19 @@ export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest
                 compilationMessages: Array.from(compilationContext.messages)
             };
         } finally {
-            this.performCleanup();
+            this.dispose();
         }
+    }
+
+    dispose(): void {
+        BeanRepository.clear();
+        BeanDependenciesRepository.clear();
+        DependencyGraph.clear();
+        ContextNamesRepository.clear();
+        ContextRepository.clear();
+        LifecycleMethodsRepository.clear();
+        PathResolver.clear();
+        PathResolverCache.clear();
     }
 
     private initGlobalContexts(contextPaths: string[], compilationContext: CompilationContext): void {
@@ -53,17 +65,5 @@ export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest
         const { pattern } = ConfigLoader.load();
 
         return minimatch.match(filePaths, pattern);
-    }
-
-    private performCleanup(): void {
-        BeanRepository.clear();
-        BeanDependenciesRepository.clear();
-        DependencyGraph.clear();
-        ContextNamesRepository.clear();
-        ContextRepository.clear();
-        LifecycleMethodsRepository.clear();
-        PathResolver.clear();
-        PathResolverCache.clear();
-        ConfigLoader.clear();
     }
 }

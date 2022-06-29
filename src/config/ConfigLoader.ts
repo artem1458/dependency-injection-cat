@@ -1,11 +1,9 @@
 import { IDIConfig } from './IDIConfig';
 import { cosmiconfigSync } from 'cosmiconfig';
-import TypeScriptLoader from 'cosmiconfig-typescript-loader';
 import { Validator } from 'jsonschema';
 import schema from './schema.json';
 
 export class ConfigLoader {
-    private static moduleName = 'dicat';
     private static defaultConfig: IDIConfig = {
         pattern: '**/*.di.ts',
         ignorePatterns: ['**/node_modules/**'],
@@ -18,25 +16,16 @@ export class ConfigLoader {
             return this.cachedConfig;
         }
 
-        const moduleName = this.moduleName;
+        const configFileName = 'dicat';
 
-        const loader = cosmiconfigSync(this.moduleName, {
+        const loader = cosmiconfigSync(configFileName, {
             searchPlaces: [
-                'package.json',
-                `.${moduleName}rc`,
-                `.${moduleName}rc.json`,
-                `.${moduleName}rc.yaml`,
-                `.${moduleName}rc.yml`,
-                `.${moduleName}rc.js`,
-                `.${moduleName}rc.ts`,
-                `.${moduleName}rc.cjs`,
-                `${moduleName}.config.js`,
-                `${moduleName}.config.ts`,
-                `${moduleName}.config.cjs`,
+                `.${configFileName}rc`,
+                `.${configFileName}.json`,
+                //TODO Maybe needs to handle js/ts configs. For now only json based configs
+                // `.${configFileName}rc.js`,
+                // `.${configFileName}rc.ts`,
             ],
-            loaders: {
-                '.ts': TypeScriptLoader(),
-            }
         });
 
         const loaderResult = loader.search();

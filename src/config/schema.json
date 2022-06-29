@@ -5,10 +5,6 @@
   "additionalProperties": false,
   "type": "object",
   "properties": {
-    "$schema": {
-      "type": "string",
-      "format": "uri-reference"
-    },
     "pattern": {
       "default": "**/*.di.ts",
       "description": "Glob-pattern for files where placed Contexts",
@@ -25,7 +21,8 @@
       }
     },
     "printLogo": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": true
     }
   }
 }

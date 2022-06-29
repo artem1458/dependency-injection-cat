@@ -22,7 +22,7 @@ export class FileSystemHandler implements IRequestHandler<FileSystemRequest> {
         }
 
         if (request.type === FSRequestType.CLEAR) {
-            FileSystem.clearFS();
+            FileSystem.clearVirtualFS();
             SourceFilesCache.clear();
         }
     }

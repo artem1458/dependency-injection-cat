@@ -8,33 +8,72 @@ import { IProcessFilesRequest } from './types/process_files/IProcessFilesRequest
 import { ProcessFilesHandler } from './handlers/ProcessFilesHandler';
 import { IServiceErrorResponse } from './types/unknown_error/IServiceErrorResponse';
 import { IServiceExit } from './types/exit/IServiceExit';
+import { RestartRequest } from './types/restart/RestartRequest';
+import { IRequestHandler } from './handlers/IRequestHandler';
+import { RestartResponse } from './types/restart/RestartResponse';
+import { BeanRepository } from '../core/bean/BeanRepository';
+import { BeanDependenciesRepository } from '../core/bean-dependencies/BeanDependenciesRepository';
+import { DependencyGraph } from '../core/connect-dependencies/DependencyGraph';
+import { ContextNamesRepository } from '../core/context/ContextNamesRepository';
+import { ContextRepository } from '../core/context/ContextRepository';
+import { LifecycleMethodsRepository } from '../core/context-lifecycle/LifecycleMethodsRepository';
+import { PathResolver } from '../core/ts-helpers/path-resolver/PathResolver';
+import { PathResolverCache } from '../core/ts-helpers/path-resolver/PathResolverCache';
+import { ConfigLoader } from '../config/ConfigLoader';
+import { IDisposable } from './types/IDisposable';
 
-export class DICatService {
+export class DICatService implements IRequestHandler<RestartRequest, Promise<RestartResponse>>, IDisposable {
     constructor(
         private fileSystemHandler: FileSystemHandler,
         private processFilesHandler: ProcessFilesHandler,
     ) {}
 
-    async run(): Promise<void> {
+    async run(isRestarted?: boolean): Promise<void> {
         try {
-            const onStdIn: typeof this.onStdIn = (buffer): Promise<void> => this.onStdIn(buffer);
-            const onExit = (...args: any[]): void => this.onExit(...args);
-
-            process.stdin.on('data', onStdIn);
-            process.on('exit', onExit);
-            process.on('SIGINT', onExit);
-            process.on('SIGUSR1', onExit);
-            process.on('SIGUSR2', onExit);
-            process.on('uncaughtException', onExit);
+            process.stdin.on('data', this.onStdIn);
+            process.on('exit', this.onExit);
+            process.on('SIGINT', this.onExit);
+            process.on('SIGUSR1', this.onExit);
+            process.on('SIGUSR2', this.onExit);
+            process.on('uncaughtException', this.onExit);
 
             await FileSystem.initVirtualFS();
-            this.sendResponse(undefined, ResponseType.INIT, ResponseStatus.OK);
+
+            if (!isRestarted) {
+                this.sendResponse(undefined, ResponseType.INIT, ResponseStatus.OK);
+            }
         } catch (error) {
             this.onExit(error);
         }
     }
 
-    private async onStdIn(buffer: Buffer): Promise<void> {
+    async invoke(request: RestartRequest): Promise<RestartResponse> {
+        BeanRepository.clear();
+        BeanDependenciesRepository.clear();
+        DependencyGraph.clear();
+        ContextNamesRepository.clear();
+        ContextRepository.clear();
+        LifecycleMethodsRepository.clear();
+        PathResolver.clear();
+        PathResolverCache.clear();
+        ConfigLoader.clear();
+        FileSystem.clearVirtualFS();
+
+        this.dispose();
+
+        await this.run(true);
+    }
+
+    dispose(): void {
+        process.stdin.removeListener('data', this.onStdIn);
+        process.removeListener('exit', this.onExit);
+        process.removeListener('SIGINT', this.onExit);
+        process.removeListener('SIGUSR1', this.onExit);
+        process.removeListener('SIGUSR2', this.onExit);
+        process.removeListener('uncaughtException', this.onExit);
+    }
+
+    private onStdIn = async(buffer: Buffer): Promise<void> => {
         try {
             const request: ServiceRequest = STDIOHelper.read(buffer);
 
@@ -49,6 +88,12 @@ export class DICatService {
 
                 return this.sendResponse(processResult, CommandType.PROCESS_FILES, ResponseStatus.OK);
             }
+
+            if (this.isRestartRequest(request)) {
+                const processResult = await this.invoke(request.payload);
+
+                return this.sendResponse(processResult, CommandType.RESTART, ResponseStatus.OK);
+            }
         } catch (err) {
             this.sendResponse<IServiceErrorResponse>(
                 {
@@ -59,9 +104,9 @@ export class DICatService {
                 ResponseStatus.NOT_OK
             );
         }
-    }
+    };
 
-    private onExit(...args: any[]): void {
+    private onExit = (...args: any[]): void => {
         this.sendResponse<IServiceExit>(
             {},
             ResponseType.EXIT,
@@ -69,7 +114,7 @@ export class DICatService {
         );
 
         process.exit();
-    }
+    };
 
     private isFSRequest(request: ServiceRequest): request is IServiceRequest<CommandType.FS, FileSystemRequest> {
         return request.type === CommandType.FS;
@@ -77,6 +122,10 @@ export class DICatService {
 
     private isProcessFilesRequest(request: ServiceRequest): request is IServiceRequest<CommandType.PROCESS_FILES, IProcessFilesRequest> {
         return request.type === CommandType.PROCESS_FILES;
+    }
+
+    private isRestartRequest(request: ServiceRequest): request is IServiceRequest<CommandType.RESTART, RestartRequest> {
+        return request.type === CommandType.RESTART;
     }
 
     private sendResponse<T>(payload: T, type: CommandType | ResponseType, status: ResponseStatus): void {
