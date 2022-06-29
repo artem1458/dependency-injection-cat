@@ -1,4 +1,3 @@
 {
-  "$schema": "node_modules/dependency-injection-cat/config/schema.json",
-
+  "$schema": "node_modules/dependency-injection-cat/config/schema.json"
 }
