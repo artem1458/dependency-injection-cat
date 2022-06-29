@@ -1,5 +1,5 @@
-import { IRequestHandler } from './IRequestHandler';
-import { IProcessFilesRequest } from '../types/process_files/IProcessFilesRequest';
+import { ICommandHandler } from './ICommandHandler';
+import { IProcessFilesCommand } from '../types/process_files/IProcessFilesCommand';
 import { IProcessFilesResponse } from '../types/process_files/IProcessFilesResponse';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
@@ -19,9 +19,9 @@ import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResol
 import { ConfigLoader } from '../../config/ConfigLoader';
 import { IDisposable } from '../types/IDisposable';
 
-export class ProcessFilesHandler implements IRequestHandler<IProcessFilesRequest, Promise<IProcessFilesResponse>>, IDisposable {
+export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand, Promise<IProcessFilesResponse>>, IDisposable {
 
-    async invoke(request: IProcessFilesRequest): Promise<IProcessFilesResponse> {
+    async invoke(command: IProcessFilesCommand): Promise<IProcessFilesResponse> {
         try {
             const compilationContext = new CompilationContext();
             PathResolver.init();

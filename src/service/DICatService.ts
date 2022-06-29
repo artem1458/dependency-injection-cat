@@ -1,15 +1,15 @@
 import { STDIOHelper } from './STDIOHelper';
-import { CommandType, IServiceRequest, ServiceRequest } from './types/ServiceRequest';
+import { CommandType, IServiceCommand, ServiceCommand } from './types/ServiceCommand';
 import { IServiceResponse, ResponseStatus, ResponseType, } from './types/ServiceResponse';
 import { FileSystemHandler } from './handlers/FileSystemHandler';
-import { FileSystemRequest } from './types/file_system/FileSystemRequest';
+import { FileSystemCommand } from './types/file_system/FileSystemCommand';
 import { FileSystem } from '../file-system/FileSystem';
-import { IProcessFilesRequest } from './types/process_files/IProcessFilesRequest';
+import { IProcessFilesCommand } from './types/process_files/IProcessFilesCommand';
 import { ProcessFilesHandler } from './handlers/ProcessFilesHandler';
 import { IServiceErrorResponse } from './types/unknown_error/IServiceErrorResponse';
-import { IServiceExit } from './types/exit/IServiceExit';
-import { RestartRequest } from './types/restart/RestartRequest';
-import { IRequestHandler } from './handlers/IRequestHandler';
+import { IServiceExitResponse } from './types/exit/IServiceExitResponse';
+import { RestartCommand } from './types/restart/RestartCommand';
+import { ICommandHandler } from './handlers/ICommandHandler';
 import { RestartResponse } from './types/restart/RestartResponse';
 import { BeanRepository } from '../core/bean/BeanRepository';
 import { BeanDependenciesRepository } from '../core/bean-dependencies/BeanDependenciesRepository';
@@ -22,7 +22,7 @@ import { PathResolverCache } from '../core/ts-helpers/path-resolver/PathResolver
 import { ConfigLoader } from '../config/ConfigLoader';
 import { IDisposable } from './types/IDisposable';
 
-export class DICatService implements IRequestHandler<RestartRequest, Promise<RestartResponse>>, IDisposable {
+export class DICatService implements ICommandHandler<RestartCommand, Promise<RestartResponse>>, IDisposable {
     constructor(
         private fileSystemHandler: FileSystemHandler,
         private processFilesHandler: ProcessFilesHandler,
@@ -47,7 +47,7 @@ export class DICatService implements IRequestHandler<RestartRequest, Promise<Res
         }
     }
 
-    async invoke(request: RestartRequest): Promise<RestartResponse> {
+    async invoke(command: RestartCommand): Promise<RestartResponse> {
         BeanRepository.clear();
         BeanDependenciesRepository.clear();
         DependencyGraph.clear();
@@ -75,22 +75,22 @@ export class DICatService implements IRequestHandler<RestartRequest, Promise<Res
 
     private onStdIn = async(buffer: Buffer): Promise<void> => {
         try {
-            const request: ServiceRequest = STDIOHelper.read(buffer);
+            const command: ServiceCommand = STDIOHelper.read(buffer);
 
-            if (this.isFSRequest(request)) {
-                this.fileSystemHandler.invoke(request.payload);
+            if (this.isFSCommand(command)) {
+                this.fileSystemHandler.invoke(command.payload);
 
                 return this.sendResponse(undefined, CommandType.FS, ResponseStatus.OK);
             }
 
-            if (this.isProcessFilesRequest(request)) {
-                const processResult = await this.processFilesHandler.invoke(request.payload);
+            if (this.isProcessFilesCommand(command)) {
+                const processResult = await this.processFilesHandler.invoke(command.payload);
 
                 return this.sendResponse(processResult, CommandType.PROCESS_FILES, ResponseStatus.OK);
             }
 
-            if (this.isRestartRequest(request)) {
-                const processResult = await this.invoke(request.payload);
+            if (this.isRestartCommand(command)) {
+                const processResult = await this.invoke(command.payload);
 
                 return this.sendResponse(processResult, CommandType.RESTART, ResponseStatus.OK);
             }
@@ -98,7 +98,7 @@ export class DICatService implements IRequestHandler<RestartRequest, Promise<Res
             this.sendResponse<IServiceErrorResponse>(
                 {
                     details: err.message ?? null,
-                    requestDetails: buffer.toString(),
+                    commandDetails: buffer.toString(),
                 },
                 ResponseType.ERROR,
                 ResponseStatus.NOT_OK
@@ -107,7 +107,7 @@ export class DICatService implements IRequestHandler<RestartRequest, Promise<Res
     };
 
     private onExit = (...args: any[]): void => {
-        this.sendResponse<IServiceExit>(
+        this.sendResponse<IServiceExitResponse>(
             {},
             ResponseType.EXIT,
             ResponseStatus.NOT_OK
@@ -116,16 +116,16 @@ export class DICatService implements IRequestHandler<RestartRequest, Promise<Res
         process.exit();
     };
 
-    private isFSRequest(request: ServiceRequest): request is IServiceRequest<CommandType.FS, FileSystemRequest> {
-        return request.type === CommandType.FS;
+    private isFSCommand(command: ServiceCommand): command is IServiceCommand<CommandType.FS, FileSystemCommand> {
+        return command.type === CommandType.FS;
     }
 
-    private isProcessFilesRequest(request: ServiceRequest): request is IServiceRequest<CommandType.PROCESS_FILES, IProcessFilesRequest> {
-        return request.type === CommandType.PROCESS_FILES;
+    private isProcessFilesCommand(command: ServiceCommand): command is IServiceCommand<CommandType.PROCESS_FILES, IProcessFilesCommand> {
+        return command.type === CommandType.PROCESS_FILES;
     }
 
-    private isRestartRequest(request: ServiceRequest): request is IServiceRequest<CommandType.RESTART, RestartRequest> {
-        return request.type === CommandType.RESTART;
+    private isRestartCommand(command: ServiceCommand): command is IServiceCommand<CommandType.RESTART, RestartCommand> {
+        return command.type === CommandType.RESTART;
     }
 
     private sendResponse<T>(payload: T, type: CommandType | ResponseType, status: ResponseStatus): void {

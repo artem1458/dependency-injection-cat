@@ -1,4 +1,4 @@
-import { CommandType } from './ServiceRequest';
+import { CommandType } from './ServiceCommand';
 
 export interface IServiceResponse<T extends ResponseType | CommandType, P> {
     type: T;

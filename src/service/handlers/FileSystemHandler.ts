@@ -1,27 +1,27 @@
-import { FileSystemRequest } from '../types/file_system/FileSystemRequest';
-import { FSRequestType } from '../types/file_system/FSRequestType';
+import { FileSystemCommand } from '../types/file_system/FileSystemCommand';
+import { FSCommandType } from '../types/file_system/FSCommandType';
 import { FileSystem } from '../../file-system/FileSystem';
 import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
-import { IRequestHandler } from './IRequestHandler';
+import { ICommandHandler } from './ICommandHandler';
 
-export class FileSystemHandler implements IRequestHandler<FileSystemRequest> {
+export class FileSystemHandler implements ICommandHandler<FileSystemCommand> {
 
-    invoke(request: FileSystemRequest): void {
-        if (request.type === FSRequestType.ADD) {
-            request.files.forEach(([path, content]) => {
+    invoke(command: FileSystemCommand): void {
+        if (command.type === FSCommandType.ADD) {
+            command.files.forEach(([path, content]) => {
                 FileSystem.writeFile(path, content);
                 SourceFilesCache.clearByPath(path);
             });
         }
 
-        if (request.type === FSRequestType.DELETE) {
-            request.paths.forEach(path => {
+        if (command.type === FSCommandType.DELETE) {
+            command.paths.forEach(path => {
                 FileSystem.deleteFile(path);
                 SourceFilesCache.clearByPath(path);
             });
         }
 
-        if (request.type === FSRequestType.CLEAR) {
+        if (command.type === FSCommandType.CLEAR) {
             FileSystem.clearVirtualFS();
             SourceFilesCache.clear();
         }
