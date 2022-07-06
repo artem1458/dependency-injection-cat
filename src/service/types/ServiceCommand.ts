@@ -1,19 +1,16 @@
-import { FileSystemCommand } from './file_system/FileSystemCommand';
-import { IProcessFilesCommand } from './process_files/IProcessFilesCommand';
-import { RestartCommand } from './restart/RestartCommand';
+import { IBatchFileSystemCommand } from './file_system/FileSystemCommands';
 
-export interface IServiceCommand<T extends CommandType, P> {
+export interface IServiceCommand<T extends CommandType, P = null> {
     type: T;
     payload: P;
+    id: number;
 }
 
 export enum CommandType {
     FS = 'FS',
     PROCESS_FILES = 'PROCESS_FILES',
-    RESTART = 'RESTART',
 }
 
 export type ServiceCommand =
-    | IServiceCommand<CommandType.FS, FileSystemCommand>
-    | IServiceCommand<CommandType.PROCESS_FILES, IProcessFilesCommand>
-    | IServiceCommand<CommandType.RESTART, RestartCommand>
+    | IServiceCommand<CommandType.FS, IBatchFileSystemCommand>
+    | IServiceCommand<CommandType.PROCESS_FILES>

@@ -1,28 +1,15 @@
-import { STDIOHelper } from './STDIOHelper';
+import { STDIOUtils } from './STDIOUtils';
 import { CommandType, IServiceCommand, ServiceCommand } from './types/ServiceCommand';
-import { IServiceResponse, ResponseStatus, ResponseType, } from './types/ServiceResponse';
+import { IServiceResponse, ResponseType, } from './types/ServiceResponse';
 import { FileSystemHandler } from './handlers/FileSystemHandler';
-import { FileSystemCommand } from './types/file_system/FileSystemCommand';
 import { FileSystem } from '../file-system/FileSystem';
-import { IProcessFilesCommand } from './types/process_files/IProcessFilesCommand';
 import { ProcessFilesHandler } from './handlers/ProcessFilesHandler';
 import { IServiceErrorResponse } from './types/unknown_error/IServiceErrorResponse';
 import { IServiceExitResponse } from './types/exit/IServiceExitResponse';
-import { RestartCommand } from './types/restart/RestartCommand';
-import { ICommandHandler } from './handlers/ICommandHandler';
-import { RestartResponse } from './types/restart/RestartResponse';
-import { BeanRepository } from '../core/bean/BeanRepository';
-import { BeanDependenciesRepository } from '../core/bean-dependencies/BeanDependenciesRepository';
-import { DependencyGraph } from '../core/connect-dependencies/DependencyGraph';
-import { ContextNamesRepository } from '../core/context/ContextNamesRepository';
-import { ContextRepository } from '../core/context/ContextRepository';
-import { LifecycleMethodsRepository } from '../core/context-lifecycle/LifecycleMethodsRepository';
-import { PathResolver } from '../core/ts-helpers/path-resolver/PathResolver';
-import { PathResolverCache } from '../core/ts-helpers/path-resolver/PathResolverCache';
-import { ConfigLoader } from '../config/ConfigLoader';
 import { IDisposable } from './types/IDisposable';
+import { IBatchFileSystemCommand } from './types/file_system/FileSystemCommands';
 
-export class DICatService implements ICommandHandler<RestartCommand, Promise<RestartResponse>>, IDisposable {
+export class DICatService implements IDisposable {
     constructor(
         private fileSystemHandler: FileSystemHandler,
         private processFilesHandler: ProcessFilesHandler,
@@ -40,28 +27,11 @@ export class DICatService implements ICommandHandler<RestartCommand, Promise<Res
             await FileSystem.initVirtualFS();
 
             if (!isRestarted) {
-                this.sendResponse(undefined, ResponseType.INIT, ResponseStatus.OK);
+                this.sendResponse(null, ResponseType.INIT, null);
             }
         } catch (error) {
             this.onExit(error);
         }
-    }
-
-    async invoke(command: RestartCommand): Promise<RestartResponse> {
-        BeanRepository.clear();
-        BeanDependenciesRepository.clear();
-        DependencyGraph.clear();
-        ContextNamesRepository.clear();
-        ContextRepository.clear();
-        LifecycleMethodsRepository.clear();
-        PathResolver.clear();
-        PathResolverCache.clear();
-        ConfigLoader.clear();
-        FileSystem.clearVirtualFS();
-
-        this.dispose();
-
-        await this.run(true);
     }
 
     dispose(): void {
@@ -73,68 +43,61 @@ export class DICatService implements ICommandHandler<RestartCommand, Promise<Res
         process.removeListener('uncaughtException', this.onExit);
     }
 
-    private onStdIn = async(buffer: Buffer): Promise<void> => {
-        try {
-            const command: ServiceCommand = STDIOHelper.read(buffer);
+    private onStdIn = async (buffer: Buffer): Promise<void> => {
+        let commandId: number | null = null;
 
-            if (this.isFSCommand(command)) {
+        try {
+            const command: ServiceCommand = STDIOUtils.read(buffer);
+            commandId = command.id;
+
+            if (this.isBatchFSCommand(command)) {
                 this.fileSystemHandler.invoke(command.payload);
 
-                return this.sendResponse(undefined, CommandType.FS, ResponseStatus.OK);
+                return this.sendResponse(null, CommandType.FS, command.id);
             }
 
             if (this.isProcessFilesCommand(command)) {
-                const processResult = await this.processFilesHandler.invoke(command.payload);
+                const processResult = await this.processFilesHandler.invoke();
 
-                return this.sendResponse(processResult, CommandType.PROCESS_FILES, ResponseStatus.OK);
-            }
-
-            if (this.isRestartCommand(command)) {
-                const processResult = await this.invoke(command.payload);
-
-                return this.sendResponse(processResult, CommandType.RESTART, ResponseStatus.OK);
+                return this.sendResponse(processResult, CommandType.PROCESS_FILES, command.id);
             }
         } catch (err) {
             this.sendResponse<IServiceErrorResponse>(
                 {
                     details: err.message ?? null,
-                    commandDetails: buffer.toString(),
+                    command: buffer.toString(),
                 },
                 ResponseType.ERROR,
-                ResponseStatus.NOT_OK
+                commandId,
             );
         }
     };
 
     private onExit = (...args: any[]): void => {
         this.sendResponse<IServiceExitResponse>(
-            {},
+            null,
             ResponseType.EXIT,
-            ResponseStatus.NOT_OK
+            null,
         );
 
         process.exit();
     };
 
-    private isFSCommand(command: ServiceCommand): command is IServiceCommand<CommandType.FS, FileSystemCommand> {
+    private isBatchFSCommand(command: ServiceCommand): command is IServiceCommand<CommandType.FS, IBatchFileSystemCommand> {
         return command.type === CommandType.FS;
     }
 
-    private isProcessFilesCommand(command: ServiceCommand): command is IServiceCommand<CommandType.PROCESS_FILES, IProcessFilesCommand> {
+    private isProcessFilesCommand(command: ServiceCommand): command is IServiceCommand<CommandType.PROCESS_FILES> {
         return command.type === CommandType.PROCESS_FILES;
     }
 
-    private isRestartCommand(command: ServiceCommand): command is IServiceCommand<CommandType.RESTART, RestartCommand> {
-        return command.type === CommandType.RESTART;
-    }
-
-    private sendResponse<T>(payload: T, type: CommandType | ResponseType, status: ResponseStatus): void {
-        const response: IServiceResponse<typeof type, typeof payload> = {
+    private sendResponse<T extends Record<string, any>>(payload: T | null, type: CommandType | ResponseType, id: number | null): void {
+        const response: IServiceResponse<typeof type> = {
             type: type,
-            status: status,
-            payload: payload
+            payload: payload === null ? null : JSON.stringify(payload),
+            id: id,
         };
 
-        STDIOHelper.write(response);
+        STDIOUtils.write(response);
     }
 }

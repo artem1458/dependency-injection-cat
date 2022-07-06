@@ -10,8 +10,6 @@ export interface IAddFilesCommand {
     files: [path: string, content: string][];
 }
 
-export interface IClearFilesCommand {
-    type: FSCommandType.CLEAR;
+export interface IBatchFileSystemCommand {
+    commands: Array<IAddFilesCommand | IDeleteFilesCommand>;
 }
-
-export type FileSystemCommand = IAddFilesCommand | IDeleteFilesCommand | IClearFilesCommand;

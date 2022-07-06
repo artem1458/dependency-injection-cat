@@ -2,6 +2,7 @@ import { IDIConfig } from './IDIConfig';
 import { cosmiconfigSync } from 'cosmiconfig';
 import { Validator } from 'jsonschema';
 import schema from './schema.json';
+import upath from 'upath';
 
 export class ConfigLoader {
     private static defaultConfig: IDIConfig = {
@@ -10,6 +11,10 @@ export class ConfigLoader {
         printLogo: true,
     };
     private static cachedConfig: IDIConfig | null = null;
+    private static fileNamesToFind = [
+        '.dicatrc',
+        '.dicatrc.json',
+    ];
 
     static load(): IDIConfig {
         if (this.cachedConfig !== null) {
@@ -20,8 +25,7 @@ export class ConfigLoader {
 
         const loader = cosmiconfigSync(configFileName, {
             searchPlaces: [
-                `.${configFileName}rc`,
-                `.${configFileName}.json`,
+                ...this.fileNamesToFind,
                 //TODO Maybe needs to handle js/ts configs. For now only json based configs
                 // `.${configFileName}rc.js`,
                 // `.${configFileName}rc.ts`,
@@ -37,6 +41,13 @@ export class ConfigLoader {
             return this.cachedConfig;
         }
 
+
+        this.setConfig(config);
+
+        return this.cachedConfig!;
+    }
+
+    static setConfig(config: Partial<IDIConfig>): void {
         const validator = new Validator();
 
         validator.validate(config, schema, {
@@ -47,8 +58,16 @@ export class ConfigLoader {
             ...this.defaultConfig,
             ...config,
         };
+    }
 
-        return this.cachedConfig;
+    static parseAndSetConfig(content: string): void {
+        this.setConfig(JSON.parse(content));
+    }
+
+    static isConfigFile(path: string): boolean {
+        return this.fileNamesToFind
+            .map(fileName => upath.join(process.cwd(), fileName))
+            .some(it => it === upath.normalize(path));
     }
 
     static clear(): void {
