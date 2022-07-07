@@ -19,7 +19,7 @@ export class FileSystemHandler implements ICommandHandler<IBatchFileSystemComman
     invoke(command: IBatchFileSystemCommand): void {
         command.commands.forEach(it => {
             if (it.type === FSCommandType.ADD) {
-                it.files.forEach(([path, content]) => {
+                Object.entries(it.files).forEach(([path, content]) => {
                     const normalizedPath = upath.normalize(path);
 
                     if (ConfigLoader.isConfigFile(normalizedPath)) {

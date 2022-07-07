@@ -7,7 +7,7 @@ export interface IDeleteFilesCommand {
 
 export interface IAddFilesCommand {
     type: FSCommandType.ADD;
-    files: [path: string, content: string][];
+    files: Record<string, string>;
 }
 
 export interface IBatchFileSystemCommand {

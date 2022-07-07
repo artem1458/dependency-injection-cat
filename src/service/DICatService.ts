@@ -15,7 +15,7 @@ export class DICatService implements IDisposable {
         private processFilesHandler: ProcessFilesHandler,
     ) {}
 
-    async run(isRestarted?: boolean): Promise<void> {
+    async run(): Promise<void> {
         try {
             process.stdin.on('data', this.onStdIn);
             process.on('exit', this.onExit);
@@ -26,9 +26,7 @@ export class DICatService implements IDisposable {
 
             await FileSystem.initVirtualFS();
 
-            if (!isRestarted) {
-                this.sendResponse(null, ResponseType.INIT, null);
-            }
+            this.sendResponse(null, ResponseType.INIT, null);
         } catch (error) {
             this.onExit(error);
         }
