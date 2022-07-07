@@ -26,7 +26,7 @@ export class DICatService implements IDisposable {
 
             await FileSystem.initVirtualFS();
 
-            this.sendResponse(null, ResponseType.INIT, null);
+            this.sendResponse(null, ResponseType.INIT);
         } catch (error) {
             this.onExit(error);
         }
@@ -42,22 +42,19 @@ export class DICatService implements IDisposable {
     }
 
     private onStdIn = async (buffer: Buffer): Promise<void> => {
-        let commandId: number | null = null;
-
         try {
             const command: ServiceCommand = STDIOUtils.read(buffer);
-            commandId = command.id;
 
             if (this.isBatchFSCommand(command)) {
                 this.fileSystemHandler.invoke(command.payload);
 
-                return this.sendResponse(null, CommandType.FS, command.id);
+                return this.sendResponse(null, CommandType.FS);
             }
 
             if (this.isProcessFilesCommand(command)) {
                 const processResult = await this.processFilesHandler.invoke();
 
-                return this.sendResponse(processResult, CommandType.PROCESS_FILES, command.id);
+                return this.sendResponse(processResult, CommandType.PROCESS_FILES);
             }
         } catch (err) {
             this.sendResponse<IServiceErrorResponse>(
@@ -66,7 +63,6 @@ export class DICatService implements IDisposable {
                     command: buffer.toString(),
                 },
                 ResponseType.ERROR,
-                commandId,
             );
         }
     };
@@ -75,7 +71,6 @@ export class DICatService implements IDisposable {
         this.sendResponse<IServiceExitResponse>(
             null,
             ResponseType.EXIT,
-            null,
         );
 
         process.exit();
@@ -89,11 +84,10 @@ export class DICatService implements IDisposable {
         return command.type === CommandType.PROCESS_FILES;
     }
 
-    private sendResponse<T extends Record<string, any>>(payload: T | null, type: CommandType | ResponseType, id: number | null): void {
+    private sendResponse<T extends Record<string, any>>(payload: T | null, type: CommandType | ResponseType): void {
         const response: IServiceResponse<typeof type> = {
             type: type,
             payload: payload === null ? null : JSON.stringify(payload),
-            id: id,
         };
 
         STDIOUtils.write(response);
