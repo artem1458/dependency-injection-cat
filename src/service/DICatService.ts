@@ -41,9 +41,13 @@ export class DICatService implements IDisposable {
         process.removeListener('uncaughtException', this.onExit);
     }
 
-    private onStdIn = async (buffer: Buffer): Promise<void> => {
+    private onStdIn = (buffer: Buffer): void => {
+        STDIOUtils.read(buffer, this.handleData);
+    };
+
+    private handleData = async (data: string): Promise<void> => {
         try {
-            const command: ServiceCommand = STDIOUtils.read(buffer);
+            const command: ServiceCommand = JSON.parse(data);
 
             if (this.isBatchFSCommand(command)) {
                 this.fileSystemHandler.invoke(command.payload);
@@ -60,7 +64,7 @@ export class DICatService implements IDisposable {
             this.sendResponse<IServiceErrorResponse>(
                 {
                     details: err.message ?? null,
-                    command: buffer.toString(),
+                    command: data,
                 },
                 ResponseType.ERROR,
             );
