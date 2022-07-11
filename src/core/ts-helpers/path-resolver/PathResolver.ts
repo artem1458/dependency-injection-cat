@@ -4,12 +4,13 @@ import { isPathRelative } from '../../utils/isPathRelative';
 import { extensionsToResolve } from './constants';
 import { libraryName } from '../../../constants/libraryName';
 import { FileSystem } from '../../../file-system/FileSystem';
+import { ProgramOptionsProvider } from '../../../program-options/ProgramOptionsProvider';
 
 export class PathResolver {
     private static resolver: MatchPath | null = null;
 
     static init(): void {
-        const config = loadConfig();
+        const config = loadConfig(ProgramOptionsProvider.options.cwd);
 
         if (config.resultType === 'failed') {
             throw new Error('Can not load tsconfig file');

@@ -3,6 +3,7 @@ import { cosmiconfigSync } from 'cosmiconfig';
 import { Validator } from 'jsonschema';
 import schema from './schema.json';
 import upath from 'upath';
+import { ProgramOptionsProvider } from '../program-options/ProgramOptionsProvider';
 
 export class ConfigLoader {
     private static defaultConfig: IDIConfig = {
@@ -66,7 +67,7 @@ export class ConfigLoader {
 
     static isConfigFile(path: string): boolean {
         return this.fileNamesToFind
-            .map(fileName => upath.join(process.cwd(), fileName))
+            .map(fileName => upath.join(ProgramOptionsProvider.options.cwd, fileName))
             .some(it => it === upath.normalize(path));
     }
 

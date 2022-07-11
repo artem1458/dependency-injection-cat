@@ -2,6 +2,7 @@ import fs from 'fs';
 import upath from 'upath';
 import minimatch from 'minimatch';
 import glob, { IOptions } from 'glob';
+import { ProgramOptionsProvider } from '../program-options/ProgramOptionsProvider';
 
 type FSMode = 'node_fs' | 'virtual_fs'
 
@@ -18,6 +19,7 @@ export class FileSystem {
                 '**/dist/**',
             ],
             absolute: true,
+            cwd: ProgramOptionsProvider.options.cwd
         });
 
         await Promise.all(projectFiles.map(async filePath => {
