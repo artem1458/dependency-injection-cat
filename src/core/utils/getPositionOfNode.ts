@@ -5,6 +5,8 @@ export interface INodePosition {
     line: number;
     startColumn: number;
     endColumn: number;
+    startOffset: number;
+    endOffset: number;
 }
 
 export const getPositionOfNode = (node: ts.Node): INodePosition => {
@@ -18,5 +20,7 @@ export const getPositionOfNode = (node: ts.Node): INodePosition => {
         line: result.line,
         startColumn: result.col,
         endColumn: result.col + node.getWidth(),
+        startOffset: node.getStart(),
+        endOffset: node.getEnd()
     };
 };
