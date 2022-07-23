@@ -19,6 +19,7 @@ export const registerPropertyBeanDependencies = (
     descriptor: IBeanDescriptor<ClassPropertyDeclarationWithInitializer>
 ) => {
     //Assuming that we're already checked that first argument in property bean is reference
+    const beanProperty = descriptor.node;
     const classReference = descriptor.node.initializer.arguments[0];
 
     const classReferenceName = classReference.getText();
@@ -29,7 +30,7 @@ export const registerPropertyBeanDependencies = (
     if (nodeSourceDescriptor === null) {
         compilationContext.report(new DependencyResolvingError(
             'Try to use method bean instead.',
-            classReference,
+            beanProperty,
             descriptor.contextDescriptor.node,
         ));
         return;
@@ -42,7 +43,7 @@ export const registerPropertyBeanDependencies = (
     if (classDeclaration === null) {
         compilationContext.report(new DependencyResolvingError(
             'Try to use method bean instead.',
-            classReference,
+            beanProperty,
             descriptor.contextDescriptor.node,
         ));
         return;
@@ -81,8 +82,8 @@ export const registerPropertyBeanDependencies = (
 
     unqualifiedParameters.forEach(([parameter]) => {
         compilationContext.report(new TypeQualifyError(
-            `Parameter name: ${parameter.name.getText()}`,
-            classReference,
+            `Parameter name: "${parameter.name.getText()}"`,
+            beanProperty,
             descriptor.contextDescriptor.node,
         ));
     });

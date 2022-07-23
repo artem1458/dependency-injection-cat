@@ -10,6 +10,7 @@ export interface ICompilationMessage {
     position: INodePosition;
     contextDetails: IContextDetails | null;
     filePath: string;
+    originalText: string;
 }
 
 export interface IContextDetails {

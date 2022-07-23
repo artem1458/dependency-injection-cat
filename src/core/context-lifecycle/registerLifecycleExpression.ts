@@ -149,7 +149,7 @@ export const registerLifecycleExpression = (
 
                 if (beanCandidatesFromCurrentContextQualifiedByParameterName.length > 1) {
                     compilationContext.report(new DependencyResolvingError(
-                        `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}", found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates with same name.`,
+                        `Found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
                         parameter,
                         contextDescriptor.node,
                     ));
@@ -157,7 +157,7 @@ export const registerLifecycleExpression = (
                 }
 
                 compilationContext.report(new DependencyResolvingError(
-                    `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}", found ${beanCandidatesFromCurrentContextQualifiedByParameterName.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                    `Found ${nonEmbeddedBeanCandidatesFromCurrentContext.length} candidates for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
                     parameter,
                     contextDescriptor.node,
                 ));
@@ -188,7 +188,7 @@ export const registerLifecycleExpression = (
 
                 if (beansByParameterName.length > 1) {
                     compilationContext.report(new DependencyResolvingError(
-                        `Can not find EmbeddedBean candidate for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}", found ${beansByParameterName.length} candidates with same name.`,
+                        `Found ${beansByParameterName.length} EmbeddedBean candidates for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
                         parameter,
                         contextDescriptor.node,
                     ));
@@ -196,7 +196,7 @@ export const registerLifecycleExpression = (
                 }
 
                 compilationContext.report(new DependencyResolvingError(
-                    `Can not find EmbeddedBean candidate for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}", found ${embeddedBeanCandidatesFromCurrentContext.length} candidates. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                    `Found ${embeddedBeanCandidatesFromCurrentContext.length} EmbeddedBean candidates for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
                     parameter,
                     contextDescriptor.node,
                 ));
@@ -227,7 +227,7 @@ export const registerLifecycleExpression = (
 
                 if (beanCandidatesFromGlobalContextQualifiedByParameterName.length > 1) {
                     compilationContext.report(new DependencyResolvingError(
-                        `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}", found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} candidates in Global context with same name.`,
+                        `Found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} GlobalBean candidates for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
                         parameter,
                         contextDescriptor.node,
                     ));
@@ -235,7 +235,7 @@ export const registerLifecycleExpression = (
                 }
 
                 compilationContext.report(new DependencyResolvingError(
-                    `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}", found ${beanCandidatesFromGlobalContext.length} candidates in Global context. Please use @Qualifier or rename parameter to match Bean name, to specify which Bean should be injected.`,
+                    `Found ${beanCandidatesFromGlobalContext.length} GlobalBean candidates for parameter "${getFormattedParameterNameAndType(parameterName, qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
                     parameter,
                     contextDescriptor.node,
                 ));

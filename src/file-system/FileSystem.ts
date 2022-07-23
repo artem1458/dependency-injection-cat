@@ -49,14 +49,15 @@ export class FileSystem {
         }
     }
 
-    static writeFile(path: string, content: string, modificationStamp: number): void {
+    static writeFile(path: string, content: string, modificationStamp: number | null): void {
         const normalizedPath = this.toUPath(path);
 
         if (this.mode === 'node_fs') {
             fs.writeFileSync(normalizedPath, content);
         } else {
             this.data.set(normalizedPath, content);
-            this.modificationStamps.set(normalizedPath, modificationStamp);
+
+            modificationStamp !== null && this.modificationStamps.set(normalizedPath, modificationStamp);
         }
     }
 
