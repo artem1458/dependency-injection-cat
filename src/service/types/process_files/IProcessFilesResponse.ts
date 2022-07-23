@@ -3,4 +3,5 @@ import { ICompilationMessage } from '../../../compilation-context/messages/IComp
 //TODO add more stats
 export interface IProcessFilesResponse {
     compilationMessages: ICompilationMessage[];
+    modificationStamps: Record<string, number>;
 }

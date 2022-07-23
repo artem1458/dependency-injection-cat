@@ -9,6 +9,7 @@ type FSMode = 'node_fs' | 'virtual_fs'
 export class FileSystem {
     private static mode: FSMode = 'node_fs';
     private static data = new Map<string, string>();
+    private static modificationStamps = new Map<string, number>();
 
     static async initVirtualFS(): Promise<void> {
         this.setMode('virtual_fs');
@@ -44,17 +45,23 @@ export class FileSystem {
 
         if (this.mode === 'virtual_fs') {
             this.data.delete(normalizedPath);
+            this.modificationStamps.delete(normalizedPath);
         }
     }
 
-    static writeFile(path: string, content: string): void {
+    static writeFile(path: string, content: string, modificationStamp: number): void {
         const normalizedPath = this.toUPath(path);
 
         if (this.mode === 'node_fs') {
             fs.writeFileSync(normalizedPath, content);
         } else {
             this.data.set(normalizedPath, content);
+            this.modificationStamps.set(normalizedPath, modificationStamp);
         }
+    }
+
+    static getModificationStamps(): Record<string, number> {
+        return Object.fromEntries(this.modificationStamps.entries());
     }
 
     static exists(path: string): boolean {

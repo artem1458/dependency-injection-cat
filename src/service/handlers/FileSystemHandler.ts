@@ -17,40 +17,69 @@ import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResol
 export class FileSystemHandler implements ICommandHandler<IBatchFileSystemCommand> {
 
     invoke(command: IBatchFileSystemCommand): void {
+        let wasConfigChanged = false;
+        let contentOfNewConfigFile: string | null = null;
+
         command.commands.forEach(it => {
             if (it.type === FSCommandType.ADD) {
-                Object.entries(it.files).forEach(([path, content]) => {
-                    const normalizedPath = upath.normalize(path);
+                const normalizedPath = upath.normalize(it.path);
 
-                    if (ConfigLoader.isConfigFile(normalizedPath)) {
-                        ConfigLoader.parseAndSetConfig(content);
-                        BeanRepository.clear();
-                        BeanDependenciesRepository.clear();
-                        DependencyGraph.clear();
-                        ContextNamesRepository.clear();
-                        ContextRepository.clear();
-                        LifecycleMethodsRepository.clear();
-                        PathResolver.clear();
-                        PathResolverCache.clear();
-                    }
+                FileSystem.writeFile(normalizedPath, it.content, it.modificationStamp);
+                SourceFilesCache.clearByPath(normalizedPath);
 
-                    FileSystem.writeFile(normalizedPath, content);
-                    SourceFilesCache.clearByPath(normalizedPath);
-                });
+                if (ConfigLoader.isConfigFile(normalizedPath)) {
+                    wasConfigChanged = true;
+                    contentOfNewConfigFile = it.content;
+                }
             }
 
             if (it.type === FSCommandType.DELETE) {
-                it.paths.forEach(path => {
-                    const normalizedPath = upath.normalize(path);
+                const normalizedPath = upath.normalize(it.path);
 
-                    if (ConfigLoader.isConfigFile(normalizedPath)) {
-                        ConfigLoader.clear();
-                    }
+                if (ConfigLoader.isConfigFile(normalizedPath)) {
+                    wasConfigChanged = true;
+                    contentOfNewConfigFile = null;
+                }
 
-                    FileSystem.deleteFile(normalizedPath);
-                    SourceFilesCache.clearByPath(normalizedPath);
-                });
+                FileSystem.deleteFile(normalizedPath);
+                SourceFilesCache.clearByPath(normalizedPath);
+            }
+
+            if (it.type === FSCommandType.MOVE) {
+                const normalizedOldPath = upath.normalize(it.oldPath);
+                const normalizedNewPath = upath.normalize(it.newPath);
+
+                if (ConfigLoader.isConfigFile(normalizedOldPath)) {
+                    wasConfigChanged = true;
+                    contentOfNewConfigFile = null;
+                }
+
+                if (ConfigLoader.isConfigFile(normalizedNewPath)) {
+                    wasConfigChanged = true;
+                    contentOfNewConfigFile = it.content;
+                }
+
+                FileSystem.deleteFile(normalizedOldPath);
+                FileSystem.writeFile(normalizedNewPath, it.content, it.modificationStamp);
+
+                SourceFilesCache.clearByPath(normalizedOldPath);
+                SourceFilesCache.clearByPath(normalizedNewPath);
             }
         });
+
+        if (wasConfigChanged) {
+            BeanRepository.clear();
+            BeanDependenciesRepository.clear();
+            DependencyGraph.clear();
+            ContextNamesRepository.clear();
+            ContextRepository.clear();
+            LifecycleMethodsRepository.clear();
+            PathResolver.clear();
+            PathResolverCache.clear();
+
+            contentOfNewConfigFile === null
+                ? ConfigLoader.clear()
+                : ConfigLoader.parseAndSetConfig(contentOfNewConfigFile);
+        }
     }
 }

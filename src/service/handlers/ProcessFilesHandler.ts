@@ -33,7 +33,8 @@ export class ProcessFilesHandler implements ICommandHandler<void, Promise<IProce
             });
 
             return {
-                compilationMessages: Array.from(compilationContext.messages)
+                compilationMessages: Array.from(compilationContext.messages),
+                modificationStamps: FileSystem.getModificationStamps(),
             };
         } finally {
             this.dispose();

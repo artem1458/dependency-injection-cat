@@ -1,15 +1,25 @@
 import { FSCommandType } from './FSCommandType';
 
-export interface IDeleteFilesCommand {
+export interface IDeleteFileCommand {
     type: FSCommandType.DELETE;
-    paths: string[];
+    path: string;
 }
 
-export interface IAddFilesCommand {
+export interface IAddFileCommand {
     type: FSCommandType.ADD;
-    files: Record<string, string>;
+    path: string;
+    content: string;
+    modificationStamp: number;
+}
+
+export interface IMoveFileCommand {
+    type: FSCommandType.MOVE;
+    oldPath: string;
+    newPath: string;
+    content: string;
+    modificationStamp: number;
 }
 
 export interface IBatchFileSystemCommand {
-    commands: Array<IAddFilesCommand | IDeleteFilesCommand>;
+    commands: Array<IAddFileCommand | IDeleteFileCommand | IMoveFileCommand>;
 }
