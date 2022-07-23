@@ -125,6 +125,7 @@ export const registerLifecycleExpression = (
                 return;
             }
 
+            //<editor-fold desc="Trying to find in current context (not-embedded Beans)">
             if (nonEmbeddedBeanCandidatesFromCurrentContext.length === 1) {
                 dependencies.add({
                     parameterName,
@@ -163,7 +164,9 @@ export const registerLifecycleExpression = (
                 ));
                 return;
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Trying to find in current context (embedded Beans)">
             if (embeddedBeanCandidatesFromCurrentContext.length === 1) {
                 dependencies.add({
                     parameterName,
@@ -202,7 +205,9 @@ export const registerLifecycleExpression = (
                 ));
                 return;
             }
+            //</editor-fold>
 
+            //<editor-fold desc="Trying to find in global context">
             if (beanCandidatesFromGlobalContext.length === 1) {
                 dependencies.add({
                     parameterName,
@@ -241,8 +246,7 @@ export const registerLifecycleExpression = (
                 ));
                 return;
             }
-
-            return;
+            //</editor-fold>
         }
     });
 
