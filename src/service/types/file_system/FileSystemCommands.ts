@@ -10,6 +10,7 @@ export interface IAddFileCommand {
     path: string;
     content: string;
     modificationStamp: number | null;
+    isCold: boolean;
 }
 
 export interface IMoveFileCommand {

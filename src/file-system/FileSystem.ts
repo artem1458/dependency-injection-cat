@@ -10,6 +10,7 @@ export class FileSystem {
     private static mode: FSMode = 'node_fs';
     private static data = new Map<string, string>();
     private static modificationStamps = new Map<string, number>();
+    private static coldFilePaths = new Set<string>();
 
     static async initVirtualFS(): Promise<void> {
         this.setMode('virtual_fs');
@@ -38,6 +39,8 @@ export class FileSystem {
 
     static clearVirtualFS(): void {
         this.data.clear();
+        this.modificationStamps.clear();
+        this.coldFilePaths.clear();
     }
 
     static deleteFile(path: string): void {
@@ -46,23 +49,32 @@ export class FileSystem {
         if (this.mode === 'virtual_fs') {
             this.data.delete(normalizedPath);
             this.modificationStamps.delete(normalizedPath);
+            this.coldFilePaths.delete(normalizedPath);
         }
     }
 
-    static writeFile(path: string, content: string, modificationStamp: number | null): void {
+    static writeVirtualFile(path: string, content: string, modificationStamp: number | null, isCold: boolean): void {
         const normalizedPath = this.toUPath(path);
 
         if (this.mode === 'node_fs') {
-            fs.writeFileSync(normalizedPath, content);
+            throw Error('Trying to write virtuali file in node_fs mode');
         } else {
             this.data.set(normalizedPath, content);
 
             modificationStamp !== null && this.modificationStamps.set(normalizedPath, modificationStamp);
+
+            isCold
+                ? this.coldFilePaths.add(normalizedPath)
+                : this.coldFilePaths.delete(normalizedPath);
         }
     }
 
     static getModificationStamps(): Record<string, number> {
         return Object.fromEntries(this.modificationStamps.entries());
+    }
+
+    static getColdFilePaths(): string[] {
+        return Array.from(this.coldFilePaths);
     }
 
     static exists(path: string): boolean {

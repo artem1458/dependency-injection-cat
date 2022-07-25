@@ -4,4 +4,5 @@ import { ICompilationMessage } from '../../../compilation-context/messages/IComp
 export interface IProcessFilesResponse {
     compilationMessages: ICompilationMessage[];
     modificationStamps: Record<string, number>;
+    coldFilePaths: string[];
 }
