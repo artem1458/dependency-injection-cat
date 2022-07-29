@@ -35,7 +35,6 @@ export class ProcessFilesHandler implements ICommandHandler<void, Promise<IProce
             return {
                 compilationMessages: Array.from(compilationContext.messages),
                 modificationStamps: FileSystem.getModificationStamps(),
-                coldFilePaths: FileSystem.getColdFilePaths(),
             };
         } finally {
             this.dispose();

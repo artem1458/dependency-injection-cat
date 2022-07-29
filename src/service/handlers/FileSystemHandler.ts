@@ -24,7 +24,7 @@ export class FileSystemHandler implements ICommandHandler<IBatchFileSystemComman
             if (it.type === FSCommandType.ADD) {
                 const normalizedPath = upath.normalize(it.path);
 
-                FileSystem.writeVirtualFile(normalizedPath, it.content, it.modificationStamp, it.isCold);
+                FileSystem.writeVirtualFile(normalizedPath, it.content, it.modificationStamp);
                 SourceFilesCache.clearByPath(normalizedPath);
 
                 if (ConfigLoader.isConfigFile(normalizedPath)) {
@@ -60,7 +60,7 @@ export class FileSystemHandler implements ICommandHandler<IBatchFileSystemComman
                 }
 
                 FileSystem.deleteFile(normalizedOldPath);
-                FileSystem.writeVirtualFile(normalizedNewPath, it.content, it.modificationStamp, false);
+                FileSystem.writeVirtualFile(normalizedNewPath, it.content, it.modificationStamp);
 
                 SourceFilesCache.clearByPath(normalizedOldPath);
                 SourceFilesCache.clearByPath(normalizedNewPath);
