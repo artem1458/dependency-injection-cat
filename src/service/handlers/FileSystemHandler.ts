@@ -1,6 +1,6 @@
 import upath from 'upath';
-import { IBatchFileSystemCommand } from '../types/file_system/FileSystemCommands';
-import { FSCommandType } from '../types/file_system/FSCommandType';
+import { IBatchFileSystemCommand } from '../types/file-system/FileSystemCommands';
+import { FSCommandType } from '../types/file-system/FSCommandType';
 import { FileSystem } from '../../file-system/FileSystem';
 import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
 import { ICommandHandler } from './ICommandHandler';

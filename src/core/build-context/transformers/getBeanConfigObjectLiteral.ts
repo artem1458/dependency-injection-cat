@@ -14,7 +14,7 @@ export function getBeanConfigObjectLiteral(contextDescriptor: IContextDescriptor
                         factory.createIdentifier('scope'),
                         factory.createStringLiteral(bean.scope)
                     ),
-                    bean.isPublic && factory.createPropertyAssignment(
+                    bean.publicInfo !== null && factory.createPropertyAssignment(
                         factory.createIdentifier('isPublic'),
                         factory.createTrue(),
                     ),

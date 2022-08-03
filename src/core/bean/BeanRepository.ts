@@ -8,6 +8,7 @@ import {
 import { IContextDescriptor } from '../context/ContextRepository';
 import { uniqId } from '../utils/uniqId';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
+import { INodeSourceDescriptor } from '../ts-helpers/node-source-descriptor';
 
 export type TBeanNode = ts.MethodDeclaration
     | ClassPropertyDeclarationWithInitializer
@@ -24,12 +25,16 @@ export interface IBeanDescriptor<T extends TBeanNode = TBeanNode> {
     scope: TBeanScopeValue;
     node: T;
     beanKind: TBeanKind;
-    beanSourceLocation: string | null;
-    isPublic: boolean;
+    beanImplementationSource: INodeSourceDescriptor | null;
+    publicInfo: IBeanPublicInfo | null;
 }
 
 export interface IBeanDescriptorWithId<T extends TBeanNode = TBeanNode> extends IBeanDescriptor<T> {
     id: string;
+}
+
+export interface IBeanPublicInfo {
+    publicNode: ts.PropertySignature;
 }
 
 type TContextName = string;

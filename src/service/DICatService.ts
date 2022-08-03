@@ -7,7 +7,7 @@ import { ProcessFilesHandler } from './handlers/ProcessFilesHandler';
 import { IServiceErrorResponse } from './types/unknown_error/IServiceErrorResponse';
 import { IServiceExitResponse } from './types/exit/IServiceExitResponse';
 import { IDisposable } from './types/IDisposable';
-import { IBatchFileSystemCommand } from './types/file_system/FileSystemCommands';
+import { IBatchFileSystemCommand } from './types/file-system/FileSystemCommands';
 
 export class DICatService implements IDisposable {
     constructor(

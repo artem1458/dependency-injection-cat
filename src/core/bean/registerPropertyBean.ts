@@ -54,8 +54,8 @@ export const registerPropertyBean = (
         node: classElement,
         beanKind: 'property',
         //Will be assigned when resolving dependencies
-        beanSourceLocation: null,
-        isPublic: false,
+        beanImplementationSource: null,
+        publicInfo: null,
     });
 };
 

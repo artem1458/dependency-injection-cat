@@ -1,5 +1,6 @@
-import ts from 'typescript';
+import ts, { SyntaxKind } from 'typescript';
 import { NamedClassDeclaration } from '../types';
+import { isNamedClassDeclaration } from './isNamedClassDeclaration';
 
 export const findClassDeclarationInSourceFileByName = (sourceFile: ts.SourceFile, name: string): NamedClassDeclaration | null => {
     return sourceFile.statements
@@ -7,6 +8,6 @@ export const findClassDeclarationInSourceFileByName = (sourceFile: ts.SourceFile
         .find(it => it.name.getText() === name) ?? null;
 };
 
-function isNamedExportClassDeclaration(node: ts.Node): node is NamedClassDeclaration {
-    return ts.isClassDeclaration(node) && node.name !== undefined;
+export function isNamedExportClassDeclaration(node: ts.Node): node is NamedClassDeclaration {
+    return isNamedClassDeclaration(node) && (node.modifiers?.some(it => it.kind === SyntaxKind.ExportKeyword) ?? false);
 }

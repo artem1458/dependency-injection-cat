@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { NamedClassDeclaration } from '../types';
 
-export const isNamedClassDeclaration = (node: ts.ClassDeclaration): node is NamedClassDeclaration => {
-    return node.name !== undefined;
+export const isNamedClassDeclaration = (node: ts.Node): node is NamedClassDeclaration => {
+    return ts.isClassDeclaration(node) && node.name !== undefined;
 };

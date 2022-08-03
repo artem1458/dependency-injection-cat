@@ -7,7 +7,7 @@ export interface ITestContext {
 export interface IRequester {}
 
 
-class TestContext extends CatContext<ITestContext> {
+export class TestContext extends CatContext<ITestContext> {
     a = Bean(A);
 }
 

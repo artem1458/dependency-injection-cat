@@ -60,7 +60,7 @@ export default class DICatWebpackPlugin {
                 .map(it => it.contextDescriptor.absolutePath);
             const dependenciesContextPaths = Array.from(BeanRepository.beanIdToBeanDescriptorMap.values())
                 .filter(
-                    it => it.beanSourceLocation && changedFiles.has(it.beanSourceLocation),
+                    it => it.beanImplementationSource && changedFiles.has(it.beanImplementationSource.path),
                 )
                 .map(it => it.contextDescriptor.absolutePath);
             const contextsToRebuild = new Set([

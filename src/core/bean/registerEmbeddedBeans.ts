@@ -111,8 +111,8 @@ export const registerEmbeddedBean = (
             scope: 'singleton',
             node: classElement,
             beanKind: 'embedded',
-            beanSourceLocation: null,
-            isPublic: false,
+            beanImplementationSource: null,
+            publicInfo: null,
         });
     });
 
@@ -138,8 +138,8 @@ export const registerEmbeddedBean = (
         scope: 'singleton',
         node: classElement,
         beanKind: 'embedded',
-        beanSourceLocation: null,
-        isPublic: false,
+        beanImplementationSource: null,
+        publicInfo: null,
     });
 };
 

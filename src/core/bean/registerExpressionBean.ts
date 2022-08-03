@@ -56,7 +56,7 @@ export const registerExpressionBean = (
         scope: beanInfo.scope,
         node: classElement,
         beanKind: 'expression',
-        beanSourceLocation: null,
-        isPublic: false,
+        beanImplementationSource: null,
+        publicInfo: null,
     });
 };

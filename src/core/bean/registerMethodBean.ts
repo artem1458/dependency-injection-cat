@@ -65,7 +65,7 @@ export const registerMethodBean = (
         scope: beanInfo.scope,
         node: classElement,
         beanKind: 'method',
-        beanSourceLocation: null,
-        isPublic: false,
+        beanImplementationSource: null,
+        publicInfo: null,
     });
 };

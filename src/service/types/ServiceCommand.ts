@@ -1,4 +1,4 @@
-import { IBatchFileSystemCommand } from './file_system/FileSystemCommands';
+import { IBatchFileSystemCommand } from './file-system/FileSystemCommands';
 
 export interface IServiceCommand<T extends CommandType, P = null> {
     type: T;

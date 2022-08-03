@@ -1,5 +1,5 @@
 import { ICommandHandler } from './ICommandHandler';
-import { IProcessFilesResponse } from '../types/process_files/IProcessFilesResponse';
+import { IProcessFilesResponse, IProcessFilesStatistics } from '../types/process-files/IProcessFilesResponse';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
 import { FileSystem } from '../../file-system/FileSystem';
@@ -17,6 +17,8 @@ import { LifecycleMethodsRepository } from '../../core/context-lifecycle/Lifecyc
 import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
 import { ConfigLoader } from '../../config/ConfigLoader';
 import { IDisposable } from '../types/IDisposable';
+import { AbstractStatistics } from '../types/process-files/statistics/AbstractStatistics';
+import { BeanDeclarationLinkStatistics } from '../types/process-files/statistics/BeanDeclarationLinkStatistics';
 
 export class ProcessFilesHandler implements ICommandHandler<void, Promise<IProcessFilesResponse>>, IDisposable {
 
@@ -35,6 +37,7 @@ export class ProcessFilesHandler implements ICommandHandler<void, Promise<IProce
             return {
                 compilationMessages: Array.from(compilationContext.messages),
                 modificationStamps: FileSystem.getModificationStamps(),
+                statistics: this.collectStatistics(),
             };
         } finally {
             this.dispose();
@@ -65,5 +68,21 @@ export class ProcessFilesHandler implements ICommandHandler<void, Promise<IProce
         const { pattern } = ConfigLoader.load();
 
         return minimatch.match(filePaths, pattern);
+    }
+
+    private collectStatistics(): IProcessFilesStatistics[] {
+        const result: AbstractStatistics[] = [];
+
+        Array.from(BeanRepository.contextIdToBeanDescriptorsMap.values()).forEach(beanDescriptorsByContext => {
+            beanDescriptorsByContext.forEach(beanDescriptor => {
+
+                result.push(...BeanDeclarationLinkStatistics.build(beanDescriptor));
+            });
+        });
+
+        return result.map(it => ({
+            type: it.type,
+            payload: JSON.stringify(it),
+        }));
     }
 }

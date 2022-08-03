@@ -56,7 +56,7 @@ export const registerArrowFunctionBean = (
         node: classElement,
         qualifiedType: qualifiedType,
         beanKind: 'arrowFunction',
-        beanSourceLocation: null,
-        isPublic: false,
+        beanImplementationSource: null,
+        publicInfo: null,
     });
 };

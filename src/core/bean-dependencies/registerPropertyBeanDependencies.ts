@@ -38,7 +38,7 @@ export const registerPropertyBeanDependencies = (
 
     const nodeSourceFile = SourceFilesCache.getSourceFileByPath(nodeSourceDescriptor.path);
     const classDeclaration = findClassDeclarationInSourceFileByName(nodeSourceFile, nodeSourceDescriptor.name);
-    descriptor.beanSourceLocation = nodeSourceDescriptor.path;
+    descriptor.beanImplementationSource = nodeSourceDescriptor;
 
     if (classDeclaration === null) {
         compilationContext.report(new DependencyResolvingError(

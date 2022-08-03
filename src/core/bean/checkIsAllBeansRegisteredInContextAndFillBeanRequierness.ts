@@ -121,7 +121,9 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
             ?.find(it => it.classMemberName === requiredBeanName && it.qualifiedType.kind === qualifiedPropertyType.kind);
 
         if (requiredBeanDescriptor) {
-            requiredBeanDescriptor.isPublic = true;
+            requiredBeanDescriptor.publicInfo = {
+                publicNode: requiredBeanProperty,
+            };
         } else {
             missingBeans.push(requiredBeanProperty);
         }
