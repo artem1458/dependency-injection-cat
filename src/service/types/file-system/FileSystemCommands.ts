@@ -9,7 +9,6 @@ export interface IAddFileCommand {
     type: FSCommandType.ADD;
     path: string;
     content: string;
-    modificationStamp: number | null;
 }
 
 export interface IMoveFileCommand {
@@ -17,7 +16,6 @@ export interface IMoveFileCommand {
     oldPath: string;
     newPath: string;
     content: string;
-    modificationStamp: number | null;
 }
 
 export interface IBatchFileSystemCommand {

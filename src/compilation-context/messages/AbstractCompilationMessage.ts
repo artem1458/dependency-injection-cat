@@ -13,6 +13,7 @@ export abstract class AbstractCompilationMessage implements ICompilationMessage 
     public readonly position: INodePosition;
     public readonly contextDetails: IContextDetails | null;
     public readonly filePath: string;
+    public readonly nodeText: string;
 
     public constructor(
         public details: string | null,
@@ -20,6 +21,7 @@ export abstract class AbstractCompilationMessage implements ICompilationMessage 
         contextNode: NamedClassDeclaration | null
     ) {
         this.position = getPositionOfNode(node);
+        this.nodeText = node.getText();
         this.filePath = node.getSourceFile().fileName;
         this.contextDetails = this.getContextDetails(contextNode);
     }

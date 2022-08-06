@@ -1,4 +1,5 @@
 import { IBatchFileSystemCommand } from './file-system/FileSystemCommands';
+import { IProcessFilesCommand } from './process-files/IProcessFilesCommand';
 
 export interface IServiceCommand<T extends CommandType, P = null> {
     type: T;
@@ -12,4 +13,4 @@ export enum CommandType {
 
 export type ServiceCommand =
     | IServiceCommand<CommandType.FS, IBatchFileSystemCommand>
-    | IServiceCommand<CommandType.PROCESS_FILES>
+    | IServiceCommand<CommandType.PROCESS_FILES, IProcessFilesCommand>

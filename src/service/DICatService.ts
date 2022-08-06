@@ -8,6 +8,7 @@ import { IServiceErrorResponse } from './types/unknown_error/IServiceErrorRespon
 import { IServiceExitResponse } from './types/exit/IServiceExitResponse';
 import { IDisposable } from './types/IDisposable';
 import { IBatchFileSystemCommand } from './types/file-system/FileSystemCommands';
+import { IProcessFilesCommand } from './types/process-files/IProcessFilesCommand';
 
 export class DICatService implements IDisposable {
     constructor(
@@ -56,7 +57,7 @@ export class DICatService implements IDisposable {
             }
 
             if (this.isProcessFilesCommand(command)) {
-                const processResult = await this.processFilesHandler.invoke();
+                const processResult = await this.processFilesHandler.invoke(command.payload);
 
                 return this.sendResponse(processResult, CommandType.PROCESS_FILES);
             }
@@ -84,7 +85,7 @@ export class DICatService implements IDisposable {
         return command.type === CommandType.FS;
     }
 
-    private isProcessFilesCommand(command: ServiceCommand): command is IServiceCommand<CommandType.PROCESS_FILES> {
+    private isProcessFilesCommand(command: ServiceCommand): command is IServiceCommand<CommandType.PROCESS_FILES, IProcessFilesCommand> {
         return command.type === CommandType.PROCESS_FILES;
     }
 

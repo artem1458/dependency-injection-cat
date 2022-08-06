@@ -19,10 +19,11 @@ import { ConfigLoader } from '../../config/ConfigLoader';
 import { IDisposable } from '../types/IDisposable';
 import { AbstractStatistics } from '../types/process-files/statistics/AbstractStatistics';
 import { BeanDeclarationLinkStatistics } from '../types/process-files/statistics/BeanDeclarationLinkStatistics';
+import { IProcessFilesCommand } from '../types/process-files/IProcessFilesCommand';
 
-export class ProcessFilesHandler implements ICommandHandler<void, Promise<IProcessFilesResponse>>, IDisposable {
+export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand, Promise<IProcessFilesResponse>>, IDisposable {
 
-    async invoke(): Promise<IProcessFilesResponse> {
+    async invoke(command: IProcessFilesCommand): Promise<IProcessFilesResponse> {
         try {
             const compilationContext = new CompilationContext();
             PathResolver.init();
@@ -36,8 +37,8 @@ export class ProcessFilesHandler implements ICommandHandler<void, Promise<IProce
 
             return {
                 compilationMessages: Array.from(compilationContext.messages),
-                modificationStamps: FileSystem.getModificationStamps(),
                 statistics: this.collectStatistics(),
+                projectModificationStamp: command.projectModificationStamp,
             };
         } finally {
             this.dispose();
