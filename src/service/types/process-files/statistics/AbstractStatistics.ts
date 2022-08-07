@@ -4,6 +4,5 @@ export abstract class AbstractStatistics {
 }
 
 export enum StatisticsType {
-    BEAN_DEPENDENCIES = 'BEAN_DEPENDENCIES',
-    BEAN_DECLARATION_LINK = 'BEAN_DECLARATION_LINK',
+    LINK = 'LINK',
 }

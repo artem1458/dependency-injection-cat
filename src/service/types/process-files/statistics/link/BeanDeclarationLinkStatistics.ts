@@ -1,16 +1,17 @@
-import { AbstractStatistics, StatisticsType } from './AbstractStatistics';
-import { IBeanDescriptor } from '../../../../core/bean/BeanRepository';
-import { getPositionOfNode, INodePosition } from '../../../../core/utils/getPositionOfNode';
+import { AbstractStatistics, StatisticsType } from '../AbstractStatistics';
+import { IBeanDescriptor } from '../../../../../core/bean/BeanRepository';
+import { getPositionOfNode } from '../../../../../core/utils/getPositionOfNode';
 import upath from 'upath';
-import { isNamedClassDeclaration } from '../../../../core/ts-helpers/predicates/isNamedClassDeclaration';
+import { isNamedClassDeclaration } from '../../../../../core/ts-helpers/predicates/isNamedClassDeclaration';
+import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStatistics';
 
-export class BeanDeclarationLinkStatistics extends AbstractStatistics {
+export class BeanDeclarationLinkStatistics extends AbstractStatistics implements ILinkStatistics {
 
     static build(descriptor: IBeanDescriptor): BeanDeclarationLinkStatistics[] {
         const result: BeanDeclarationLinkStatistics[] = [];
 
         if (descriptor.publicInfo !== null) {
-            const linkPosition: IBeanDeclarationLinkStatisticsPosition = {
+            const linkPosition: ILinkPositionDescriptor = {
                 path: upath.normalize(descriptor.publicInfo.publicNode.getSourceFile().fileName),
                 nodePosition: getPositionOfNode(descriptor.publicInfo.publicNode.name),
             };
@@ -23,7 +24,7 @@ export class BeanDeclarationLinkStatistics extends AbstractStatistics {
             && descriptor.beanImplementationSource?.node
             && isNamedClassDeclaration(descriptor.beanImplementationSource.node)
         ) {
-            const linkPosition: IBeanDeclarationLinkStatisticsPosition = {
+            const linkPosition: ILinkPositionDescriptor = {
                 path: descriptor.beanImplementationSource.path,
                 nodePosition: getPositionOfNode(descriptor.beanImplementationSource.node.name),
             };
@@ -34,31 +35,25 @@ export class BeanDeclarationLinkStatistics extends AbstractStatistics {
         return result;
     }
 
-    public type = StatisticsType.BEAN_DECLARATION_LINK;
-    public linkPosition: IBeanDeclarationLinkStatisticsPosition;
-    public contextPosition: IBeanDeclarationLinkStatisticsPosition;
-    public contextName: string;
-    public beanNameInContext: string;
+    public type = StatisticsType.LINK;
+    public linkType = LinkType.BEAN_DECLARATION;
+    public fromPosition: ILinkPositionDescriptor;
+    public toPosition: ILinkPositionDescriptor;
+    public presentableName: string;
 
     private constructor(
         descriptor: IBeanDescriptor,
-        linkPosition: IBeanDeclarationLinkStatisticsPosition,
+        linkPosition: ILinkPositionDescriptor,
     ) {
         super();
 
-        this.contextPosition = {
+        this.toPosition = {
             path: descriptor.contextDescriptor.absolutePath,
             nodePosition: getPositionOfNode(descriptor.node)
         };
 
-        this.contextName = descriptor.contextDescriptor.name;
-        this.beanNameInContext = descriptor.classMemberName;
+        this.presentableName = `${descriptor.contextDescriptor.name}::${descriptor.classMemberName}`;
 
-        this.linkPosition = linkPosition;
+        this.fromPosition = linkPosition;
     }
-}
-
-export interface IBeanDeclarationLinkStatisticsPosition {
-    path: string;
-    nodePosition: INodePosition;
 }

@@ -18,7 +18,7 @@ import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResol
 import { ConfigLoader } from '../../config/ConfigLoader';
 import { IDisposable } from '../types/IDisposable';
 import { AbstractStatistics } from '../types/process-files/statistics/AbstractStatistics';
-import { BeanDeclarationLinkStatistics } from '../types/process-files/statistics/BeanDeclarationLinkStatistics';
+import { BeanDeclarationLinkStatistics } from '../types/process-files/statistics/link/BeanDeclarationLinkStatistics';
 import { IProcessFilesCommand } from '../types/process-files/IProcessFilesCommand';
 
 export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand, Promise<IProcessFilesResponse>>, IDisposable {
