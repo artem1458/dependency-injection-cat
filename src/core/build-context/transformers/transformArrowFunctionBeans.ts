@@ -43,7 +43,7 @@ function getTransformedArrowFunction (
     const node = parentBeanDescriptor.node as ClassPropertyArrowFunction;
     const arrowFunction = node.initializer;
 
-    const dependencies = BeanDependenciesRepository.beanDependenciesRepository
+    const dependencies = BeanDependenciesRepository.data
         .get(parentBeanDescriptor.contextDescriptor.name)?.get(parentBeanDescriptor) ?? [];
 
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {

@@ -36,7 +36,7 @@ export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContext
 };
 
 function getBeanBlock(parentBeanDescriptor: IBeanDescriptor, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
-    const dependencies = BeanDependenciesRepository.beanDependenciesRepository
+    const dependencies = BeanDependenciesRepository.data
         .get(parentBeanDescriptor.contextDescriptor.name)?.get(parentBeanDescriptor) ?? [];
 
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {

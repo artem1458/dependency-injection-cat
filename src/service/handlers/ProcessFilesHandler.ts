@@ -21,6 +21,7 @@ import { AbstractStatistics } from '../types/process-files/statistics/AbstractSt
 import { BeanDeclarationLinkStatistics } from '../types/process-files/statistics/link/BeanDeclarationLinkStatistics';
 import { IProcessFilesCommand } from '../types/process-files/IProcessFilesCommand';
 import { AbstractCompilationMessage } from '../../compilation-context/messages/AbstractCompilationMessage';
+import { QualifiedBeanDeclarationLinkStatistics } from '../types/process-files/statistics/link/QualifiedBeanDeclarationLinkStatistics';
 
 export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand, Promise<IProcessFilesResponse>>, IDisposable {
 
@@ -105,6 +106,20 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
                     result.push(it);
                     affectedFiles.add(it.fromPosition.path);
                     affectedFiles.add(it.toPosition.path);
+                });
+            });
+        });
+
+        BeanDependenciesRepository.data.forEach(beanDescriptorToDependencies => {
+            beanDescriptorToDependencies.forEach((dependencies, descriptor) => {
+                dependencies.forEach(dependencyDescriptor => {
+                    const statistics = QualifiedBeanDeclarationLinkStatistics.build(dependencyDescriptor);
+
+                    statistics.forEach(it => {
+                        result.push(it);
+                        affectedFiles.add(it.fromPosition.path);
+                        affectedFiles.add(it.toPosition.path);
+                    });
                 });
             });
         });

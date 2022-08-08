@@ -13,5 +13,6 @@ export interface ILinkPositionDescriptor {
 }
 
 export enum LinkType {
+    QUALIFIED_BEAN_DECLARATION = 'QUALIFIED_BEAN_DECLARATION',
     BEAN_DECLARATION = 'BEAN_DECLARATION',
 }

@@ -17,13 +17,13 @@ type TBeanDependencyQualifier = string | null;
 type TContextName = string;
 
 export class BeanDependenciesRepository {
-    static beanDependenciesRepository = new Map<TContextName, Map<IBeanDescriptor, IBeanDependencyDescriptor[]>>();
+    static data = new Map<TContextName, Map<IBeanDescriptor, IBeanDependencyDescriptor[]>>();
 
     static registerBeanDependency(beanDescriptor: IBeanDescriptor, dependencyDescriptor: IBeanDependencyDescriptor) {
-        const dependenciesMap = this.beanDependenciesRepository.get(dependencyDescriptor.contextName) ?? new Map();
+        const dependenciesMap = this.data.get(dependencyDescriptor.contextName) ?? new Map();
 
-        if (!this.beanDependenciesRepository.has(dependencyDescriptor.contextName)) {
-            this.beanDependenciesRepository.set(dependencyDescriptor.contextName, dependenciesMap);
+        if (!this.data.has(dependencyDescriptor.contextName)) {
+            this.data.set(dependencyDescriptor.contextName, dependenciesMap);
         }
 
         let beanDependencyDescriptors = dependenciesMap.get(beanDescriptor) ?? null;
@@ -37,14 +37,14 @@ export class BeanDependenciesRepository {
     }
 
     static getBeanDescriptorMapByContextName(contextName: TContextName): Map<IBeanDescriptor, IBeanDependencyDescriptor[]> | null {
-        return this.beanDependenciesRepository.get(contextName) ?? null;
+        return this.data.get(contextName) ?? null;
     }
 
     static clearBeanDependenciesByContextDescriptor(contextDescriptor: IContextDescriptor) {
-        this.beanDependenciesRepository.delete(contextDescriptor.name);
+        this.data.delete(contextDescriptor.name);
     }
 
     static clear(): void {
-        this.beanDependenciesRepository.clear();
+        this.data.clear();
     }
 }

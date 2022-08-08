@@ -42,7 +42,7 @@ function getNewBody (parentBeanDescriptor: IBeanDescriptorWithId, contextDescrip
     const node = parentBeanDescriptor.node as ts.MethodDeclaration;
     const nodeBody = node.body ?? factory.createBlock([]);
 
-    const dependencies = BeanDependenciesRepository.beanDependenciesRepository
+    const dependencies = BeanDependenciesRepository.data
         .get(parentBeanDescriptor.contextDescriptor.name)?.get(parentBeanDescriptor) ?? [];
 
     const dependenciesStatements = dependencies.map(dependencyDescriptor => {
