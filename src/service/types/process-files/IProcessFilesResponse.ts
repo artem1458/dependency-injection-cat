@@ -6,6 +6,7 @@ export interface IProcessFilesResponse {
     compilationMessages: ICompilationMessage[];
     statistics: IProcessFilesStatistics[];
     projectModificationStamp: number;
+    affectedFiles: string[]
 }
 
 export interface IProcessFilesStatistics {

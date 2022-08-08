@@ -20,6 +20,7 @@ import { IDisposable } from '../types/IDisposable';
 import { AbstractStatistics } from '../types/process-files/statistics/AbstractStatistics';
 import { BeanDeclarationLinkStatistics } from '../types/process-files/statistics/link/BeanDeclarationLinkStatistics';
 import { IProcessFilesCommand } from '../types/process-files/IProcessFilesCommand';
+import { AbstractCompilationMessage } from '../../compilation-context/messages/AbstractCompilationMessage';
 
 export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand, Promise<IProcessFilesResponse>>, IDisposable {
 
@@ -35,10 +36,13 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
                 registerAndTransformContext(compilationContext, SourceFilesCache.getSourceFileByPath(path));
             });
 
+            const affectedFiles = new Set<string>();
+
             return {
-                compilationMessages: Array.from(compilationContext.messages),
-                statistics: this.collectStatistics(),
+                compilationMessages: this.collectCompilationMessages(compilationContext, affectedFiles),
+                statistics: this.collectStatistics(affectedFiles),
                 projectModificationStamp: command.projectModificationStamp,
+                affectedFiles: Array.from(affectedFiles)
             };
         } finally {
             this.dispose();
@@ -71,13 +75,37 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
         return minimatch.match(filePaths, pattern);
     }
 
-    private collectStatistics(): IProcessFilesStatistics[] {
+    private collectCompilationMessages(
+        compilationContext: CompilationContext,
+        affectedFiles: Set<string>
+    ): AbstractCompilationMessage[] {
+        const result: AbstractCompilationMessage[] = [];
+
+        compilationContext.messages.forEach(message => {
+            result.push(message);
+
+            affectedFiles.add(message.filePath);
+
+            if (message.contextDetails !== null) {
+                affectedFiles.add(message.contextDetails.path);
+            }
+        });
+
+        return result;
+    }
+
+    private collectStatistics(affectedFiles: Set<string>): IProcessFilesStatistics[] {
         const result: AbstractStatistics[] = [];
 
         Array.from(BeanRepository.contextIdToBeanDescriptorsMap.values()).forEach(beanDescriptorsByContext => {
             beanDescriptorsByContext.forEach(beanDescriptor => {
+                const statistics = BeanDeclarationLinkStatistics.build(beanDescriptor);
 
-                result.push(...BeanDeclarationLinkStatistics.build(beanDescriptor));
+                statistics.forEach(it => {
+                    result.push(it);
+                    affectedFiles.add(it.fromPosition.path);
+                    affectedFiles.add(it.toPosition.path);
+                });
             });
         });
 
