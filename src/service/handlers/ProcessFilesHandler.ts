@@ -9,8 +9,11 @@ import { ContextRepository } from '../../core/context/ContextRepository';
 import { registerBeans } from '../../core/bean/registerBeans';
 import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
 import { registerAndTransformContext } from '../../core/build-context/registerAndTransformContext';
-import { BeanRepository } from '../../core/bean/BeanRepository';
-import { BeanDependenciesRepository } from '../../core/bean-dependencies/BeanDependenciesRepository';
+import { BeanRepository, IBeanDescriptor } from '../../core/bean/BeanRepository';
+import {
+    BeanDependenciesRepository,
+    IBeanDependencyDescriptor
+} from '../../core/bean-dependencies/BeanDependenciesRepository';
 import { DependencyGraph } from '../../core/connect-dependencies/DependencyGraph';
 import { ContextNamesRepository } from '../../core/context/ContextNamesRepository';
 import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
@@ -22,6 +25,7 @@ import { BeanDeclarationLinkStatistics } from '../types/process-files/statistics
 import { IProcessFilesCommand } from '../types/process-files/IProcessFilesCommand';
 import { AbstractCompilationMessage } from '../../compilation-context/messages/AbstractCompilationMessage';
 import { QualifiedBeanDeclarationLinkStatistics } from '../types/process-files/statistics/link/QualifiedBeanDeclarationLinkStatistics';
+import { BeanUsageLinkStatistics } from '../types/process-files/statistics/link/BeanUsageLinkStatistics';
 
 export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand, Promise<IProcessFilesResponse>>, IDisposable {
 
@@ -110,18 +114,38 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
             });
         });
 
+        const beanDescriptorToDependents = new Map<IBeanDescriptor, Set<IBeanDependencyDescriptor>>();
+
         BeanDependenciesRepository.data.forEach(beanDescriptorToDependencies => {
             beanDescriptorToDependencies.forEach((dependencies, descriptor) => {
-                dependencies.forEach(dependencyDescriptor => {
-                    const statistics = QualifiedBeanDeclarationLinkStatistics.build(dependencyDescriptor);
 
-                    statistics.forEach(it => {
-                        result.push(it);
-                        affectedFiles.add(it.fromPosition.path);
-                        affectedFiles.add(it.toPosition.path);
+                dependencies.forEach(dependencyDescriptor => {
+
+                    dependencyDescriptor.qualifiedBeans.forEach(qualifiedBeanDescriptor => {
+                        const dependents = beanDescriptorToDependents.get(qualifiedBeanDescriptor) ?? new Set();
+
+                        dependents.add(dependencyDescriptor);
+
+                        beanDescriptorToDependents.set(qualifiedBeanDescriptor, dependents);
                     });
+
+                    QualifiedBeanDeclarationLinkStatistics.build(dependencyDescriptor)
+                        .forEach(it => {
+                            result.push(it);
+                            affectedFiles.add(it.fromPosition.path);
+                            affectedFiles.add(it.toPosition.path);
+                        });
                 });
             });
+        });
+
+        beanDescriptorToDependents.forEach((dependents, beanDescriptor) => {
+            BeanUsageLinkStatistics.build(beanDescriptor, Array.from(dependents))
+                .forEach(it => {
+                    result.push(it);
+                    affectedFiles.add(it.fromPosition.path);
+                    affectedFiles.add(it.toPosition.path);
+                });
         });
 
         return result.map(it => ({
