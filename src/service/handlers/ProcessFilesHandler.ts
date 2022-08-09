@@ -16,7 +16,10 @@ import {
 } from '../../core/bean-dependencies/BeanDependenciesRepository';
 import { DependencyGraph } from '../../core/connect-dependencies/DependencyGraph';
 import { ContextNamesRepository } from '../../core/context/ContextNamesRepository';
-import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
+import {
+    ILifecycleDependencyDescriptor,
+    LifecycleMethodsRepository
+} from '../../core/context-lifecycle/LifecycleMethodsRepository';
 import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
 import { ConfigLoader } from '../../config/ConfigLoader';
 import { IDisposable } from '../types/IDisposable';
@@ -101,6 +104,7 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
 
     private collectStatistics(affectedFiles: Set<string>): IProcessFilesStatistics[] {
         const result: AbstractStatistics[] = [];
+        const beanDescriptorToDependents = new Map<IBeanDescriptor, Set<IBeanDependencyDescriptor | ILifecycleDependencyDescriptor>>();
 
         Array.from(BeanRepository.contextIdToBeanDescriptorsMap.values()).forEach(beanDescriptorsByContext => {
             beanDescriptorsByContext.forEach(beanDescriptor => {
@@ -114,7 +118,28 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
             });
         });
 
-        const beanDescriptorToDependents = new Map<IBeanDescriptor, Set<IBeanDependencyDescriptor>>();
+        Array.from(LifecycleMethodsRepository.contextDescriptorToLifecycleDescriptors.values())
+            .forEach(lifecycleDescriptors => {
+                lifecycleDescriptors.forEach(lifecycleDescriptor => {
+                    lifecycleDescriptor.dependencies.forEach(dependencyDescriptor => {
+                        dependencyDescriptor.qualifiedBeans.forEach(beanDescriptor => {
+                            const dependents = beanDescriptorToDependents.get(beanDescriptor) ?? new Set();
+
+                            dependents.add(dependencyDescriptor);
+
+                            beanDescriptorToDependents.set(beanDescriptor, dependents);
+                        });
+
+                        QualifiedBeanDeclarationLinkStatistics.build(dependencyDescriptor)
+                            .forEach(it => {
+                                result.push(it);
+                                affectedFiles.add(it.fromPosition.path);
+                                affectedFiles.add(it.toPosition.path);
+                            });
+                    });
+                });
+            });
+
 
         BeanDependenciesRepository.data.forEach(beanDescriptorToDependencies => {
             beanDescriptorToDependencies.forEach((dependencies, descriptor) => {

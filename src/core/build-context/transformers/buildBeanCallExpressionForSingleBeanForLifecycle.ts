@@ -17,7 +17,7 @@ export function buildDependenciesStatementsForLifecycle(
 ): (ts.VariableStatement | undefined)[] {
     return lifecycleDescriptor.dependencies.list().map(lifecycleDependencyDescriptor => {
         if (lifecycleDependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.PLAIN) {
-            const qualifiedBeanDescriptor = lifecycleDependencyDescriptor.beanDescriptors.firstOrNull();
+            const qualifiedBeanDescriptor = lifecycleDependencyDescriptor.qualifiedBeans.firstOrNull();
 
             if (qualifiedBeanDescriptor === null) {
                 return;
@@ -45,7 +45,7 @@ export function buildDependenciesStatementsForLifecycle(
         }
 
         if (lifecycleDependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
-            const beanCallExpressions = lifecycleDependencyDescriptor.beanDescriptors.list()
+            const beanCallExpressions = lifecycleDependencyDescriptor.qualifiedBeans.list()
                 .map(beanDescriptor => buildBeanCallExpressionForSingleBeanForLifecycle(
                     beanDescriptor,
                     lifecycleDependencyDescriptor,

@@ -10,8 +10,9 @@ export type TLifecycleNodeKind = 'method' | 'arrow-function';
 
 export interface ILifecycleDependencyDescriptor {
     parameterName: string;
+    node: ts.ParameterDeclaration;
     qualifiedType: QualifiedType;
-    beanDescriptors: ExtendedSet<IBeanDescriptor>;
+    qualifiedBeans: ExtendedSet<IBeanDescriptor>;
 }
 
 export interface IContextLifecycleDescriptor {

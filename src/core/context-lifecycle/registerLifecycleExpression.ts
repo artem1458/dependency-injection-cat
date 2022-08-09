@@ -87,7 +87,8 @@ export const registerLifecycleExpression = (
             dependencies.add({
                 qualifiedType,
                 parameterName,
-                beanDescriptors: new ExtendedSet(uniqMergedBeans)
+                qualifiedBeans: new ExtendedSet(uniqMergedBeans),
+                node: parameter,
             });
             return;
         }
@@ -130,7 +131,8 @@ export const registerLifecycleExpression = (
                 dependencies.add({
                     parameterName,
                     qualifiedType,
-                    beanDescriptors: new ExtendedSet(nonEmbeddedBeanCandidatesFromCurrentContext),
+                    qualifiedBeans: new ExtendedSet(nonEmbeddedBeanCandidatesFromCurrentContext),
+                    node: parameter,
                 });
                 return;
             }
@@ -143,7 +145,8 @@ export const registerLifecycleExpression = (
                     dependencies.add({
                         parameterName,
                         qualifiedType,
-                        beanDescriptors: new ExtendedSet(beanCandidatesFromCurrentContextQualifiedByParameterName)
+                        qualifiedBeans: new ExtendedSet(beanCandidatesFromCurrentContextQualifiedByParameterName),
+                        node: parameter,
                     });
                     return;
                 }
@@ -171,7 +174,8 @@ export const registerLifecycleExpression = (
                 dependencies.add({
                     parameterName,
                     qualifiedType,
-                    beanDescriptors: new ExtendedSet(embeddedBeanCandidatesFromCurrentContext),
+                    qualifiedBeans: new ExtendedSet(embeddedBeanCandidatesFromCurrentContext),
+                    node: parameter,
                 });
                 return;
             }
@@ -184,7 +188,8 @@ export const registerLifecycleExpression = (
                     dependencies.add({
                         parameterName,
                         qualifiedType,
-                        beanDescriptors: new ExtendedSet(beansByParameterName)
+                        qualifiedBeans: new ExtendedSet(beansByParameterName),
+                        node: parameter,
                     });
                     return;
                 }
@@ -212,7 +217,8 @@ export const registerLifecycleExpression = (
                 dependencies.add({
                     parameterName,
                     qualifiedType,
-                    beanDescriptors: new ExtendedSet(beanCandidatesFromGlobalContext)
+                    qualifiedBeans: new ExtendedSet(beanCandidatesFromGlobalContext),
+                    node: parameter,
                 });
                 return;
             }
@@ -225,7 +231,8 @@ export const registerLifecycleExpression = (
                     dependencies.add({
                         parameterName,
                         qualifiedType,
-                        beanDescriptors: new ExtendedSet(beanCandidatesFromGlobalContextQualifiedByParameterName)
+                        qualifiedBeans: new ExtendedSet(beanCandidatesFromGlobalContextQualifiedByParameterName),
+                        node: parameter,
                     });
                     return;
                 }

@@ -6,10 +6,11 @@ import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStati
 import { IBeanDependencyDescriptor } from '../../../../../core/bean-dependencies/BeanDependenciesRepository';
 import { isNamedClassDeclaration } from '../../../../../core/ts-helpers/predicates/isNamedClassDeclaration';
 import ts from 'typescript';
+import { ILifecycleDependencyDescriptor } from '../../../../../core/context-lifecycle/LifecycleMethodsRepository';
 
 export class BeanUsageLinkStatistics extends AbstractStatistics implements ILinkStatistics {
 
-    static build(beanDescriptor: IBeanDescriptor, dependencyDescriptors: IBeanDependencyDescriptor[]): BeanUsageLinkStatistics[] {
+    static build(beanDescriptor: IBeanDescriptor, dependencyDescriptors: (IBeanDependencyDescriptor | ILifecycleDependencyDescriptor)[]): BeanUsageLinkStatistics[] {
         const result: BeanUsageLinkStatistics[] = [];
 
         const fromPosition: ILinkPositionDescriptor = {
@@ -23,20 +24,7 @@ export class BeanUsageLinkStatistics extends AbstractStatistics implements ILink
                 nodePosition: getPositionOfNode(dependencyDescriptor.node.name)
             };
 
-            let parentName: string | null = null;
-
-            const firstParent: ts.Node | null = dependencyDescriptor.node?.parent?.parent ?? null;
-            const secondParent: ts.Node | null = dependencyDescriptor.node?.parent?.parent?.parent ?? null;
-
-            if (isNamedClassDeclaration(firstParent)) {
-                parentName = firstParent.name.getText();
-            } else if (isNamedClassDeclaration(secondParent)) {
-                parentName = secondParent.name.getText();
-            }
-
-            const presentableName = parentName === null
-                ? `::${beanDescriptor.classMemberName}`
-                : `${parentName}::${beanDescriptor.classMemberName}`;
+            const presentableName = this.buildPresentableName(dependencyDescriptor);
 
             result.push(new BeanUsageLinkStatistics(toPosition, fromPosition, presentableName));
         });
@@ -63,6 +51,33 @@ export class BeanUsageLinkStatistics extends AbstractStatistics implements ILink
         return result;
     }
 
+    private static buildPresentableName(dependencyDescriptor: IBeanDependencyDescriptor | ILifecycleDependencyDescriptor): string {
+        const parameterParent: ts.SignatureDeclaration | null = dependencyDescriptor.node?.parent ?? null;
+        const signatureParent: ts.Node | null = parameterParent?.parent ?? null;
+
+        if (parameterParent === null || signatureParent === null) {
+            return dependencyDescriptor.node.getText();
+        }
+
+        let methodName: string | null = null;
+
+        if (!isNamedClassDeclaration(signatureParent)) {
+            return dependencyDescriptor.node.getText();
+        }
+
+        if (ts.isConstructSignatureDeclaration(parameterParent) || ts.isConstructorDeclaration(parameterParent)) {
+            methodName = 'constructor';
+        } else {
+            methodName = parameterParent.name?.getText() ?? null;
+        }
+
+        if (methodName === null) {
+            return `${signatureParent.name.getText()}::${dependencyDescriptor.parameterName}`;
+        }
+
+        return `${signatureParent.name.getText()}::${methodName}::${dependencyDescriptor.parameterName}`;
+    }
+
     public type = StatisticsType.LINK;
     public linkType = LinkType.BEAN_USAGE_DECLARATION;
     public fromPosition: ILinkPositionDescriptor;
@@ -80,32 +95,4 @@ export class BeanUsageLinkStatistics extends AbstractStatistics implements ILink
         this.fromPosition = fromPosition;
         this.presentableName = presentableName;
     }
-
-    // private constructor(
-    //     dependencyDescriptor: IBeanDependencyDescriptor,
-    //     linkPosition: ILinkPositionDescriptor,
-    // ) {
-    //     super();
-    //
-    //     this.toPosition = {
-    //         path: upath.normalize(dependencyDescriptor.node.getSourceFile().fileName),
-    //         nodePosition: getPositionOfNode(dependencyDescriptor.node.name)
-    //     };
-    //
-    //     const topLevelParent = dependencyDescriptor.node.parent?.parent ?? null;
-    //
-    //     let parentName: string | null = null;
-    //
-    //     if (topLevelParent !== null && isNamedClassDeclaration(topLevelParent)) {
-    //         parentName = topLevelParent.name.getText();
-    //     }
-    //
-    //     if (parentName === null) {
-    //         this.presentableName = dependencyDescriptor.parameterName;
-    //     } else {
-    //         this.presentableName = `${parentName}::${dependencyDescriptor.parameterName}`;
-    //     }
-    //
-    //     this.fromPosition = linkPosition;
-    // }
 }

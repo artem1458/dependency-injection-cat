@@ -4,10 +4,11 @@ import { getPositionOfNode } from '../../../../../core/utils/getPositionOfNode';
 import upath from 'upath';
 import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStatistics';
 import { IBeanDependencyDescriptor } from '../../../../../core/bean-dependencies/BeanDependenciesRepository';
+import { ILifecycleDependencyDescriptor } from '../../../../../core/context-lifecycle/LifecycleMethodsRepository';
 
 export class QualifiedBeanDeclarationLinkStatistics extends AbstractStatistics implements ILinkStatistics {
 
-    static build(dependencyDescriptor: IBeanDependencyDescriptor): QualifiedBeanDeclarationLinkStatistics[] {
+    static build(dependencyDescriptor: IBeanDependencyDescriptor | ILifecycleDependencyDescriptor): QualifiedBeanDeclarationLinkStatistics[] {
         const result: QualifiedBeanDeclarationLinkStatistics[] = [];
 
         dependencyDescriptor.qualifiedBeans.forEach(beanDescriptor => {
