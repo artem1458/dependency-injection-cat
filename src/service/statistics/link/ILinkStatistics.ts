@@ -1,4 +1,4 @@
-import { INodePosition } from '../../../../../core/utils/getPositionOfNode';
+import { INodePosition } from '../../../core/utils/getPositionOfNode';
 
 export interface ILinkStatistics {
     linkType: LinkType;
@@ -16,4 +16,5 @@ export enum LinkType {
     BEAN_USAGE_DECLARATION = 'BEAN_USAGE_DECLARATION',
     QUALIFIED_BEAN_DECLARATION = 'QUALIFIED_BEAN_DECLARATION',
     BEAN_DECLARATION = 'BEAN_DECLARATION',
+    CONTEXT_IMPLEMENTATION = 'CONTEXT_IMPLEMENTATION',
 }

@@ -1,8 +1,8 @@
 import { AbstractStatistics, StatisticsType } from '../AbstractStatistics';
-import { IBeanDescriptor } from '../../../../../core/bean/BeanRepository';
-import { getPositionOfNode } from '../../../../../core/utils/getPositionOfNode';
+import { IBeanDescriptor } from '../../../core/bean/BeanRepository';
+import { getPositionOfNode } from '../../../core/utils/getPositionOfNode';
 import upath from 'upath';
-import { isNamedClassDeclaration } from '../../../../../core/ts-helpers/predicates/isNamedClassDeclaration';
+import { isNamedClassDeclaration } from '../../../core/ts-helpers/predicates/isNamedClassDeclaration';
 import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStatistics';
 
 export class BeanDeclarationLinkStatistics extends AbstractStatistics implements ILinkStatistics {

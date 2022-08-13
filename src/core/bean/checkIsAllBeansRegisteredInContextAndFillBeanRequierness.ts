@@ -84,7 +84,7 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
         return;
     }
 
-    ContextRepository.registerTBeanType(contextDescriptor, nodeDescriptor);
+    ContextRepository.registerContextInterface(contextDescriptor, nodeDescriptor.node, nodeDescriptor);
 
     const requiredBeanProperties: ts.PropertySignature[] = nodeDescriptor.node.members.map((it) => it as ts.PropertySignature);
 

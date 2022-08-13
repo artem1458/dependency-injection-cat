@@ -6,6 +6,7 @@ import { RebuildStatusRepository } from './RebuildStatusRepository';
 import { BeanRepository } from '../../core/bean/BeanRepository';
 import { getCompilationContext } from '../../transformers/getCompilationContext';
 import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
+import upath from 'upath';
 
 let wasReportedAboutGlobalContexts = false;
 
@@ -55,8 +56,8 @@ export default class DICatWebpackPlugin {
             const changedFiles = webpack4ChangedFiles.length > 0
                 ? new Set(webpack4ChangedFiles)
                 : new Set(Array.from(compiler.modifiedFiles ?? []));
-            const tbeanContextPaths = Array.from(ContextRepository.contextNameToTBeanNodeSourceDescriptor.values())
-                .filter(it => changedFiles.has(it.nodeSourceDescriptor.path))
+            const tbeanContextPaths = Array.from(ContextRepository.contextDescriptorToContextInterface.values())
+                .filter(it => changedFiles.has(it.absolutePath))
                 .map(it => it.contextDescriptor.absolutePath);
             const dependenciesContextPaths = Array.from(BeanRepository.beanIdToBeanDescriptorMap.values())
                 .filter(

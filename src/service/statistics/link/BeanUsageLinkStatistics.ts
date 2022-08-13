@@ -1,12 +1,12 @@
 import { AbstractStatistics, StatisticsType } from '../AbstractStatistics';
-import { IBeanDescriptor } from '../../../../../core/bean/BeanRepository';
-import { getPositionOfNode } from '../../../../../core/utils/getPositionOfNode';
+import { IBeanDescriptor } from '../../../core/bean/BeanRepository';
+import { getPositionOfNode } from '../../../core/utils/getPositionOfNode';
 import upath from 'upath';
 import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStatistics';
-import { IBeanDependencyDescriptor } from '../../../../../core/bean-dependencies/BeanDependenciesRepository';
-import { isNamedClassDeclaration } from '../../../../../core/ts-helpers/predicates/isNamedClassDeclaration';
+import { IBeanDependencyDescriptor } from '../../../core/bean-dependencies/BeanDependenciesRepository';
+import { isNamedClassDeclaration } from '../../../core/ts-helpers/predicates/isNamedClassDeclaration';
 import ts from 'typescript';
-import { ILifecycleDependencyDescriptor } from '../../../../../core/context-lifecycle/LifecycleMethodsRepository';
+import { ILifecycleDependencyDescriptor } from '../../../core/context-lifecycle/LifecycleMethodsRepository';
 
 export class BeanUsageLinkStatistics extends AbstractStatistics implements ILinkStatistics {
 

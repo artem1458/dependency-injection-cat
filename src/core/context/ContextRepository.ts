@@ -3,6 +3,7 @@ import { INodeSourceDescriptor } from '../ts-helpers/node-source-descriptor';
 import { unquoteString } from '../utils/unquoteString';
 import { GLOBAL_CONTEXT_NAME } from './constants';
 import md5 from 'md5';
+import ts from 'typescript';
 
 type TContextName = string;
 type TContextId = string;
@@ -16,15 +17,16 @@ export interface IContextDescriptor {
     node: NamedClassDeclaration;
 }
 
-export interface TBeanTypeDescriptor {
-    nodeSourceDescriptor: INodeSourceDescriptor;
+export interface IContextInterfaceDescriptor {
+    absolutePath: string;
+    node: ts.InterfaceDeclaration;
     contextDescriptor: IContextDescriptor;
 }
 
 export class ContextRepository {
     static contextMap = new Map<TContextName, IContextDescriptor>();
     static globalContexts = new Map<TContextId, IContextDescriptor>();
-    static contextNameToTBeanNodeSourceDescriptor = new Map<TContextName, TBeanTypeDescriptor>();
+    static contextDescriptorToContextInterface = new Map<IContextDescriptor, IContextInterfaceDescriptor>();
     static contextPathToContextDescriptor = new Map<string, IContextDescriptor>();
 
     static registerContext(
@@ -74,17 +76,17 @@ export class ContextRepository {
         return this.contextMap.get(name) ?? null;
     }
 
-    static registerTBeanType(contextDescriptor: IContextDescriptor, nodeSourceDescriptor: INodeSourceDescriptor) {
-        this.contextNameToTBeanNodeSourceDescriptor.set(
-            contextDescriptor.name,
-            {contextDescriptor, nodeSourceDescriptor}
+    static registerContextInterface(contextDescriptor: IContextDescriptor, node: ts.InterfaceDeclaration, nodeSourceDescriptor: INodeSourceDescriptor) {
+        this.contextDescriptorToContextInterface.set(
+            contextDescriptor,
+            { node: node, absolutePath: nodeSourceDescriptor.path, contextDescriptor: contextDescriptor }
         );
     }
 
     static clear(): void {
         this.contextMap.clear();
         this.globalContexts.clear();
-        this.contextNameToTBeanNodeSourceDescriptor.clear();
+        this.contextDescriptorToContextInterface.clear();
         this.contextPathToContextDescriptor.clear();
     }
 }

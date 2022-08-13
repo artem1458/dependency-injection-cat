@@ -4,5 +4,6 @@ export abstract class AbstractStatistics {
 }
 
 export enum StatisticsType {
+    CONTEXT_DETAILS = 'CONTEXT_DETAILS',
     LINK = 'LINK',
 }

@@ -8,7 +8,7 @@ type FSMode = 'node_fs' | 'virtual_fs'
 
 export class FileSystem {
     private static mode: FSMode = 'node_fs';
-    private static data = new Map<string, string>();
+    private static data = new Map<string, string | undefined>();
 
     static async initVirtualFS(): Promise<void> {
         this.setMode('virtual_fs');
@@ -21,13 +21,11 @@ export class FileSystem {
             cwd: ProgramOptionsProvider.options.cwd
         });
 
-        await Promise.all(projectFiles.map(async filePath => {
-            const fileContent = await this.readFileAsync(filePath);
+        this.data.clear();
 
-            if (fileContent !== null) {
-                this.data.set(filePath, fileContent);
-            }
-        }));
+        projectFiles.forEach(filePath => {
+            this.data.set(filePath, undefined);
+        });
     }
 
     static setMode(mode: FSMode): void {
@@ -50,7 +48,7 @@ export class FileSystem {
         const normalizedPath = this.toUPath(path);
 
         if (this.mode === 'node_fs') {
-            throw Error('Trying to write virtuali file in node_fs mode');
+            throw Error('Trying to write virtual file in node_fs mode');
         } else {
             this.data.set(normalizedPath, content);
         }

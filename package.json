@@ -31,7 +31,8 @@
   "scripts": {
     "lint": "eslint './src/**/*.ts'",
     "build": "sh scripts/build.sh",
-    "build-and-test": "sh scripts/buildAndTest.sh"
+    "build-and-test": "sh scripts/buildAndTest.sh",
+    "t": "ts-node src/file-system/directoryTree.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

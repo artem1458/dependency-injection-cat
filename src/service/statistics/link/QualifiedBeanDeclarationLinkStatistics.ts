@@ -1,10 +1,10 @@
 import { AbstractStatistics, StatisticsType } from '../AbstractStatistics';
-import { IBeanDescriptor } from '../../../../../core/bean/BeanRepository';
-import { getPositionOfNode } from '../../../../../core/utils/getPositionOfNode';
+import { IBeanDescriptor } from '../../../core/bean/BeanRepository';
+import { getPositionOfNode } from '../../../core/utils/getPositionOfNode';
 import upath from 'upath';
 import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStatistics';
-import { IBeanDependencyDescriptor } from '../../../../../core/bean-dependencies/BeanDependenciesRepository';
-import { ILifecycleDependencyDescriptor } from '../../../../../core/context-lifecycle/LifecycleMethodsRepository';
+import { IBeanDependencyDescriptor } from '../../../core/bean-dependencies/BeanDependenciesRepository';
+import { ILifecycleDependencyDescriptor } from '../../../core/context-lifecycle/LifecycleMethodsRepository';
 
 export class QualifiedBeanDeclarationLinkStatistics extends AbstractStatistics implements ILinkStatistics {
 
