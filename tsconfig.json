@@ -23,6 +23,11 @@
       "es2017",
       "ESNext",
       "scripthost"
+    ],
+    "plugins": [
+      {
+        "transform": "dependency-injection-cat/transformers/typescript",
+      }
     ]
   },
   "include": [
