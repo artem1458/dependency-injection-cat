@@ -5,6 +5,7 @@ import { isEmbeddedBeanDecorator } from './isEmbeddedBeanDecorator';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { MissingInitializerError } from '../../../compilation-context/messages/errors/MissingInitializerError';
+import { getDecoratorsOnly } from '../../utils/getDecoratorsOnly';
 
 export const isEmbeddedBean = (
     compilationContext: CompilationContext,
@@ -19,7 +20,7 @@ export const isEmbeddedBean = (
         return false;
     }
 
-    if (!node.decorators?.some(isEmbeddedBeanDecorator)) {
+    if (!getDecoratorsOnly(node).some(isEmbeddedBeanDecorator)) {
         return false;
     }
 

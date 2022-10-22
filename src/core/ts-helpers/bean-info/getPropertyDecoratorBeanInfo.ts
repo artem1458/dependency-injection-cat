@@ -7,13 +7,14 @@ import { CompilationContext } from '../../../compilation-context/CompilationCont
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { UnknownError } from '../../../compilation-context/messages/errors/UnknownError';
 import { IncorrectArgumentError } from '../../../compilation-context/messages/errors/IncorrectArgumentError';
+import { getDecoratorsOnly } from '../../utils/getDecoratorsOnly';
 
 export const getPropertyDecoratorBeanInfo = (
     compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor,
     node: ts.MethodDeclaration | ClassPropertyArrowFunction | ts.PropertyDeclaration
 ): ICompilationBeanInfo => {
-    const bean = node.decorators?.find(isBeanDecorator) ?? null;
+    const bean = getDecoratorsOnly(node).find(isBeanDecorator) ?? null;
 
     if (bean === null) {
         compilationContext.report(new UnknownError(

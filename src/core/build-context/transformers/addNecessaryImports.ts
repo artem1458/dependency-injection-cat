@@ -22,7 +22,6 @@ export const addNecessaryImports = (contextDescriptorToIdentifierList: TContextD
 
         const internalCatContextImport = factory.createImportDeclaration(
             undefined,
-            undefined,
             factory.createImportClause(
                 false,
                 undefined,
@@ -34,7 +33,6 @@ export const addNecessaryImports = (contextDescriptorToIdentifierList: TContextD
         );
 
         const contextPoolImport = factory.createImportDeclaration(
-            undefined,
             undefined,
             factory.createImportClause(
                 false,
@@ -54,7 +52,6 @@ export const addNecessaryImports = (contextDescriptorToIdentifierList: TContextD
 
             return (
                 factory.createImportDeclaration(
-                    undefined,
                     undefined,
                     factory.createImportClause(
                         false,

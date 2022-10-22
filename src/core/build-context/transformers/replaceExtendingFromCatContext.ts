@@ -1,6 +1,7 @@
 import ts, { factory } from 'typescript';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { INTERNAL_CAT_CONTEXT_IMPORT } from './addNecessaryImports';
+import { getDecoratorsOnly } from '../../utils/getDecoratorsOnly';
 
 export const replaceExtendingFromCatContext = (contextDescriptor: IContextDescriptor): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
@@ -21,12 +22,11 @@ export const replaceExtendingFromCatContext = (contextDescriptor: IContextDescri
 
                     return ts.factory.updateClassDeclaration(
                         classDeclaration,
-                        classDeclaration.decorators,
-                        classDeclaration.modifiers,
+                        [...getDecoratorsOnly(classDeclaration), ...classDeclaration.modifiers ?? []],
                         classDeclaration.name,
                         classDeclaration.typeParameters,
                         [newHeritageClause],
-                        classDeclaration.members,
+                        classDeclaration.members
                     );
                 }
 

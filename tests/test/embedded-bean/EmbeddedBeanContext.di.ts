@@ -14,10 +14,10 @@ class EmbeddedBeanContext extends CatContext<IEmbeddedBeanContext> {
     @EmbeddedBean embedded: IEmbeddedBeans = {
         withoutDependencies: new WithoutDependencies(),
         withoutDependenciesFromNodeModule: new DependencyFromNodeModuleWithoutDependencies(),
-    }
+    };
 
     withDependenciesFromNodeModule: IDependencyFromNodeModuleWithDependency & DependencyFromNodeModuleWithDependency =
-        Bean(DependencyFromNodeModuleWithDependency)
+        Bean(DependencyFromNodeModuleWithDependency);
 
-    withDependenciesFromEmbeddedBeans: IWithDependencies = Bean(WithDependencies)
+    withDependenciesFromEmbeddedBeans: IWithDependencies = Bean(WithDependencies);
 }

@@ -1,8 +1,7 @@
 import { AbstractStatistics, StatisticsType } from '../AbstractStatistics';
 import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStatistics';
 import { getPositionOfNode } from '../../../core/utils/getPositionOfNode';
-import { IContextDescriptor, IContextInterfaceDescriptor } from '../../../core/context/ContextRepository';
-import ts from 'typescript';
+import { IContextInterfaceDescriptor } from '../../../core/context/ContextRepository';
 import upath from 'upath';
 
 export class ContextImplementationLinkStatistics extends AbstractStatistics implements ILinkStatistics {

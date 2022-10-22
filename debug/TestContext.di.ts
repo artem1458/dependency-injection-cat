@@ -1,4 +1,4 @@
-import { Bean, CatContext, EmbeddedBean, PostConstruct } from 'dependency-injection-cat';
+import { Bean, CatContext, EmbeddedBean } from 'dependency-injection-cat';
 
 export interface ITestContext {
     data: string;
@@ -8,6 +8,9 @@ export interface IRequester {}
 
 
 export class TestContext extends CatContext<ITestContext> {
+    @EmbeddedBean test: IRequester = {};
+
+    @Bean data: string = '';
     a = Bean(A);
 }
 
@@ -19,7 +22,5 @@ export class A {
         data2: string,
         data3: string,
         data4: string,
-        private data5: ITestContext,
-    ) {
-    }
+    ) {}
 }

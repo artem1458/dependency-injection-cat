@@ -21,7 +21,6 @@ export const transformLifecycleArrowFunctions = (contextDescriptorToIdentifierLi
                     return factory.updatePropertyDeclaration(
                         typedNode,
                         undefined,
-                        undefined,
                         typedNode.name,
                         typedNode.questionToken,
                         typedNode.type,

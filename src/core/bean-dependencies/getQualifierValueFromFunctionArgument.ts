@@ -6,13 +6,14 @@ import { DecoratorsCountError } from '../../compilation-context/messages/errors/
 import { IncorrectArgumentError } from '../../compilation-context/messages/errors/IncorrectArgumentError';
 import { IncorrectExpressionUsageError } from '../../compilation-context/messages/errors/IncorrectExpressionUsageError';
 import { IncorrectArgumentsLengthError } from '../../compilation-context/messages/errors/IncorrectArgumentsLengthError';
+import { getDecoratorsOnly } from '../utils/getDecoratorsOnly';
 
 export function getQualifierValueFromFunctionArgument(
     compilationContext: CompilationContext,
     parameter: ts.ParameterDeclaration,
     contextDescriptor: IContextDescriptor
 ): string | null {
-    const qualifierDecorators = parameter.decorators?.filter(isParameterQualifierDecorator) ?? [];
+    const qualifierDecorators = getDecoratorsOnly(parameter).filter(isParameterQualifierDecorator) ?? [];
 
     if (qualifierDecorators.length === 0) {
         return null;

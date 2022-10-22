@@ -4,6 +4,7 @@ import { isBeanDecorator } from './isBeanDecorator';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { MissingInitializerError } from '../../../compilation-context/messages/errors/MissingInitializerError';
+import { getDecoratorsOnly } from '../../utils/getDecoratorsOnly';
 
 export const isArrowFunctionBean = (
     compilationContext: CompilationContext,
@@ -14,7 +15,7 @@ export const isArrowFunctionBean = (
         return false;
     }
 
-    if (!node.decorators?.some(isBeanDecorator)) {
+    if (!getDecoratorsOnly(node).some(isBeanDecorator)) {
         return false;
     }
 

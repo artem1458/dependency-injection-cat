@@ -6,7 +6,6 @@ import { RebuildStatusRepository } from './RebuildStatusRepository';
 import { BeanRepository } from '../../core/bean/BeanRepository';
 import { getCompilationContext } from '../../transformers/getCompilationContext';
 import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
-import upath from 'upath';
 
 let wasReportedAboutGlobalContexts = false;
 

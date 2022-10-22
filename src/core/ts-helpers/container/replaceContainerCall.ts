@@ -75,7 +75,6 @@ export const replaceContainerCall = (
     const importNamespaceName = `${contextName}${CONTEXT_POOL_POSTFIX}`;
     const importDeclaration = factory.createImportDeclaration(
         undefined,
-        undefined,
         factory.createImportClause(
             false,
             undefined,

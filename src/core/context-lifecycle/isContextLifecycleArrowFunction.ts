@@ -5,6 +5,7 @@ import { isExpressionBean } from '../ts-helpers/predicates/isExpressionBean';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../context/ContextRepository';
+import { getDecoratorsOnly } from '../utils/getDecoratorsOnly';
 
 export const isContextLifecycleArrowFunction = (
     compilationContext: CompilationContext,
@@ -19,7 +20,7 @@ export const isContextLifecycleArrowFunction = (
         return false;
     }
 
-    if (!node.decorators?.some(isContextLifecycleDecorator)) {
+    if (!getDecoratorsOnly(node).some(isContextLifecycleDecorator)) {
         return false;
     }
 

@@ -7,6 +7,7 @@ import { registerLifecycleArrowFunction } from './registerLifecycleArrowFunction
 import { LifecycleMethodsRepository } from './LifecycleMethodsRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { IncorrectUsageError } from '../../compilation-context/messages/errors/IncorrectUsageError';
+import { getDecoratorsOnly } from '../utils/getDecoratorsOnly';
 
 export const registerContextLifecycleMethods = (
     compilationContext: CompilationContext,
@@ -15,7 +16,7 @@ export const registerContextLifecycleMethods = (
     LifecycleMethodsRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
 
     contextDescriptor.node.members.forEach(it => {
-        const lifecycles = getLifecycleTypes(it.decorators ?? [] as any);
+        const lifecycles = getLifecycleTypes(getDecoratorsOnly(it));
 
         if (lifecycles === null) {
             return;

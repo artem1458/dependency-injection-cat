@@ -1,5 +1,6 @@
 import * as ts from 'typescript';
 import { get } from 'lodash';
+import { getModifiersOnly } from '../../utils/getModifiersOnly';
 
 type ExportModifier = ts.Token<ts.SyntaxKind.ExportKeyword>;
 
@@ -9,7 +10,7 @@ export interface NamedExportStatement extends ts.Statement {
 }
 
 export function isNamedExportStatement(node: ts.Statement): node is NamedExportStatement {
-    const modifiers = node.modifiers ?? [];
+    const modifiers = getModifiersOnly(node);
 
     return get(node, 'name') !== undefined && modifiers.some(it => it.kind === ts.SyntaxKind.ExportKeyword);
 }

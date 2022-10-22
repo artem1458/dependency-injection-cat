@@ -5,6 +5,7 @@ import { isClassPropertyBean } from './isClassPropertyBean';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 import { IContextDescriptor } from '../../context/ContextRepository';
 import { MissingInitializerError } from '../../../compilation-context/messages/errors/MissingInitializerError';
+import { getDecoratorsOnly } from '../../utils/getDecoratorsOnly';
 
 export const isExpressionBean = (
     compilationContext: CompilationContext,
@@ -19,7 +20,7 @@ export const isExpressionBean = (
         return false;
     }
 
-    if (!node.decorators?.some(isBeanDecorator)) {
+    if (!getDecoratorsOnly(node).some(isBeanDecorator)) {
         return false;
     }
 

@@ -21,7 +21,6 @@ export const transformLifecycleMethods = (contextDescriptorToIdentifierList: TCo
                         typedNode,
                         undefined,
                         undefined,
-                        undefined,
                         typedNode.name,
                         undefined,
                         undefined,

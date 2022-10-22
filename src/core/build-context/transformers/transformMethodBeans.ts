@@ -20,7 +20,6 @@ export const transformMethodBeans = (contextDescriptorToIdentifierList: TContext
                         typedNode,
                         undefined,
                         undefined,
-                        undefined,
                         typedNode.name,
                         undefined,
                         undefined,

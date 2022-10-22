@@ -17,7 +17,6 @@ export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContext
                     return factory.createMethodDeclaration(
                         undefined,
                         undefined,
-                        undefined,
                         factory.createIdentifier(beanDescriptor.classMemberName),
                         undefined,
                         undefined,
