@@ -60,7 +60,6 @@ interface IQualifiedTypes {
 
 export class TypeQualifier {
 
-    //TODO Add related context to errors
     static qualify(
         compilationContext: CompilationContext,
         contextDescriptor: IContextDescriptor,
