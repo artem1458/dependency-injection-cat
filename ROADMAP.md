@@ -9,7 +9,7 @@
 - Features/Code improvements
   - ✅"PostConstruct", "BeforeDestruct" inside contexts
   - Lazy beans (needed?)
-  - Abstract contexts
+  - Abstract contexts, and it's initialization
   - Embedded Bean with dependencies
   - JetBrains platform plugin for DI-Cat support:
     - Errors highlighting
