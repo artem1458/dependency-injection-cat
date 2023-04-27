@@ -3,7 +3,7 @@ import { Subscriber } from './Subscriber';
 import { IContextLifecycle } from './IContextLifecycle';
 
 class ContextLifecycle extends CatContext<IContextLifecycle> {
-    subscriber = Bean(Subscriber)
+    subscriber = Bean(Subscriber);
 
     @PostConstruct
     postConstructMethod(subscriber: Subscriber) {
@@ -16,14 +16,14 @@ class ContextLifecycle extends CatContext<IContextLifecycle> {
     }
 
     @PostConstruct
-    postConstructArrowFunction = (subscriber: Subscriber) => {
-        subscriber.subscribe('subscribe from arrow function');
-    }
+        postConstructArrowFunction = (subscriber: Subscriber) => {
+            subscriber.subscribe('subscribe from arrow function');
+        };
 
     @BeforeDestruct
-    beforeDestructArrowFunction = (subscriber: Subscriber) => {
-        subscriber.unSubscribe('unsubscribe from arrow function');
-    }
+        beforeDestructArrowFunction = (subscriber: Subscriber) => {
+            subscriber.unSubscribe('unsubscribe from arrow function');
+        };
 
     @PostConstruct
     @BeforeDestruct
@@ -33,7 +33,7 @@ class ContextLifecycle extends CatContext<IContextLifecycle> {
 
     @PostConstruct
     @BeforeDestruct
-    allLifecyclesArrowFunction = (subscriber: Subscriber) => {
-        subscriber.callInAllLifecycleMethods('all lifecycles arrow function');
-    };
+        allLifecyclesArrowFunction = (subscriber: Subscriber) => {
+            subscriber.callInAllLifecycleMethods('all lifecycles arrow function');
+        };
 }

@@ -12,14 +12,14 @@ import { IWithDependencies } from '../classes/with-dependencies/IWithDependencie
 import { WithDependencies } from '../classes/with-dependencies/WithDependencies';
 
 class TestContext extends CatContext<IBeans> {
-    withoutDependencies: IWithoutDependencies = Bean(WithoutDependencies)
-    withoutDependenciesImpl = Bean(WithoutDependencies)
+    withoutDependencies: IWithoutDependencies = Bean(WithoutDependencies);
+    withoutDependenciesImpl = Bean(WithoutDependencies);
 
     withDependencies: IWithDependencies = Bean(WithDependencies);
 
 
     //From Node Modules
-    dependencyFromNodeModulesWithoutDependencies: IDependencyFromNodeModuleWithoutDependencies = Bean(DependencyFromNodeModuleWithoutDependencies)
-    withDependenciesFromNodeModule: IDependencyFromNodeModuleWithDependency = Bean(DependencyFromNodeModuleWithDependency)
-    withDependenciesFromNodeModuleImpl = Bean(DependencyFromNodeModuleWithDependency)
+    dependencyFromNodeModulesWithoutDependencies: IDependencyFromNodeModuleWithoutDependencies = Bean(DependencyFromNodeModuleWithoutDependencies);
+    withDependenciesFromNodeModule: IDependencyFromNodeModuleWithDependency = Bean(DependencyFromNodeModuleWithDependency);
+    withDependenciesFromNodeModuleImpl = Bean(DependencyFromNodeModuleWithDependency);
 }
