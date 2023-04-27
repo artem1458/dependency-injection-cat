@@ -1,6 +1,5 @@
 import ts, { factory } from 'typescript';
 import { compact } from 'lodash';
-import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import {
     IContextLifecycleDescriptor,
     LifecycleMethodsRepository
@@ -8,7 +7,7 @@ import {
 import { ClassPropertyArrowFunction } from '../../ts-helpers/types';
 import { buildDependenciesStatementsForLifecycle } from './buildBeanCallExpressionForSingleBeanForLifecycle';
 
-export const transformLifecycleArrowFunctions = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
+export const transformLifecycleArrowFunctions = (): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
@@ -16,7 +15,7 @@ export const transformLifecycleArrowFunctions = (contextDescriptorToIdentifierLi
 
                 if (lifecycleDescriptor?.nodeKind === 'arrow-function') {
                     const typedNode = lifecycleDescriptor.node as ClassPropertyArrowFunction;
-                    const newArrowFunction = getTransformedArrowFunction(lifecycleDescriptor, contextDescriptorToIdentifierList);
+                    const newArrowFunction = getTransformedArrowFunction(lifecycleDescriptor);
 
                     return factory.updatePropertyDeclaration(
                         typedNode,
@@ -36,13 +35,10 @@ export const transformLifecycleArrowFunctions = (contextDescriptorToIdentifierLi
     };
 };
 
-function getTransformedArrowFunction (
-    lifecycleDescriptor: IContextLifecycleDescriptor,
-    contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]
-): ts.ArrowFunction {
+function getTransformedArrowFunction(lifecycleDescriptor: IContextLifecycleDescriptor): ts.ArrowFunction {
     const node = lifecycleDescriptor.node as ClassPropertyArrowFunction;
     const arrowFunction = node.initializer;
-    const dependenciesStatements = buildDependenciesStatementsForLifecycle(lifecycleDescriptor, contextDescriptorToIdentifierList);
+    const dependenciesStatements = buildDependenciesStatementsForLifecycle(lifecycleDescriptor);
 
     let newBody: ts.Block;
 

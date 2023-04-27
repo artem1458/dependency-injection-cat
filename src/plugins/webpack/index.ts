@@ -7,17 +7,7 @@ import { BeanRepository } from '../../core/bean/BeanRepository';
 import { getCompilationContext } from '../../transformers/getCompilationContext';
 import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
 
-let wasReportedAboutGlobalContexts = false;
-
 const reportDIErrorsHook = (compilation: Compilation) => {
-    const globalContextsCount = Array.from(ContextRepository.globalContexts.values()).length;
-
-    if (globalContextsCount > 0 && !wasReportedAboutGlobalContexts) {
-        wasReportedAboutGlobalContexts = true;
-        compilation.warnings
-            .push(buildWebpackError('You have Defined Global Cat Context, Currently, DI Cat does not support hot reloading of them'));
-    }
-
     const compilationContext = getCompilationContext();
     const message = BuildErrorFormatter.formatErrors(
         compilationContext.errors,

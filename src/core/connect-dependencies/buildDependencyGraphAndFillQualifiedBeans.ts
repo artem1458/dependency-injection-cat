@@ -1,7 +1,6 @@
 import { BeanRepository } from '../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../bean-dependencies/BeanDependenciesRepository';
 import { DependencyGraph } from './DependencyGraph';
-import { GLOBAL_CONTEXT_NAME } from '../context/constants';
 import { IContextDescriptor } from '../context/ContextRepository';
 import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
@@ -27,13 +26,9 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
             dependencies.forEach(dependencyDescriptor => {
                 if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
                     const beansFromCurrentContext = beansMap.get(dependencyDescriptor.qualifiedType.fullTypeId) ?? [];
-                    const beansFromGlobalContext = BeanRepository.beanDescriptorRepository.get(GLOBAL_CONTEXT_NAME)
-                        ?.get(dependencyDescriptor.qualifiedType.fullTypeId) ?? [];
 
-                    const mergedBeans = [
-                        ...beansFromCurrentContext,
-                        ...beansFromGlobalContext,
-                    ].filter(it => it !== beanDescriptor);
+                    const mergedBeans = beansFromCurrentContext
+                        .filter(it => it !== beanDescriptor);
 
                     const uniqMergedBeans = uniqNotEmpty(mergedBeans);
 
@@ -61,28 +56,21 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
                         .filter(it => it !== beanDescriptor && it.beanKind !== 'embedded');
                     const currentContextEmbeddedBeans = currentContextBeans
                         .filter(it => it !== beanDescriptor && it.beanKind === 'embedded');
-                    const globalContextBeans =
-                        (BeanRepository.beanDescriptorRepository.get(GLOBAL_CONTEXT_NAME)?.get(dependencyDescriptor.qualifiedType.fullTypeId) ?? [])
-                            .filter(it => it !== beanDescriptor);
 
                     //<editor-fold desc="Trying to find in current context (not-embedded Beans)">
                     let nonEmbeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextNonEmbeddedBeans);
                     let embeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextEmbeddedBeans);
-                    let beanCandidatesFromGlobalContext = uniqNotEmpty(globalContextBeans);
 
                     if (dependencyDescriptor.qualifier !== null) {
                         nonEmbeddedBeanCandidatesFromCurrentContext = nonEmbeddedBeanCandidatesFromCurrentContext
                             .filter(it => it.classMemberName === dependencyDescriptor.qualifier);
                         embeddedBeanCandidatesFromCurrentContext = embeddedBeanCandidatesFromCurrentContext
                             .filter(it => it.nestedProperty === dependencyDescriptor.qualifier);
-                        beanCandidatesFromGlobalContext = beanCandidatesFromGlobalContext
-                            .filter(it => it.classMemberName === dependencyDescriptor.qualifier);
                     }
 
                     if (
                         nonEmbeddedBeanCandidatesFromCurrentContext.length === 0
                         && embeddedBeanCandidatesFromCurrentContext.length === 0
-                        && beanCandidatesFromGlobalContext.length === 0
                     ) {
                         compilationContext.report(new DependencyResolvingError(
                             `Can not find Bean candidate for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}".`,
@@ -154,41 +142,6 @@ export const buildDependencyGraphAndFillQualifiedBeans = (
 
                         compilationContext.report(new DependencyResolvingError(
                             `Found ${embeddedBeanCandidatesFromCurrentContext.length} EmbeddedBean candidates for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
-                            beanDescriptor.node,
-                            contextDescriptor.node,
-                        ));
-                        return;
-                    }
-                    //</editor-fold>
-
-                    //<editor-fold desc="Trying to find in global context">
-                    if (beanCandidatesFromGlobalContext.length === 1) {
-                        dependencyDescriptor.qualifiedBeans.add(beanCandidatesFromGlobalContext[0]);
-                        DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidatesFromGlobalContext);
-                        return;
-                    }
-
-                    if (beanCandidatesFromGlobalContext.length > 1) {
-                        const beanCandidatesFromGlobalContextQualifiedByParameterName = beanCandidatesFromGlobalContext
-                            .filter(it => it.classMemberName === dependencyDescriptor.parameterName);
-
-                        if (beanCandidatesFromGlobalContextQualifiedByParameterName.length === 1) {
-                            dependencyDescriptor.qualifiedBeans.add(beanCandidatesFromGlobalContextQualifiedByParameterName[0]);
-                            DependencyGraph.addNodeWithEdges(beanDescriptor, beanCandidatesFromGlobalContextQualifiedByParameterName);
-                            return;
-                        }
-
-                        if (beanCandidatesFromGlobalContextQualifiedByParameterName.length > 1) {
-                            compilationContext.report(new DependencyResolvingError(
-                                `Found ${beanCandidatesFromGlobalContextQualifiedByParameterName.length} GlobalBean candidates for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
-                                beanDescriptor.node,
-                                contextDescriptor.node,
-                            ));
-                            return;
-                        }
-
-                        compilationContext.report(new DependencyResolvingError(
-                            `Found ${beanCandidatesFromGlobalContext.length} GlobalBean candidates for parameter "${getFormattedParameterNameAndType(dependencyDescriptor.parameterName, dependencyDescriptor.qualifiedType)}". Rename parameter or use @Qualifier to match Bean name, to specify which Bean should be injected.`,
                             beanDescriptor.node,
                             contextDescriptor.node,
                         ));

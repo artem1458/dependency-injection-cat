@@ -9,7 +9,6 @@ export class ContextDetailsStatistics extends AbstractStatistics {
     public name: string;
     public className: string;
     public namePosition: INodePosition;
-    public isGlobal: boolean;
     public beansCount: number;
 
     constructor(contextDescriptor: IContextDescriptor) {
@@ -19,7 +18,6 @@ export class ContextDetailsStatistics extends AbstractStatistics {
         this.name = contextDescriptor.name;
         this.className = contextDescriptor.className;
         this.namePosition = getPositionOfNode(contextDescriptor.node.name);
-        this.isGlobal = contextDescriptor.isGlobal;
         this.beansCount = (BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? []).length;
     }
 }

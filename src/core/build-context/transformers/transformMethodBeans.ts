@@ -2,11 +2,10 @@ import ts, { factory } from 'typescript';
 import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
 import { compact } from 'lodash';
-import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 import { getCallExpressionForBean } from './getCallExpressionForBean';
 
-export const transformMethodBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
+export const transformMethodBeans = (): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
@@ -14,7 +13,7 @@ export const transformMethodBeans = (contextDescriptorToIdentifierList: TContext
 
                 if (beanDescriptor?.beanKind === 'method') {
                     const typedNode = beanDescriptor.node as ts.MethodDeclaration;
-                    const newBody = getNewBody(beanDescriptor, contextDescriptorToIdentifierList);
+                    const newBody = getNewBody(beanDescriptor);
 
                     return factory.updateMethodDeclaration(
                         typedNode,
@@ -37,7 +36,7 @@ export const transformMethodBeans = (contextDescriptorToIdentifierList: TContext
     };
 };
 
-function getNewBody (parentBeanDescriptor: IBeanDescriptorWithId, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
+function getNewBody(parentBeanDescriptor: IBeanDescriptorWithId): ts.Block {
     const node = parentBeanDescriptor.node as ts.MethodDeclaration;
     const nodeBody = node.body ?? factory.createBlock([]);
 
@@ -52,11 +51,7 @@ function getNewBody (parentBeanDescriptor: IBeanDescriptorWithId, contextDescrip
                 return;
             }
 
-            const callExpressionForBean = getCallExpressionForBean(
-                qualifiedBeanDescriptor,
-                parentBeanDescriptor,
-                contextDescriptorToIdentifierList,
-            );
+            const callExpressionForBean = getCallExpressionForBean(qualifiedBeanDescriptor);
 
             return factory.createVariableStatement(
                 undefined,
@@ -74,11 +69,7 @@ function getNewBody (parentBeanDescriptor: IBeanDescriptorWithId, contextDescrip
 
         if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
             const callExpressionForBeans = dependencyDescriptor.qualifiedBeans.list()
-                .map(qualifiedBean => getCallExpressionForBean(
-                    qualifiedBean,
-                    parentBeanDescriptor,
-                    contextDescriptorToIdentifierList,
-                ));
+                .map(qualifiedBean => getCallExpressionForBean(qualifiedBean));
 
             return factory.createVariableStatement(
                 undefined,

@@ -1,9 +1,7 @@
 import ts from 'typescript';
 import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
-import { GLOBAL_CONTEXT_NAME } from './constants';
 import { ContextRepository } from './ContextRepository';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
 import {
     IncorrectContextDeclarationError
 } from '../../compilation-context/messages/errors/IncorrectContextDeclarationError';
@@ -41,15 +39,6 @@ function registerCatContext(compilationContext: CompilationContext, classDeclara
     }
 
     const name = classDeclaration.name.getText();
-
-    if (name === GLOBAL_CONTEXT_NAME) {
-        compilationContext.report(new IncorrectNameError(
-            `"${GLOBAL_CONTEXT_NAME}" name of context is reserved for di-container`,
-            classDeclaration.name,
-            classDeclaration,
-        ));
-        return;
-    }
 
     const existContext = ContextRepository.getContextByName(name);
 

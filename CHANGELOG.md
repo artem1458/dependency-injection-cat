@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+- [Feature] Build core for intellij plugins support
+- [Breaking changes] Removed GlobalCatContexts
+
 ## 1.1.0
 
 - [Feature] EmbeddedBean feature implemented

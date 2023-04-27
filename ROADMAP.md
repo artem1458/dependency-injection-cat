@@ -9,7 +9,7 @@
 - Features/Code improvements
   - ✅"PostConstruct", "BeforeDestruct" inside contexts
   - Lazy beans (needed?)
-  - Drop support of global contexts
+  - ✅Drop support of global contexts
   - Use context classes instead of context names for init/get/clear
   - Abstract contexts, and it's initialization
   - Embedded Bean with dependencies

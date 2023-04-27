@@ -2,6 +2,7 @@ import { IServiceResponse } from './types/ServiceResponse';
 
 export class STDIOUtils {
 
+    //TODO use bytearray instead
     private static stdinBuffer = '';
 
     static read = (buffer: Buffer, onReadComplete: (data: string) => void): void => {

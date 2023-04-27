@@ -19,6 +19,13 @@ export class PathResolver {
         this.resolver = createMatchPath(config.absoluteBaseUrl, config.paths);
     }
 
+
+    static initOnce(): void {
+        if (this.resolver === null) {
+            this.init();
+        }
+    }
+
     static resolve(sourceFilePath: string, targetPath: string): string {
         if (targetPath === libraryName) {
             return targetPath;

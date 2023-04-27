@@ -3,7 +3,7 @@ import ts from 'typescript';
 import { libraryName } from '../../../constants/libraryName';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 
-export type TDICatClass = 'GlobalCatContext' | 'CatContext';
+export type TDICatClass = 'CatContext';
 
 export const isExtendsClass = (node: ts.Node, className: TDICatClass): node is ts.ClassDeclaration => {
     if (!ts.isClassDeclaration(node)) {

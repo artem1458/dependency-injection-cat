@@ -1,15 +1,15 @@
 import ts from 'typescript';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
 import { libraryName } from '../../constants/libraryName';
-import { initGlobalContexts } from '../../core/initGlobalContexts';
 import { uniqId } from '../../core/utils/uniqId';
 import { getCompilationContext } from '../getCompilationContext';
+import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
 
 const IGNORE_TRANSFORM_PROPERTY_KEY = uniqId();
 
-export default function(api: any) {
+export default function (api: any) {
+    PathResolver.initOnce();
     const compilationContext = getCompilationContext();
-    initGlobalContexts(compilationContext);
     const transformerFactory = getTransformerFactory(compilationContext);
     const printer = ts.createPrinter();
 

@@ -10,7 +10,6 @@ import { TypeQualifyError } from '../../compilation-context/messages/errors/Type
 import { IncorrectTypeDefinitionError } from '../../compilation-context/messages/errors/IncorrectTypeDefinitionError';
 import { MissingBeanDeclarationError } from '../../compilation-context/messages/errors/MissingBeanDeclarationError';
 
-//Only for non-global contexts
 export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
     compilationContext: CompilationContext,
     contextDescriptor: IContextDescriptor

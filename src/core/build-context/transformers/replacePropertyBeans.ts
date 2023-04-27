@@ -3,11 +3,10 @@ import { compact } from 'lodash';
 import { BeanRepository, IBeanDescriptor, TBeanNode } from '../../bean/BeanRepository';
 import { BeanDependenciesRepository, } from '../../bean-dependencies/BeanDependenciesRepository';
 import { ClassPropertyDeclarationWithInitializer } from '../../ts-helpers/types';
-import { TContextDescriptorToIdentifier } from '../utils/getGlobalContextIdentifierFromArrayOrCreateNewAndPush';
 import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 import { getCallExpressionForBean } from './getCallExpressionForBean';
 
-export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.TransformerFactory<ts.SourceFile> => {
+export const replacePropertyBeans = (): ts.TransformerFactory<ts.SourceFile> => {
     return context => {
         return sourceFile => {
             const visitor: ts.Visitor = (node: ts.Node) => {
@@ -22,7 +21,7 @@ export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContext
                         undefined,
                         [],
                         beanDescriptor.qualifiedType.typeNode,
-                        getBeanBlock(beanDescriptor, contextDescriptorToIdentifierList),
+                        getBeanBlock(beanDescriptor),
                     );
                 }
 
@@ -34,7 +33,7 @@ export const replacePropertyBeans = (contextDescriptorToIdentifierList: TContext
     };
 };
 
-function getBeanBlock(parentBeanDescriptor: IBeanDescriptor, contextDescriptorToIdentifierList: TContextDescriptorToIdentifier[]): ts.Block {
+function getBeanBlock(parentBeanDescriptor: IBeanDescriptor): ts.Block {
     const dependencies = BeanDependenciesRepository.data
         .get(parentBeanDescriptor.contextDescriptor.name)?.get(parentBeanDescriptor) ?? [];
 
@@ -46,20 +45,12 @@ function getBeanBlock(parentBeanDescriptor: IBeanDescriptor, contextDescriptorTo
                 return;
             }
 
-            return getCallExpressionForBean(
-                qualifiedBeanDescriptor,
-                parentBeanDescriptor,
-                contextDescriptorToIdentifierList,
-            );
+            return getCallExpressionForBean(qualifiedBeanDescriptor);
         }
 
         if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
             const expressions = dependencyDescriptor.qualifiedBeans.list()
-                .map(beanDescriptor => getCallExpressionForBean(
-                    beanDescriptor,
-                    parentBeanDescriptor,
-                    contextDescriptorToIdentifierList,
-                ));
+                .map(beanDescriptor => getCallExpressionForBean(beanDescriptor));
 
             return factory.createArrayLiteralExpression(
                 expressions,

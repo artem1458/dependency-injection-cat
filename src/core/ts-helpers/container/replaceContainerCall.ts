@@ -4,11 +4,12 @@ import { IContainerAccessNode } from './isContainerAccess';
 import { getContextNameFromContainerCall } from './getContextNameFromContainerCall';
 import { CONTEXT_POOL_POSTFIX } from '../../build-context/transformers/addContextPool';
 import { validContainerKeys } from './validContainerKeys';
-import { GLOBAL_CONTEXT_NAME } from '../../context/constants';
 import { ContextNamesRepository } from '../../context/ContextNamesRepository';
 import { registerAllContextNames } from '../../context/registerContextNames';
 import { removeExtensionFromPath } from '../../utils/removeExtensionFromPath';
-import { IncorrectContainerAccessError } from '../../../compilation-context/messages/errors/IncorrectContainerAccessError';
+import {
+    IncorrectContainerAccessError
+} from '../../../compilation-context/messages/errors/IncorrectContainerAccessError';
 import { ContextNotFoundError } from '../../../compilation-context/messages/errors/ContextNotFoundError';
 import { CompilationContext } from '../../../compilation-context/CompilationContext';
 
@@ -32,16 +33,6 @@ export const replaceContainerCall = (
     const contextName = getContextNameFromContainerCall(compilationContext, node);
 
     if (contextName === null) {
-        return node;
-    }
-
-    if (contextName === GLOBAL_CONTEXT_NAME) {
-        compilationContext.report(new IncorrectContainerAccessError(
-            'You can not access Global context',
-            node,
-            null,
-        ));
-
         return node;
     }
 
