@@ -2,10 +2,8 @@ import { IContextDescriptor } from '../context/ContextRepository';
 import * as ts from 'typescript';
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
-import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
 import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
 import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
 
@@ -14,17 +12,6 @@ export const registerExpressionBean = (
     contextDescriptor: IContextDescriptor,
     classElement: ts.PropertyDeclaration,
 ): void => {
-    const classElementName = classElement.name.getText();
-
-    if (restrictedClassMemberNames.has(classElementName)) {
-        compilationContext.report(new IncorrectNameError(
-            `"${classElementName}" name is reserved for the di-container.`,
-            classElement.name,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
     const propertyType = classElement.type ?? null;
     const beanInfo = getPropertyDecoratorBeanInfo(compilationContext, contextDescriptor, classElement);
 

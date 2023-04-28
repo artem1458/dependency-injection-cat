@@ -1,39 +1,31 @@
 import ts, { factory } from 'typescript';
-import { IContextDescriptor } from '../../context/ContextRepository';
-import { INTERNAL_CAT_CONTEXT_IMPORT } from './addNecessaryImports';
 import { getDecoratorsOnly } from '../../utils/getDecoratorsOnly';
+import { PRIVATE_TOKEN } from '../constants';
 
-export const replaceExtendingFromCatContext = (contextDescriptor: IContextDescriptor): ts.TransformerFactory<ts.SourceFile> => {
-    return context => {
-        return sourceFile => {
-            const visitor: ts.Visitor = (node: ts.Node) => {
-                if (node === contextDescriptor.node) {
-                    const classDeclaration = contextDescriptor.node;
-                    const newHeritageClause = factory.createHeritageClause(
-                        ts.SyntaxKind.ExtendsKeyword,
-                        [factory.createExpressionWithTypeArguments(
-                            factory.createPropertyAccessExpression(
-                                factory.createIdentifier(INTERNAL_CAT_CONTEXT_IMPORT),
-                                factory.createIdentifier('InternalCatContext')
-                            ),
-                            undefined
-                        )]
-                    );
+export const INTERNAL_CAT_CONTEXT_IMPORT = `INTERNAL_CAT_CONTEXT_IMPORT${PRIVATE_TOKEN}`;
 
-                    return ts.factory.updateClassDeclaration(
-                        classDeclaration,
-                        [...getDecoratorsOnly(classDeclaration), ...classDeclaration.modifiers ?? []],
-                        classDeclaration.name,
-                        classDeclaration.typeParameters,
-                        [newHeritageClause],
-                        classDeclaration.members
-                    );
-                }
+export const replaceExtendingFromCatContext = (): ts.TransformerFactory<ts.ClassDeclaration> => {
+    return () => {
+        return contextNode => {
+            const newHeritageClause = factory.createHeritageClause(
+                ts.SyntaxKind.ExtendsKeyword,
+                [factory.createExpressionWithTypeArguments(
+                    factory.createPropertyAccessExpression(
+                        factory.createIdentifier(INTERNAL_CAT_CONTEXT_IMPORT),
+                        factory.createIdentifier('InternalCatContext')
+                    ),
+                    undefined
+                )]
+            );
 
-                return ts.visitEachChild(node, visitor, context);
-            };
-
-            return ts.visitNode(sourceFile, visitor);
+            return ts.factory.updateClassDeclaration(
+                contextNode,
+                [...getDecoratorsOnly(contextNode), ...contextNode.modifiers ?? []],
+                contextNode.name,
+                contextNode.typeParameters,
+                [newHeritageClause],
+                contextNode.members
+            );
         };
     };
 };

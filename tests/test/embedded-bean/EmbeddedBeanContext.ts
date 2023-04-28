@@ -10,7 +10,7 @@ import {
 } from 'mock_node_module';
 import { WithDependencies } from '../../src/classes/with-dependencies/WithDependencies';
 
-class EmbeddedBeanContext extends CatContext<IEmbeddedBeanContext> {
+export class EmbeddedBeanContext extends CatContext<IEmbeddedBeanContext> {
     @EmbeddedBean embedded: IEmbeddedBeans = {
         withoutDependencies: new WithoutDependencies(),
         withoutDependenciesFromNodeModule: new DependencyFromNodeModuleWithoutDependencies(),

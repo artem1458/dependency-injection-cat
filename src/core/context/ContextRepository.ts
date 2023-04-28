@@ -5,7 +5,6 @@ import md5 from 'md5';
 import ts from 'typescript';
 
 type TContextName = string;
-type TContextId = string;
 
 export interface IContextDescriptor {
     id: string;
@@ -22,7 +21,7 @@ export interface IContextInterfaceDescriptor {
 }
 
 export class ContextRepository {
-    static contextMap = new Map<TContextName, IContextDescriptor>();
+    static contextIdToContextDescriptor = new Map<string, IContextDescriptor>();
     static contextDescriptorToContextInterface = new Map<IContextDescriptor, IContextInterfaceDescriptor>();
     static contextPathToContextDescriptor = new Map<string, IContextDescriptor>();
 
@@ -31,24 +30,26 @@ export class ContextRepository {
         classDeclaration: NamedClassDeclaration,
     ): IContextDescriptor {
         const sourceFile = classDeclaration.getSourceFile();
-        const id = md5(sourceFile.fileName);
 
         const descriptor: IContextDescriptor = {
-            id,
+            id: this.buildContextId(classDeclaration),
             name,
             className: unquoteString(classDeclaration.name.getText()),
             absolutePath: sourceFile.fileName,
             node: classDeclaration,
         };
 
-        this.contextMap.set(name, descriptor);
+        this.contextIdToContextDescriptor.set(descriptor.id, descriptor);
         this.contextPathToContextDescriptor.set(sourceFile.fileName, descriptor);
 
         return descriptor;
     }
 
-    static getContextByName(name: TContextName): IContextDescriptor | null {
-        return this.contextMap.get(name) ?? null;
+    static buildContextId(classDeclaration: NamedClassDeclaration): string {
+        const sourceFile = classDeclaration.getSourceFile();
+        const name = classDeclaration.name.getText();
+
+        return md5(`${sourceFile.fileName}_${name}`);
     }
 
     static registerContextInterface(contextDescriptor: IContextDescriptor, node: ts.InterfaceDeclaration, nodeSourceDescriptor: INodeSourceDescriptor) {
@@ -59,8 +60,19 @@ export class ContextRepository {
     }
 
     static clear(): void {
-        this.contextMap.clear();
+        this.contextIdToContextDescriptor.clear();
         this.contextDescriptorToContextInterface.clear();
         this.contextPathToContextDescriptor.clear();
+    }
+
+    static clearByContextId(id: string): void {
+        const descriptor = this.contextIdToContextDescriptor.get(id);
+
+        if (!descriptor) {
+            return;
+        }
+
+        this.contextIdToContextDescriptor.delete(id);
+        this.contextDescriptorToContextInterface.delete(descriptor);
     }
 }

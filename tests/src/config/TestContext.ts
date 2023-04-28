@@ -11,7 +11,7 @@ import { IBeans } from './IBeans';
 import { IWithDependencies } from '../classes/with-dependencies/IWithDependencies';
 import { WithDependencies } from '../classes/with-dependencies/WithDependencies';
 
-class TestContext extends CatContext<IBeans> {
+export class TestContext extends CatContext<IBeans> {
     withoutDependencies: IWithoutDependencies = Bean(WithoutDependencies);
     withoutDependenciesImpl = Bean(WithoutDependencies);
 

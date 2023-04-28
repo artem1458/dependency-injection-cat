@@ -82,7 +82,7 @@ export const registerPropertyBeanDependencies = (
 
     unqualifiedParameters.forEach(([parameter]) => {
         compilationContext.report(new TypeQualifyError(
-            `Parameter name: "${parameter.name.getText()}"`,
+            `Parameter name: "${parameter.name.getText()}".`,
             beanProperty,
             descriptor.contextDescriptor.node,
         ));

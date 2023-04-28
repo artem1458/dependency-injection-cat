@@ -5,12 +5,13 @@ import { WithoutDependencies } from '../../src/classes/without-dependencies/With
 import { DependencyFromNodeModuleWithDependency, DependencyFromNodeModuleWithoutDependencies } from 'mock_node_module';
 import { get } from 'lodash';
 import { WithDependencies } from '../../src/classes/with-dependencies/WithDependencies';
+import { EmbeddedBeanContext } from './EmbeddedBeanContext';
 
 describe('EmbeddedBeanContextTests', () => {
     it('should correctly use embedded beans', () => {
         //Given
         const context = container.initContext<IEmbeddedBeanContext>({
-            name: 'EmbeddedBeanContext'
+            context: EmbeddedBeanContext
         });
 
         //When

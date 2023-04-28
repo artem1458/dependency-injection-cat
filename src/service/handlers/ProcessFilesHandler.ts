@@ -6,11 +6,9 @@ import { FileSystem } from '../../file-system/FileSystem';
 import minimatch from 'minimatch';
 import { ContextRepository } from '../../core/context/ContextRepository';
 import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
-import { registerAndTransformContext } from '../../core/build-context/registerAndTransformContext';
 import { BeanRepository } from '../../core/bean/BeanRepository';
 import { BeanDependenciesRepository } from '../../core/bean-dependencies/BeanDependenciesRepository';
 import { DependencyGraph } from '../../core/connect-dependencies/DependencyGraph';
-import { ContextNamesRepository } from '../../core/context/ContextNamesRepository';
 import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
 import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
 import { ConfigLoader } from '../../config/ConfigLoader';
@@ -18,6 +16,7 @@ import { IDisposable } from '../types/IDisposable';
 import { IProcessFilesCommand } from '../types/process-files/IProcessFilesCommand';
 import { AbstractCompilationMessage } from '../../compilation-context/messages/AbstractCompilationMessage';
 import { StatisticsCollector } from '../statistics/StatisticsCollector';
+import { processContexts } from '../../core/build-context/processContexts';
 
 export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand, Promise<IProcessFilesResponse>>, IDisposable {
     constructor(
@@ -32,7 +31,7 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
             const contextPaths = this.getContextPaths();
 
             contextPaths.forEach(path => {
-                registerAndTransformContext(compilationContext, SourceFilesCache.getSourceFileByPath(path));
+                processContexts(compilationContext, SourceFilesCache.getSourceFileByPath(path));
             });
 
             const affectedFiles = new Set<string>();
@@ -52,7 +51,6 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
         BeanRepository.clear();
         BeanDependenciesRepository.clear();
         DependencyGraph.clear();
-        ContextNamesRepository.clear();
         ContextRepository.clear();
         LifecycleMethodsRepository.clear();
         PathResolver.clear();

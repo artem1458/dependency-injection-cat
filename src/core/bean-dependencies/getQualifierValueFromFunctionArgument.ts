@@ -22,7 +22,7 @@ export function getQualifierValueFromFunctionArgument(
     if (qualifierDecorators.length > 1) {
         qualifierDecorators.slice(1).forEach(it => {
             compilationContext.report(new DecoratorsCountError(
-                'Only 1 @Qualifier decorator is allowed',
+                'Only 1 @Qualifier decorator is allowed.',
                 it,
                 contextDescriptor.node,
             ));

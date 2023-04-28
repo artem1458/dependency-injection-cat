@@ -23,7 +23,7 @@ export const getScopeValue = (
     if (ts.isPropertyAssignment(scopeNode)) {
         if (!ts.isStringLiteral(scopeNode.initializer)) {
             compilationContext.report(new IncorrectArgumentError(
-                'Bean scope value should be a string literal',
+                'Bean scope value should be a string literal.',
                 scopeNode,
                 contextDescriptor.node,
             ));
@@ -35,7 +35,7 @@ export const getScopeValue = (
 
     if (!scopes.includes(scopeValue as TBeanScopeValue)) {
         compilationContext.report(new IncorrectArgumentError(
-            'Bean scope value should be a a "prototype" or "singleton"',
+            'Bean scope value should be a a "prototype" or "singleton".',
             scopeNode,
             contextDescriptor.node,
         ));

@@ -5,10 +5,11 @@ import { IBeans } from '../src/config/IBeans';
 import { WithoutDependencies } from '../src/classes/without-dependencies/WithoutDependencies';
 import { DependencyFromNodeModuleWithDependency, DependencyFromNodeModuleWithoutDependencies } from 'mock_node_module';
 import { WithDependencies } from '../src/classes/with-dependencies/WithDependencies';
+import { TestContext } from '../src/config/TestContext';
 
 describe('TestContext tests', () => {
     const context = container.initContext<IBeans>({
-        name: 'TestContext',
+        context: TestContext,
     });
 
     it('withoutDependencies', () => {

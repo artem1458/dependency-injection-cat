@@ -11,8 +11,8 @@ export enum MessageCode {
     DICAT9 = 'DICAT9',
     DICAT10 = 'DICAT10',
     DICAT11 = 'DICAT11',
-    DICAT12 = 'DICAT12',
-    DICAT13 = 'DICAT13',
+    DICAT12 = 'DICAT12', //FREE
+    DICAT13 = 'DICAT13', //FREE
     DICAT14 = 'DICAT14',
     DICAT15 = 'DICAT15',
     DICAT16 = 'DICAT16',

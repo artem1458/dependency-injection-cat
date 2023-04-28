@@ -1,11 +1,9 @@
 import { IContextDescriptor } from '../context/ContextRepository';
 import * as ts from 'typescript';
-import { restrictedClassMemberNames } from './constants';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { BeanRepository } from './BeanRepository';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
 import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
 import { IncorrectTypeDefinitionError } from '../../compilation-context/messages/errors/IncorrectTypeDefinitionError';
 import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
@@ -15,17 +13,6 @@ export const registerEmbeddedBean = (
     contextDescriptor: IContextDescriptor,
     classElement: ts.PropertyDeclaration
 ): void => {
-    const classElementName = classElement.name.getText();
-
-    if (restrictedClassMemberNames.has(classElementName)) {
-        compilationContext.report(new IncorrectNameError(
-            `"${classElementName}" name is reserved for the di-container.`,
-            classElement.name,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
     const classElementType = classElement.type ?? null;
 
     if (classElementType === null) {

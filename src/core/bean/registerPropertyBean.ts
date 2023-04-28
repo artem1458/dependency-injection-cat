@@ -6,12 +6,10 @@ import { ClassPropertyDeclarationWithInitializer } from '../ts-helpers/types';
 import { getPropertyBeanInfo } from '../ts-helpers/bean-info/getPropertyBeanInfo';
 import { BeanRepository } from './BeanRepository';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
-import { restrictedClassMemberNames } from './constants';
 import { QualifiedType } from '../ts-helpers/type-qualifier/QualifiedType';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { ExtendedSet } from '../utils/ExtendedSet';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
 import { IncorrectTypeDefinitionError } from '../../compilation-context/messages/errors/IncorrectTypeDefinitionError';
 import { IncorrectArgumentError } from '../../compilation-context/messages/errors/IncorrectArgumentError';
 import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
@@ -22,17 +20,6 @@ export const registerPropertyBean = (
     contextDescriptor: IContextDescriptor,
     classElement: ClassPropertyDeclarationWithInitializer,
 ): void => {
-    const classElementName = classElement.name.getText();
-
-    if (restrictedClassMemberNames.has(classElementName)) {
-        compilationContext.report(new IncorrectNameError(
-            `"${classElementName}" name is reserved for the di-container.`,
-            classElement.name,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
     const qualifiedType = getBeanTypeInfoFromClassProperty(compilationContext, contextDescriptor, classElement);
     const beanInfo = getPropertyBeanInfo(compilationContext, contextDescriptor, classElement);
 

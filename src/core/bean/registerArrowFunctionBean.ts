@@ -1,11 +1,9 @@
 import { IContextDescriptor } from '../context/ContextRepository';
 import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
 import { BeanRepository } from './BeanRepository';
-import { restrictedClassMemberNames } from './constants';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
 import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
 import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
 import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
 
@@ -14,17 +12,6 @@ export const registerArrowFunctionBean = (
     contextDescriptor: IContextDescriptor,
     classElement: ClassPropertyArrowFunction,
 ): void => {
-    const classElementName = classElement.name.getText();
-
-    if (restrictedClassMemberNames.has(classElementName)) {
-        compilationContext.report(new IncorrectNameError(
-            `"${classElementName}" name is reserved for the di-container.`,
-            classElement.name,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
     const functionReturnType = classElement.initializer.type ?? null;
     const beanInfo = getPropertyDecoratorBeanInfo(compilationContext, contextDescriptor, classElement);
 

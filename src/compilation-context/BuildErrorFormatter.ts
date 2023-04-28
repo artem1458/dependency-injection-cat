@@ -13,7 +13,7 @@ export class BuildErrorFormatter {
 
             if (contextPath === null || errors.length === 0) {
                 formattedCompilationErrors.add(formattedErrors);
-                return ;
+                return;
             }
 
             const contextDetails = errors[0].contextDetails!;
@@ -58,6 +58,6 @@ export class BuildErrorFormatter {
         path: string,
         position: INodePosition,
     ): string {
-        return `(${path}:${position.line}:${position.startColumn})`;
+        return `file://${path}:${position.line}:${position.startColumn}`;
     }
 }

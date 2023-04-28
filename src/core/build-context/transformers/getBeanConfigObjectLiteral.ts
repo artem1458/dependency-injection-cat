@@ -10,10 +10,12 @@ export function getBeanConfigObjectLiteral(contextDescriptor: IContextDescriptor
             factory.createComputedPropertyName(factory.createStringLiteral(bean.classMemberName)),
             factory.createObjectLiteralExpression(
                 [
-                    factory.createPropertyAssignment(
-                        factory.createIdentifier('scope'),
-                        factory.createStringLiteral(bean.scope)
-                    ),
+                    bean.scope === 'singleton'
+                        ? null
+                        : factory.createPropertyAssignment(
+                            factory.createIdentifier('scope'),
+                            factory.createStringLiteral(bean.scope)
+                        ),
                     bean.publicInfo !== null && factory.createPropertyAssignment(
                         factory.createIdentifier('isPublic'),
                         factory.createTrue(),

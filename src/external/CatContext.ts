@@ -1,14 +1,18 @@
 import { UsingCatContextWithoutConfiguredDI } from '../exceptions/runtime/UsingCatContextWithoutConfiguredDI';
 
 /**
- * TBeans should be a plain interface without extending
+ * T should be a plain interface without extending
  */
-export abstract class CatContext<TBeans, TConfig = null> {
-    protected constructor() {
+export abstract class CatContext<T, C = null> {
+    constructor() {
         throw new UsingCatContextWithoutConfiguredDI();
     }
 
-    get config(): TConfig {
+    get config(): C {
+        throw new UsingCatContextWithoutConfiguredDI();
+    }
+
+    private getBeans(): T {
         throw new UsingCatContextWithoutConfiguredDI();
     }
 }

@@ -18,7 +18,7 @@ export const getPropertyDecoratorBeanInfo = (
 
     if (bean === null) {
         compilationContext.report(new UnknownError(
-            'Bean do not have @Bean decorator',
+            'Bean do not have @Bean decorator.',
             node,
             contextDescriptor.node,
         ));

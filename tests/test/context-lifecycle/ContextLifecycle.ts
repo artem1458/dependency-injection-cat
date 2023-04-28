@@ -2,7 +2,7 @@ import { Bean, BeforeDestruct, CatContext, PostConstruct } from 'dependency-inje
 import { Subscriber } from './Subscriber';
 import { IContextLifecycle } from './IContextLifecycle';
 
-class ContextLifecycle extends CatContext<IContextLifecycle> {
+export class ContextLifecycle extends CatContext<IContextLifecycle> {
     subscriber = Bean(Subscriber);
 
     @PostConstruct

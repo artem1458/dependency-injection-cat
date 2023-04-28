@@ -1,38 +1,21 @@
 import ts, { factory } from 'typescript';
 import { compact } from 'lodash';
-import {
-    IContextLifecycleDescriptor,
-    LifecycleMethodsRepository
-} from '../../context-lifecycle/LifecycleMethodsRepository';
+import { IContextLifecycleDescriptor } from '../../context-lifecycle/LifecycleMethodsRepository';
 import { ClassPropertyArrowFunction } from '../../ts-helpers/types';
 import { buildDependenciesStatementsForLifecycle } from './buildBeanCallExpressionForSingleBeanForLifecycle';
 
-export const transformLifecycleArrowFunctions = (): ts.TransformerFactory<ts.SourceFile> => {
-    return context => {
-        return sourceFile => {
-            const visitor: ts.Visitor = (node: ts.Node) => {
-                const lifecycleDescriptor = LifecycleMethodsRepository.nodeToContextLifecycleDescriptor.get(node) ?? null;
+export const transformLifecycleArrowFunction = (lifecycleDescriptor: IContextLifecycleDescriptor): ts.PropertyDeclaration => {
+    const typedNode = lifecycleDescriptor.node as ClassPropertyArrowFunction;
+    const newArrowFunction = getTransformedArrowFunction(lifecycleDescriptor);
 
-                if (lifecycleDescriptor?.nodeKind === 'arrow-function') {
-                    const typedNode = lifecycleDescriptor.node as ClassPropertyArrowFunction;
-                    const newArrowFunction = getTransformedArrowFunction(lifecycleDescriptor);
-
-                    return factory.updatePropertyDeclaration(
-                        typedNode,
-                        undefined,
-                        typedNode.name,
-                        typedNode.questionToken,
-                        typedNode.type,
-                        newArrowFunction,
-                    );
-                }
-
-                return ts.visitEachChild(node, visitor, context);
-            };
-
-            return ts.visitNode(sourceFile, visitor);
-        };
-    };
+    return factory.updatePropertyDeclaration(
+        typedNode,
+        undefined,
+        typedNode.name,
+        typedNode.questionToken,
+        typedNode.type,
+        newArrowFunction,
+    );
 };
 
 function getTransformedArrowFunction(lifecycleDescriptor: IContextLifecycleDescriptor): ts.ArrowFunction {

@@ -1,12 +1,13 @@
 import { container } from 'dependency-injection-cat';
 import { IContextLifecycle } from './IContextLifecycle';
 import { assertEquals, assertTrue } from '../assertions';
+import { ContextLifecycle } from './ContextLifecycle';
 
 describe('ContextLifecycleTests', () => {
     it('should subscribe subscriber when initializing context in correct order from method and arrow function', () => {
         //When
         const context = container.initContext<IContextLifecycle>({
-            name: 'ContextLifecycle',
+            context: ContextLifecycle,
         });
 
         //Then
@@ -18,14 +19,14 @@ describe('ContextLifecycleTests', () => {
         assertTrue(subscriber.subscribe.getCall(1).calledWithExactly('subscribe from arrow function'));
 
         container.clearContext({
-            name: 'ContextLifecycle',
+            context: ContextLifecycle,
         });
     });
 
     it('should subscribe subscriber when initializing context, and unsubscribe when clearing context for method and arrow functions', () => {
         //When
         const context = container.initContext<IContextLifecycle>({
-            name: 'ContextLifecycle',
+            context: ContextLifecycle,
         });
 
         //Then
@@ -38,7 +39,7 @@ describe('ContextLifecycleTests', () => {
 
         //When
         container.clearContext({
-            name: 'ContextLifecycle'
+            context: ContextLifecycle
         });
 
         //Then
@@ -51,7 +52,7 @@ describe('ContextLifecycleTests', () => {
     it('function decorated with all lifecycle methods should be called in all lifecycle methods method and arrow functions', () => {
         //When
         const context = container.initContext<IContextLifecycle>({
-            name: 'ContextLifecycle',
+            context: ContextLifecycle,
         });
 
         //Then
@@ -63,7 +64,7 @@ describe('ContextLifecycleTests', () => {
 
         //When
         container.clearContext({
-            name: 'ContextLifecycle'
+            context: ContextLifecycle,
         });
 
         //Then

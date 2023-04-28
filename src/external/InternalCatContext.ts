@@ -1,92 +1,108 @@
-import { IFullBeanConfig, IInternalCatContext } from './IInternalCatContext';
-import { NotInitializedConfig } from '../exceptions/runtime/NotInitializedConfig';
 import { BeanNotFoundInContext } from '../exceptions/runtime/BeanNotFoundInContext';
+
+export interface IBeanConfig {
+    scope: 'prototype' | 'singleton';
+    isPublic: boolean;
+}
 
 type TBeanName = string;
 
 export type TLifecycle = 'post-construct' | 'before-destruct';
-export type TLifecycleConfiguration = Record<TLifecycle, TBeanName[]>
 
-export abstract class InternalCatContext implements IInternalCatContext {
+export abstract class InternalCatContext {
     [beanName: string]: any;
 
-    constructor(
-        private contextName: string,
-        private beanConfigurationRecord: Record<TBeanName, IFullBeanConfig>,
-        private lifecycleConfiguration: TLifecycleConfiguration,
-    ) {}
+    static reservedNames = new Set([
+        'dicat_contextName',
+        'dicat_beanConfigurationRecord',
+        'dicat_lifecycleConfiguration',
+        'dicat_postConstruct',
+        'dicat_beforeDestruct',
+        'dicat_init',
+        'dicat_singletonMap',
+        'dicat_config',
+        'config',
+        'getBean',
+        'getBeans',
+        'getPrivateBean',
+        'dicat_getBeanConfiguration',
+    ]);
 
-    ___postConstruct(): void {
-        this.lifecycleConfiguration['post-construct'].forEach(methodName => {
+    abstract dicat_contextName: string;
+    abstract dicat_beanConfigurationRecord: Record<TBeanName, Partial<IBeanConfig>>;
+    abstract dicat_lifecycleConfiguration: Record<TLifecycle, TBeanName[]>;
+
+    dicat_init(contextConfig: any): void {
+        this.dicat_config = contextConfig;
+    }
+
+    dicat_postConstruct(): void {
+        this.dicat_lifecycleConfiguration['post-construct'].forEach(methodName => {
             this[methodName]();
         });
     }
-    ___beforeDestruct(): void {
-        this.lifecycleConfiguration['before-destruct'].forEach(methodName => {
+
+    dicat_beforeDestruct(): void {
+        this.dicat_lifecycleConfiguration['before-destruct'].forEach(methodName => {
             this[methodName]();
         });
     }
 
-    private singletonMap = new Map<TBeanName, any>();
+    private dicat_singletonMap = new Map<TBeanName, any>();
 
-    private notInitializedConfigMarker = {};
-    private _config: any = this.notInitializedConfigMarker;
+    private dicat_config: any = null;
 
     get config(): any {
-        if (this._config === this.notInitializedConfigMarker) {
-            throw new NotInitializedConfig();
-        }
-
-        return this._config;
-    }
-
-    set config(config: any) {
-        this._config = config;
+        return this.dicat_config;
     }
 
     getBean<T>(beanName: TBeanName): T {
-        const beanConfiguration = this.getBeanConfiguration(beanName);
+        const beanConfiguration = this.dicat_getBeanConfiguration(beanName);
 
         if (!beanConfiguration.isPublic) {
-            console.warn(`Bean ${beanName} is not defined in TBeans interface.\nThis Bean will not be checked for correctness at compile-time.\nContext name: ${this.contextName}`);
+            console.warn(`Bean ${beanName} is not defined in TBeans interface.\nThis Bean will not be checked for correctness at compile-time.\nContext name: ${this.dicat_contextName}`);
         }
 
         return this.getPrivateBean(beanName);
     }
 
     protected getPrivateBean<T>(beanName: TBeanName): T {
-        const beanConfiguration = this.getBeanConfiguration(beanName);
+        const beanConfiguration = this.dicat_getBeanConfiguration(beanName);
 
         if (beanConfiguration.scope !== 'singleton') {
             return this[beanName]();
         }
 
-        const savedInstance = this.singletonMap.get(beanName) ?? this[beanName]();
+        const savedInstance = this.dicat_singletonMap.get(beanName) ?? this[beanName]();
 
-        if (!this.singletonMap.has(beanName)) {
-            this.singletonMap.set(beanName, savedInstance);
+        if (!this.dicat_singletonMap.has(beanName)) {
+            this.dicat_singletonMap.set(beanName, savedInstance);
         }
 
         return savedInstance;
     }
 
-    private getBeanConfiguration(beanName: TBeanName): IFullBeanConfig {
-        const beanConfiguration = this.beanConfigurationRecord[beanName] ?? null;
+    private dicat_getBeanConfiguration(beanName: TBeanName): IBeanConfig {
+        const beanConfiguration = this.dicat_beanConfigurationRecord[beanName] ?? null;
 
         if (beanConfiguration === null) {
-            throw new BeanNotFoundInContext(this.contextName, beanName);
+            throw new BeanNotFoundInContext(this.dicat_contextName, beanName);
         }
 
-        return beanConfiguration;
+        return {
+            scope: 'singleton',
+            isPublic: false,
+            ...beanConfiguration,
+        };
     }
 
-    getBeans(): Record<string, any> {
-        const publicBeansConfigurations: Record<string, IFullBeanConfig> = {};
-        Object.keys(this.beanConfigurationRecord).forEach(key => {
-            const beanConfigRecord = this.beanConfigurationRecord[key];
+    getBeans(): any {
+        const publicBeansConfigurations: Record<string, IBeanConfig> = {};
+        Object.keys(this.dicat_beanConfigurationRecord).forEach(key => {
+            const beanConfig = this.dicat_getBeanConfiguration(key);
 
-            if (beanConfigRecord?.isPublic) {
-                publicBeansConfigurations[key] = beanConfigRecord;
+            if (beanConfig.isPublic) {
+                publicBeansConfigurations[key] = beanConfig;
             }
         });
 

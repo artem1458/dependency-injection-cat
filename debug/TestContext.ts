@@ -6,14 +6,17 @@ export interface ITestContext {
 
 export interface IRequester {}
 
-
 export class TestContext extends CatContext<ITestContext> {
     @EmbeddedBean test: IRequester = {};
 
     @Bean data: string = '';
     a = Bean(A);
-}
 
+    @Bean
+    methodBean(d: string): number {
+        return Number(d);
+    }
+}
 
 export class A {
     constructor(

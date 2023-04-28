@@ -1,39 +1,25 @@
 import ts, { factory } from 'typescript';
-import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
+import { IBeanDescriptorWithId } from '../../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
 import { compact } from 'lodash';
 import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 import { getCallExpressionForBean } from './getCallExpressionForBean';
 
-export const transformMethodBeans = (): ts.TransformerFactory<ts.SourceFile> => {
-    return context => {
-        return sourceFile => {
-            const visitor: ts.Visitor = (node: ts.Node) => {
-                const beanDescriptor = BeanRepository.beanNodeToBeanDescriptorMap.get(node as TBeanNode) ?? null;
+export const transformMethodBean = (beanDescriptor: IBeanDescriptorWithId): ts.MethodDeclaration => {
+    const typedNode = beanDescriptor.node as ts.MethodDeclaration;
+    const newBody = getNewBody(beanDescriptor);
 
-                if (beanDescriptor?.beanKind === 'method') {
-                    const typedNode = beanDescriptor.node as ts.MethodDeclaration;
-                    const newBody = getNewBody(beanDescriptor);
-
-                    return factory.updateMethodDeclaration(
-                        typedNode,
-                        undefined,
-                        undefined,
-                        typedNode.name,
-                        undefined,
-                        undefined,
-                        [],
-                        typedNode.type,
-                        newBody,
-                    );
-                }
-
-                return ts.visitEachChild(node, visitor, context);
-            };
-
-            return ts.visitNode(sourceFile, visitor);
-        };
-    };
+    return factory.updateMethodDeclaration(
+        typedNode,
+        undefined,
+        undefined,
+        typedNode.name,
+        undefined,
+        undefined,
+        [],
+        typedNode.type,
+        newBody,
+    );
 };
 
 function getNewBody(parentBeanDescriptor: IBeanDescriptorWithId): ts.Block {

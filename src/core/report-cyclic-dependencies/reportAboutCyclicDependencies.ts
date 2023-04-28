@@ -18,7 +18,7 @@ export const reportAboutCyclicDependencies = (
             cycle.forEach(item => {
                 const otherDependencyNames = cycle.filter(it => it !== item).map(it => it.classMemberName);
                 compilationContext.report(new CyclicDependenciesError(
-                    `${item.classMemberName} <—> ${otherDependencyNames.join(' <—> ')}`,
+                    `${item.classMemberName} <—> ${otherDependencyNames.join(' <—> ')}.`,
                     item.node,
                     contextDescriptor.node,
                 ));

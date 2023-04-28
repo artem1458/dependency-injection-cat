@@ -13,9 +13,7 @@ import { TLifecycle } from '../../external/InternalCatContext';
 import { QualifiedTypeKind } from '../ts-helpers/type-qualifier/QualifiedType';
 import { ExtendedSet } from '../utils/ExtendedSet';
 import { uniqNotEmpty } from '../utils/uniqNotEmpty';
-import { restrictedClassMemberNames } from '../bean/constants';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { IncorrectNameError } from '../../compilation-context/messages/errors/IncorrectNameError';
 import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
 import { DependencyResolvingError } from '../../compilation-context/messages/errors/DependencyResolvingError';
 import { unquoteString } from '../utils/unquoteString';
@@ -29,15 +27,6 @@ export const registerLifecycleExpression = (
     lifecycles: Set<TLifecycle>,
     lifecycleNodeKind: TLifecycleNodeKind,
 ) => {
-    if (restrictedClassMemberNames.has(classMemberName)) {
-        compilationContext.report(new IncorrectNameError(
-            `"${classMemberName}" name is reserved for the di-container.`,
-            node.name,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
     const beansMap = BeanRepository.beanDescriptorRepository.get(contextDescriptor.name);
 
     if (!beansMap) {

@@ -8,7 +8,6 @@ import { ConfigLoader } from '../../config/ConfigLoader';
 import { BeanRepository } from '../../core/bean/BeanRepository';
 import { BeanDependenciesRepository } from '../../core/bean-dependencies/BeanDependenciesRepository';
 import { DependencyGraph } from '../../core/connect-dependencies/DependencyGraph';
-import { ContextNamesRepository } from '../../core/context/ContextNamesRepository';
 import { ContextRepository } from '../../core/context/ContextRepository';
 import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
 import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
@@ -71,7 +70,6 @@ export class FileSystemHandler implements ICommandHandler<IBatchFileSystemComman
             BeanRepository.clear();
             BeanDependenciesRepository.clear();
             DependencyGraph.clear();
-            ContextNamesRepository.clear();
             ContextRepository.clear();
             LifecycleMethodsRepository.clear();
             PathResolver.clear();

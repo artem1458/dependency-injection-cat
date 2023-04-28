@@ -3,6 +3,7 @@
 ## 2.0.0
 - [Feature] Build core for intellij plugins support
 - [Breaking changes] Removed GlobalCatContexts
+- [Breaking changes] Changed container API to use context class instead of context name
 
 ## 1.1.0
 

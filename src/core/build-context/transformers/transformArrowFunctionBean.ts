@@ -1,40 +1,26 @@
 import ts, { factory } from 'typescript';
-import { BeanRepository, IBeanDescriptorWithId, TBeanNode } from '../../bean/BeanRepository';
+import { IBeanDescriptorWithId } from '../../bean/BeanRepository';
 import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
 import { compact } from 'lodash';
 import { ClassPropertyArrowFunction } from '../../ts-helpers/types';
 import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
 import { getCallExpressionForBean } from './getCallExpressionForBean';
 
-export const transformArrowFunctionBeans = (): ts.TransformerFactory<ts.SourceFile> => {
-    return context => {
-        return sourceFile => {
-            const visitor: ts.Visitor = (node: ts.Node) => {
-                const beanDescriptor = BeanRepository.beanNodeToBeanDescriptorMap.get(node as TBeanNode) ?? null;
+export const transformArrowFunctionBean = (beanDescriptor: IBeanDescriptorWithId): ts.PropertyDeclaration => {
+    const typedNode = beanDescriptor.node as ClassPropertyArrowFunction;
+    const newArrowFunction = getTransformedArrowFunction(beanDescriptor);
 
-                if (beanDescriptor?.beanKind === 'arrowFunction') {
-                    const typedNode = beanDescriptor.node as ClassPropertyArrowFunction;
-                    const newArrowFunction = getTransformedArrowFunction(beanDescriptor);
-
-                    return factory.updatePropertyDeclaration(
-                        typedNode,
-                        undefined,
-                        typedNode.name,
-                        typedNode.questionToken,
-                        typedNode.type,
-                        newArrowFunction,
-                    );
-                }
-
-                return ts.visitEachChild(node, visitor, context);
-            };
-
-            return ts.visitNode(sourceFile, visitor);
-        };
-    };
+    return factory.updatePropertyDeclaration(
+        typedNode,
+        undefined,
+        typedNode.name,
+        typedNode.questionToken,
+        typedNode.type,
+        newArrowFunction,
+    );
 };
 
-function getTransformedArrowFunction (parentBeanDescriptor: IBeanDescriptorWithId): ts.ArrowFunction {
+function getTransformedArrowFunction(parentBeanDescriptor: IBeanDescriptorWithId): ts.ArrowFunction {
     const node = parentBeanDescriptor.node as ClassPropertyArrowFunction;
     const arrowFunction = node.initializer;
 
