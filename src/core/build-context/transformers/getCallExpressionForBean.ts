@@ -6,7 +6,7 @@ export const getCallExpressionForBean = (qualifiedBean: IBeanDescriptor): ts.Exp
     let beanAccessExpression: ts.Expression = factory.createCallExpression(
         factory.createPropertyAccessExpression(
             factory.createThis(),
-            factory.createIdentifier('getPrivateBean')
+            factory.createIdentifier('dicat_getPrivateBean')
         ),
         undefined,
         [factory.createStringLiteral(qualifiedBean.classMemberName)]

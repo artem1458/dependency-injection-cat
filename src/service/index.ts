@@ -1,13 +1,16 @@
 import { ProgramOptionsProvider } from '../program-options/ProgramOptionsProvider';
-import { container } from 'dependency-injection-cat';
-import { IDICatServiceContext } from './DICatServiceContext.di';
+import { DICatService } from './DICatService';
+import { FileSystemHandler } from './handlers/FileSystemHandler';
+import { ProcessFilesHandler } from './handlers/ProcessFilesHandler';
+import { StatisticsCollector } from './statistics/StatisticsCollector';
 
 (async () => {
-    const appContext = container.getOrInitContext<IDICatServiceContext>({
-        name: 'DICatServiceContext',
-    }).getBeans();
+    const statisticsCollector = new StatisticsCollector();
+    const fileSystemHandler = new FileSystemHandler();
+    const processFilesHandler = new ProcessFilesHandler(statisticsCollector);
+    const diCatService = new DICatService(fileSystemHandler, processFilesHandler);
 
     ProgramOptionsProvider.init();
 
-    await appContext.service.run();
+    await diCatService.run();
 })();

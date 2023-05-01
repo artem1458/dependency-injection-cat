@@ -24,9 +24,16 @@ import {
 import upath from 'upath';
 import { getImportPathToExternalDirectory } from './utils/getImportPathToExternalDirectory';
 import { processMembers } from './transformers/processMembers';
-import { IncorrectUsageError } from '../../compilation-context/messages/errors/IncorrectUsageError';
+import {
+    IncorrectContextDeclarationError
+} from '../../compilation-context/messages/errors/IncorrectContextDeclarationError';
 
 export const processContexts = (compilationContext: CompilationContext, sourceFile: ts.SourceFile): ts.SourceFile => {
+    //Skipping declaration files
+    if (sourceFile.isDeclarationFile) {
+        return sourceFile;
+    }
+
     let shouldAddImports = false;
 
     const updatedStatements = sourceFile.statements.map(node => {
@@ -36,7 +43,7 @@ export const processContexts = (compilationContext: CompilationContext, sourceFi
         }
 
         if (!isNamedClassDeclaration(node)) {
-            compilationContext.report(new IncorrectUsageError(
+            compilationContext.report(new IncorrectContextDeclarationError(
                 'Class that extends CatContext should be a named class declaration.',
                 node,
                 null,

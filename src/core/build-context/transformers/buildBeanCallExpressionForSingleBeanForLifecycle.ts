@@ -55,7 +55,7 @@ function buildBeanCallExpressionForSingleBeanForLifecycle(beanDescriptor: IBeanD
     let beanAccessExpression: ts.Expression = factory.createCallExpression(
         factory.createPropertyAccessExpression(
             factory.createThis(),
-            factory.createIdentifier('getPrivateBean')
+            factory.createIdentifier('dicat_getPrivateBean')
         ),
         undefined,
         [factory.createStringLiteral(beanDescriptor.classMemberName)]

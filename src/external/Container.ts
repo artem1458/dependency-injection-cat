@@ -74,8 +74,7 @@ class Container implements IContainer {
         const instance = pool.get(init.key);
 
         if (!instance) {
-            //TODO remove context name
-            throw new NoContextByKey('this.contextName', init.key);
+            throw new NoContextByKey((init.context as any)['dicat_contextName'], init.key);
         }
 
         return instance as any;

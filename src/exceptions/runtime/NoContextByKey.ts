@@ -1,6 +1,5 @@
 export class NoContextByKey extends Error {
     constructor(
-        //TODO remove context name
         private contextName: string,
         private contextKey: string,
     ) {
