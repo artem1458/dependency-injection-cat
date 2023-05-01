@@ -10,8 +10,10 @@
   - ✅"PostConstruct", "BeforeDestruct" inside contexts
   - Lazy beans (needed?)
   - ✅Drop support of global contexts
+  - Drop support of Qualifier decorator (parameter decorators will be dropped in ts >=5)
   - ✅Use context classes instead of context names for init/get/clear
   - Abstract contexts, and it's initialization
+  - Support different ts versions
   - Embedded Bean with dependencies
   - JetBrains platform plugin for DI-Cat support:
     - Errors highlighting
