@@ -6,11 +6,7 @@ import upath from 'upath';
 import { ProgramOptionsProvider } from '../program-options/ProgramOptionsProvider';
 
 export class ConfigLoader {
-    private static defaultConfig: IDIConfig = {
-        pattern: '**/*.di.ts',
-        ignorePatterns: ['**/node_modules/**'],
-        printLogo: true,
-    };
+    private static defaultConfig: IDIConfig = {};
     private static cachedConfig: IDIConfig | null = null;
     private static fileNamesToFind = [
         '.dicatrc',

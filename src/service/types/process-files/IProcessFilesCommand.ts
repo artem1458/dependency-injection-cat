@@ -1,3 +1,4 @@
 export interface IProcessFilesCommand {
-    projectModificationStamp: number;
+    projectModificationStamp: string;
+    filesToProcess: string[];
 }

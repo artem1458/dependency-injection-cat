@@ -52,7 +52,8 @@
     "ts-loader": "^9.3.0",
     "ts-node": "^10.8.1",
     "ttypescript": "^1.5.13",
-    "typescript": "4.8.4"
+    "typescript": "4.8.4",
+    "json-beautify": "^1.1.1"
   },
   "peerDependencies": {
     "typescript": "^4.8.X"
@@ -63,7 +64,6 @@
     "cosmiconfig": "^7.0.1",
     "glob": "^8.0.3",
     "graphlib": "^2.1.8",
-    "json-beautify": "^1.1.1",
     "jsonschema": "^1.4.1",
     "line-column": "^1.0.2",
     "lodash": "^4.17.21",

@@ -4,25 +4,5 @@
   "additionalItems": false,
   "additionalProperties": false,
   "type": "object",
-  "properties": {
-    "pattern": {
-      "default": "**/*.di.ts",
-      "description": "Glob-pattern for files where placed Contexts",
-      "type": "string"
-    },
-    "ignorePatterns": {
-      "type": "array",
-      "default": true,
-      "description": "Glob-pattern array for files excluded from searching of context files",
-      "uniqueItems": true,
-      "items": {
-        "type": "string",
-        "default": "**/node_modules/**"
-      }
-    },
-    "printLogo": {
-      "type": "boolean",
-      "default": true
-    }
-  }
+  "properties": {}
 }

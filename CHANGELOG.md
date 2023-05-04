@@ -2,6 +2,7 @@
 
 ## 2.0.0
 - [Feature] Build core for intellij plugins support
+- [Feature] You can declare Context classes in any files and in any amount (not only in `*.di.ts` files)
 - [Breaking changes] Removed GlobalCatContexts
 - [Breaking changes] Changed container API to use context class instead of context name
 

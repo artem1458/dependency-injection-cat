@@ -5,7 +5,7 @@ import { StatisticsType } from '../../statistics/AbstractStatistics';
 export interface IProcessFilesResponse {
     compilationMessages: ICompilationMessage[];
     statistics: IProcessFilesStatistics[];
-    projectModificationStamp: number;
+    projectModificationStamp: string;
     affectedFiles: string[]
 }
 
