@@ -38,10 +38,7 @@ module.exports = {
         options: {
           plugins: [
             [
-              'dependency-injection-cat/transformers/babel',
-              {
-                //Configuration options, see below
-              }
+              'dependency-injection-cat/transformers/babel'
             ]
           ]
         }
@@ -71,9 +68,7 @@ module.exports = {
           loader: 'ts-loader',
           options: {
             getCustomTransformers: (program) => ({
-              before: [diCatTransformer(program, {
-                //Here is configuration options, see below
-              })],
+              before: [diCatTransformer(program)],
             }),
           }
         }
@@ -121,8 +116,7 @@ module.exports = {
     "baseUrl": "your base url",
     "plugins": [
       {
-        "transform": "dependency-injection-cat/transformers/typescript",
-        //Here is configuration options, see below
+        "transform": "dependency-injection-cat/transformers/typescript"
       }
     ]
   }
@@ -139,20 +133,9 @@ module.exports = {
     "baseUrl": "your base url",
     "plugins": [
       {
-        "transform": "dependency-injection-cat/transformers/typescript",
-        //Here is configuration options, see below
+        "transform": "dependency-injection-cat/transformers/typescript"
       }
     ]
   }
-}
-```
-
-## Configuration options
-
-```typescript
-interface IOptions {
-  diConfigPattern: string | undefined; // Glob pattern, default value. Default: '**/*.di.ts'
-  ignorePatterns: Array<string> | undefined; // Array of Glob patterns, default value. Default: ['**/node_modules/**']
-  disableLogoPrint: boolean | undefined; // Disable exposing dependency-injections-cat logo into console. Default: false
 }
 ```
