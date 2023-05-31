@@ -7,7 +7,7 @@ export enum MessageCode {
     DICAT5 = 'DICAT5',
     DICAT6 = 'DICAT6',
     DICAT7 = 'DICAT7',
-    DICAT8 = 'DICAT8',
+    DICAT8 = 'DICAT8', //FREE
     DICAT9 = 'DICAT9',
     DICAT10 = 'DICAT10',
     DICAT11 = 'DICAT11',

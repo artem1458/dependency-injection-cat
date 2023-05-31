@@ -6,14 +6,13 @@ import { ExtendedSet } from '../utils/ExtendedSet';
 
 export interface IBeanDependencyDescriptor {
     parameterName: string;
-    qualifier: TBeanDependencyQualifier;
+    qualifier: null; // String, bean qualifier by name, currently not clear how to implement it with decorators, because parameter decorators support is not included is es standard
     contextName: TContextName;
     qualifiedType: QualifiedType;
     node: ts.ParameterDeclaration;
     qualifiedBeans: ExtendedSet<IBeanDescriptorWithId>;
 }
 
-type TBeanDependencyQualifier = string | null;
 type TContextName = string;
 
 export class BeanDependenciesRepository {

@@ -2,7 +2,6 @@ import { IBeanDescriptor } from '../bean/BeanRepository';
 import { getParameterType } from './getParameterType';
 import { BeanDependenciesRepository } from './BeanDependenciesRepository';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
-import { getQualifierValueFromFunctionArgument } from './getQualifierValueFromFunctionArgument';
 import { ExtendedSet } from '../utils/ExtendedSet';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
@@ -14,7 +13,6 @@ export const registerArrowFunctionBeanDependencies = (
     const parameters = descriptor.node.initializer.parameters;
 
     parameters.forEach(parameter => {
-        const qualifier = getQualifierValueFromFunctionArgument(compilationContext, parameter, descriptor.contextDescriptor);
         const qualifiedType = getParameterType(compilationContext, descriptor.contextDescriptor, parameter);
 
         if (qualifiedType === null) {
@@ -31,9 +29,9 @@ export const registerArrowFunctionBeanDependencies = (
             {
                 node: parameter,
                 contextName: descriptor.contextDescriptor.name,
+                qualifier: null,
                 qualifiedType: qualifiedType,
                 parameterName: parameter.name.getText(),
-                qualifier,
                 qualifiedBeans: new ExtendedSet()
             }
         );

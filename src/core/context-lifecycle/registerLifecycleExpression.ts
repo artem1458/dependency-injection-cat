@@ -5,7 +5,6 @@ import {
     LifecycleMethodsRepository,
     TLifecycleNodeKind
 } from './LifecycleMethodsRepository';
-import { getQualifierValueFromFunctionArgument } from '../bean-dependencies/getQualifierValueFromFunctionArgument';
 import { getParameterType } from '../bean-dependencies/getParameterType';
 import { BeanRepository } from '../bean/BeanRepository';
 import { ClassPropertyArrowFunction } from '../ts-helpers/types';
@@ -39,7 +38,6 @@ export const registerLifecycleExpression = (
 
     parameters.forEach(parameter => {
         const parameterName = unquoteString(parameter.name.getText());
-        const qualifier = getQualifierValueFromFunctionArgument(compilationContext, parameter, contextDescriptor);
         const qualifiedType = getParameterType(compilationContext, contextDescriptor, parameter);
 
         if (qualifiedType === null) {
@@ -78,15 +76,8 @@ export const registerLifecycleExpression = (
             const currentContextNonEmbeddedBeans = currentContextBeans.filter(it => it.beanKind !== 'embedded');
             const currentContextEmbeddedBeans = currentContextBeans.filter(it => it.beanKind === 'embedded');
 
-            let nonEmbeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextNonEmbeddedBeans);
-            let embeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextEmbeddedBeans);
-
-            if (qualifier !== null) {
-                nonEmbeddedBeanCandidatesFromCurrentContext = nonEmbeddedBeanCandidatesFromCurrentContext
-                    .filter(it => it.classMemberName === qualifier);
-                embeddedBeanCandidatesFromCurrentContext = embeddedBeanCandidatesFromCurrentContext
-                    .filter(it => it.nestedProperty === qualifier);
-            }
+            const nonEmbeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextNonEmbeddedBeans);
+            const embeddedBeanCandidatesFromCurrentContext = uniqNotEmpty(currentContextEmbeddedBeans);
 
             if (
                 nonEmbeddedBeanCandidatesFromCurrentContext.length === 0
