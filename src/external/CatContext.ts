@@ -3,7 +3,7 @@ import { UsingCatContextWithoutConfiguredDI } from '../exceptions/runtime/UsingC
 /**
  * T should be a plain interface without extending
  */
-export abstract class CatContext<T, C = null> {
+export abstract class CatContext<T = {}, C = null> {
     constructor() {
         throw new UsingCatContextWithoutConfiguredDI();
     }

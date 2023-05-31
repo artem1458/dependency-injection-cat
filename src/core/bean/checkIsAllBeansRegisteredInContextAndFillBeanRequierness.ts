@@ -23,14 +23,11 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
 
     const typeArgs = extendsHeritageClause.types[0].typeArguments ?? null;
 
-    if (typeArgs === null) {
-        compilationContext.report(new MissingTypeDefinitionError(
-            'You should pass interface reference to the context inheritance.',
-            extendsHeritageClause,
-            contextDescriptor.node,
-        ));
+    if (typeArgs === null || !typeArgs[0]) {
+        //If no type args - assuming that all beans are "private"
         return;
     }
+
     const type = typeArgs[0];
 
     if (!type || !ts.isTypeReferenceNode(type)) {
