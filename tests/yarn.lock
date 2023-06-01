@@ -794,16 +794,14 @@ del@^4.1.1:
     pify "^4.0.1"
     rimraf "^2.6.3"
 
-dependency-injection-cat@../dist, dependency-injection-cat@^1.1.0:
+dependency-injection-cat@../dist:
   version "1.1.0"
   dependencies:
     chalk "^4.1.2"
     commander "^9.3.0"
     cosmiconfig "^7.0.1"
-    dependency-injection-cat "^1.1.0"
     glob "^8.0.3"
     graphlib "^2.1.8"
-    json-beautify "^1.1.1"
     jsonschema "^1.4.1"
     line-column "^1.0.2"
     lodash "^4.17.21"
@@ -1585,11 +1583,6 @@ js-yaml@4.1.0:
   integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
   dependencies:
     argparse "^2.0.1"
-
-json-beautify@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/json-beautify/-/json-beautify-1.1.1.tgz#8a1ed511ad5d52ca63ed29f7c61896c6a6ebbb9f"
-  integrity sha512-17j+Hk2lado0xqKtUcyAjK0AtoHnPSIgktWRsEXgdFQFG9UnaGw6CHa0J7xsvulxRpFl6CrkDFHght1p5ZJc4A==
 
 json-parse-even-better-errors@^2.3.0, json-parse-even-better-errors@^2.3.1:
   version "2.3.1"

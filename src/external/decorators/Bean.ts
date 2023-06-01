@@ -1,14 +1,15 @@
-type TClassConstructor<T> = new (...args: any[]) => T;
-type TBeanScope = 'prototype' | 'singleton';
+import { ClassConstructor } from '../ClassConstructor';
 
-interface IBeanConfig {
-    scope?: TBeanScope;
+type BeanScope = 'prototype' | 'singleton';
+
+interface BeanConfig {
+    scope?: BeanScope;
 }
 
-type ConfigurableMethodBean = (beanConfig: IBeanConfig) => PropertyDecorator;
-type PropertyBean = <T>(clazz: TClassConstructor<T>, beanConfig?: IBeanConfig) => T;
+type ConfigurableMethodBean = (beanConfig: BeanConfig) => PropertyDecorator;
+type PropertyBean = <T>(clazz: ClassConstructor<T>, beanConfig?: BeanConfig) => T;
 
-type TBean = PropertyDecorator & ConfigurableMethodBean & PropertyBean;
-export const Bean: TBean = () => {
+type Bean = PropertyDecorator & ConfigurableMethodBean & PropertyBean;
+export const Bean: Bean = () => {
     throw new Error('Trying to use @Bean without configured di-container, or not in context-class');
 };

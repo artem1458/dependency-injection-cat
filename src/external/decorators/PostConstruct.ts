@@ -1,5 +1,3 @@
-type TPostConstruct = PropertyDecorator & MethodDecorator;
-
-export const PostConstruct: TPostConstruct = () => {
+export const PostConstruct: PropertyDecorator & MethodDecorator = () => {
     throw new Error('Trying to use @PostConstruct without configured di-container, or not in context-class');
 };

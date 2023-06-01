@@ -23,8 +23,8 @@ export abstract class InternalCatContext {
         'dicat_singletonMap',
         'dicat_config',
         'config',
-        'getBean',
-        'getBeans',
+        'dicat_getBean',
+        'dicat_getBeans',
         'dicat_getPrivateBean',
         'dicat_getBeanConfiguration',
     ]);
@@ -57,7 +57,7 @@ export abstract class InternalCatContext {
         return this.dicat_config;
     }
 
-    getBean<T>(beanName: TBeanName): T {
+    dicat_getBean<T>(beanName: TBeanName): T {
         const beanConfiguration = this.dicat_getBeanConfiguration(beanName);
 
         if (!beanConfiguration.isPublic) {
@@ -97,7 +97,7 @@ export abstract class InternalCatContext {
         };
     }
 
-    getBeans(): any {
+    dicat_getBeans(): any {
         const publicBeansConfigurations: Record<string, IBeanConfig> = {};
         Object.keys(this.getStaticConstructorProperty('dicat_beanConfiguration')).forEach(key => {
             const beanConfig = this.dicat_getBeanConfiguration(key);
@@ -110,7 +110,7 @@ export abstract class InternalCatContext {
         return Object.keys(publicBeansConfigurations)
             .reduce((previousValue, currentValue) => ({
                 ...previousValue,
-                [currentValue]: this.getBean(currentValue),
+                [currentValue]: this.dicat_getBean(currentValue),
             }), {});
     }
 

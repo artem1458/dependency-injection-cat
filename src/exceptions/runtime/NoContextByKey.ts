@@ -1,3 +1,5 @@
+import { contextKeyToString } from './contextKeyToString';
+
 export class NoContextByKey extends Error {
     constructor(
         private contextName: string,
@@ -5,7 +7,7 @@ export class NoContextByKey extends Error {
     ) {
         super();
 
-        this.name = 'NotFoundException';
-        this.message = `Context with name ${this.contextName} and key ${this.contextKey} was not initialized`;
+        this.name = 'NoContextByKey';
+        this.message = `Context "${this.contextName}" and key ${contextKeyToString(contextKey)} was not initialized`;
     }
 }
