@@ -1,4 +1,4 @@
-import { ClassConstructor } from '../ClassConstructor';
+import { ClassConstructor } from './ClassConstructor';
 
 type BeanScope = 'prototype' | 'singleton';
 
