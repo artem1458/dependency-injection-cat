@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
-import { libraryName } from '../../constants/libraryName';
+import { CONSTANTS } from '../../constants';
 import { uniqId } from '../../core/utils/uniqId';
 import { getCompilationContext } from '../getCompilationContext';
 import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
@@ -26,7 +26,7 @@ export default function (api: any) {
                     if (!moduleSpecifier) {
                         return false;
                     }
-                    return moduleSpecifier === libraryName;
+                    return moduleSpecifier === CONSTANTS.libraryName;
                 });
 
                 if (!hasLibraryImport) {

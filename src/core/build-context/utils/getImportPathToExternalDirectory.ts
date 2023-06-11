@@ -1,3 +1,3 @@
-import { libraryName } from '../../../constants/libraryName';
+import { CONSTANTS } from '../../../constants';
 
-export const getImportPathToExternalDirectory = (): string => `${libraryName}/external`;
+export const getImportPathToExternalDirectory = (): string => `${CONSTANTS.libraryName}/external`;

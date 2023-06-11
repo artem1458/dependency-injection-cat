@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-import { libraryName } from '../../../constants/libraryName';
+import { CONSTANTS } from '../../../constants';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 
 export type TDICatClass = 'CatContext';
@@ -23,5 +23,5 @@ export const isExtendsClass = (node: ts.Node, className: TDICatClass): node is t
         return false;
     }
 
-    return sourceDescriptor.name === className && sourceDescriptor.path === libraryName;
+    return sourceDescriptor.name === className && sourceDescriptor.path === CONSTANTS.libraryName;
 };

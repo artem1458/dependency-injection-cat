@@ -4,14 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "debug": "ttsc",
+    "debug": "cross-env DICAT_DEBUG_MODE=true ttsc",
     "testt": "ts-node ../src/service"
   },
   "dependencies": {
-    "dependency-injection-cat": "link:../src"
+    "dependency-injection-cat": "^1.1.0"
   },
   "devDependencies": {
     "ts-node": "^10.8.1",
-    "ttypescript": "^1.5.13"
+    "ttypescript": "^1.5.13",
+    "cross-env": "^7.0.3"
   }
 }

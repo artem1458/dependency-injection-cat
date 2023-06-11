@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { libraryName } from '../../../constants/libraryName';
+import { CONSTANTS } from '../../../constants';
 import { getNodeSourceDescriptorDeep } from '../node-source-descriptor';
 
 export function isEmbeddedBeanDecorator(decorator: ts.Decorator): boolean {
@@ -21,5 +21,5 @@ export function isEmbeddedBeanDecorator(decorator: ts.Decorator): boolean {
         return false;
     }
 
-    return nodeSourceDescriptor.name === 'EmbeddedBean' && nodeSourceDescriptor.path === libraryName;
+    return nodeSourceDescriptor.name === 'EmbeddedBean' && nodeSourceDescriptor.path === CONSTANTS.libraryName;
 }

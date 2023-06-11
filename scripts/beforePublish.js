@@ -1,14 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const beautify = require('json-beautify');
-const { libraryName } = require('../src/constants/libraryName');
+const { CONSTANTS } = require('../src/constants');
 
 const readmeMd = fs.readFileSync(path.resolve(__dirname, '../README.md'));
 const changelogMd = fs.readFileSync(path.resolve(__dirname, '../CHANGELOG.md'));
 const packageJson = require('../package.json');
 const newJson = {
     ...packageJson,
-    name: libraryName,
+    name: CONSTANTS.libraryName,
     scripts: undefined,
 };
 

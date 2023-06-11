@@ -47,11 +47,11 @@
     "concurrently": "^7.2.1",
     "dts-bundle-generator": "^6.11.0",
     "eslint": "^8.17.0",
+    "json-beautify": "^1.1.1",
     "ts-loader": "^9.3.0",
     "ts-node": "^10.8.1",
     "ttypescript": "^1.5.13",
-    "typescript": "4.8.4",
-    "json-beautify": "^1.1.1"
+    "typescript": "4.8.4"
   },
   "peerDependencies": {
     "typescript": "^4.8.X"

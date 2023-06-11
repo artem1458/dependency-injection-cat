@@ -2,7 +2,7 @@ import upath from 'upath';
 import { createMatchPath, loadConfig, MatchPath } from 'tsconfig-paths';
 import { isPathRelative } from '../../utils/isPathRelative';
 import { extensionsToResolve } from './constants';
-import { libraryName } from '../../../constants/libraryName';
+import { CONSTANTS } from '../../../constants';
 import { FileSystem } from '../../../file-system/FileSystem';
 import { ProgramOptionsProvider } from '../../../program-options/ProgramOptionsProvider';
 
@@ -27,7 +27,7 @@ export class PathResolver {
     }
 
     static resolve(sourceFilePath: string, targetPath: string): string {
-        if (targetPath === libraryName) {
+        if (targetPath === CONSTANTS.libraryName) {
             return targetPath;
         }
 

@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { compact } from 'lodash';
 import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
-import { libraryName } from '../../constants/libraryName';
+import { CONSTANTS } from '../../constants';
 import { TLifecycle } from '../../external/InternalCatContext';
 
 export const CONTEXT_LIFECYCLE_DECORATORS = [
@@ -40,7 +40,7 @@ export const getLifecycleTypes = (decorators: ts.Decorator[]): Set<TLifecycle> |
             return null;
         }
 
-        if (nodeSourceDescriptor.path !== libraryName) {
+        if (nodeSourceDescriptor.path !== CONSTANTS.libraryName) {
             return null;
         }
 
@@ -69,5 +69,5 @@ export const isContextLifecycleDecorator = (decorator: ts.Decorator): boolean =>
         return false;
     }
 
-    return CONTEXT_LIFECYCLE_DECORATORS.includes(nodeSourceDescriptor.name) && nodeSourceDescriptor.path === libraryName;
+    return CONTEXT_LIFECYCLE_DECORATORS.includes(nodeSourceDescriptor.name) && nodeSourceDescriptor.path === CONSTANTS.libraryName;
 };
