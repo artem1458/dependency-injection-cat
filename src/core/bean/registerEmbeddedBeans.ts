@@ -1,135 +1,77 @@
-import { IContextDescriptor } from '../context/ContextRepository';
-import * as ts from 'typescript';
-import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
-import { BeanRepository } from './BeanRepository';
-import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
+import ts from 'typescript';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
 import { IncorrectTypeDefinitionError } from '../../compilation-context/messages/errors/IncorrectTypeDefinitionError';
-import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
+import { DITypeBuilder } from '../type-system/DITypeBuilder';
+import { ContextBean } from './ContextBean';
+import { BeanKind } from './BeanKind';
+import { Context } from '../context/Context';
 
 export const registerEmbeddedBean = (
     compilationContext: CompilationContext,
-    contextDescriptor: IContextDescriptor,
+    context: Context,
     classElement: ts.PropertyDeclaration
 ): void => {
-    const classElementType = classElement.type ?? null;
+    const typeChecker = compilationContext.typeChecker;
+    const type = typeChecker.getTypeAtLocation(classElement);
+    const diTypeRoot = DITypeBuilder.build(type, compilationContext);
+    const typeSymbol = type.getSymbol();
 
-    if (classElementType === null) {
+    if (!typeSymbol) {
+        //TODO add error
         compilationContext.report(new MissingTypeDefinitionError(
             null,
             classElement,
-            contextDescriptor.node,
+            context.node,
         ));
         return;
     }
 
-    if (!ts.isTypeReferenceNode(classElementType)) {
-        compilationContext.report(new IncorrectTypeDefinitionError(
-            'Should be an interface reference.',
-            classElementType,
-            contextDescriptor.node,
-        ));
-        return;
-    }
+    const declarations = typeSymbol.declarations ?? [];
 
-    const nodeSourceDescriptor = getNodeSourceDescriptorDeep(classElementType.getSourceFile(), classElementType.getText());
-
-    if (nodeSourceDescriptor === null || nodeSourceDescriptor.node === null) {
-        compilationContext.report(new TypeQualifyError(
+    if (declarations.length === 0) {
+        compilationContext.report(new MissingTypeDefinitionError(
+            //TODO add error
             null,
-            classElementType,
-            contextDescriptor.node,
+            classElement,
+            context.node,
         ));
         return;
     }
 
-    if (!ts.isInterfaceDeclaration(nodeSourceDescriptor.node)) {
+    if (declarations.length > 1) {
         compilationContext.report(new IncorrectTypeDefinitionError(
-            'Referenced type should be an interface declaration with statically known members.',
-            classElementType,
-            contextDescriptor.node,
+            //TODO add found declarations
+            'Type of Embedded bean should be defined only once.',
+            classElement.type ?? classElement,
+            context.node,
         ));
         return;
     }
 
-    const interfaceMembers = nodeSourceDescriptor.node.members;
+    const declaration = declarations[0];
+    const declarationType = typeChecker.getTypeAtLocation(declaration);
+    declarationType.getProperties().forEach(property => {
+        const type = typeChecker.getTypeOfSymbolAtLocation(property, declaration);
+        const diType = DITypeBuilder.build(type, compilationContext);
 
-    if (!isPropertySignatureList(interfaceMembers)) {
-        compilationContext.report(new IncorrectTypeDefinitionError(
-            'Referenced type should be an interface declaration with statically known members.',
-            classElementType,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
-    interfaceMembers.forEach(node => {
-        const propertyName = node.name.getText();
-        const propertyType = node.type;
-
-        if (!propertyType) {
-            compilationContext.report(
-                new MissingTypeDefinitionError(
-                    null,
-                    node,
-                    contextDescriptor.node,
-                )
-            );
-            return;
-        }
-
-        const qualifiedType = TypeQualifier.qualify(compilationContext, contextDescriptor, propertyType);
-
-        if (qualifiedType === null) {
-            compilationContext.report(new TypeQualifyError(
-                null,
-                propertyType,
-                contextDescriptor.node,
-            ));
-            return;
-        }
-
-        BeanRepository.registerBean({
+        const contextBean = new ContextBean({
+            context: context,
             classMemberName: classElement.name.getText(),
-            nestedProperty: propertyName,
-            contextDescriptor,
-            qualifiedType,
-            scope: 'singleton',
+            nestedProperty: property.name,
+            diType: diType,
             node: classElement,
-            beanKind: 'embedded',
-            beanImplementationSource: null,
-            publicInfo: null,
+            kind: BeanKind.EMBEDDED,
         });
+        context.registerBean(contextBean);
     });
 
-
-    const qualifiedType = TypeQualifier.qualify(compilationContext, contextDescriptor, classElementType);
-
-    if (qualifiedType === null) {
-        compilationContext.report(
-            new MissingTypeDefinitionError(
-                null,
-                classElementType,
-                contextDescriptor.node,
-            )
-        );
-        return;
-    }
-
-    BeanRepository.registerBean({
+    const rootContextBean = new ContextBean({
+        context: context,
         classMemberName: classElement.name.getText(),
-        nestedProperty: null,
-        contextDescriptor,
-        qualifiedType,
-        scope: 'singleton',
+        diType: diTypeRoot,
         node: classElement,
-        beanKind: 'embedded',
-        beanImplementationSource: null,
-        publicInfo: null,
+        kind: BeanKind.EMBEDDED,
     });
+    context.registerBean(rootContextBean);
 };
-
-function isPropertySignatureList(list: ts.NodeArray<ts.TypeElement>): list is ts.NodeArray<ts.PropertySignature> {
-    return list.every(it => ts.isPropertySignature(it));
-}

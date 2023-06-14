@@ -1,35 +1,41 @@
-import { IContextDescriptor } from '../context/ContextRepository';
-import { isMethodBean } from '../ts-helpers/predicates/isMethodBean';
+import { isMethodBean } from '../ts/predicates/isMethodBean';
 import { registerMethodBean } from './registerMethodBean';
-import { isClassPropertyBean } from '../ts-helpers/predicates/isClassPropertyBean';
+import { isClassPropertyBean } from '../ts/predicates/isClassPropertyBean';
 import { registerPropertyBean } from './registerPropertyBean';
-import { BeanRepository } from './BeanRepository';
-import { isArrowFunctionBean } from '../ts-helpers/predicates/isArrowFunctionBean';
+import { isArrowFunctionBean } from '../ts/predicates/isArrowFunctionBean';
 import { registerArrowFunctionBean } from './registerArrowFunctionBean';
-import { isExpressionBean } from '../ts-helpers/predicates/isExpressionBean';
+import { isExpressionBean } from '../ts/predicates/isExpressionBean';
 import { registerExpressionBean } from './registerExpressionBean';
-import { isEmbeddedBean } from '../ts-helpers/predicates/isEmbeddedBean';
+import { isEmbeddedBean } from '../ts/predicates/isEmbeddedBean';
 import { registerEmbeddedBean } from './registerEmbeddedBeans';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
+import { verifyBeanTypes } from './verifyBeanTypes';
+import { isLifecycleMethodBean } from '../ts/predicates/isLifecycleMethodBean';
+import { registerLifecycleBean } from './registerLifecycleBean';
+import { isLifecycleArrowFunctionBean } from '../ts/predicates/isLifecycleArrowFunctionBean';
+import { Context } from '../context/Context';
 
-export function registerBeans(compilationContext: CompilationContext, contextDescriptor: IContextDescriptor) {
-    BeanRepository.clearBeanInfoByContextDescriptor(contextDescriptor);
-
-    contextDescriptor.node.members.forEach((classElement) => {
+export function registerBeans(compilationContext: CompilationContext, context: Context): void {
+    context.node.members.forEach((classElement) => {
         if (isMethodBean(classElement)) {
-            registerMethodBean(compilationContext, contextDescriptor, classElement);
+            registerMethodBean(compilationContext, context, classElement);
         }
-        if (isClassPropertyBean(classElement)) {
-            registerPropertyBean(compilationContext, contextDescriptor, classElement);
+        if (isClassPropertyBean(classElement, compilationContext)) {
+            registerPropertyBean(compilationContext, context, classElement);
         }
-        if (isArrowFunctionBean(compilationContext, contextDescriptor, classElement)) {
-            registerArrowFunctionBean(compilationContext, contextDescriptor, classElement);
+        if (isArrowFunctionBean(compilationContext, context, classElement)) {
+            registerArrowFunctionBean(compilationContext, context, classElement);
         }
-        if (isExpressionBean(compilationContext, contextDescriptor, classElement)) {
-            registerExpressionBean(compilationContext, contextDescriptor, classElement);
+        if (isExpressionBean(compilationContext, context, classElement)) {
+            registerExpressionBean(compilationContext, context, classElement);
         }
-        if (isEmbeddedBean(compilationContext, contextDescriptor, classElement)) {
-            registerEmbeddedBean(compilationContext, contextDescriptor, classElement);
+        if (isEmbeddedBean(compilationContext, context, classElement)) {
+            registerEmbeddedBean(compilationContext, context, classElement);
+        }
+        if (isLifecycleMethodBean(classElement) || isLifecycleArrowFunctionBean(compilationContext, context, classElement)) {
+            registerLifecycleBean(compilationContext, context, classElement);
         }
     });
+
+    verifyBeanTypes(compilationContext, context);
 }

@@ -1,49 +1,29 @@
-import { IContextDescriptor } from '../context/ContextRepository';
-import * as ts from 'typescript';
-import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
-import { BeanRepository } from './BeanRepository';
-import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
+import ts from 'typescript';
+import { getPropertyDecoratorBeanInfo } from '../ts/bean-info/getPropertyDecoratorBeanInfo';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
-import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
+import { DITypeBuilder } from '../type-system/DITypeBuilder';
+import { ContextBean } from './ContextBean';
+import { BeanKind } from './BeanKind';
+import { Context } from '../context/Context';
 
 export const registerExpressionBean = (
     compilationContext: CompilationContext,
-    contextDescriptor: IContextDescriptor,
+    context: Context,
     classElement: ts.PropertyDeclaration,
 ): void => {
-    const propertyType = classElement.type ?? null;
-    const beanInfo = getPropertyDecoratorBeanInfo(compilationContext, contextDescriptor, classElement);
+    const beanInfo = getPropertyDecoratorBeanInfo(compilationContext, context, classElement);
 
-    if (propertyType === null) {
-        compilationContext.report(new MissingTypeDefinitionError(
-            null,
-            classElement,
-            contextDescriptor.node,
-        ));
-        return;
-    }
+    const typeChecker = compilationContext.typeChecker;
+    const type = typeChecker.getTypeAtLocation(classElement);
+    const diType = DITypeBuilder.build(type, compilationContext);
 
-    const qualifiedType = TypeQualifier.qualify(compilationContext, contextDescriptor, propertyType);
-
-    if (qualifiedType === null) {
-        compilationContext.report(new TypeQualifyError(
-            null,
-            propertyType,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
-    BeanRepository.registerBean({
+    const contextBean = new ContextBean({
+        context: context,
         classMemberName: classElement.name.getText(),
-        nestedProperty: null,
-        contextDescriptor,
-        qualifiedType: qualifiedType,
-        scope: beanInfo.scope,
+        diType:  diType,
         node: classElement,
-        beanKind: 'expression',
-        beanImplementationSource: null,
-        publicInfo: null,
+        kind: BeanKind.EXPRESSION,
+        scope: beanInfo.scope,
     });
+    context.registerBean(contextBean);
 };

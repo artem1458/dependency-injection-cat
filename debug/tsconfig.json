@@ -27,7 +27,7 @@
       "scripthost"
     ],
     "plugins": [
-      { "transform": "../src/v2/CustomTransformer.ts" }
+      { "transform": "../src/transformers/typescript/index.ts" }
     ]
   }
 }

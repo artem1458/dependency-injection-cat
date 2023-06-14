@@ -1,7 +1,16 @@
+import ts from 'typescript';
 import { AbstractCompilationMessage } from './messages/AbstractCompilationMessage';
 import { MessageType } from './messages/MessageType';
 
 export class CompilationContext {
+    constructor(
+        public readonly program: ts.Program
+    ) {}
+
+    get typeChecker(): ts.TypeChecker {
+        return this.program.getTypeChecker();
+    }
+
     messages = new Set<AbstractCompilationMessage>();
 
     get errors(): AbstractCompilationMessage[] {

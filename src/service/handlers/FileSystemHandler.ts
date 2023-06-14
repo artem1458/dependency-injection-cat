@@ -2,17 +2,12 @@ import upath from 'upath';
 import { IBatchFileSystemCommand } from '../types/file-system/FileSystemCommands';
 import { FSCommandType } from '../types/file-system/FSCommandType';
 import { FileSystem } from '../../file-system/FileSystem';
-import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
 import { ICommandHandler } from './ICommandHandler';
 import { ConfigLoader } from '../../config/ConfigLoader';
-import { BeanRepository } from '../../core/bean/BeanRepository';
-import { BeanDependenciesRepository } from '../../core/bean-dependencies/BeanDependenciesRepository';
-import { DependencyGraph } from '../../core/connect-dependencies/DependencyGraph';
+import { DependencyGraph } from '../../core/dependencies/DependencyGraph';
 import { ContextRepository } from '../../core/context/ContextRepository';
-import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
-import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
-import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
 
+//TODO
 export class FileSystemHandler implements ICommandHandler<IBatchFileSystemCommand> {
 
     invoke(command: IBatchFileSystemCommand): void {
@@ -67,13 +62,8 @@ export class FileSystemHandler implements ICommandHandler<IBatchFileSystemComman
         });
 
         if (wasConfigChanged) {
-            BeanRepository.clear();
-            BeanDependenciesRepository.clear();
             DependencyGraph.clear();
             ContextRepository.clear();
-            LifecycleMethodsRepository.clear();
-            PathResolver.clear();
-            PathResolverCache.clear();
 
             contentOfNewConfigFile === null
                 ? ConfigLoader.clear()

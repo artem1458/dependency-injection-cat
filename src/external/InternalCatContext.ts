@@ -5,18 +5,19 @@ export interface IBeanConfig {
     isPublic: boolean;
 }
 
-type TBeanName = string;
+type BeanName = string;
 
-export type TLifecycle = 'post-construct' | 'before-destruct';
+export type BeanLifecycle = 'post-construct' | 'before-destruct';
 
 export abstract class InternalCatContext {
     [beanName: string]: any;
 
     static reservedNames = new Set([
-        'dicat_staticInit', //Static
-        'dicat_contextName', //Static
-        'dicat_beanConfiguration', //Static
-        'dicat_lifecycleConfiguration', //Static
+        'dicat_static_init',
+        'dicat_static_contextName',
+        'dicat_static_beanConfiguration',
+        'dicat_static_lifecycleConfiguration',
+
         'dicat_postConstruct',
         'dicat_beforeDestruct',
         'dicat_init',
@@ -27,29 +28,32 @@ export abstract class InternalCatContext {
         'dicat_getBeans',
         'dicat_getPrivateBean',
         'dicat_getBeanConfiguration',
+
+        'dicat_createSet',
+        'dicat_createMap',
     ]);
 
-    declare static dicat_contextName: string;
-    declare static dicat_beanConfiguration: Record<TBeanName, Partial<IBeanConfig>>;
-    declare static dicat_lifecycleConfiguration: Record<TLifecycle, TBeanName[]>;
+    declare static dicat_static_contextName: string;
+    declare static dicat_static_beanConfiguration: Record<BeanName, Partial<IBeanConfig>>;
+    declare static dicat_static_lifecycleConfiguration: Record<BeanLifecycle, BeanName[]>;
 
     dicat_init(contextConfig: any): void {
         this.dicat_config = contextConfig;
     }
 
     dicat_postConstruct(): void {
-        this.getStaticConstructorProperty('dicat_lifecycleConfiguration')['post-construct'].forEach(methodName => {
+        this.getStaticConstructorProperty('dicat_static_lifecycleConfiguration')['post-construct'].forEach(methodName => {
             this[methodName]();
         });
     }
 
     dicat_beforeDestruct(): void {
-        this.getStaticConstructorProperty('dicat_lifecycleConfiguration')['before-destruct'].forEach(methodName => {
+        this.getStaticConstructorProperty('dicat_static_lifecycleConfiguration')['before-destruct'].forEach(methodName => {
             this[methodName]();
         });
     }
 
-    private dicat_singletonMap = new Map<TBeanName, any>();
+    private dicat_singletonMap = new Map<BeanName, any>();
 
     private dicat_config: any = null;
 
@@ -57,17 +61,17 @@ export abstract class InternalCatContext {
         return this.dicat_config;
     }
 
-    dicat_getBean<T>(beanName: TBeanName): T {
+    dicat_getBean<T>(beanName: BeanName): T {
         const beanConfiguration = this.dicat_getBeanConfiguration(beanName);
 
         if (!beanConfiguration.isPublic) {
-            console.warn(`Bean ${beanName} is not defined in TBeans interface.\nThis Bean will not be checked for correctness at compile-time.\nContext name: ${this.getStaticConstructorProperty('dicat_contextName')}`);
+            console.warn(`Bean ${beanName} is not defined in TBeans interface.\nThis Bean will not be checked for correctness at compile-time.\nContext name: ${this.getStaticConstructorProperty('dicat_static_contextName')}`);
         }
 
         return this.dicat_getPrivateBean(beanName);
     }
 
-    protected dicat_getPrivateBean<T>(beanName: TBeanName): T {
+    protected dicat_getPrivateBean<T>(beanName: BeanName): T {
         const beanConfiguration = this.dicat_getBeanConfiguration(beanName);
 
         if (beanConfiguration.scope !== 'singleton') {
@@ -83,11 +87,11 @@ export abstract class InternalCatContext {
         return savedInstance;
     }
 
-    private dicat_getBeanConfiguration(beanName: TBeanName): IBeanConfig {
-        const beanConfiguration = this.getStaticConstructorProperty('dicat_beanConfiguration')[beanName] ?? null;
+    private dicat_getBeanConfiguration(beanName: BeanName): IBeanConfig {
+        const beanConfiguration = this.getStaticConstructorProperty('dicat_static_beanConfiguration')[beanName] ?? null;
 
         if (beanConfiguration === null) {
-            throw new BeanNotFoundInContext(this.getStaticConstructorProperty('dicat_contextName'), beanName);
+            throw new BeanNotFoundInContext(this.getStaticConstructorProperty('dicat_static_contextName'), beanName);
         }
 
         return {
@@ -99,7 +103,7 @@ export abstract class InternalCatContext {
 
     dicat_getBeans(): any {
         const publicBeansConfigurations: Record<string, IBeanConfig> = {};
-        Object.keys(this.getStaticConstructorProperty('dicat_beanConfiguration')).forEach(key => {
+        Object.keys(this.getStaticConstructorProperty('dicat_static_beanConfiguration')).forEach(key => {
             const beanConfig = this.dicat_getBeanConfiguration(key);
 
             if (beanConfig.isPublic) {
@@ -116,5 +120,13 @@ export abstract class InternalCatContext {
 
     private getStaticConstructorProperty<T extends keyof typeof InternalCatContext>(property: T): typeof InternalCatContext[T] {
         return (this.constructor as any)[property];
+    }
+
+    protected dicat_createSet<V>(values: V[]): Set<V> {
+        return new Set(values);
+    }
+
+    protected dicat_createMap<K, V>(values: [K, V][]): Map<K, V> {
+        return new Map(values);
     }
 }

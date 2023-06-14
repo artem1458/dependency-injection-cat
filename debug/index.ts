@@ -1,8 +1,8 @@
-// import { container } from 'dependency-injection-cat';
-// import { TestContext } from './TestContext';
+import { container } from 'dependency-injection-cat';
+import { TestContext } from './TestContext';
 
-// export const context = container.initContext({
-//     context: TestContext,
-// });
-//
-// console.log(context.getBeans());
+export const context = container.initContext({
+    context: TestContext,
+});
+
+console.log(context.getBeans());

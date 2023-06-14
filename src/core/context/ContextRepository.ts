@@ -1,78 +1,67 @@
-import { NamedClassDeclaration } from '../ts-helpers/types';
-import { INodeSourceDescriptor } from '../ts-helpers/node-source-descriptor';
-import { unquoteString } from '../utils/unquoteString';
-import md5 from 'md5';
 import ts from 'typescript';
-
-type TContextName = string;
-
-export interface IContextDescriptor {
-    id: string;
-    name: TContextName;
-    className: string;
-    absolutePath: string;
-    node: NamedClassDeclaration;
-}
-
-export interface IContextInterfaceDescriptor {
-    absolutePath: string;
-    node: ts.InterfaceDeclaration;
-    contextDescriptor: IContextDescriptor;
-}
+import { Context } from './Context';
+import { unquoteString } from '../utils/unquoteString';
 
 export class ContextRepository {
-    static contextIdToContextDescriptor = new Map<string, IContextDescriptor>();
-    static contextDescriptorToContextInterface = new Map<IContextDescriptor, IContextInterfaceDescriptor>();
-    static contextPathToContextDescriptor = new Map<string, IContextDescriptor>();
+    static fileNameToLastContextCounter = new Map<string, number>();
+    static fileNameToContexts = new Map<string, Context[]>();
+    static contextIdToContext = new Map<string, Context>();
 
-    static registerContext(
-        name: string,
-        classDeclaration: NamedClassDeclaration,
-    ): IContextDescriptor {
+    static register(classDeclaration: ts.ClassDeclaration): Context {
         const sourceFile = classDeclaration.getSourceFile();
 
-        const descriptor: IContextDescriptor = {
-            id: this.buildContextId(classDeclaration),
-            name,
-            className: unquoteString(classDeclaration.name.getText()),
-            absolutePath: sourceFile.fileName,
-            node: classDeclaration,
-        };
+        const context = new Context();
 
-        this.contextIdToContextDescriptor.set(descriptor.id, descriptor);
-        this.contextPathToContextDescriptor.set(sourceFile.fileName, descriptor);
+        context.id = this.buildId(classDeclaration);
+        context.fileName = this.buildId(classDeclaration);
+        context.node = classDeclaration;
 
-        return descriptor;
+        if (classDeclaration.name !== undefined) {
+            context.name = unquoteString(classDeclaration.name.getText());
+        }
+
+        const descriptors = this.fileNameToContexts.get(sourceFile.fileName) ?? [];
+        this.fileNameToContexts.set(sourceFile.fileName, descriptors);
+        descriptors.push(context);
+
+        this.contextIdToContext.set(context.id, context);
+
+        return context;
     }
 
-    static buildContextId(classDeclaration: NamedClassDeclaration): string {
+    static getContextByBeanId(beanId: string): Context | null {
+        const contextId = beanId.match(/(.*)_\d+$/);
+
+        if (contextId === null) {
+            //TODO warn for debug mode
+            return null;
+        }
+
+        return this.contextIdToContext.get(contextId[1]) ?? null;
+    }
+
+    private static buildId(classDeclaration: ts.ClassDeclaration): string {
         const sourceFile = classDeclaration.getSourceFile();
-        const name = classDeclaration.name.getText();
+        const lastContextCounter = this.fileNameToLastContextCounter.get(sourceFile.fileName);
+        const newCounter = (lastContextCounter ?? 0) + 1;
+        this.fileNameToLastContextCounter.set(sourceFile.fileName, newCounter);
 
-        return md5(`${sourceFile.fileName}_${name}`);
-    }
-
-    static registerContextInterface(contextDescriptor: IContextDescriptor, node: ts.InterfaceDeclaration, nodeSourceDescriptor: INodeSourceDescriptor) {
-        this.contextDescriptorToContextInterface.set(
-            contextDescriptor,
-            {node: node, absolutePath: nodeSourceDescriptor.path, contextDescriptor: contextDescriptor}
-        );
+        return `${sourceFile.fileName}_${newCounter}`;
     }
 
     static clear(): void {
-        this.contextIdToContextDescriptor.clear();
-        this.contextDescriptorToContextInterface.clear();
-        this.contextPathToContextDescriptor.clear();
+        this.fileNameToContexts.clear();
+        this.fileNameToLastContextCounter.clear();
+        this.contextIdToContext.clear();
     }
 
-    static clearByContextId(id: string): void {
-        const descriptor = this.contextIdToContextDescriptor.get(id);
+    static clearByFileName(fileName: string): void {
+        const contexts = this.fileNameToContexts.get(fileName) ?? [];
 
-        if (!descriptor) {
-            return;
-        }
-
-        this.contextIdToContextDescriptor.delete(id);
-        this.contextDescriptorToContextInterface.delete(descriptor);
+        this.fileNameToContexts.delete(fileName);
+        this.fileNameToLastContextCounter.delete(fileName);
+        contexts.forEach(context => {
+            this.contextIdToContext.delete(context.id);
+        });
     }
 }

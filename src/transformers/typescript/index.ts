@@ -1,14 +1,14 @@
 import ts from 'typescript';
-import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
+import { getTransformerFactory } from '../../core/build-context/getTransformerFactory';
 import DICatWebpackPlugin from '../../plugins/webpack';
 import { get } from 'lodash';
-import { getCompilationContext } from '../getCompilationContext';
+import { initCompilationContext } from '../getCompilationContext';
 import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
-import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
+import { BaseTypesRepository } from '../../core/type-system/BaseTypesRepository';
 
 export default (program: ts.Program): ts.TransformerFactory<ts.SourceFile> => {
-    PathResolver.initOnce();
-    const compilationContext = getCompilationContext();
+    const compilationContext = initCompilationContext(program);
+    BaseTypesRepository.init(compilationContext);
 
     const transformerFactory = getTransformerFactory(compilationContext);
 

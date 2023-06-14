@@ -1,6 +1,6 @@
 import { MessageCode } from './MessageCode';
 import { MessageType } from './MessageType';
-import { INodePosition } from '../../core/utils/getPositionOfNode';
+import { INodePosition } from '../../core/ts/utils/getPositionOfNode';
 
 export interface ICompilationMessage {
     details: string | null;

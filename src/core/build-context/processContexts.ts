@@ -1,18 +1,11 @@
 import ts, { factory } from 'typescript';
-import { isExtendsClass } from '../ts-helpers/predicates/isExtendsClass';
-import { ContextRepository } from '../context/ContextRepository';
-import { isNamedClassDeclaration } from '../ts-helpers/predicates/isNamedClassDeclaration';
-import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
+import { isExtendsClassFromLibrary } from '../ts/predicates/isExtendsClassFromLibrary';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { registerBeans } from '../bean/registerBeans';
 import {
     checkIsAllBeansRegisteredInContextAndFillBeanRequierness
 } from '../bean/checkIsAllBeansRegisteredInContextAndFillBeanRequierness';
-import { registerBeanDependencies } from '../bean-dependencies/registerBeanDependencies';
-import {
-    buildDependencyGraphAndFillQualifiedBeans
-} from '../connect-dependencies/buildDependencyGraphAndFillQualifiedBeans';
-import { registerContextLifecycleMethods } from '../context-lifecycle/registerContextLifecycleMethods';
+import { registerBeanDependencies } from '../bean-dependency/registerBeanDependencies';
 import { reportAboutCyclicDependencies } from '../report-cyclic-dependencies/reportAboutCyclicDependencies';
 import { enrichWithAdditionalProperties } from './transformers/enrichWithAdditionalProperties';
 import { InternalCatContext } from '../../external/InternalCatContext';
@@ -24,11 +17,13 @@ import {
 import upath from 'upath';
 import { getImportPathToExternalDirectory } from './utils/getImportPathToExternalDirectory';
 import { processMembers } from './transformers/processMembers';
+import { clearAllBySourceFile } from './clearAllBySourceFile';
+import { ContextRepository } from '../context/ContextRepository';
 import {
-    IncorrectContextDeclarationError
-} from '../../compilation-context/messages/errors/IncorrectContextDeclarationError';
+    buildDependencyGraphAndFillQualifiedBeans
+} from '../dependencies/buildDependencyGraphAndFillQualifiedBeans';
 
-export const processContexts = (compilationContext: CompilationContext, sourceFile: ts.SourceFile): ts.SourceFile => {
+export const processContexts = (compilationContext: CompilationContext, tsContext: ts.TransformationContext, sourceFile: ts.SourceFile): ts.SourceFile => {
     //Skipping declaration files
     if (sourceFile.isDeclarationFile) {
         return sourceFile;
@@ -36,32 +31,18 @@ export const processContexts = (compilationContext: CompilationContext, sourceFi
 
     let shouldAddImports = false;
 
-    const updatedStatements = sourceFile.statements.map(node => {
-        //Registering contexts
-        if (!isExtendsClass(node, 'CatContext')) {
-            return node;
-        }
+    clearAllBySourceFile(sourceFile);
 
-        if (!isNamedClassDeclaration(node)) {
-            compilationContext.report(new IncorrectContextDeclarationError(
-                'Class that extends CatContext should be a named class declaration.',
-                node,
-                null,
-            ));
-            return node;
+    const visitor = (node: ts.Node): ts.Node => {
+        //Registering contexts
+        if (!isExtendsClassFromLibrary(node, 'CatContext', compilationContext)) {
+            return ts.visitEachChild(node, visitor, tsContext);
         }
 
         shouldAddImports = true;
 
-        const contextId = ContextRepository.buildContextId(node);
-        const oldContextDescriptor = ContextRepository.contextIdToContextDescriptor.get(contextId);
+        const context = ContextRepository.register(node);
 
-        if (oldContextDescriptor) {
-            ContextRepository.clearByContextId(contextId);
-            DependencyGraph.clearByContextDescriptor(oldContextDescriptor);
-        }
-
-        const contextDescriptor = ContextRepository.registerContext(node.name.getText(), node);
         const restrictedClassMembersByName = node.members
             .filter(it => InternalCatContext.reservedNames.has(it.name?.getText() ?? ''));
 
@@ -70,29 +51,29 @@ export const processContexts = (compilationContext: CompilationContext, sourceFi
                 compilationContext.report(new IncorrectNameError(
                     `"${it.name?.getText()}" name is reserved for the di-container.`,
                     it,
-                    contextDescriptor.node,
+                    context.node,
                 ));
             });
-            return node;
+            return ts.visitEachChild(node, visitor, tsContext);
         }
 
         //Processing beans
-        registerBeans(compilationContext, contextDescriptor);
-        checkIsAllBeansRegisteredInContextAndFillBeanRequierness(compilationContext, contextDescriptor);
-        registerBeanDependencies(compilationContext, contextDescriptor);
-        buildDependencyGraphAndFillQualifiedBeans(compilationContext, contextDescriptor);
-        registerContextLifecycleMethods(compilationContext, contextDescriptor);
-        reportAboutCyclicDependencies(compilationContext, contextDescriptor);
+        registerBeans(compilationContext, context);
+        checkIsAllBeansRegisteredInContextAndFillBeanRequierness(compilationContext, context);
+        registerBeanDependencies(compilationContext, context);
+        buildDependencyGraphAndFillQualifiedBeans(compilationContext, context);
+        reportAboutCyclicDependencies(compilationContext, context);
 
-        return ts.transform<ts.ClassDeclaration>(
-            node,
-            [
-                enrichWithAdditionalProperties(contextDescriptor),
-                replaceExtendingFromCatContext(),
-                processMembers(),
-            ],
-        ).transformed[0];
-    });
+        const enrichedWithAdditionalProperties = enrichWithAdditionalProperties(node, context);
+        const replacedExtendingFromCatContext = replaceExtendingFromCatContext(enrichedWithAdditionalProperties);
+        const withProcessedMembers = processMembers(replacedExtendingFromCatContext, context);
+
+        return withProcessedMembers;
+    };
+
+    const transformedFile = ts.visitNode(sourceFile, visitor);
+
+    const updatedStatements = Array.from(transformedFile.statements);
 
     if (shouldAddImports) {
         const pathForInternalCatContext = upath.join(

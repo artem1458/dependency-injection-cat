@@ -1,23 +1,21 @@
 import { AbstractStatistics, StatisticsType } from './AbstractStatistics';
-import { IContextDescriptor } from '../../core/context/ContextRepository';
-import { getPositionOfNode, INodePosition } from '../../core/utils/getPositionOfNode';
-import { BeanRepository } from '../../core/bean/BeanRepository';
+import { getPositionOfNode, INodePosition } from '../../core/ts/utils/getPositionOfNode';
 
 export class ContextDetailsStatistics extends AbstractStatistics {
     public type = StatisticsType.CONTEXT_DETAILS;
     public path: string;
-    public name: string;
-    public className: string;
-    public namePosition: INodePosition;
+    public name: string | null;
+    public namePosition: INodePosition | null = null;
+    public classPosition: INodePosition;
     public beansCount: number;
 
     constructor(contextDescriptor: IContextDescriptor) {
         super();
 
-        this.path = contextDescriptor.absolutePath;
+        this.path = contextDescriptor.fileName;
         this.name = contextDescriptor.name;
-        this.className = contextDescriptor.className;
-        this.namePosition = getPositionOfNode(contextDescriptor.node.name);
-        this.beansCount = (BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? []).length;
+        this.namePosition = contextDescriptor.node.name ? getPositionOfNode(contextDescriptor.node.name) : null;
+        this.classPosition = getPositionOfNode(contextDescriptor.node);
+        this.beansCount = (BeanRepository.contextDescriptorToBeanDescriptors.get(contextDescriptor) ?? []).length;
     }
 }

@@ -43,7 +43,7 @@ export class ContainerImpl implements Container {
         const contextHolder = pool.get(props.key);
 
         if (!contextHolder) {
-            throw new NoContextByKey((props.context as any)['dicat_contextName'], props.key);
+            throw new NoContextByKey((props.context as any)['dicat_static_contextName'], props.key);
         }
 
         return contextHolder as any;

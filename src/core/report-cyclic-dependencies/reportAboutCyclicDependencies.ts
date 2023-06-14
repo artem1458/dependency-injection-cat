@@ -1,16 +1,16 @@
-import { DependencyGraph } from '../connect-dependencies/DependencyGraph';
-import { IContextDescriptor } from '../context/ContextRepository';
+import { DependencyGraph } from '../dependencies/DependencyGraph';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { CyclicDependenciesError } from '../../compilation-context/messages/errors/CyclicDependenciesError';
+import { Context } from '../context/Context';
 
 export const reportAboutCyclicDependencies = (
     compilationContext: CompilationContext,
-    contextDescriptor: IContextDescriptor
+    context: Context
 ) => {
     const cycle = DependencyGraph.getCycle();
 
-    cycle.forEach((cycles, contextName) => {
-        if (contextDescriptor.name !== contextName) {
+    cycle.forEach((cycles, currentContext) => {
+        if (context !== currentContext) {
             return;
         }
 
@@ -20,7 +20,7 @@ export const reportAboutCyclicDependencies = (
                 compilationContext.report(new CyclicDependenciesError(
                     `${item.classMemberName} <—> ${otherDependencyNames.join(' <—> ')}.`,
                     item.node,
-                    contextDescriptor.node,
+                    context.node,
                 ));
             });
         });

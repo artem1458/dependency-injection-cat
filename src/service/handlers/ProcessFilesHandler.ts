@@ -1,25 +1,20 @@
 import { ICommandHandler } from './ICommandHandler';
 import { IProcessFilesResponse } from '../types/process-files/IProcessFilesResponse';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { PathResolver } from '../../core/ts-helpers/path-resolver/PathResolver';
-import { ContextRepository } from '../../core/context/ContextRepository';
-import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
-import { BeanRepository } from '../../core/bean/BeanRepository';
-import { BeanDependenciesRepository } from '../../core/bean-dependencies/BeanDependenciesRepository';
-import { DependencyGraph } from '../../core/connect-dependencies/DependencyGraph';
-import { LifecycleMethodsRepository } from '../../core/context-lifecycle/LifecycleMethodsRepository';
-import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
+import { DependencyGraph } from '../../core/dependencies/DependencyGraph';
 import { IDisposable } from '../types/IDisposable';
 import { IProcessFilesCommand } from '../types/process-files/IProcessFilesCommand';
 import { AbstractCompilationMessage } from '../../compilation-context/messages/AbstractCompilationMessage';
 import { StatisticsCollector } from '../statistics/StatisticsCollector';
-import { getTransformerFactory } from '../../core/transformers/getTransformerFactory';
+import { getTransformerFactory } from '../../core/build-context/getTransformerFactory';
 import ts from 'typescript';
+import { ContextRepository } from '../../core/context/ContextRepository';
 
 export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand, Promise<IProcessFilesResponse>>, IDisposable {
     constructor(
         private statisticsCollector: StatisticsCollector
-    ) {}
+    ) {
+    }
 
     async invoke(command: IProcessFilesCommand): Promise<IProcessFilesResponse> {
         try {
@@ -49,13 +44,8 @@ export class ProcessFilesHandler implements ICommandHandler<IProcessFilesCommand
     }
 
     dispose(): void {
-        BeanRepository.clear();
-        BeanDependenciesRepository.clear();
         DependencyGraph.clear();
         ContextRepository.clear();
-        LifecycleMethodsRepository.clear();
-        PathResolver.clear();
-        PathResolverCache.clear();
     }
 
     private collectCompilationMessages(

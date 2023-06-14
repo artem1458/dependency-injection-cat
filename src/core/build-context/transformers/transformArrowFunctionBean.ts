@@ -1,84 +1,33 @@
 import ts, { factory } from 'typescript';
-import { IBeanDescriptorWithId } from '../../bean/BeanRepository';
-import { BeanDependenciesRepository } from '../../bean-dependencies/BeanDependenciesRepository';
-import { compact } from 'lodash';
-import { ClassPropertyArrowFunction } from '../../ts-helpers/types';
-import { QualifiedTypeKind } from '../../ts-helpers/type-qualifier/QualifiedType';
-import { getCallExpressionForBean } from './getCallExpressionForBean';
+import { ClassPropertyWithArrowFunctionInitializer } from '../../ts/types';
+import { ContextBean } from '../../bean/ContextBean';
+import { unwrapExpressionFromRoundBrackets } from '../../ts/utils/unwrapExpressionFromRoundBrackets';
+import { getDependenciesVariables } from './getDependenciesVariables';
+import { isDecoratorFromLibrary } from '../../ts/predicates/isDecoratorFromLibrary';
 
-export const transformArrowFunctionBean = (beanDescriptor: IBeanDescriptorWithId): ts.PropertyDeclaration => {
-    const typedNode = beanDescriptor.node as ClassPropertyArrowFunction;
-    const newArrowFunction = getTransformedArrowFunction(beanDescriptor);
+export const transformArrowFunctionBean = (bean: ContextBean<ClassPropertyWithArrowFunctionInitializer>): ts.PropertyDeclaration => {
+    const newArrowFunction = getTransformedArrowFunction(bean);
 
     return factory.updatePropertyDeclaration(
-        typedNode,
-        undefined,
-        typedNode.name,
-        typedNode.questionToken,
-        typedNode.type,
+        bean.node,
+        bean.node.modifiers?.filter(modifier => !isDecoratorFromLibrary(modifier, undefined)),
+        bean.node.name,
+        bean.node.questionToken,
+        bean.node.type,
         newArrowFunction,
     );
 };
 
-function getTransformedArrowFunction(parentBeanDescriptor: IBeanDescriptorWithId): ts.ArrowFunction {
-    const node = parentBeanDescriptor.node as ClassPropertyArrowFunction;
-    const arrowFunction = node.initializer;
-
-    const dependencies = BeanDependenciesRepository.data
-        .get(parentBeanDescriptor.contextDescriptor.name)?.get(parentBeanDescriptor) ?? [];
-
-    const dependenciesStatements = dependencies.map(dependencyDescriptor => {
-        if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.PLAIN) {
-            const qualifiedBeanDescriptor = dependencyDescriptor.qualifiedBeans.firstOrNull();
-
-            if (qualifiedBeanDescriptor === null) {
-                return;
-            }
-
-            const expression = getCallExpressionForBean(qualifiedBeanDescriptor);
-
-            return factory.createVariableStatement(
-                undefined,
-                factory.createVariableDeclarationList(
-                    [factory.createVariableDeclaration(
-                        factory.createIdentifier(dependencyDescriptor.parameterName),
-                        undefined,
-                        dependencyDescriptor.node.type,
-                        expression,
-                    )],
-                    ts.NodeFlags.Const
-                )
-            );
-        }
-
-        if (dependencyDescriptor.qualifiedType.kind === QualifiedTypeKind.LIST) {
-            const expressions = dependencyDescriptor.qualifiedBeans.list()
-                .map(beanDescriptor => getCallExpressionForBean(beanDescriptor));
-
-            return factory.createVariableStatement(
-                undefined,
-                factory.createVariableDeclarationList(
-                    [factory.createVariableDeclaration(
-                        factory.createIdentifier(dependencyDescriptor.parameterName),
-                        undefined,
-                        dependencyDescriptor.node.type,
-                        factory.createArrayLiteralExpression(
-                            expressions,
-                            true
-                        ),
-                    )],
-                    ts.NodeFlags.Const
-                )
-            );
-        }
-    });
+function getTransformedArrowFunction(bean: ContextBean<ClassPropertyWithArrowFunctionInitializer>): ts.ArrowFunction {
+    const arrowFunction = unwrapExpressionFromRoundBrackets(bean.node.initializer);
+    const beansVariables = getDependenciesVariables(bean);
 
     let newBody: ts.Block;
 
     if (ts.isBlock(arrowFunction.body)) {
         newBody = factory.createBlock(
             [
-                ...compact(dependenciesStatements),
+                ...beansVariables,
                 ...arrowFunction.body.statements,
             ],
             true,
@@ -86,7 +35,7 @@ function getTransformedArrowFunction(parentBeanDescriptor: IBeanDescriptorWithId
     } else {
         newBody = factory.createBlock(
             [
-                ...compact(dependenciesStatements),
+                ...beansVariables,
                 factory.createReturnStatement(arrowFunction.body),
             ],
             true,

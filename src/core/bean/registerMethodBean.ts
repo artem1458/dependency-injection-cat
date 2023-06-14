@@ -1,59 +1,50 @@
-import { IContextDescriptor } from '../context/ContextRepository';
-import * as ts from 'typescript';
-import { getPropertyDecoratorBeanInfo } from '../ts-helpers/bean-info/getPropertyDecoratorBeanInfo';
-import { BeanRepository } from './BeanRepository';
-import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
+import ts from 'typescript';
+import { getPropertyDecoratorBeanInfo } from '../ts/bean-info/getPropertyDecoratorBeanInfo';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
 import { MissingInitializerError } from '../../compilation-context/messages/errors/MissingInitializerError';
-import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
 import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
+import { DITypeBuilder } from '../type-system/DITypeBuilder';
+import { Context } from '../context/Context';
+import { ContextBean } from './ContextBean';
+import { BeanKind } from './BeanKind';
 
 export const registerMethodBean = (
     compilationContext: CompilationContext,
-    contextDescriptor: IContextDescriptor,
+    context: Context,
     classElement: ts.MethodDeclaration,
 ): void => {
     if (classElement.body === undefined) {
         compilationContext.report(new MissingInitializerError(
             'Method Bean should have a body.',
             classElement.name,
-            contextDescriptor.node,
+            context.node,
         ));
         return;
     }
 
-    const methodReturnType = classElement.type ?? null;
-    const beanInfo = getPropertyDecoratorBeanInfo(compilationContext, contextDescriptor, classElement);
+    const beanInfo = getPropertyDecoratorBeanInfo(compilationContext, context, classElement);
+    const typeChecker = compilationContext.typeChecker;
+    const signature = typeChecker.getSignatureFromDeclaration(classElement);
 
-    if (methodReturnType === null) {
-        compilationContext.report(new MissingTypeDefinitionError(
-            null,
-            classElement,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
-    const qualifiedType = TypeQualifier.qualify(compilationContext, contextDescriptor, methodReturnType);
-
-    if (qualifiedType === null) {
+    if (!signature) {
         compilationContext.report(new TypeQualifyError(
-            null,
-            methodReturnType,
-            contextDescriptor.node,
+            'Can not resolve method return type.',
+            classElement.name,
+            context.node,
         ));
         return;
     }
 
-    BeanRepository.registerBean({
+    const returnType = typeChecker.getReturnTypeOfSignature(signature);
+    const diType = DITypeBuilder.build(returnType, compilationContext);
+
+    const contextBean  = new ContextBean({
+        context: context,
         classMemberName: classElement.name.getText(),
-        nestedProperty: null,
-        contextDescriptor,
-        qualifiedType: qualifiedType,
-        scope: beanInfo.scope,
+        diType: diType,
         node: classElement,
-        beanKind: 'method',
-        beanImplementationSource: null,
-        publicInfo: null,
+        kind: BeanKind.METHOD,
+        scope: beanInfo.scope,
     });
+    context.registerBean(contextBean);
 };

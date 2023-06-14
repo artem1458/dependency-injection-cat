@@ -5,3 +5,4 @@ export { Bean } from './external/Bean';
 export { PostConstruct } from './external/PostConstruct';
 export { BeforeDestruct } from './external/BeforeDesctruct';
 export { EmbeddedBean } from './external/EmbeddedBean';
+export { _TypeTable } from './external/_TypeTable';

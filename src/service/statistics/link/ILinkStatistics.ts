@@ -1,4 +1,4 @@
-import { INodePosition } from '../../../core/utils/getPositionOfNode';
+import { INodePosition } from '../../../core/ts/utils/getPositionOfNode';
 
 export interface ILinkStatistics {
     linkType: LinkType;

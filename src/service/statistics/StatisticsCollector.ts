@@ -1,18 +1,8 @@
 import { IProcessFilesStatistics } from '../types/process-files/IProcessFilesResponse';
 import { AbstractStatistics } from './AbstractStatistics';
-import { BeanRepository, IBeanDescriptor } from '../../core/bean/BeanRepository';
-import {
-    BeanDependenciesRepository,
-    IBeanDependencyDescriptor
-} from '../../core/bean-dependencies/BeanDependenciesRepository';
-import {
-    ILifecycleDependencyDescriptor,
-    LifecycleMethodsRepository
-} from '../../core/context-lifecycle/LifecycleMethodsRepository';
 import { BeanDeclarationLinkStatistics } from './link/BeanDeclarationLinkStatistics';
 import { QualifiedBeanDeclarationLinkStatistics } from './link/QualifiedBeanDeclarationLinkStatistics';
 import { BeanUsageLinkStatistics } from './link/BeanUsageLinkStatistics';
-import { ContextRepository } from '../../core/context/ContextRepository';
 import { ContextImplementationLinkStatistics } from './link/ContextImplementationLinkStatistics';
 import { ContextDetailsStatistics } from './ContextDetailsStatistics';
 
@@ -34,7 +24,7 @@ export class StatisticsCollector {
             result.push(new ContextDetailsStatistics(contextDescriptor));
         });
 
-        Array.from(BeanRepository.contextIdToBeanDescriptorsMap.values()).forEach(beanDescriptorsByContext => {
+        Array.from(BeanRepository.contextDescriptorToBeanDescriptors.values()).forEach(beanDescriptorsByContext => {
             beanDescriptorsByContext.forEach(beanDescriptor => {
                 const statistics = BeanDeclarationLinkStatistics.build(beanDescriptor);
 
@@ -69,7 +59,7 @@ export class StatisticsCollector {
             });
 
 
-        BeanDependenciesRepository.data.forEach(beanDescriptorToDependencies => {
+        BeanDependenciesRepository.contextDescriptorToBeanDescriptorToBeanDependencyDescriptors.forEach(beanDescriptorToDependencies => {
             beanDescriptorToDependencies.forEach((dependencies, descriptor) => {
 
                 dependencies.forEach(dependencyDescriptor => {

@@ -1,10 +1,9 @@
 import ts, { factory } from 'typescript';
-import { IContextDescriptor } from '../../context/ContextRepository';
-import { BeanRepository } from '../../bean/BeanRepository';
+import { Context } from '../../context/Context';
 
-export function getBeanConfigObjectLiteral(contextDescriptor: IContextDescriptor): ts.ObjectLiteralExpression {
-    const contextBeans = BeanRepository.contextIdToBeanDescriptorsMap.get(contextDescriptor.id) ?? [];
-    const notNestedContextBeans = contextBeans.filter(it => it.nestedProperty === null);
+export function getBeanConfigObjectLiteral(context: Context): ts.ObjectLiteralExpression {
+    const notNestedContextBeans = Array.from(context.beans).filter(it => it.nestedProperty === null);
+
     const objectLiteralMembers: ts.PropertyAssignment[] = notNestedContextBeans.map(bean => (
         factory.createPropertyAssignment(
             factory.createComputedPropertyName(factory.createStringLiteral(bean.classMemberName)),
@@ -16,7 +15,7 @@ export function getBeanConfigObjectLiteral(contextDescriptor: IContextDescriptor
                             factory.createIdentifier('scope'),
                             factory.createStringLiteral(bean.scope)
                         ),
-                    bean.publicInfo !== null && factory.createPropertyAssignment(
+                    bean.public && factory.createPropertyAssignment(
                         factory.createIdentifier('isPublic'),
                         factory.createTrue(),
                     ),

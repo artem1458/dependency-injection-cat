@@ -1,91 +1,87 @@
 import ts, { factory } from 'typescript';
-import { IContextDescriptor } from '../../context/ContextRepository';
-import { LifecycleMethodsRepository } from '../../context-lifecycle/LifecycleMethodsRepository';
 import { getBeanConfigObjectLiteral } from './getBeanConfigObjectLiteral';
+import { Context } from '../../context/Context';
+import { BeanKind } from '../../bean/BeanKind';
+import { BeanLifecycle } from '../../../external/InternalCatContext';
 
-export const enrichWithAdditionalProperties = (contextDescriptor: IContextDescriptor): ts.TransformerFactory<ts.ClassDeclaration> => {
-    return () => contextNode => {
-        const postConstructMethodNames = Array.from(LifecycleMethodsRepository.getLifecycleDescriptorsByContextDescriptorAndLifecycleType(
-            contextDescriptor,
-            'post-construct',
-        )).map(it => it.classMemberName);
-        const beforeDestructMethodNames = Array.from(LifecycleMethodsRepository.getLifecycleDescriptorsByContextDescriptorAndLifecycleType(
-            contextDescriptor,
-            'before-destruct',
-        )).map(it => it.classMemberName);
-
-        const lifecycleConfigProperty = factory.createObjectLiteralExpression(
-            [
-                factory.createPropertyAssignment(
-                    factory.createStringLiteral('post-construct'),
-                    factory.createArrayLiteralExpression(
-                        postConstructMethodNames.map(it => factory.createStringLiteral(it)),
-                        false
-                    )
-                ),
-                factory.createPropertyAssignment(
-                    factory.createStringLiteral('before-destruct'),
-                    factory.createArrayLiteralExpression(
-                        beforeDestructMethodNames.map(it => factory.createStringLiteral(it)),
-                        false
-                    )
-                )
-            ],
-            true
-        );
-
-        //TODO Use class static init blocks
-        const configInitProperty = factory.createPropertyDeclaration(
-            [factory.createToken(ts.SyntaxKind.StaticKeyword)],
-            factory.createIdentifier('dicat_staticInit'),
-            undefined,
-            undefined,
-            factory.createCallExpression(
-                factory.createParenthesizedExpression(factory.createArrowFunction(
-                    undefined,
-                    undefined,
-                    [],
-                    undefined,
-                    factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-                    factory.createBlock(
-                        [factory.createExpressionStatement(factory.createCallExpression(
-                            factory.createPropertyAccessExpression(
-                                factory.createIdentifier('Object'),
-                                factory.createIdentifier('defineProperties')
-                            ),
-                            undefined,
-                            [
-                                factory.createThis(),
-                                factory.createObjectLiteralExpression(
-                                    [
-                                        createObjectDefinePropertyPropertyAssignment('dicat_contextName', factory.createStringLiteral(contextDescriptor.name)),
-                                        createObjectDefinePropertyPropertyAssignment('dicat_beanConfiguration', getBeanConfigObjectLiteral(contextDescriptor)),
-                                        createObjectDefinePropertyPropertyAssignment('dicat_lifecycleConfiguration', lifecycleConfigProperty),
-                                    ],
-                                    true
-                                )
-                            ]
-                        ))],
-                        true
-                    )
-                )),
-                undefined,
-                []
-            )
-        );
-
-        return factory.updateClassDeclaration(
-            contextNode,
-            contextNode.modifiers,
-            contextNode.name,
-            contextNode.typeParameters,
-            contextNode.heritageClauses,
-            [
-                configInitProperty,
-                ...contextNode.members,
-            ]
-        );
+export const enrichWithAdditionalProperties = (node: ts.ClassDeclaration, context: Context): ts.ClassDeclaration => {
+    const lifecycleBeanData: Record<BeanLifecycle, string[]> = {
+        'post-construct': [],
+        'before-destruct': [],
     };
+
+    context.beans.forEach(bean => {
+        if (bean.kind === BeanKind.LIFECYCLE_METHOD || bean.kind === BeanKind.LIFECYCLE_ARROW_FUNCTION) {
+            bean.lifecycle?.forEach(lifecycle => {
+                lifecycleBeanData[lifecycle].push(bean.classMemberName);
+            });
+        }
+    });
+
+    const lifecycleConfigProperty = factory.createObjectLiteralExpression(
+        Object.entries(lifecycleBeanData).map(([lifecycle, methodNames]) => {
+            return factory.createPropertyAssignment(
+                factory.createStringLiteral(lifecycle),
+                factory.createArrayLiteralExpression(
+                    methodNames.map(it => factory.createStringLiteral(it)),
+                    false
+                )
+            );
+        }),
+        false,
+    );
+
+    //TODO Use class static init blocks
+    const configInitProperty = factory.createPropertyDeclaration(
+        [factory.createToken(ts.SyntaxKind.StaticKeyword)],
+        factory.createIdentifier('dicat_static_init'),
+        undefined,
+        undefined,
+        factory.createCallExpression(
+            factory.createParenthesizedExpression(factory.createArrowFunction(
+                undefined,
+                undefined,
+                [],
+                undefined,
+                factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+                factory.createBlock(
+                    [factory.createExpressionStatement(factory.createCallExpression(
+                        factory.createPropertyAccessExpression(
+                            factory.createIdentifier('Object'),
+                            factory.createIdentifier('defineProperties')
+                        ),
+                        undefined,
+                        [
+                            factory.createThis(),
+                            factory.createObjectLiteralExpression(
+                                [
+                                    createObjectDefinePropertyPropertyAssignment('dicat_static_contextName', factory.createStringLiteral(context.name ?? '<anonymous>')),
+                                    createObjectDefinePropertyPropertyAssignment('dicat_static_beanConfiguration', getBeanConfigObjectLiteral(context)),
+                                    createObjectDefinePropertyPropertyAssignment('dicat_static_lifecycleConfiguration', lifecycleConfigProperty),
+                                ],
+                                true
+                            )
+                        ]
+                    ))],
+                    true
+                )
+            )),
+            undefined,
+            []
+        )
+    );
+
+    return factory.updateClassDeclaration(
+        node,
+        node.modifiers,
+        node.name,
+        node.typeParameters,
+        node.heritageClauses,
+        [
+            configInitProperty,
+            ...node.members,
+        ]
+    );
 };
 
 function createObjectDefinePropertyPropertyAssignment(propertyName: string, value: ts.Expression): ts.PropertyAssignment {

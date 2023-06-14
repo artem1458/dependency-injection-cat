@@ -1,12 +1,9 @@
-import { AbstractStatistics, StatisticsType } from '../AbstractStatistics';
-import { IBeanDescriptor } from '../../../core/bean/BeanRepository';
-import { getPositionOfNode } from '../../../core/utils/getPositionOfNode';
-import upath from 'upath';
-import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStatistics';
-import { IBeanDependencyDescriptor } from '../../../core/bean-dependencies/BeanDependenciesRepository';
-import { isNamedClassDeclaration } from '../../../core/ts-helpers/predicates/isNamedClassDeclaration';
 import ts from 'typescript';
-import { ILifecycleDependencyDescriptor } from '../../../core/context-lifecycle/LifecycleMethodsRepository';
+import upath from 'upath';
+import { AbstractStatistics, StatisticsType } from '../AbstractStatistics';
+import { getPositionOfNode } from '../../../core/ts/utils/getPositionOfNode';
+import { ILinkPositionDescriptor, ILinkStatistics, LinkType } from './ILinkStatistics';
+import { isNamedClassDeclaration } from '../../../core/ts/predicates/isNamedClassDeclaration';
 
 export class BeanUsageLinkStatistics extends AbstractStatistics implements ILinkStatistics {
 
@@ -14,7 +11,7 @@ export class BeanUsageLinkStatistics extends AbstractStatistics implements ILink
         const result: BeanUsageLinkStatistics[] = [];
 
         const fromPosition: ILinkPositionDescriptor = {
-            path: beanDescriptor.contextDescriptor.absolutePath,
+            path: beanDescriptor.contextDescriptor.fileName,
             nodePosition: getPositionOfNode(beanDescriptor.node.name),
         };
 

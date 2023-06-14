@@ -1,10 +1,10 @@
 import ts from 'typescript';
 import { MessageCode } from './MessageCode';
-import { NamedClassDeclaration } from '../../core/ts-helpers/types';
 import { unquoteString } from '../../core/utils/unquoteString';
-import { getPositionOfNode, INodePosition } from '../../core/utils/getPositionOfNode';
+import { getPositionOfNode, INodePosition } from '../../core/ts/utils/getPositionOfNode';
 import { MessageType } from './MessageType';
 import { ICompilationMessage, IContextDetails } from './ICompilationMessage';
+import { getNameFromDeclarationOrNull } from '../../core/ts/utils/getNameFromDeclarationOrNull';
 
 export abstract class AbstractCompilationMessage implements ICompilationMessage {
     public abstract code: MessageCode
@@ -17,22 +17,24 @@ export abstract class AbstractCompilationMessage implements ICompilationMessage 
     public constructor(
         public details: string | null,
         node: ts.Node,
-        contextNode: NamedClassDeclaration | null
+        contextNode: ts.ClassDeclaration | null
     ) {
         this.position = getPositionOfNode(node);
         this.filePath = node.getSourceFile().fileName;
         this.contextDetails = this.getContextDetails(contextNode);
     }
 
-    private getContextDetails(contextNode: NamedClassDeclaration | null): IContextDetails | null {
+    private getContextDetails(contextNode: ts.ClassDeclaration | null): IContextDetails | null {
         if (contextNode === null) {
             return null;
         }
 
+        const contextName = getNameFromDeclarationOrNull(contextNode) ?? '<anonymous>';
+
         return {
-            name: unquoteString(contextNode.name.getText()),
+            name: unquoteString(contextName),
             path: contextNode.getSourceFile().fileName,
-            namePosition: getPositionOfNode(contextNode.name),
+            namePosition: getPositionOfNode(contextNode.name ?? contextNode),
         };
     }
 }

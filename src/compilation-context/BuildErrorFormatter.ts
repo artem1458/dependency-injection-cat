@@ -1,5 +1,5 @@
 import { AbstractCompilationMessage } from './messages/AbstractCompilationMessage';
-import { INodePosition } from '../core/utils/getPositionOfNode';
+import { INodePosition } from '../core/ts/utils/getPositionOfNode';
 import chalk from 'chalk';
 
 export class BuildErrorFormatter {

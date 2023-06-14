@@ -29,6 +29,6 @@
     "./src"
   ],
   "exclude": [
-    "./src/external/built-context"
+    "./src/service"
   ]
 }

@@ -1,55 +1,51 @@
 import ts, { factory } from 'typescript';
-import { BeanRepository, TBeanNode } from '../../bean/BeanRepository';
-import { replacePropertyBean } from './replacePropertyBean';
+import { transformPropertyBean } from './transformPropertyBean';
 import { transformMethodBean } from './transformMethodBean';
 import { transformArrowFunctionBean } from './transformArrowFunctionBean';
 import { transformExpressionOrEmbeddedBean } from './transformExpressionOrEmbeddedBean';
-import { LifecycleMethodsRepository } from '../../context-lifecycle/LifecycleMethodsRepository';
-import { transformLifecycleMethod } from './transformLifecycleMethod';
-import { transformLifecycleArrowFunction } from './transformLifecycleArrowFunction';
+import { Context } from '../../context/Context';
+import { BeanKind } from '../../bean/BeanKind';
+import { BeanNode, ContextBean } from '../../bean/ContextBean';
+import {
+    ClassPropertyWithArrowFunctionInitializer,
+    ClassPropertyWithCallExpressionInitializer,
+    ClassPropertyWithExpressionInitializer
+} from '../../ts/types';
 
-export const processMembers = (): ts.TransformerFactory<ts.ClassDeclaration> => {
-    return () => {
-        return contextNode => {
-            const newMembers = contextNode.members.map(node => {
-                const beanDescriptor = BeanRepository.beanNodeToBeanDescriptorMap.get(node as TBeanNode);
-                const lifecycleDescriptor = LifecycleMethodsRepository.nodeToContextLifecycleDescriptor.get(node);
+export const processMembers = (node: ts.ClassDeclaration, context: Context): ts.ClassDeclaration => {
+    const newMembers = node.members.map(node => {
+        const bean = context.getBeanByNode(node as BeanNode);
 
-                if (beanDescriptor?.beanKind === 'property') {
-                    return replacePropertyBean(beanDescriptor);
-                }
+        if (bean === null) {
+            return node;
+        }
 
-                if (beanDescriptor?.beanKind === 'method') {
-                    return transformMethodBean(beanDescriptor);
-                }
+        switch (bean.kind) {
+        case BeanKind.METHOD:
+        case BeanKind.LIFECYCLE_METHOD:
+            return transformMethodBean(bean as ContextBean<ts.MethodDeclaration>);
 
-                if (beanDescriptor?.beanKind === 'arrowFunction') {
-                    return transformArrowFunctionBean(beanDescriptor);
-                }
+        case BeanKind.PROPERTY:
+            return transformPropertyBean(bean as ContextBean<ClassPropertyWithCallExpressionInitializer>);
 
-                if (beanDescriptor?.beanKind === 'expression' || beanDescriptor?.beanKind === 'embedded') {
-                    return transformExpressionOrEmbeddedBean(beanDescriptor);
-                }
+        case BeanKind.ARROW_FUNCTION:
+        case BeanKind.LIFECYCLE_ARROW_FUNCTION:
+            return transformArrowFunctionBean(bean as ContextBean<ClassPropertyWithArrowFunctionInitializer>);
 
-                if (lifecycleDescriptor?.nodeKind === 'method') {
-                    return transformLifecycleMethod(lifecycleDescriptor);
-                }
+        case BeanKind.EXPRESSION:
+        case BeanKind.EMBEDDED:
+            return transformExpressionOrEmbeddedBean(bean as ContextBean<ClassPropertyWithExpressionInitializer>);
+        }
 
-                if (lifecycleDescriptor?.nodeKind === 'arrow-function') {
-                    return transformLifecycleArrowFunction(lifecycleDescriptor);
-                }
+        return node;
+    });
 
-                return node;
-            });
-
-            return factory.updateClassDeclaration(
-                contextNode,
-                contextNode.modifiers,
-                contextNode.name,
-                contextNode.typeParameters,
-                contextNode.heritageClauses,
-                newMembers
-            );
-        };
-    };
+    return factory.updateClassDeclaration(
+        node,
+        node.modifiers,
+        node.name,
+        node.typeParameters,
+        node.heritageClauses,
+        newMembers
+    );
 };

@@ -1,20 +1,14 @@
-import { SourceFilesCache } from '../../core/ts-helpers/source-files-cache/SourceFilesCache';
-import { PathResolverCache } from '../../core/ts-helpers/path-resolver/PathResolverCache';
 import { Compilation, Compiler, NormalModule } from 'webpack';
-import { ContextRepository } from '../../core/context/ContextRepository';
 import { RebuildStatusRepository } from './RebuildStatusRepository';
-import { BeanRepository } from '../../core/bean/BeanRepository';
 import { getCompilationContext } from '../../transformers/getCompilationContext';
 import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
+import { ContextRepository } from '../../core/context/ContextRepository';
 
 const reportDIErrorsHook = (compilation: Compilation) => {
     const compilationContext = getCompilationContext();
     const message = BuildErrorFormatter.formatErrors(
         compilationContext.errors,
     );
-
-    PathResolverCache.clear();
-    SourceFilesCache.clear();
 
     if (message === null) {
         return;
@@ -45,17 +39,23 @@ export default class DICatWebpackPlugin {
             const changedFiles = webpack4ChangedFiles.length > 0
                 ? new Set(webpack4ChangedFiles)
                 : new Set(Array.from(compiler.modifiedFiles ?? []));
-            const tbeanContextPaths = Array.from(ContextRepository.contextDescriptorToContextInterface.values())
-                .filter(it => changedFiles.has(it.absolutePath))
-                .map(it => it.contextDescriptor.absolutePath);
-            const dependenciesContextPaths = Array.from(BeanRepository.beanIdToBeanDescriptorMap.values())
-                .filter(
-                    it => it.beanImplementationSource && changedFiles.has(it.beanImplementationSource.path),
-                )
-                .map(it => it.contextDescriptor.absolutePath);
+
+            const contexts = Array.from(ContextRepository.contextIdToContext.values());
+
+            const changedContextPaths = contexts.map(it => it.fileName).filter(it => changedFiles.has(it));
+            const contextTypePaths = Array.from(ContextRepository.contextIdToContext.values())
+                .map(it => it.typePaths).flat()
+                .filter(it => changedFiles.has(it));
+
+            //TODO
+            // const dependenciesContextPaths = Array.from(BeanRepository.beanIdToBeanDescriptor.values())
+            //     .filter(
+            //         it => it.beanImplementationSource && changedFiles.has(it.beanImplementationSource.path),
+            //     )
+            //     .map(it => it.contextDescriptor.fileName);
             const contextsToRebuild = new Set([
-                ...tbeanContextPaths,
-                ...dependenciesContextPaths,
+                ...contextTypePaths,
+                ...changedContextPaths,
             ]);
 
             compilation.hooks.finishModules.tapAsync(

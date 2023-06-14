@@ -1,20 +1,17 @@
-import { ContextRepository, IContextDescriptor } from '../context/ContextRepository';
 import ts from 'typescript';
-import { getNodeSourceDescriptorDeep } from '../ts-helpers/node-source-descriptor';
-import { unquoteString } from '../utils/unquoteString';
-import { BeanRepository, IBeanDescriptorWithId } from './BeanRepository';
-import { TypeQualifier } from '../ts-helpers/type-qualifier/TypeQualifier';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { MissingTypeDefinitionError } from '../../compilation-context/messages/errors/MissingTypeDefinitionError';
-import { TypeQualifyError } from '../../compilation-context/messages/errors/TypeQualifyError';
 import { IncorrectTypeDefinitionError } from '../../compilation-context/messages/errors/IncorrectTypeDefinitionError';
 import { MissingBeanDeclarationError } from '../../compilation-context/messages/errors/MissingBeanDeclarationError';
+import { DITypeBuilder } from '../type-system/DITypeBuilder';
+import { Context } from '../context/Context';
+import { ContextBean } from './ContextBean';
+import { getNodeSourceDescriptor } from '../ts/utils/getNodeSourceDescriptor';
 
 export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
     compilationContext: CompilationContext,
-    contextDescriptor: IContextDescriptor
-) => {
-    const extendsHeritageClause = contextDescriptor.node.heritageClauses
+    context: Context
+): void => {
+    const extendsHeritageClause = context.node.heritageClauses
         ?.find(clause => clause.token === ts.SyntaxKind.ExtendsKeyword);
 
     if (!extendsHeritageClause) {
@@ -28,111 +25,61 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
         return;
     }
 
-    const type = typeArgs[0];
+    const typeNode = typeArgs[0];
 
-    if (!type || !ts.isTypeReferenceNode(type)) {
+    const typeChecker = compilationContext.typeChecker;
+    const type = typeChecker.getTypeAtLocation(typeNode);
+    const diType = DITypeBuilder.build(type, compilationContext);
+
+    if (!diType.isObject) {
         compilationContext.report(new IncorrectTypeDefinitionError(
-            'Should be an interface reference.',
-            type,
-            contextDescriptor.node,
+            'Should be an object-like type.',
+            typeNode,
+            context.node,
         ));
         return;
     }
 
-    const nodeDescriptor = getNodeSourceDescriptorDeep(
-        contextDescriptor.node.getSourceFile(),
-        type.typeName.getText(),
-    );
+    const typeSource = getNodeSourceDescriptor(typeNode, compilationContext);
 
-    if (nodeDescriptor === null || nodeDescriptor.node === null) {
-        compilationContext.report(new TypeQualifyError(
-            null,
-            type,
-            contextDescriptor.node,
-        ));
-        return;
+    if (typeSource !== null) {
+        typeSource.forEach(it => {
+            context.typePaths.push(it.fileName);
+        });
     }
 
-    if (!ts.isInterfaceDeclaration(nodeDescriptor.node)) {
-        compilationContext.report(new IncorrectTypeDefinitionError(
-            'Referenced type should be an interface declaration with statically known members.',
-            type,
-            contextDescriptor.node,
-        ));
-        return;
-    }
+    const typeProperties = type.getProperties();
+    const beans = Array.from(context.beans)
+        .reduce((acc, curr) => {
+            acc.set(curr.classMemberName, curr);
+            return acc;
+        }, new Map<string, ContextBean>());
 
-    if (nodeDescriptor.node.heritageClauses !== undefined) {
-        compilationContext.report(new IncorrectTypeDefinitionError(
-            'Referenced type should be an interface declaration with statically known members.',
-            type,
-            contextDescriptor.node,
-        ));
-        return;
-    }
+    typeProperties.forEach((property) => {
+        const propertyName = property.getName();
+        const propertyType = typeChecker.getTypeOfSymbolAtLocation(property, typeNode);
+        const propertyDIType = DITypeBuilder.build(propertyType, compilationContext);
+        const bean = beans.get(propertyName);
 
-    if (nodeDescriptor.node.members.some(it => !ts.isPropertySignature(it))) {
-        compilationContext.report(new IncorrectTypeDefinitionError(
-            'Referenced type should be an interface declaration with statically known members.',
-            type,
-            contextDescriptor.node,
-        ));
-        return;
-    }
-
-    ContextRepository.registerContextInterface(contextDescriptor, nodeDescriptor.node, nodeDescriptor);
-
-    const requiredBeanProperties: ts.PropertySignature[] = nodeDescriptor.node.members.map((it) => it as ts.PropertySignature);
-
-    const contextBeans = BeanRepository
-        .beanDescriptorRepository.get(contextDescriptor.name) ?? new Map<string, IBeanDescriptorWithId[]>();
-
-    const missingBeans: ts.PropertySignature[] = [];
-
-    requiredBeanProperties.forEach(requiredBeanProperty => {
-        if (!requiredBeanProperty.type) {
-            compilationContext.report(
-                new MissingTypeDefinitionError(
-                    null,
-                    requiredBeanProperty,
-                    contextDescriptor.node,
-                )
-            );
-            return;
-        }
-
-        const requiredBeanName = unquoteString(requiredBeanProperty.name.getText());
-        const qualifiedPropertyType = TypeQualifier.qualify(compilationContext, contextDescriptor, requiredBeanProperty.type);
-
-        if (qualifiedPropertyType === null) {
-            compilationContext.report(new TypeQualifyError(
-                null,
-                requiredBeanProperty.type,
-                contextDescriptor.node,
-            ));
-            return;
-        }
-
-        const requiredBeanDescriptor = contextBeans.get(qualifiedPropertyType.fullTypeId)
-            ?.find(it => it.classMemberName === requiredBeanName && it.qualifiedType.kind === qualifiedPropertyType.kind);
-
-        if (requiredBeanDescriptor) {
-            requiredBeanDescriptor.publicInfo = {
-                publicNode: requiredBeanProperty,
-            };
-        } else {
-            missingBeans.push(requiredBeanProperty);
-        }
-    });
-
-    if (missingBeans.length > 0) {
-        missingBeans.forEach(it => {
+        if (!bean) {
+            //TODO add beans that could be used by type and name
             compilationContext.report(new MissingBeanDeclarationError(
                 null,
-                it,
-                contextDescriptor.node,
+                property.valueDeclaration ?? typeNode,
+                context.node,
             ));
-        });
-        return;
-    }
+            return;
+        }
+
+        if (!propertyDIType.isCompatible(bean.diType)) {
+            compilationContext.report(new IncorrectTypeDefinitionError(
+                'Type of bean is not compatible with type of property declared in context type argument.',
+                bean.node,
+                context.node,
+            ));
+            return;
+        }
+
+        bean.public = true;
+    });
 };

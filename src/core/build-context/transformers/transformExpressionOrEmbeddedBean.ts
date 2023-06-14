@@ -1,25 +1,24 @@
 import ts, { factory } from 'typescript';
-import { IBeanDescriptorWithId } from '../../bean/BeanRepository';
-import { ClassPropertyDeclarationWithExpressionInitializer } from '../../ts-helpers/types';
-import { getModifiersOnly } from '../../utils/getModifiersOnly';
+import { ClassPropertyWithExpressionInitializer } from '../../ts/types';
+import { ContextBean } from '../../bean/ContextBean';
+import { isDecoratorFromLibrary } from '../../ts/predicates/isDecoratorFromLibrary';
 
-export const transformExpressionOrEmbeddedBean = (beanDescriptor: IBeanDescriptorWithId): ts.PropertyDeclaration => {
-    const typedNode = beanDescriptor.node as ClassPropertyDeclarationWithExpressionInitializer;
+export const transformExpressionOrEmbeddedBean = (bean: ContextBean<ClassPropertyWithExpressionInitializer>): ts.PropertyDeclaration => {
     const newExpression = factory.createArrowFunction(
         undefined,
         undefined,
         [],
-        typedNode.type,
+        bean.node.type,
         undefined,
-        typedNode.initializer,
+        bean.node.initializer,
     );
 
     return factory.updatePropertyDeclaration(
-        typedNode,
-        getModifiersOnly(typedNode),
-        typedNode.name,
-        typedNode.questionToken,
-        typedNode.type,
+        bean.node,
+        bean.node.modifiers?.filter(modifier => !isDecoratorFromLibrary(modifier, undefined)),
+        bean.node.name,
+        bean.node.questionToken,
+        bean.node.type,
         newExpression,
     );
 };
