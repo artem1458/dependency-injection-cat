@@ -29,6 +29,7 @@ export class ContextBean<T = BeanNode> {
     declare node: T;
     declare kind: BeanKind;
 
+    classDeclaration: ts.ClassDeclaration | null = null;
     nestedProperty: string | null = null;
     scope: BeanScope = BeanScope.SINGLETON;
     lifecycle: BeanLifecycle[] | null = null;

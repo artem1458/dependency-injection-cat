@@ -18,6 +18,16 @@ export class DITypeBuilder {
         return this._build(tsType, compilationContext.typeChecker);
     }
 
+    static buildSyntheticIntersection(tsTypes: ts.Type[], compilationContext: CompilationContext): DIType {
+        const diType = new DIType();
+        diType.tsTypeFlags = ts.TypeFlags.Intersection;
+        diType.parsedTSTypeFlags = new Set([ts.TypeFlags.Intersection]);
+        diType.typeFlag = DITypeFlag.INTERSECTION;
+        diType.unionOrIntersectionTypes = tsTypes.map(tsType => this._build(tsType, compilationContext.typeChecker));
+
+        return diType;
+    }
+
     static empty(): DIType {
         const diType = new DIType();
 
