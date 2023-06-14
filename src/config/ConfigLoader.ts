@@ -6,7 +6,9 @@ import upath from 'upath';
 import { ProgramOptionsProvider } from '../program-options/ProgramOptionsProvider';
 
 export class ConfigLoader {
-    private static defaultConfig: IDIConfig = {};
+    private static defaultConfig: IDIConfig = {
+        unsafeTSVersion: false,
+    };
     private static cachedConfig: IDIConfig | null = null;
     private static fileNamesToFind = [
         '.dicatrc',

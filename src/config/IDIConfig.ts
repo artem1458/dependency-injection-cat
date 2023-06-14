@@ -1,1 +1,3 @@
-export interface IDIConfig {}
+export interface IDIConfig {
+    unsafeTSVersion: boolean;
+}

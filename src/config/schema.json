@@ -4,5 +4,12 @@
   "additionalItems": false,
   "additionalProperties": false,
   "type": "object",
-  "properties": {}
+  "properties": {
+    "unsafeTSVersion": {
+      "type": "boolean",
+      "default": false,
+      "title": "Allows to use TypeScript version that is not officially supported by this version of dependency-injection-cat",
+      "examples": [true, false]
+    }
+  }
 }

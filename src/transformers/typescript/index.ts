@@ -5,6 +5,9 @@ import { get } from 'lodash';
 import { initCompilationContext } from '../getCompilationContext';
 import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
 import { BaseTypesRepository } from '../../core/type-system/BaseTypesRepository';
+import { verifyTSVersion } from '../verifyTSVersion';
+
+verifyTSVersion();
 
 export default (program: ts.Program): ts.TransformerFactory<ts.SourceFile> => {
     const compilationContext = initCompilationContext(program);
