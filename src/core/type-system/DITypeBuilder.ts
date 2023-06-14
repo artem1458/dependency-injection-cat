@@ -1,6 +1,6 @@
 import ts, { TypeFlags } from 'typescript';
 import { DIType } from './DIType';
-import { get } from 'lodash';
+import { get, hasIn } from 'lodash';
 import { parseFlags } from '../ts/flags/parseFlags';
 import { DITypeFlag } from './DITypeFlag';
 import { DeclarationInfo } from './DeclarationInfo';
@@ -27,7 +27,7 @@ export class DITypeBuilder {
         return diType;
     }
 
-    private static _build(tsType, typeChecker: ts.TypeChecker): DIType {
+    private static _build(tsType: ts.Type, typeChecker: ts.TypeChecker): DIType {
         const diType = new DIType();
 
         this.setTSFlags(diType, tsType);
@@ -44,7 +44,7 @@ export class DITypeBuilder {
         diType.tsTypeFlags = tsType.getFlags();
         diType.parsedTSTypeFlags = new Set(parseFlags(ts.TypeFlags, tsType.getFlags()));
 
-        if (Object.hasOwn(tsType, 'objectFlags')) {
+        if (hasIn(tsType, 'objectFlags')) {
             const objectFlags = (tsType as ts.ObjectType).objectFlags;
 
             diType.tsObjectFlags = objectFlags;

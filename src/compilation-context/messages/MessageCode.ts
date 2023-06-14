@@ -10,10 +10,10 @@ export enum MessageCode {
     DICAT8 = 'DICAT8', //FREE
     DICAT9 = 'DICAT9',
     DICAT10 = 'DICAT10',
-    DICAT11 = 'DICAT11',
+    DICAT11 = 'DICAT11', //FREE
     DICAT12 = 'DICAT12', //FREE
     DICAT13 = 'DICAT13', //FREE
-    DICAT14 = 'DICAT14',
+    DICAT14 = 'DICAT14', //FREE
     DICAT15 = 'DICAT15', //FREE
     DICAT16 = 'DICAT16',
 }

@@ -66,6 +66,14 @@ export class DIType {
         this.declarations.sort((a, b) => a.compareTo(b));
     }
 
+    get isAny(): boolean {
+        return this.typeFlag === DITypeFlag.ANY;
+    }
+
+    get isUnknown(): boolean {
+        return this.typeFlag === DITypeFlag.UNKNOWN;
+    }
+
     get isPrimitive(): boolean {
         return this.typeFlag >= DITypeFlag.ANY && this.typeFlag <= DITypeFlag.BIGINT;
     }
@@ -107,6 +115,10 @@ export class DIType {
     }
 
     isCompatible(to: DIType): boolean {
+        if (this.isAny || this.isUnknown) {
+            return true;
+        }
+
         if (this.id === to.id) {
             return true;
         }

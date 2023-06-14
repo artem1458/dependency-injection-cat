@@ -1,4 +1,5 @@
 import { DITypeFlag } from './DITypeFlag';
+import { get } from 'lodash';
 
 export class TypeCompatibilityMatrix {
     static [DITypeFlag.ANY]: Set<DITypeFlag> = new Set(Object.values(DITypeFlag).filter(it => typeof it === 'number') as any);
@@ -31,6 +32,8 @@ export class TypeCompatibilityMatrix {
             return false;
         }
 
-        return this[from]?.has(to) ?? false;
+        const compatibleValues = get(this, from, new Set<DITypeFlag>());
+
+        return compatibleValues.has(to) ?? false;
     }
 }

@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "debug": "cross-env DICAT_DEBUG_MODE=true ttsc",
-    "testt": "ts-node ../src/service"
+    "run": "cross-env DICAT_DEBUG_MODE=true ts-node index.ts"
   },
   "dependencies": {
     "dependency-injection-cat": "link:../dist"

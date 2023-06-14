@@ -10,7 +10,7 @@
     "strict": true,
     "baseUrl": "./src",
     "rootDir": "./src",
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "downlevelIteration": true,
     "skipLibCheck": true,

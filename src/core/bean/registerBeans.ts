@@ -9,7 +9,7 @@ import { registerExpressionBean } from './registerExpressionBean';
 import { isEmbeddedBean } from '../ts/predicates/isEmbeddedBean';
 import { registerEmbeddedBean } from './registerEmbeddedBeans';
 import { CompilationContext } from '../../compilation-context/CompilationContext';
-import { verifyBeanTypes } from './verifyBeanTypes';
+import { verifyBeans } from './verifyBeans';
 import { isLifecycleMethodBean } from '../ts/predicates/isLifecycleMethodBean';
 import { registerLifecycleBean } from './registerLifecycleBean';
 import { isLifecycleArrowFunctionBean } from '../ts/predicates/isLifecycleArrowFunctionBean';
@@ -37,5 +37,5 @@ export function registerBeans(compilationContext: CompilationContext, context: C
         }
     });
 
-    verifyBeanTypes(compilationContext, context);
+    verifyBeans(compilationContext, context);
 }

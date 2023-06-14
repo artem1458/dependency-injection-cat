@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { getNodeSourceDescriptor } from '../utils/getNodeSourceDescriptor';
 import { getCompilationContext } from '../../../transformers/getCompilationContext';
 
-type Decorators = 'Bean' | 'EmbeddedBean' | 'PostConstruct' | 'BeforeDestruct';
+export type Decorators = 'Bean' | 'EmbeddedBean' | 'PostConstruct' | 'BeforeDestruct';
 const LIBRARY_DECORATORS = new Set<Decorators>(['Bean', 'EmbeddedBean', 'PostConstruct', 'BeforeDestruct']);
 
 export function isDecoratorFromLibrary(decorator: ts.ModifierLike, name: Decorators | undefined): boolean {
