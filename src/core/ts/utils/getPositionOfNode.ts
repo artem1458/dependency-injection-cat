@@ -1,6 +1,7 @@
 import ts from 'typescript';
 import LineColumn from 'line-column';
 
+//TODO Start position and end position
 export interface INodePosition {
     line: number;
     startColumn: number;
