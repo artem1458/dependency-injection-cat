@@ -1,6 +1,7 @@
 import ts from 'typescript';
 import { Context } from './Context';
 import { unquoteString } from '../utils/unquoteString';
+import { DependencyGraph } from '../dependencies/DependencyGraph';
 
 export class ContextRepository {
     static fileNameToLastContextCounter = new Map<string, number>();
@@ -13,7 +14,7 @@ export class ContextRepository {
         const context = new Context();
 
         context.id = this.buildId(classDeclaration);
-        context.fileName = this.buildId(classDeclaration);
+        context.fileName = classDeclaration.getSourceFile().fileName;
         context.node = classDeclaration;
 
         if (classDeclaration.name !== undefined) {
@@ -62,6 +63,8 @@ export class ContextRepository {
         this.fileNameToLastContextCounter.delete(fileName);
         contexts.forEach(context => {
             this.contextIdToContext.delete(context.id);
+
+            DependencyGraph.clearByContext(context);
         });
     }
 }

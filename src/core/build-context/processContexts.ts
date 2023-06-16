@@ -17,11 +17,8 @@ import {
 import upath from 'upath';
 import { getImportPathToExternalDirectory } from './utils/getImportPathToExternalDirectory';
 import { processMembers } from './transformers/processMembers';
-import { clearAllBySourceFile } from './clearAllBySourceFile';
 import { ContextRepository } from '../context/ContextRepository';
-import {
-    buildDependencyGraphAndFillQualifiedBeans
-} from '../dependencies/buildDependencyGraphAndFillQualifiedBeans';
+import { buildDependencyGraphAndFillQualifiedBeans } from '../dependencies/buildDependencyGraphAndFillQualifiedBeans';
 
 export const processContexts = (compilationContext: CompilationContext, tsContext: ts.TransformationContext, sourceFile: ts.SourceFile): ts.SourceFile => {
     //Skipping declaration files
@@ -30,8 +27,6 @@ export const processContexts = (compilationContext: CompilationContext, tsContex
     }
 
     let shouldAddImports = false;
-
-    clearAllBySourceFile(sourceFile);
 
     const visitor = (node: ts.Node): ts.Node => {
         //Registering contexts

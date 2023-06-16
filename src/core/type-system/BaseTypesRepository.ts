@@ -19,13 +19,13 @@ export class BaseTypesRepository {
             return;
         }
 
-        const librarySourceFile = compilationContext.program.getSourceFile(CONSTANTS.packageRoot);
+        const libraryDeclarationFile = compilationContext.program.getSourceFile(CONSTANTS.packageRoot);
 
-        if (!librarySourceFile) {
-            throw new Error('dependency-injection-cat library source file not found');
+        if (!libraryDeclarationFile) {
+            throw new Error('dependency-injection-cat library declaration file (index.d.ts) not found');
         }
 
-        const typeTableDeclaration = librarySourceFile.statements
+        const typeTableDeclaration = libraryDeclarationFile.statements
             .find((it): it is ts.InterfaceDeclaration => ts.isInterfaceDeclaration(it) && it.name.getText() === '_TypeTable');
 
         if (!typeTableDeclaration) {

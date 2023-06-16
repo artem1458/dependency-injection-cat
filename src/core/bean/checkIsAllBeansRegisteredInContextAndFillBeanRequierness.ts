@@ -5,7 +5,6 @@ import { MissingBeanDeclarationError } from '../../compilation-context/messages/
 import { DITypeBuilder } from '../type-system/DITypeBuilder';
 import { Context } from '../context/Context';
 import { ContextBean } from './ContextBean';
-import { getNodeSourceDescriptor } from '../ts/utils/getNodeSourceDescriptor';
 
 export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
     compilationContext: CompilationContext,
@@ -40,14 +39,7 @@ export const checkIsAllBeansRegisteredInContextAndFillBeanRequierness = (
         return;
     }
 
-    const typeSource = getNodeSourceDescriptor(typeNode, compilationContext);
-
-    if (typeSource !== null) {
-        typeSource.forEach(it => {
-            context.typePaths.push(it.fileName);
-        });
-    }
-
+    context.registerDIType(diType);
     const typeProperties = type.getProperties();
     const beans = Array.from(context.beans)
         .reduce((acc, curr) => {

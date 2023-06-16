@@ -1,5 +1,6 @@
 import ts from 'typescript';
 import { ContextBean } from '../bean/ContextBean';
+import { DIType } from '../type-system/DIType';
 
 export class Context {
     private beanCounter = 0;
@@ -10,7 +11,8 @@ export class Context {
 
     name: string | null = null;
     beans = new Set<ContextBean>();
-    typePaths: string[] = [];
+    relatedPaths = new Set<string>();
+    diType: DIType | null = null;
     private beanIdToContextBean = new Map<string, ContextBean>();
     private beanNodeToContextBean = new Map<ts.Node, ContextBean>();
 
@@ -21,6 +23,12 @@ export class Context {
         this.beans.add(bean);
         this.beanIdToContextBean.set(bean.id, bean);
         this.beanNodeToContextBean.set(bean.node, bean);
+
+        const beanClassDeclarationFileName = bean.classDeclaration?.getSourceFile().fileName;
+        bean.diType.declarations.map(it => {
+            this.relatedPaths.add(it.fileName);
+        });
+        beanClassDeclarationFileName && this.relatedPaths.add(beanClassDeclarationFileName);
     }
 
     deregisterBean(bean: ContextBean): void {
@@ -35,5 +43,11 @@ export class Context {
 
     getBeanById(id: string): ContextBean | null {
         return this.beanIdToContextBean.get(id) ?? null;
+    }
+
+    registerDIType(diType: DIType): void {
+        diType.declarations.map(it => {
+            this.relatedPaths.add(it.fileName);
+        });
     }
 }

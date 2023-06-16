@@ -1,22 +1,25 @@
 import ts from 'typescript';
-import { getTransformerFactory } from '../../core/build-context/getTransformerFactory';
 import DICatWebpackPlugin from '../../plugins/webpack';
 import { get } from 'lodash';
 import { initCompilationContext } from '../getCompilationContext';
 import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
 import { BaseTypesRepository } from '../../core/type-system/BaseTypesRepository';
 import { verifyTSVersion } from '../verifyTSVersion';
+import { ContextRepository } from '../../core/context/ContextRepository';
+import { processContexts } from '../../core/build-context/processContexts';
 
 verifyTSVersion();
 
 export default (program: ts.Program): ts.TransformerFactory<ts.SourceFile> => {
-    const compilationContext = initCompilationContext(program);
-    BaseTypesRepository.init(compilationContext);
-
-    const transformerFactory = getTransformerFactory(compilationContext);
+    const compilationContext = initCompilationContext();
+    compilationContext.assignProgram(program);
 
     return context => sourceFile => {
-        const transformedSourceFile = transformerFactory(context)(sourceFile);
+        compilationContext.clearMessagesByFilePath(sourceFile.fileName);
+        ContextRepository.clearByFileName(sourceFile.fileName);
+        BaseTypesRepository.init(compilationContext);
+
+        const transformedSourceFile = processContexts(compilationContext, context, sourceFile);
 
         if (!get(DICatWebpackPlugin, 'isErrorsHandledByWebpack')) {
             const message = BuildErrorFormatter.formatErrors(
