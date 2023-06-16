@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import DICatWebpackPlugin from '../../plugins/webpack';
 import { get } from 'lodash';
-import { initCompilationContext } from '../getCompilationContext';
+import { getCompilationContext } from '../getCompilationContext';
 import { BuildErrorFormatter } from '../../compilation-context/BuildErrorFormatter';
 import { BaseTypesRepository } from '../../core/type-system/BaseTypesRepository';
 import { verifyTSVersion } from '../verifyTSVersion';
@@ -11,7 +11,7 @@ import { processContexts } from '../../core/build-context/processContexts';
 verifyTSVersion();
 
 export default (program: ts.Program): ts.TransformerFactory<ts.SourceFile> => {
-    const compilationContext = initCompilationContext();
+    const compilationContext = getCompilationContext();
     compilationContext.assignProgram(program);
 
     return context => sourceFile => {

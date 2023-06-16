@@ -1,6 +1,7 @@
 /**
- * This is an interface for internal usage only, it's not used in any other interfaces of this library.
- * Please don't rely on this in your own code.
+ * This is an interface for internal usage only, it's not used in any other api of this library.
+ *
+ * Please don't rely on this interface in your own code.
  * */
 export interface _TypeTable {
     array: ReadonlyArray<any> | Array<any> | any[];

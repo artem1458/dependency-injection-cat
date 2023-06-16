@@ -17,10 +17,10 @@ export const verifyTSVersion = () => {
     const tsVersion: string | undefined = get(packageJsonParsed, 'peerDependencies.typescript', undefined);
 
     if (!tsVersion) {
-        throw new Error(chalk.red(`Required typescript version is not defined in ${chalk.red('dependency-injection-cat\'s')} package.json, try to reinstall ${chalk.bold('dependency-injection-cat')} package.`));
+        throw new Error(chalk.red(`Required typescript version is not defined in ${chalk.red(`${CONSTANTS.libraryName}'s`)} package.json, try to reinstall ${chalk.bold(CONSTANTS.libraryName)} package.`));
     }
 
     if (!semver.satisfies(ts.version, tsVersion)) {
-        throw new Error(chalk.red(`${chalk.bold('dependency-injection-cat')} works correctly with typescript version "${chalk.bold(tsVersion)}", you have version "${chalk.bold(ts.version)}", you can disable this error check by setting "unsafeTSVersion" flag in ${chalk.bold('.dicatrc')} config file.`));
+        throw new Error(chalk.red(`${chalk.bold(CONSTANTS.libraryName)} works correctly with typescript version "${chalk.bold(tsVersion)}", you have version "${chalk.bold(ts.version)}", you can disable this error check by setting "unsafeTSVersion" flag in ${chalk.bold('.dicatrc')} config file.`));
     }
 };
