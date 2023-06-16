@@ -2,10 +2,8 @@ import { CatContext } from './CatContext';
 import { ContextHolder } from './ContextHolder';
 import { Context } from './Context';
 import { InternalCatContext } from './InternalCatContext';
-import { ClassNotExtendsCatContext } from '../exceptions/runtime/ClassNotExtendsCatContext';
-import { NoContextByKey } from '../exceptions/runtime/NoContextByKey';
 import { ContextProps, ContextPropsWithConfig, Container } from './Container';
-import { contextKeyToString } from '../exceptions/runtime/contextKeyToString';
+import { ErrorBuilder } from './ErrorBuilder';
 
 export class ContainerImpl implements Container {
     private pools: Map<{ new(): CatContext<any> }, Map<any, ContextHolder>> = new Map();
@@ -14,7 +12,7 @@ export class ContainerImpl implements Container {
     initContext<T, C>(props: ContextPropsWithConfig<T, C>): Context<T>;
     initContext<T, C>(props: ContextPropsWithConfig<T, C>): Context<T> {
         if (!(props.context.prototype instanceof InternalCatContext)) {
-            throw new ClassNotExtendsCatContext();
+            throw ErrorBuilder.classNotInheritorOfCatContext();
         }
 
         const pool = this.getPool(props.context as any);
@@ -37,13 +35,13 @@ export class ContainerImpl implements Container {
     getContext<T>(props: ContextProps<T>): Context<T>;
     getContext<T, C>(props: ContextPropsWithConfig<T, C>): Context<T> {
         if (!(props.context.prototype instanceof InternalCatContext)) {
-            throw new ClassNotExtendsCatContext();
+            throw ErrorBuilder.classNotInheritorOfCatContext();
         }
         const pool = this.getPool(props.context as any);
         const contextHolder = pool.get(props.key);
 
         if (!contextHolder) {
-            throw new NoContextByKey((props.context as any)['dicat_static_contextName'], props.key);
+            throw ErrorBuilder.noContextByKey((props.context as any)['dicat_static_contextName'], props.key);
         }
 
         return contextHolder as any;
@@ -53,7 +51,7 @@ export class ContainerImpl implements Container {
     getOrInitContext<T, C>(props: ContextPropsWithConfig<T, C>): Context<T>;
     getOrInitContext<T, C>(props: ContextPropsWithConfig<T, C>): Context<T> {
         if (!(props.context.prototype instanceof InternalCatContext)) {
-            throw new ClassNotExtendsCatContext();
+            throw ErrorBuilder.classNotInheritorOfCatContext();
         }
         const pool = this.getPool(props.context as any);
         const contextHolder = pool.get(props.key);
@@ -67,13 +65,13 @@ export class ContainerImpl implements Container {
 
     clearContext<T>(props: ContextProps<T>): void {
         if (!(props.context.prototype instanceof InternalCatContext)) {
-            throw new ClassNotExtendsCatContext();
+            throw ErrorBuilder.classNotInheritorOfCatContext();
         }
         const pool = this.getPool(props.context);
         const contextHolder = pool.get(props.key);
 
         if (!contextHolder) {
-            return console.warn(`Trying to clear not initialized context, class: ${props.context}, key: ${contextKeyToString(props.key)}`);
+            return console.warn(`Trying to clear not initialized context, class: ${props.context}, key: ${ErrorBuilder.contextKeyToString(props.key)}`);
         }
 
         try {

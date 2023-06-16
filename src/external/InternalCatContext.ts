@@ -1,4 +1,4 @@
-import { BeanNotFoundInContext } from '../exceptions/runtime/BeanNotFoundInContext';
+import { ErrorBuilder } from './ErrorBuilder';
 
 export interface IBeanConfig {
     scope: 'prototype' | 'singleton';
@@ -33,7 +33,7 @@ export abstract class InternalCatContext {
         'dicat_createMap',
     ]);
 
-    declare static dicat_static_contextName: string;
+    static dicat_static_contextName: string | null = null;
     declare static dicat_static_beanConfiguration: Record<BeanName, Partial<IBeanConfig>>;
     declare static dicat_static_lifecycleConfiguration: Record<BeanLifecycle, BeanName[]>;
 
@@ -91,7 +91,7 @@ export abstract class InternalCatContext {
         const beanConfiguration = this.getStaticConstructorProperty('dicat_static_beanConfiguration')[beanName] ?? null;
 
         if (beanConfiguration === null) {
-            throw new BeanNotFoundInContext(this.getStaticConstructorProperty('dicat_static_contextName'), beanName);
+            throw ErrorBuilder.beanNotFoundInContext(this.getStaticConstructorProperty('dicat_static_contextName'), beanName);
         }
 
         return {

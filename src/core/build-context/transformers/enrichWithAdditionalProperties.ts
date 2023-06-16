@@ -55,7 +55,7 @@ export const enrichWithAdditionalProperties = (node: ts.ClassDeclaration, contex
                             factory.createThis(),
                             factory.createObjectLiteralExpression(
                                 [
-                                    createObjectDefinePropertyPropertyAssignment('dicat_static_contextName', factory.createStringLiteral(context.name ?? '<anonymous>')),
+                                    createObjectDefinePropertyPropertyAssignment('dicat_static_contextName', context.name ? factory.createStringLiteral(context.name) : factory.createNull()),
                                     createObjectDefinePropertyPropertyAssignment('dicat_static_beanConfiguration', getBeanConfigObjectLiteral(context)),
                                     createObjectDefinePropertyPropertyAssignment('dicat_static_lifecycleConfiguration', lifecycleConfigProperty),
                                 ],

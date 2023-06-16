@@ -1,4 +1,4 @@
-import { UsingCatContextWithoutConfiguredDI } from '../exceptions/runtime/UsingCatContextWithoutConfiguredDI';
+import { ErrorBuilder } from './ErrorBuilder';
 
 /**
  * It's a class you should extend from to declare your own context.
@@ -39,13 +39,13 @@ import { UsingCatContextWithoutConfiguredDI } from '../exceptions/runtime/UsingC
  */
 export abstract class CatContext<T = {}, C = null> {
     constructor() {
-        throw new UsingCatContextWithoutConfiguredDI();
+        throw ErrorBuilder.usageWithoutConfiguredDI('CatContext.constructor');
     }
 
     /**
      * Returns config that was passed in context initialization stage via {@link Container#initContext} or {@link Container#getOrInitContext}.
      * */
     protected get config(): C {
-        throw new UsingCatContextWithoutConfiguredDI();
+        throw ErrorBuilder.usageWithoutConfiguredDI('CatContext.config');
     }
 }

@@ -1,4 +1,5 @@
 import { ClassConstructor } from './ClassConstructor';
+import { ErrorBuilder } from './ErrorBuilder';
 
 type BeanScope = 'prototype' | 'singleton';
 
@@ -11,5 +12,5 @@ type PropertyBean = <T>(clazz: ClassConstructor<T>, beanConfig?: BeanConfig) => 
 
 type Bean = PropertyDecorator & ConfigurableMethodBean & PropertyBean;
 export const Bean: Bean = () => {
-    throw new Error('Trying to use @Bean without configured di-container, or not in context-class');
+    throw ErrorBuilder.usageWithoutConfiguredDI('@Bean');
 };
